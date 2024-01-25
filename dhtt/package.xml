@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>dhtt</name>
+  <version>0.0.0</version>
+  <description>This package contains the implementation of dynamic Hierarchical Task Trees (dHTTs). This is meant to be a server which is communicated with in order to make the robot perform tasks, or provide updates about the tasks.</description>
+  <maintainer email="tbecker@nevada.unr.edu">Tyler J Becker</maintainer>
+  <license>TODO: License declaration</license>
+
+  <depend>rclcpp</depend>
+  <depend>dhtt_msgs</depend>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

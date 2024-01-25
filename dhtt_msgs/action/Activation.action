@@ -1,0 +1,26 @@
+### goal
+# first pass
+dhtt_msgs/Resource[] 		passed_resources
+
+# second pass
+dhtt_msgs/Resource[] 		granted_resources
+
+---
+### result
+# first pass
+bool 						done 
+
+string 						local_best_node
+
+dhtt_msgs/Resource[] 		requested_resources
+dhtt_msgs/Resource[] 		owned_resources
+
+float64 					activation_potential
+
+# second pass
+dhtt_msgs/Resource[] 		released_resources
+dhtt_msgs/Resource[] 		passed_resources
+
+---
+### feedback
+# wow such empty
