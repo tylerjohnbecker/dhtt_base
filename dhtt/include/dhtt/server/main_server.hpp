@@ -1,5 +1,5 @@
-#ifndef MAIN_SERVER
-#define MAIN_SERVER
+#ifndef MAIN_SERVER_HPP
+#define MAIN_SERVER_HPP
 
 // cpp includes
 #include <string.h>
@@ -121,4 +121,4 @@ namespace dHTT
 
 }
 
-#endif //MAIN_SERVER 
+#endif //MAIN_SERVER_HPP

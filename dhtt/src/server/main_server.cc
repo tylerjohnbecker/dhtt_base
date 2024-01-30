@@ -480,16 +480,16 @@ namespace dHTT
 	std::string MainServer::reset_tree()
 	{
 
-		if ( this->node_list.tree_status.state == dhtt_msgs::NodeStatus::ACTIVE or this->node_list.tree_status.state == dhtt_msgs::NodeStatus::WORKING )
+		if ( this->node_list.tree_status == dhtt_msgs::msg::NodeStatus::ACTIVE or this->node_list.tree_status == dhtt_msgs::msg::NodeStatus::WORKING )
 		{
-			return "Can\'t reset the tree while it is active. Returning in error."
+			return "Can\'t reset the tree while it is active. Returning in error.";
 		}
 
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> blank_rs = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
 
-		for ( std::vector<dhtt_msgs::msg::Node>::iterator iter = this->node_list.tree_nodes[0].child_name.begin() ; iter != this->node_list.tree_nodes[0].child_name.end() ; iter++ )
+		for ( std::vector<std::string>::iterator iter = this->node_list.tree_nodes[0].child_name.begin() ; iter != this->node_list.tree_nodes[0].child_name.end() ; iter++ )
 		{
-			this->remove_node( blank_rs, (*iter).node_name );
+			this->remove_node( blank_rs, *iter );
 		}
 
 		return "";

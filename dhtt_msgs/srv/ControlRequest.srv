@@ -1,5 +1,5 @@
 # defines the activity to perform for this service (only works for the list of constants below)
-int8 				control_code
+int8 				type
 
 # location and file_name to save as (uses a default location if save is the function chosen and this is left empty)
 string 				file_name
