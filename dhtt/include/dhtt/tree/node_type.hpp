@@ -18,6 +18,7 @@ namespace dhtt
 		TRANSIENT
 	};
 
+	class Node;
 
 	class NodeType
 	{
@@ -25,15 +26,15 @@ namespace dhtt
 
 		virtual void initialize(std::vector<std::string> params) = 0;
 
-		virtual void auction_callback( dhtt::Node& container ) = 0;
-		virtual void result_callback( dhtt::Node& container, bool success) = 0;
+		virtual void auction_callback( Node& container ) = 0;
+		virtual void result_callback( Node& container, bool success) = 0;
 
 		virtual void work() = 0;
 
 		virtual double get_perceived_efficiency() = 0;
 
-		virtual std::vector<dhtt_msgs::msg::Resource> get_retained_resources( dhtt::Node& container ) = 0;
-		virtual std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node& container ) = 0;
+		virtual std::vector<dhtt_msgs::msg::Resource> get_retained_resources( Node& container ) = 0;
+		virtual std::vector<dhtt_msgs::msg::Resource> get_released_resources( Node& container ) = 0;
 
 		virtual bool can_add_child() {return false;};
 

@@ -16,6 +16,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 // dhtt includes
+#include "dhtt/tree/node.hpp"
 
 // dhtt message includes
 #include "dhtt_msgs/msg/node.hpp"

@@ -3,8 +3,11 @@
 
 #include <memory>
 
+#include "pluginlib/class_loader.hpp"
+
 #include "dhtt_msgs/msg/node.hpp"
 #include "dhtt_msgs/msg/resource.hpp"
+#include "dhtt_msgs/msg/node_status.hpp"
 
 #include "dhtt/tree/node_type.hpp"
 
@@ -27,7 +30,7 @@ namespace dhtt
 
 		std::shared_ptr<NodeType> logic;
 
-		dhtt_msgs::msg::NodeStatus stat;
+		dhtt_msgs::msg::NodeStatus status;
 
 		std::vector<dhtt_msgs::msg::Resource> owned_resources;
 		std::vector<std::string> child_names;
@@ -45,6 +48,6 @@ namespace dhtt
 	private:
 	};
 
-};
+}
 
 #endif // NODE_HPP

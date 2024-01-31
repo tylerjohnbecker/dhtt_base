@@ -28,8 +28,8 @@ find_package(Boost REQUIRED COMPONENTS
   thread)
 
 # make nodes
-add_executable(start_server src/main.cpp src/server/main_server.cc)
-ament_target_dependencies(start_server rclcpp rcl_yaml_param_parser dhtt_msgs yaml-cpp)
+add_executable(start_server src/main.cpp src/server/main_server.cc src/tree/node.cc)
+ament_target_dependencies(start_server rclcpp rcl_yaml_param_parser dhtt_msgs yaml-cpp pluginlib)
 target_link_libraries(start_server ${YAML_CPP_LIBRARIES} ${Boost_LIBRARIES})
 target_include_directories(start_server PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

@@ -40,4 +40,4 @@ namespace dhtt_plugins
 
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::DummyBehavior, dhtt::NodeType)
 
-#endif DUMMY_BEHAVIOR_HPP
+#endif //DUMMY_BEHAVIOR_HPP

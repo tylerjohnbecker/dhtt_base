@@ -267,6 +267,8 @@ namespace dHTT
 	
 	void MainServer::register_callback( const std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Request> request, std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Response> response )
 	{
+		(void) request;
+		(void) response;
 
 	}
 
@@ -458,12 +460,16 @@ namespace dHTT
 	
 	std::string MainServer::change_params( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request )
 	{
+		(void) request;
+
 		return "";
 	}
 
 	// control helpers
 	std::string MainServer::stop_tree( bool interrupt )
 	{
+		(void) interrupt;
+
 		return "";
 	}
 
@@ -596,7 +602,7 @@ namespace dHTT
 
 			int child_index = -1;
 
-			for (int i = 0; i < (*parent_iter).child_name.size(); i++)
+			for (int i = 0; i < (int) ((*parent_iter).child_name.size()); i++)
 			{
 				if ( not strcmp((*parent_iter).child_name[i].c_str(), (*node_iter).node_name.c_str()) )
 				{
