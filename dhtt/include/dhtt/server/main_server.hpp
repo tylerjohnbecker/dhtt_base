@@ -41,12 +41,12 @@
 #define ROOT_PARENT -1
 #define ROOT_PARENT_NAME "NONE"
 
-namespace dHTT
+namespace dhtt
 {
 	class MainServer : public rclcpp::Node
 	{
 	public:
-		MainServer(std::string node_name);
+		MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner);
 		~MainServer();
 
 	protected:
@@ -112,8 +112,11 @@ namespace dHTT
 		boost::mutex modify_mut;
 
 		// members
-		std::map<std::string, rclcpp::Node> ros2_node_list; //////////////////// change to dhtt_node as soon as that exists for now i don't even need to maintain it
+		std::map<std::string, std::shared_ptr<dhtt::Node>> node_map; 
 		dhtt_msgs::msg::Subtree node_list; 
+
+		// this is passed in from main through the constructor so that any inner nodes can be spun as well
+		std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner_cp;
 
 		int total_nodes_added;
 		bool verbose;

@@ -1,8 +1,8 @@
 #include "dhtt/server/main_server.hpp"
 
-namespace dHTT
+namespace dhtt
 {
-	MainServer::MainServer(std::string node_name) : rclcpp::Node(node_name), total_nodes_added(1), verbose(true)
+	MainServer::MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner) : rclcpp::Node(node_name), spinner_cp(spinner), total_nodes_added(1), verbose(true)
 	{
 		/// initialize subscribers
 		this->status_sub = this->create_subscription<dhtt_msgs::msg::Node>("/status", MAX_NODE_NUM, std::bind(&MainServer::status_callback, this, std::placeholders::_1));
@@ -11,7 +11,6 @@ namespace dHTT
 		this->root_status_pub = this->create_publisher<dhtt_msgs::msg::NodeStatus>("/root_status", 10);
 
 		/// initialize internal services
-		this->registration_server = this->create_service<dhtt_msgs::srv::InternalServiceRegistration>("/register_service", std::bind(&MainServer::register_callback, this, std::placeholders::_1, std::placeholders::_2));
 
 		/// make root node (before external services because they will not work without an active root)
 		// make local representation
@@ -38,7 +37,8 @@ namespace dHTT
 		this->node_list.task_completion_percent = 0.0f;
 
 		// initialize physical Root Node
-		// need class representation first
+		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>("ROOT_0", "dhtt_plugins::TestBehavior", std::vector<std::string>(), "NONE");
+		this->spinner_cp->add_node(this->node_map["ROOT_0"]);
 
 		/// initialize external services
 		this->modify_server = this->create_service<dhtt_msgs::srv::ModifyRequest>("/modify_service", std::bind(&MainServer::modify_callback, this, std::placeholders::_1, std::placeholders::_2));
@@ -53,6 +53,8 @@ namespace dHTT
 
 		// not functioning at the moment, will have to revisit this when I get to the proper node structure
 		// this->remove_node(std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>(), this->node_list.tree_nodes[0]);
+		this->node_list.tree_nodes.clear();
+		this->node_map.clear();
 	}
 
 	void MainServer::modify_callback( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response )
@@ -307,7 +309,31 @@ namespace dHTT
 		to_add.parent = std::distance(this->node_list.tree_nodes.begin(), found_parent);
 		to_add.node_status.state = dhtt_msgs::msg::NodeStatus::WAITING;
 		
+		RCLCPP_INFO(this->get_logger(), "Attempting to create node %s with type %s and parent %s", to_add.node_name.c_str(), to_add.plugin_name.c_str(), parent_name.c_str());
+
 		// create a physical node from the message and add to physical list
+		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(to_add.node_name, to_add.plugin_name, to_add.params, parent_name);
+		
+		if (this->node_map[to_add.node_name]->loaded_successfully() == false)
+		{
+			std::string err = this->node_map[to_add.node_name]->get_error_msg();
+
+			this->node_map.erase(to_add.node_name);
+
+			return err;
+		}
+
+		this->spinner_cp->add_node(this->node_map[to_add.node_name]);
+		this->node_map[to_add.node_name]->register_with_parent();
+
+		if (this->node_map[to_add.node_name]->loaded_successfully() == false)
+		{
+			std::string err = this->node_map[to_add.node_name]->get_error_msg();
+
+			this->node_map.erase(to_add.node_name);
+
+			return err;
+		}
 
 		// update the parent
 		(*found_parent).children.push_back( (int) this->node_list.tree_nodes.size() );
@@ -315,7 +341,7 @@ namespace dHTT
 
 		this->node_list.tree_nodes.push_back(to_add);
 
-		// notify physical parent to update it's children with an internalmodifyrequest
+		// notify physical parent to update it's children with an internalmodifyrequest // done automatically by child
 
 
 		// add this node_name to the list of added nodes
@@ -347,6 +373,7 @@ namespace dHTT
 				to_build.parent_name = config["Nodes"][(*iter)]["parent"].as<std::string>();
 
 				to_build.type = config["Nodes"][(*iter)]["type"].as<int>();
+				to_build.plugin_name = config["Nodes"][(*iter)]["behavior_type"].as<std::string>();
 
 				if (to_build.type > dhtt_msgs::msg::Node::BEHAVIOR)
 					return "Node type for node " + to_build.node_name + " incorrect at value " + std::to_string(to_build.type) + ". Returning in error.";
@@ -431,6 +458,8 @@ namespace dHTT
 			if ( found_node_iter == this->node_list.tree_nodes.end())
 				return "Could not find node " + look_for + " in internal list of nodes. Returning in error.";
 
+			std::string parent_name = (*found_node_iter).parent_name;
+
 			int parent_index = (*found_node_iter).parent;
 			int remove_index = std::distance(this->node_list.tree_nodes.begin(), found_node_iter);
 
@@ -447,6 +476,11 @@ namespace dHTT
 			this->node_list.tree_nodes.erase(found_node_iter);
 
 			response->removed_nodes.push_back(look_for);
+
+			// now remove the node and it's reference from the parent from the real node map, also remove from the spinner
+			this->spinner_cp->remove_node(this->node_map[look_for]);
+			this->node_map.erase(look_for);
+			this->node_map[parent_name]->remove_child(look_for);
 		}
 
 		if ( (int) this->node_list.tree_nodes.size() == 0 )

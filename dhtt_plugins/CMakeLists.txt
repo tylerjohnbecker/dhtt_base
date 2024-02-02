@@ -18,11 +18,12 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
+find_package(rclcpp REQUIRED)
 find_package(dhtt REQUIRED)
 find_package(dhtt_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 
-add_library(dhtt_plugins src/dhtt_plugins.cpp src/behaviors/dummy_behavior.cc)
+add_library(dhtt_plugins src/dhtt_plugins.cpp src/behaviors/test_behavior.cc)
 target_include_directories(dhtt_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
@@ -31,6 +32,7 @@ ament_target_dependencies(
   dhtt
   dhtt_msgs
   pluginlib
+  rclcpp
 )
 
 pluginlib_export_plugin_description_file(dhtt plugins.xml)

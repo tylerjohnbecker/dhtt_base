@@ -13,46 +13,49 @@ NodeList: [
 Nodes:
   ParentThen:
     type: 2
+    behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
     parent: 'NONE'
     params: []
   FirstTask:
     type: 4
-    behavior_type: 'DummyBehavior'
+    behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
     parent: 'ParentThen'
     params: []
   MidParentAnd:
     type: 1
+    behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
     parent: 'ParentThen'
     params: []
   SecondTask:
     type: 4
-    behavior_type: 'DummyBehavior'
+    behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
     parent: 'MidParentAnd'
     params: []
   ThirdTask:
     type: 4
-    behavior_type: 'DummyBehavior'
+    behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
     parent: 'MidParentAnd'
     params: []
   MidParentOr:
     type: 3
+    behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
     parent: 'ParentThen'
     params: []
   FourthTask:
     type: 4
-    behavior_type: 'DummyBehavior'
+    behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
     parent: 'MidParentOr'
     params: []
   FifthTask:
     type: 4
-    behavior_type: 'DummyBehavior'
+    behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
     parent: 'MidParentOr'
     params: []

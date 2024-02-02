@@ -1,5 +1,5 @@
 <library path="dhtt_plugins">
-	<class type="dhtt_plugins::DummyBehavior" base_class_type="dhtt::NodeType">
+	<class type="dhtt_plugins::TestBehavior" base_class_type="dhtt::NodeType">
 		<description>Filler behavior for testing the functionality of dhtts</description>
 	</class>
 </library>

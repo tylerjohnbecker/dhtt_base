@@ -16,15 +16,15 @@ int main (int argc, char** argv)
 {
 	rclcpp::init(argc, argv);
 
-	auto my_server = std::make_shared<dHTT::MainServer>("dHTT_server");
+	std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
 
-	rclcpp::executors::MultiThreadedExecutor spinner;
+	auto my_server = std::make_shared<dhtt::MainServer>("dHTT_server", spinner);
 
 	RCLCPP_INFO(my_server->get_logger(), "Server started...");
 
-	spinner.add_node(my_server);
+	spinner->add_node(my_server);
 
-	spinner.spin();
+	spinner->spin();
 
 	return 0;
 }

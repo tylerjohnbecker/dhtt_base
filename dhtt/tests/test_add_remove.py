@@ -280,7 +280,7 @@ class TestServerAddRemove:
 		modify_rq.add_node = Node()
 		modify_rq.add_node.type = Node.AND
 		modify_rq.add_node.node_name = 'ParentAnd'
-		modify_rq.add_node.plugin_name = 'dhtt::AndTaskType'
+		modify_rq.add_node.plugin_name = 'dhtt_plugins::TestBehavior' # just for now
 
 		modify_rs = self.get_modify_result(modify_rq)
 
@@ -300,7 +300,7 @@ class TestServerAddRemove:
 		modify_rq.add_node = Node()
 		modify_rq.add_node.type = Node.AND
 		modify_rq.add_node.node_name = 'ParentAnd'
-		modify_rq.add_node.plugin_name = 'dhtt::AndTaskType'
+		modify_rq.add_node.plugin_name = 'dhtt_plugins::TestBehavior'
 
 		modify_rs = self.get_modify_result(modify_rq)
 
@@ -327,7 +327,7 @@ class TestServerAddRemove:
 		modify_rq.add_node = Node()
 		modify_rq.add_node.type = Node.BEHAVIOR + 1
 		modify_rq.add_node.node_name = 'ParentFakeBehavior'
-		modify_rq.add_node.plugin_name = 'dhtt::AndTaskType'
+		modify_rq.add_node.plugin_name = 'dhtt::WhoCouldItbe'
 
 		modify_rs = self.get_modify_result(modify_rq)
 
@@ -362,7 +362,7 @@ class TestServerAddRemove:
 		modify_rq.add_node = Node()
 		modify_rq.add_node.type = Node.BEHAVIOR
 		modify_rq.add_node.node_name = 'BadChildBehavior'
-		modify_rq.add_node.plugin_name = 'dhtt::DummyBehaviorType'
+		modify_rq.add_node.plugin_name = 'dhtt_plugins::TestBehavior'
 
 		modify_rs = self.get_modify_result(modify_rq)
 
@@ -388,7 +388,7 @@ class TestServerAddRemove:
 		modify_rq.add_node = Node()
 		modify_rq.add_node.type = Node.ROOT
 		modify_rq.add_node.node_name = 'BadRootBehavior'
-		modify_rq.add_node.plugin_name = 'dhtt::ROOTBehavior'
+		modify_rq.add_node.plugin_name = 'dhtt_plugins::TestBehavior'
 
 		modify_rs = self.get_modify_result(modify_rq)
 
@@ -407,7 +407,3 @@ class TestServerAddRemove:
 		self.reset_tree()
 
 		self.multiple_yaml(wd)
-
-
-if __name__ == '__main__':
-	print("Hello world!")

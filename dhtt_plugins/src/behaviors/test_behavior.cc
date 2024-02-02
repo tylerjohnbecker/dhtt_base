@@ -1,32 +1,35 @@
-#include "dhtt_plugins/behaviors/dummy_behavior.hpp"
+#include "dhtt_plugins/behaviors/test_behavior.hpp"
 
 
 namespace dhtt_plugins
 {
 
-	void DummyBehavior::initialize(std::vector<std::string> params)
+	void TestBehavior::initialize(std::vector<std::string> params)
 	{
 		// these just supress warnings regarding not using function params
 		(void) params;
 
+		// only allowed for now until the task logic is implemented
+		this->children_allowed = true;
+
 		return;
 	}
 
-	void DummyBehavior::auction_callback( dhtt::Node& container )
+	void TestBehavior::auction_callback( dhtt::Node& container )
 	{
 		// doesn't need any functionality till the rest of the tree is made, but just needs to send up an empty request with activation potential
 
 		(void) container;
 	}
 
-	void DummyBehavior::result_callback( dhtt::Node& container, bool success)
+	void TestBehavior::result_callback( dhtt::Node& container, bool success)
 	{
 		// not sure what goes here for now, work will be called from Node
 		(void) container;
 		(void) success;
 	}
 
-	void DummyBehavior::work()
+	void TestBehavior::work()
 	{
 		// do work ofc
 
@@ -36,25 +39,20 @@ namespace dhtt_plugins
 		fake_work.sleep();
 	}
 
-	double DummyBehavior::get_perceived_efficiency()
+	double TestBehavior::get_perceived_efficiency()
 	{
 		// just give random perceived efficiency
 		return ( static_cast <float> (rand()) / static_cast <float> (RAND_MAX) );
 	}
 
-	bool DummyBehavior::can_add_child()
-	{
-		return false;
-	}
-
-	std::vector<dhtt_msgs::msg::Resource> DummyBehavior::get_retained_resources( dhtt::Node& container )
+	std::vector<dhtt_msgs::msg::Resource> TestBehavior::get_retained_resources( dhtt::Node& container )
 	{
 		(void) container;
 
 		return std::vector<dhtt_msgs::msg::Resource>();
 	}
 
-	std::vector<dhtt_msgs::msg::Resource> DummyBehavior::get_released_resources( dhtt::Node& container )
+	std::vector<dhtt_msgs::msg::Resource> TestBehavior::get_released_resources( dhtt::Node& container )
 	{
 		(void) container;
 

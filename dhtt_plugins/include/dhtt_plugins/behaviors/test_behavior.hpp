@@ -1,5 +1,5 @@
-#ifndef DUMMY_BEHAVIOR_HPP
-#define DUMMY_BEHAVIOR_HPP
+#ifndef TEST_BEHAVIOR_HPP
+#define TEST_BEHAVIOR_HPP
 
 #include "dhtt_plugins/visibility_control.h"
 
@@ -12,7 +12,7 @@
 
 namespace dhtt_plugins
 {
-	class DummyBehavior : public dhtt::NodeType
+	class TestBehavior : public dhtt::NodeType
 	{
 	public:
 
@@ -25,8 +25,6 @@ namespace dhtt_plugins
 
 		double get_perceived_efficiency() override;
 
-		bool can_add_child() override;
-
 		std::vector<dhtt_msgs::msg::Resource> get_retained_resources( dhtt::Node& container ) override;
 		std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node& container ) override;
 
@@ -37,7 +35,5 @@ namespace dhtt_plugins
 }
 
 #include <pluginlib/class_list_macros.hpp>
-
-PLUGINLIB_EXPORT_CLASS(dhtt_plugins::DummyBehavior, dhtt::NodeType)
 
 #endif //DUMMY_BEHAVIOR_HPP
