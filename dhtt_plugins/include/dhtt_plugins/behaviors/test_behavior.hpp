@@ -21,6 +21,8 @@ namespace dhtt_plugins
 		void auction_callback( dhtt::Node& container ) override;
 		void result_callback( dhtt::Node& container, bool success) override;
 
+		void parse_params( std::vector<std::string> params ) override;
+
 		void work() override;
 
 		double get_perceived_efficiency() override;
@@ -29,6 +31,8 @@ namespace dhtt_plugins
 		std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node& container ) override;
 
 	protected:
+
+		double activation_potential;
 
 	private:
 	};

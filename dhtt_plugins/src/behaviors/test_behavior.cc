@@ -12,6 +12,8 @@ namespace dhtt_plugins
 		// only allowed for now until the task logic is implemented
 		this->children_allowed = true;
 
+		this->parse_params(params);
+
 		return;
 	}
 
@@ -29,6 +31,28 @@ namespace dhtt_plugins
 		(void) success;
 	}
 
+	void TestBehavior::parse_params( std::vector<std::string> params )
+	{
+		if ( (int) params.size() > 1 )
+			throw std::invalid_argument("Too many parameters passed to node. Only activation potential required.");
+
+		if ( (int) params.size() == 0 )
+			this->activation_potential = ( static_cast <float> (rand()) / static_cast <float> (RAND_MAX) );
+
+		auto separator_pos = params[0].find(": ");
+
+		if ( separator_pos == std::string::npos )
+			throw std::invalid_argument("Parameters are expected in the format \"key: value\" but received in the form " + params[0] + ". Returning in error.");
+
+		std::string key = params[0].substr(0, separator_pos);
+		std::string value = params[0].substr(separator_pos, params[0].size() - separator_pos); 
+
+		if ( strcmp(key.c_str(), "activation_potential") )
+			throw std::invalid_argument("Class TestBehavior only expects parameter activation_potential, but received " + key + ". Returning in error.");
+
+		this->activation_potential = atof(value.c_str());
+	}
+
 	void TestBehavior::work()
 	{
 		// do work ofc
@@ -42,7 +66,7 @@ namespace dhtt_plugins
 	double TestBehavior::get_perceived_efficiency()
 	{
 		// just give random perceived efficiency
-		return ( static_cast <float> (rand()) / static_cast <float> (RAND_MAX) );
+		return this->activation_potential;
 	}
 
 	std::vector<dhtt_msgs::msg::Resource> TestBehavior::get_retained_resources( dhtt::Node& container )

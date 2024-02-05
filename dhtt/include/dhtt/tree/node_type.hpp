@@ -29,6 +29,8 @@ namespace dhtt
 		virtual void auction_callback( Node& container ) = 0;
 		virtual void result_callback( Node& container, bool success) = 0;
 
+		virtual void parse_params(std::vector<std::string> params) = 0;
+
 		virtual void work() = 0;
 
 		virtual double get_perceived_efficiency() = 0;
