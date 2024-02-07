@@ -58,7 +58,6 @@ namespace dhtt
 		void modify_callback( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response );
 		void control_callback( const std::shared_ptr<dhtt_msgs::srv::ControlRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ControlRequest::Response> response );
 		void fetch_callback( const std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response );
-		void register_callback( const std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Request> request, std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Response> response );
 
 		// modify helpers
 		std::string add_node( std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, dhtt_msgs::msg::Node to_add );
@@ -95,13 +94,6 @@ namespace dhtt
 		rclcpp::Service<dhtt_msgs::srv::ControlRequest>::SharedPtr control_server;
 		rclcpp::Service<dhtt_msgs::srv::FetchRequest>::SharedPtr fetch_server;
 
-		// internal services
-		rclcpp::Service<dhtt_msgs::srv::InternalServiceRegistration>::SharedPtr registration_server;
-
-		// internal service clients
-		std::map<std::string, rclcpp::Client<dhtt_msgs::srv::InternalControlRequest>::SharedPtr> tree_control_service;
-		std::map<std::string, rclcpp::Client<dhtt_msgs::srv::InternalModifyRequest>::SharedPtr> tree_modify_service;
-
 		// publishers
 		rclcpp::Publisher<dhtt_msgs::msg::NodeStatus>::SharedPtr root_status_pub;
 
@@ -114,6 +106,8 @@ namespace dhtt
 		// members
 		std::map<std::string, std::shared_ptr<dhtt::Node>> node_map; 
 		dhtt_msgs::msg::Subtree node_list; 
+
+		std::list<dhtt_msgs::msg::Node> history;
 
 		// this is passed in from main through the constructor so that any inner nodes can be spun as well
 		std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner_cp;

@@ -18,6 +18,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
 find_package(dhtt_msgs REQUIRED)
 find_package(rcl_yaml_param_parser REQUIRED)
 find_package(pluginlib REQUIRED)
@@ -29,7 +30,7 @@ find_package(Boost REQUIRED COMPONENTS
 
 # make nodes
 add_executable(start_server src/main.cpp src/server/main_server.cc src/tree/node.cc)
-ament_target_dependencies(start_server rclcpp rcl_yaml_param_parser dhtt_msgs yaml-cpp pluginlib)
+ament_target_dependencies(start_server rclcpp rclcpp_action rcl_yaml_param_parser dhtt_msgs yaml-cpp pluginlib)
 target_link_libraries(start_server ${YAML_CPP_LIBRARIES} ${Boost_LIBRARIES})
 target_include_directories(start_server PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

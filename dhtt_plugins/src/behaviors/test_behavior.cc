@@ -17,18 +17,22 @@ namespace dhtt_plugins
 		return;
 	}
 
-	void TestBehavior::auction_callback( dhtt::Node& container )
+	std::shared_ptr<dhtt_msgs::action::Activation::Result> TestBehavior::auction_callback( dhtt::Node* container )
 	{
 		// doesn't need any functionality till the rest of the tree is made, but just needs to send up an empty request with activation potential
 
 		(void) container;
+
+		return std::make_shared<dhtt_msgs::action::Activation::Result>();
 	}
 
-	void TestBehavior::result_callback( dhtt::Node& container, bool success)
+	std::shared_ptr<dhtt_msgs::action::Activation::Result> TestBehavior::work_callback( dhtt::Node* container, bool success)
 	{
 		// not sure what goes here for now, work will be called from Node
 		(void) container;
 		(void) success;
+
+		return std::make_shared<dhtt_msgs::action::Activation::Result>();
 	}
 
 	void TestBehavior::parse_params( std::vector<std::string> params )
@@ -37,7 +41,11 @@ namespace dhtt_plugins
 			throw std::invalid_argument("Too many parameters passed to node. Only activation potential required.");
 
 		if ( (int) params.size() == 0 )
+		{
 			this->activation_potential = ( static_cast <float> (rand()) / static_cast <float> (RAND_MAX) );
+
+			return;
+		}
 
 		auto separator_pos = params[0].find(": ");
 
@@ -53,33 +61,23 @@ namespace dhtt_plugins
 		this->activation_potential = atof(value.c_str());
 	}
 
-	void TestBehavior::work()
-	{
-		// do work ofc
-
-		// constructor for rate take hz as an input
-		rclcpp::Rate fake_work(.5);
-
-		fake_work.sleep();
-	}
-
 	double TestBehavior::get_perceived_efficiency()
 	{
 		// just give random perceived efficiency
 		return this->activation_potential;
 	}
 
-	std::vector<dhtt_msgs::msg::Resource> TestBehavior::get_retained_resources( dhtt::Node& container )
+	std::vector<dhtt_msgs::msg::Resource> TestBehavior::get_retained_resources( dhtt::Node* container )
 	{
 		(void) container;
 
 		return std::vector<dhtt_msgs::msg::Resource>();
 	}
 
-	std::vector<dhtt_msgs::msg::Resource> TestBehavior::get_released_resources( dhtt::Node& container )
+	std::vector<dhtt_msgs::msg::Resource> TestBehavior::get_released_resources( dhtt::Node* container )
 	{
 		(void) container;
 
-		return container.get_owned_resources();
+		return container->get_owned_resources();
 	}
 }

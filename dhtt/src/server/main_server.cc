@@ -266,13 +266,6 @@ namespace dhtt
 
 		return;
 	}
-	
-	void MainServer::register_callback( const std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Request> request, std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Response> response )
-	{
-		(void) request;
-		(void) response;
-
-	}
 
 	// modify helpers
 	// I should also think about the node number here
@@ -309,8 +302,6 @@ namespace dhtt
 		to_add.parent = std::distance(this->node_list.tree_nodes.begin(), found_parent);
 		to_add.node_status.state = dhtt_msgs::msg::NodeStatus::WAITING;
 		
-		RCLCPP_INFO(this->get_logger(), "Attempting to create node %s with type %s and parent %s", to_add.node_name.c_str(), to_add.plugin_name.c_str(), parent_name.c_str());
-
 		// create a physical node from the message and add to physical list
 		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(to_add.node_name, to_add.plugin_name, to_add.params, parent_name);
 		
@@ -606,6 +597,10 @@ namespace dhtt
 			return;
 
 		(*found_node).node_status.state = data->node_status.state;
+
+		// if the node is working and is not the head of the history make it the head of the history
+		if ( data->node_status.state == dhtt_msgs::msg::NodeStatus::WORKING and ( not strcmp ( this->history.back().node_name.c_str(), data->node_name.c_str() ) ) )
+			this->history.push_back(*data);
 	}
 
 	// generally helpful functions
