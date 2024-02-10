@@ -2,7 +2,7 @@
 
 namespace dhtt
 {
-	Node::Node(std::string name, std::string type, std::vector<std::string> params, std::string p_name) : rclcpp::Node( name ), node_type_loader("dhtt", "dhtt::NodeType"), name(name), parent_name(p_name)
+	Node::Node(std::string name, std::string type, std::vector<std::string> params, std::string p_name) : rclcpp::Node( name ), node_type_loader("dhtt", "dhtt::NodeType"), name(name), parent_name(p_name), priority(1)
 	{
 		this->error_msg = "";
 		this->successful_load = true;
@@ -52,6 +52,19 @@ namespace dhtt
 	std::string Node::get_error_msg()
 	{
 		return this->error_msg;
+	}
+
+	std::vector<dhtt_msgs::msg::Resource> Node::get_owned_resources()
+	{
+		return this->owned_resources;
+	}
+
+	void Node::set_owned_resources(std::vector<dhtt_msgs::msg::Resource> set_to)
+	{
+		// this is an unsafe method for now. USE AT YOUR OWN DISCRETION
+		this->owned_resources.clear();
+
+		this->owned_resources = set_to;
 	}
 
 	void Node::register_with_parent()
@@ -149,6 +162,16 @@ namespace dhtt
 		return this->responses;
 	}
 
+	std::vector<std::string> Node::get_child_names()
+	{
+		return this->child_names;
+	}
+
+	std::string Node::get_active_child_name()
+	{
+		return this->active_child_name;
+	}
+
 	void Node::update_status( int8_t n_state )
 	{
 		// update internally
@@ -197,7 +220,7 @@ namespace dhtt
 		this->stored_responses = 0;
 		this->expected_responses = 0;
 		
-		if ( this->status.state == dhtt_msgs::msg::NodeStatus::WAITING )
+		if ( this->status.state == dhtt_msgs::msg::NodeStatus::WAITING or this->status.state == dhtt_msgs::msg::NodeStatus::DONE )
 		{
 			this->update_status(dhtt_msgs::msg::NodeStatus::ACTIVE);
 
@@ -216,6 +239,8 @@ namespace dhtt
 			else
 			{
 				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
+
+				this->propogate_failure_down();
 			}
 		}
 	}
@@ -241,6 +266,8 @@ namespace dhtt
 
 			// then start auction work
 			to_ret = this->logic->auction_callback(this);
+
+			this->active_child_name = to_ret->local_best_node;
 		}
 		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::WORKING )
 		{
@@ -257,12 +284,17 @@ namespace dhtt
 			for ( dhtt_msgs::msg::Resource passed_resource : to_ret->passed_resources )
 				this->owned_resources.push_back( passed_resource );
 
-			this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
+			if (this->logic->isDone())
+				this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
+			else
+				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 		}
 		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::DONE )
 		{
 			to_ret->done = true;
 		}
+
+		to_ret->activation_potential = this->calculate_activation_potential();
 
 		// then send result back to parent
 		goal_handle->succeed(to_ret);
@@ -289,5 +321,23 @@ namespace dhtt
 	bool Node::check_preconditions()
 	{
 		return true;
+	}
+
+	double Node::calculate_activation_potential()
+	{
+		return this->logic->get_perceived_efficiency() * (this->priority + (int) this->owned_resources.size());
+	}
+
+	void Node::propogate_failure_down()
+	{
+		dhtt_msgs::action::Activation::Goal n_goal;
+
+		n_goal.success = false;
+
+		this->async_activate_child(this->active_child_name, n_goal);
+
+		this->block_for_responses_from_children();
+
+		this->active_child_name = "";
 	}
 }

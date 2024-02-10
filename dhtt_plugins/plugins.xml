@@ -2,4 +2,7 @@
 	<class type="dhtt_plugins::TestBehavior" base_class_type="dhtt::NodeType">
 		<description>Filler behavior for testing the functionality of dhtts</description>
 	</class>
+	<class type="dhtt_plugins::ThenBehavior" base_class_type="dhtt::NodeType">
+		<description>Task node which executes children in the order specified when the children are added to the tree.</description>
+	</class>
 </library>

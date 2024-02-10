@@ -11,13 +11,14 @@ bool 						success
 ### result
 # first pass
 
+# this is always the name of the direct child
 string 						local_best_node
 
 dhtt_msgs/Resource[] 		requested_resources
 dhtt_msgs/Resource[] 		owned_resources
 
+# filled in by node class
 float64 					activation_potential
-
 bool 						done
 
 # second pass

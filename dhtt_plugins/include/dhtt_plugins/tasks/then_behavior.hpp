@@ -1,5 +1,5 @@
-#ifndef TEST_BEHAVIOR_HPP
-#define TEST_BEHAVIOR_HPP
+#ifndef THEN_BEHAVIOR_HPP
+#define THEN_BEHAVIOR_HPP
 
 #include "dhtt_plugins/visibility_control.h"
 
@@ -8,11 +8,12 @@
 #include "dhtt/tree/node_type.hpp"
 
 #include <vector>
+#include <algorithm>
 #include <string>
 
 namespace dhtt_plugins
 {
-	class TestBehavior : public dhtt::NodeType
+	class ThenBehavior : public dhtt::NodeType
 	{
 	public:
 
@@ -28,12 +29,16 @@ namespace dhtt_plugins
 		std::vector<dhtt_msgs::msg::Resource> get_retained_resources( dhtt::Node* container ) override;
 		std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container ) override;
 
-	protected:
+		bool isDone() override;
 
+	protected:
 		double activation_potential;
 
+		int child_queue_index;
+		int child_queue_size;
+		bool started_activation;
 	private:
 	};
 }
 
-#endif //DUMMY_BEHAVIOR_HPP
+#endif //THEN_BEHAVIOR_HPP

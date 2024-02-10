@@ -1,5 +1,5 @@
-#ifndef TEST_BEHAVIOR_HPP
-#define TEST_BEHAVIOR_HPP
+#ifndef OR_BEHAVIOR_HPP
+#define OR_BEHAVIOR_HPP
 
 #include "dhtt_plugins/visibility_control.h"
 
@@ -12,7 +12,7 @@
 
 namespace dhtt_plugins
 {
-	class TestBehavior : public dhtt::NodeType
+	class OrBehavior : public dhtt::NodeType
 	{
 	public:
 
@@ -28,12 +28,15 @@ namespace dhtt_plugins
 		std::vector<dhtt_msgs::msg::Resource> get_retained_resources( dhtt::Node* container ) override;
 		std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container ) override;
 
-	protected:
+		bool isDone() override;
 
+	protected:
+		bool has_chosen_child;
 		double activation_potential;
 
+		std::string activated_child_name;
 	private:
 	};
 }
 
-#endif //DUMMY_BEHAVIOR_HPP
+#endif //OR_BEHAVIOR_HPP

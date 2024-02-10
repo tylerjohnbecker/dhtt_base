@@ -35,6 +35,7 @@ namespace dhtt
 		std::string get_error_msg();
 
 		std::vector<dhtt_msgs::msg::Resource> get_owned_resources();
+		void set_owned_resources(std::vector<dhtt_msgs::msg::Resource> set_to);
 
 		void register_with_parent();
 		bool remove_child(std::string child_name);
@@ -43,6 +44,9 @@ namespace dhtt
 		void async_activate_child(std::string child_name, dhtt_msgs::action::Activation::Goal activation_goal);
 		bool block_for_responses_from_children();
 		std::map<std::string, dhtt_msgs::action::Activation::Result::SharedPtr> get_activation_results(); 
+
+		std::vector<std::string> get_child_names();
+		std::string get_active_child_name();
 
 		void update_status( int8_t n_state );
 
@@ -62,6 +66,8 @@ namespace dhtt
 
 		// helpful member functions
 		bool check_preconditions();
+		double calculate_activation_potential();
+		void propogate_failure_down();
 
 		// activation server
 		rclcpp_action::Server<dhtt_msgs::action::Activation>::SharedPtr activation_server;
@@ -89,12 +95,16 @@ namespace dhtt
 		std::string parent_name;
 		std::string plugin_name;
 
+		std::string active_child_name;
+
 		double activation_potential;
 
 		// not sure if i need this
 		int activation_level;		
 		int stored_responses;
 		int expected_responses;
+
+		int priority;
 
 		bool successful_load;
 		std::string error_msg;
