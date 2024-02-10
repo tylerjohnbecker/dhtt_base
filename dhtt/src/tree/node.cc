@@ -150,6 +150,12 @@ namespace dhtt
 		(*client_iter)->async_send_goal(activation_goal, send_goal_options);
 	}
 
+	void Node::activate_all_children(dhtt_msgs::action::Activation::Goal activation_goal)
+	{
+		for (std::string iter : this->child_names)
+			this->async_activate_child(iter, activation_goal);
+	}
+
 	bool Node::block_for_responses_from_children()
 	{
 		while (this->stored_responses < this->expected_responses);
@@ -276,7 +282,7 @@ namespace dhtt
 				this->owned_resources.push_back( granted_resource );
 
 			// start work 
-			to_ret = this->logic->work_callback(this, goal_handle->get_goal()->success);
+			to_ret = this->logic->work_callback(this);
 
 			// take passed resources and again add them to owned resources. Remove any released resources
 			this->owned_resources.clear();

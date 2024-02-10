@@ -26,11 +26,10 @@ namespace dhtt_plugins
 		return std::make_shared<dhtt_msgs::action::Activation::Result>();
 	}
 
-	std::shared_ptr<dhtt_msgs::action::Activation::Result> TestBehavior::work_callback( dhtt::Node* container, bool success)
+	std::shared_ptr<dhtt_msgs::action::Activation::Result> TestBehavior::work_callback( dhtt::Node* container )
 	{
 		// not sure what goes here for now, work will be called from Node
 		(void) container;
-		(void) success;
 
 		return std::make_shared<dhtt_msgs::action::Activation::Result>();
 	}

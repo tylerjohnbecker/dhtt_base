@@ -42,6 +42,7 @@ namespace dhtt
 
 		// helpers for nodetype
 		void async_activate_child(std::string child_name, dhtt_msgs::action::Activation::Goal activation_goal);
+		void activate_all_children(dhtt_msgs::action::Activation::Goal activation_goal);
 		bool block_for_responses_from_children();
 		std::map<std::string, dhtt_msgs::action::Activation::Result::SharedPtr> get_activation_results(); 
 

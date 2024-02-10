@@ -20,7 +20,7 @@ namespace dhtt_plugins
 		void initialize(std::vector<std::string> params) override;
 
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> auction_callback( dhtt::Node* container ) override;
-		std::shared_ptr<dhtt_msgs::action::Activation::Result> work_callback( dhtt::Node* container, bool success) override;
+		std::shared_ptr<dhtt_msgs::action::Activation::Result> work_callback( dhtt::Node* container ) override;
 
 		void parse_params( std::vector<std::string> params ) override;
 

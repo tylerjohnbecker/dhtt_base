@@ -11,7 +11,7 @@ bool 						success
 ### result
 # first pass
 
-# this is always the name of the direct child
+# this is always the name of the direct child of the current node
 string 						local_best_node
 
 dhtt_msgs/Resource[] 		requested_resources

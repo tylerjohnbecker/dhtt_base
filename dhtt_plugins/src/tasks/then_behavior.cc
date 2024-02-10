@@ -43,24 +43,12 @@ namespace dhtt_plugins
 		
 		this->child_queue_size = (int) children.size();
 
-		bool first = true;
-
 		dhtt_msgs::action::Activation::Goal n_goal;
 
 		n_goal.passed_resources = container->get_owned_resources();
 
 		// activate all children for activation potential calculation and give the first one the resources that we were passed
-		for (std::vector<std::string>::iterator name_iter = std::next(children.begin(), this->child_queue_index) ; name_iter != children.end() ; name_iter++)
-		{
-			container->async_activate_child(*name_iter, n_goal);
-		
-			if (first)
-			{
-				n_goal.passed_resources.clear();
-
-				first = false;
-			}
-		}
+		container->activate_all_children(n_goal);
 
 		container->block_for_responses_from_children();
 
@@ -99,12 +87,8 @@ namespace dhtt_plugins
 		return to_ret;
 	}
 
-	std::shared_ptr<dhtt_msgs::action::Activation::Result> ThenBehavior::work_callback( dhtt::Node* container, bool success)
+	std::shared_ptr<dhtt_msgs::action::Activation::Result> ThenBehavior::work_callback( dhtt::Node* container )
 	{
-		// not sure what goes here for now, work will be called from Node
-		(void) container;
-		(void) success;
-
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> to_ret = std::make_shared<dhtt_msgs::action::Activation::Result>();
 
 		// send success to winning child		

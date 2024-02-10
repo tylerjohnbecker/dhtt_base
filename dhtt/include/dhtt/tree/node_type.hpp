@@ -27,7 +27,7 @@ namespace dhtt
 		virtual void initialize(std::vector<std::string> params) = 0;
 
 		virtual std::shared_ptr<dhtt_msgs::action::Activation::Result> auction_callback( Node* container ) = 0;
-		virtual std::shared_ptr<dhtt_msgs::action::Activation::Result> work_callback( Node* container, bool success) = 0;
+		virtual std::shared_ptr<dhtt_msgs::action::Activation::Result> work_callback( Node* container ) = 0;
 
 		virtual void parse_params(std::vector<std::string> params) = 0;
 
