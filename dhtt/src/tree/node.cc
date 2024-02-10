@@ -24,12 +24,15 @@ namespace dhtt
 		this->logic->initialize(params);
 
 		// set up services and action servers
-		std::string my_register_topic = std::string(TREE_PREFIX) + name + REGISTER_CHILD_POSTFIX;
-		std::string my_activation_topic = std::string(TREE_PREFIX) + name + ACTIVATION_POSTFIX;
+		std::string my_register_topic = std::string(TREE_PREFIX) + "/" + name + REGISTER_CHILD_POSTFIX;
+		std::string my_activation_topic = std::string(TREE_PREFIX) + "/" + name + ACTIVATION_POSTFIX;
+		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
 
 		this->register_server = this->create_service<dhtt_msgs::srv::InternalServiceRegistration>(my_register_topic, std::bind(&Node::register_child_callback, this, std::placeholders::_1, std::placeholders::_2));
 
 		this->status_pub = this->create_publisher<dhtt_msgs::msg::Node>("/status", 10);
+
+		this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1));
 
 		this->activation_server = rclcpp_action::create_server<dhtt_msgs::action::Activation>(this, my_activation_topic,
 			std::bind(&Node::goal_activation_callback, this, std::placeholders::_1, std::placeholders::_2),
@@ -178,6 +181,28 @@ namespace dhtt
 		return this->active_child_name;
 	}
 
+	bool Node::isRequestPossible(std::vector<dhtt_msgs::msg::Resource> requested_resources)
+	{
+
+		dhtt_msgs::msg::Resource looking_for;
+		auto find_fulfill = [&]( dhtt_msgs::msg::Resource to_check )
+		{
+			return (looking_for.type == to_check.type) and not to_check.locked;
+		};
+
+		for ( dhtt_msgs::msg::Resource check : requested_resources )
+		{
+			looking_for = check;
+
+			std::vector<dhtt_msgs::msg::Resource>::iterator found_iter = std::find_if(this->available_resources.begin(), this->available_resources.end(), find_fulfill);
+
+			if ( found_iter == this->available_resources.end())
+				return false;
+		}
+
+		return true;
+	}
+
 	void Node::update_status( int8_t n_state )
 	{
 		// update internally
@@ -321,6 +346,11 @@ namespace dhtt
 		this->child_names.push_back(request->node_name);
 		this->activation_clients.push_back(n_client);
 		response->success = true;
+	}
+
+	void Node::resource_availability_callback( const dhtt_msgs::msg::Resources::SharedPtr canonical_list )
+	{
+		this->available_resources = canonical_list->resource_state;
 	}
 
 	// preconditions are stored as key: val pairs in a vector of strings in logic. Here we need to check them against world information

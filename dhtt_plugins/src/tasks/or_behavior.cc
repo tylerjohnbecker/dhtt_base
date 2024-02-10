@@ -5,7 +5,7 @@ namespace dhtt_plugins
 	void OrBehavior::initialize(std::vector<std::string> params) 
 	{
 		(void) params;
-		
+
 		this->has_chosen_child = false;
 		this->child_has_run = false;
 		this->child_done = false;
@@ -49,16 +49,21 @@ namespace dhtt_plugins
 			auto results = container->get_activation_results();
 
 			// pick highest to activate
-			std::string max_ap_child = "";
 			double current_max = -1;
 
 			for ( auto const& x : results )
 			{
-				if ( x.second->activation_potential > current_max )
+				if ( x.second->activation_potential > current_max and x.second->possible )
 				{
 					current_max = x.second->activation_potential;
-					max_ap_child = x.first;
+					this->activated_child_name = x.first;
 				}
+			}
+
+			// if we don't find one we can just pick the first since impossible requests won't cause issues anyway
+			if ( current_max == -1 )
+			{
+				this->activated_child_name = (*results.begin()).first;
 			}
 
 			// collect parameters and change state to chosen
@@ -85,6 +90,7 @@ namespace dhtt_plugins
 		to_ret->requested_resources = child_req->requested_resources;
 		to_ret->owned_resources = child_req->owned_resources;
 		to_ret->done = child_req->done;
+		to_ret->possible = child_req->possible;
 
 		if ( to_ret->done )
 			this->child_done = true;

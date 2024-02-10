@@ -25,6 +25,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Node.msg"
   "msg/Subtree.msg"
   "msg/Resource.msg"
+  "msg/Resources.msg"
   "msg/NodeStatus.msg"
 
   # service files

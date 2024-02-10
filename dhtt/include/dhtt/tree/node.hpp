@@ -9,6 +9,7 @@
 
 #include "dhtt_msgs/msg/node.hpp"
 #include "dhtt_msgs/msg/resource.hpp"
+#include "dhtt_msgs/msg/resources.hpp"
 #include "dhtt_msgs/msg/node_status.hpp"
 
 #include "dhtt_msgs/srv/internal_service_registration.hpp"
@@ -17,9 +18,10 @@
 
 #include "dhtt/tree/node_type.hpp"
 
-#define TREE_PREFIX "/dhtt_tree/"
+#define TREE_PREFIX "/dhtt"
 #define REGISTER_CHILD_POSTFIX "/register_child"
 #define ACTIVATION_POSTFIX "/activate"
+#define RESOURCES_POSTFIX "/resource"
 
 namespace dhtt
 {
@@ -49,6 +51,8 @@ namespace dhtt
 		std::vector<std::string> get_child_names();
 		std::string get_active_child_name();
 
+		bool isRequestPossible(std::vector<dhtt_msgs::msg::Resource> requested_resources);
+
 		void update_status( int8_t n_state );
 
 	protected:
@@ -64,6 +68,9 @@ namespace dhtt
 
 		// service callbacks
 		void register_child_callback(std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Request> request, std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Response> response);
+
+		// subscriber callbacks
+		void resource_availability_callback( const dhtt_msgs::msg::Resources::SharedPtr canonical_list );
 
 		// helpful member functions
 		bool check_preconditions();
@@ -86,10 +93,12 @@ namespace dhtt
 
 		dhtt_msgs::msg::NodeStatus status;
 		rclcpp::Publisher<dhtt_msgs::msg::Node>::SharedPtr status_pub;
+		rclcpp::Subscription<dhtt_msgs::msg::Resources>::SharedPtr resources_sub;
 
 		std::shared_ptr<std::thread> work_thread;
 
 		std::vector<dhtt_msgs::msg::Resource> owned_resources;
+		std::vector<dhtt_msgs::msg::Resource> available_resources;
 		std::vector<std::string> child_names;
 
 		std::string name;

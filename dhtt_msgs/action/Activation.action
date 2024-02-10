@@ -20,6 +20,7 @@ dhtt_msgs/Resource[] 		owned_resources
 # filled in by node class
 float64 					activation_potential
 bool 						done
+bool 						possible
 
 # second pass
 dhtt_msgs/Resource[] 		released_resources

@@ -63,17 +63,12 @@ namespace dhtt_plugins
 		int total_num_children = (int) results.size();
 
 		for (auto const& x  : results)
-		{
 			total_sum += x.second->activation_potential;
 
-			if ( not strcmp( x.second->local_best_node.c_str(), first_child_in_queue.c_str() ) )
-			{
-				// add front of queue to result
-				to_ret->done = x.second->done;
-				to_ret->requested_resources = x.second->requested_resources;
-				to_ret->owned_resources = x.second->owned_resources;
-			}
-		}
+		to_ret->requested_resources = results[first_child_in_queue]->requested_resources;
+		to_ret->owned_resources = results[first_child_in_queue]->owned_resources;
+		to_ret->done = results[first_child_in_queue]->done;
+		to_ret->possible = results[first_child_in_queue]->possible;
 
 		this->activation_potential = total_sum / total_num_children;
 
