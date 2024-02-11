@@ -2,7 +2,8 @@
 
 namespace dhtt
 {
-	Node::Node(std::string name, std::string type, std::vector<std::string> params, std::string p_name) : rclcpp::Node( name ), node_type_loader("dhtt", "dhtt::NodeType"), name(name), parent_name(p_name), priority(1)
+	Node::Node(std::string name, std::string type, std::vector<std::string> params, std::string p_name) : rclcpp::Node( name ), node_type_loader("dhtt", "dhtt::NodeType"), 
+			name(name), parent_name(p_name), priority(1), resource_status_updated(false)
 	{
 		this->error_msg = "";
 		this->successful_load = true;
@@ -225,6 +226,11 @@ namespace dhtt
 		this->status_pub->publish(full_status);
 	}
 
+	void Node::set_resource_status_updated(bool to_set)
+	{
+		this->resource_status_updated = to_set;
+	}
+
 	rclcpp_action::GoalResponse Node::goal_activation_callback(const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const dhtt_msgs::action::Activation::Goal> goal)
 	{
 		RCLCPP_DEBUG(this->get_logger(), "Received activation from parent.");
@@ -272,6 +278,8 @@ namespace dhtt
 				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
 				this->propogate_failure_down();
+				
+				this->resource_status_updated = false;
 			}
 		}
 	}
@@ -291,7 +299,10 @@ namespace dhtt
 
 		if ( this->status.state == dhtt_msgs::msg::NodeStatus::ACTIVE )
 		{
-			// first deal with any passed resources
+			// wait real quick for the status to be updated
+			while (not this->resource_status_updated);
+
+			// deal with any passed resources
 			for ( dhtt_msgs::msg::Resource passed_resource : goal_handle->get_goal()->passed_resources )
 				this->owned_resources.push_back( passed_resource );
 
@@ -314,6 +325,8 @@ namespace dhtt
 
 			for ( dhtt_msgs::msg::Resource passed_resource : to_ret->passed_resources )
 				this->owned_resources.push_back( passed_resource );
+				
+			this->resource_status_updated = false;
 
 			if (this->logic->isDone())
 				this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
@@ -351,6 +364,8 @@ namespace dhtt
 	void Node::resource_availability_callback( const dhtt_msgs::msg::Resources::SharedPtr canonical_list )
 	{
 		this->available_resources = canonical_list->resource_state;
+
+		this->resource_status_updated = true;
 	}
 
 	// preconditions are stored as key: val pairs in a vector of strings in logic. Here we need to check them against world information

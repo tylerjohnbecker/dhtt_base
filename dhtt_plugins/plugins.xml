@@ -2,7 +2,13 @@
 	<class type="dhtt_plugins::TestBehavior" base_class_type="dhtt::NodeType">
 		<description>Filler behavior for testing the functionality of dhtts</description>
 	</class>
+	<class type="dhtt_plugins::RootBehavior" base_class_type="dhtt::NodeType">
+		<description>Task node which can only be the topmost node in the tree. A tree can only have one root. The root node's job is to manage the resources of the robot and to begin the activation cycle of the tree. The root node also acts as the major connect with the main server control services.</description>
+	</class>
 	<class type="dhtt_plugins::ThenBehavior" base_class_type="dhtt::NodeType">
+		<description>Task node which executes one of its children and then stops.</description>
+	</class>
+	<class type="dhtt_plugins::OrBehavior" base_class_type="dhtt::NodeType">
 		<description>Task node which executes children in the order specified when the children are added to the tree.</description>
 	</class>
 </library>

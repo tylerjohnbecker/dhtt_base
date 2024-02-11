@@ -1,0 +1,19 @@
+# internal representation of the resources which can be allocated to tasks by the PR2
+
+robot_name: "PR2"
+
+robot_resources:
+  number_of_resources: 4
+
+  resource_0:
+    type: 1 #GRABBER
+    name: left_arm
+  resource_1:
+    type: 1 #GRABBER
+    name: right_arm
+  resource_2:
+    type: 3
+    name: move_base
+  resource_3:
+    type: 2 
+    name: head

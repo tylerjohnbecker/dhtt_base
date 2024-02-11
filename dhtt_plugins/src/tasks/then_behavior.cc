@@ -121,7 +121,7 @@ namespace dhtt_plugins
 	void ThenBehavior::parse_params( std::vector<std::string> params )
 	{
 		if ( (int) params.size() > 0 )
-			throw std::invalid_argument("Too many parameters passed to node. Only activation potential required.");
+			throw std::invalid_argument("Then Behaviors do not take parameters but " + ((int) params.size()) + std::string(" were given. Returning in error."));
 
 		if ( (int) params.size() == 0 )
 		{
