@@ -6,6 +6,7 @@
 // list of plugin files to include here
 #include "dhtt_plugins/behaviors/test_behavior.hpp"
 #include "dhtt_plugins/tasks/root_behavior.hpp"
+#include "dhtt_plugins/tasks/and_behavior.hpp"
 #include "dhtt_plugins/tasks/then_behavior.hpp"
 #include "dhtt_plugins/tasks/or_behavior.hpp"
 
@@ -14,6 +15,7 @@
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::TestBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::RootBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::ThenBehavior, dhtt::NodeType)
+PLUGINLIB_EXPORT_CLASS(dhtt_plugins::AndBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::OrBehavior, dhtt::NodeType)
 
 #endif  // DHTT_PLUGINS__HTT_PLUGINS_HPP_

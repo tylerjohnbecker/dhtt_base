@@ -310,6 +310,9 @@ namespace dhtt
 			to_ret = this->logic->auction_callback(this);
 
 			this->active_child_name = to_ret->local_best_node;
+			
+			if (this->logic->isDone())
+				this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
 		}
 		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::WORKING )
 		{
