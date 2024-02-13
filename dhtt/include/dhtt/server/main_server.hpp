@@ -29,6 +29,7 @@
 #include "dhtt_msgs/srv/control_request.hpp"
 #include "dhtt_msgs/srv/fetch_request.hpp"
 #include "dhtt_msgs/srv/modify_request.hpp"
+#include "dhtt_msgs/srv/history_request.hpp"
 #include "dhtt_msgs/srv/internal_control_request.hpp"
 #include "dhtt_msgs/srv/internal_modify_request.hpp"
 #include "dhtt_msgs/srv/internal_service_registration.hpp"
@@ -59,6 +60,7 @@ namespace dhtt
 		void modify_callback( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response );
 		void control_callback( const std::shared_ptr<dhtt_msgs::srv::ControlRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ControlRequest::Response> response );
 		void fetch_callback( const std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response );
+		void history_callback( const std::shared_ptr<dhtt_msgs::srv::HistoryRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::HistoryRequest::Response> response );
 
 		// modify helpers
 		std::string add_node( std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, dhtt_msgs::msg::Node to_add );
@@ -94,6 +96,7 @@ namespace dhtt
 		rclcpp::Service<dhtt_msgs::srv::ModifyRequest>::SharedPtr modify_server;
 		rclcpp::Service<dhtt_msgs::srv::ControlRequest>::SharedPtr control_server;
 		rclcpp::Service<dhtt_msgs::srv::FetchRequest>::SharedPtr fetch_server;
+		rclcpp::Service<dhtt_msgs::srv::HistoryRequest>::SharedPtr history_server;
 
 		// publishers
 		rclcpp::Publisher<dhtt_msgs::msg::NodeStatus>::SharedPtr root_status_pub;
@@ -108,7 +111,7 @@ namespace dhtt
 		std::map<std::string, std::shared_ptr<dhtt::Node>> node_map; 
 		dhtt_msgs::msg::Subtree node_list; 
 
-		std::list<dhtt_msgs::msg::Node> history;
+		std::list<std::string> history;
 
 		// this is passed in from main through the constructor so that any inner nodes can be spun as well
 		std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner_cp;

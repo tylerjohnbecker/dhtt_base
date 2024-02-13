@@ -50,6 +50,7 @@ namespace dhtt
 		this->modify_server = this->create_service<dhtt_msgs::srv::ModifyRequest>("/modify_service", std::bind(&MainServer::modify_callback, this, std::placeholders::_1, std::placeholders::_2));
 		this->control_server = this->create_service<dhtt_msgs::srv::ControlRequest>("/control_service", std::bind(&MainServer::control_callback, this, std::placeholders::_1, std::placeholders::_2));
 		this->fetch_server = this->create_service<dhtt_msgs::srv::FetchRequest>("/fetch_service", std::bind(&MainServer::fetch_callback, this, std::placeholders::_1, std::placeholders::_2));
+		this->history_server = this->create_service<dhtt_msgs::srv::HistoryRequest>("/history_service", std::bind(&MainServer::history_callback, this,std::placeholders::_1, std::placeholders::_2));
 	}
 
 	MainServer::~MainServer()
@@ -271,6 +272,15 @@ namespace dhtt
 		RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
 
 		return;
+	}
+
+	void MainServer::history_callback( const std::shared_ptr<dhtt_msgs::srv::HistoryRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::HistoryRequest::Response> response )
+	{
+		(void) request;
+
+		std::vector<std::string> list_cast { std::begin(this->history), std::end(this->history) };
+
+		response->node_history = list_cast;
 	}
 
 	// modify helpers
@@ -528,6 +538,8 @@ namespace dhtt
 			this->remove_node( blank_rs, *iter );
 		}
 
+		this->history.clear();
+
 		return "";
 	}
 
@@ -603,9 +615,11 @@ namespace dhtt
 
 		(*found_node).node_status.state = data->node_status.state;
 
-		// if the node is working and is not the head of the history make it the head of the history
-		if ( data->node_status.state == dhtt_msgs::msg::NodeStatus::WORKING and ( not strcmp ( this->history.back().node_name.c_str(), data->node_name.c_str() ) ) )
-			this->history.push_back(*data);
+		bool is_leaf = (*found_node).child_name.empty();
+
+		// if the node is working and is not the head of the history make it the head of the history. only collect behaviors not tasks (so leaves)
+		if ( data->node_status.state == dhtt_msgs::msg::NodeStatus::WORKING and ( not strcmp ( this->history.back().c_str(), data->node_name.c_str() ) ) and is_leaf )
+			this->history.push_back((*data).node_name);
 	}
 
 	// generally helpful functions

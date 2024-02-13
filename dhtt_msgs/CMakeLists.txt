@@ -32,6 +32,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/ControlRequest.srv"
   "srv/FetchRequest.srv"
   "srv/ModifyRequest.srv"
+  "srv/HistoryRequest.srv"
   "srv/InternalControlRequest.srv"
   "srv/InternalModifyRequest.srv"
   "srv/InternalServiceRegistration.srv"
