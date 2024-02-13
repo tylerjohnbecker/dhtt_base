@@ -40,6 +40,7 @@ namespace dhtt
 		void set_owned_resources(std::vector<dhtt_msgs::msg::Resource> set_to);
 
 		void register_with_parent();
+		void register_servers();
 		bool remove_child(std::string child_name);
 
 		// helpers for nodetype

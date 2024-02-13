@@ -28,7 +28,7 @@ namespace dhtt
 
 		dhtt_folder_path = dhtt_folder_path.parent_path().parent_path().parent_path();
 
-		root_node->params.push_back( std::string("path:") + dhtt_folder_path.native() + "robots/pr2.yaml" );
+		root_node->params.push_back( std::string("path: ") + dhtt_folder_path.native() + "/robots/pr2.yaml" );
 
 		root_node->type = dhtt_msgs::msg::Node::ROOT;
 
@@ -44,6 +44,7 @@ namespace dhtt
 		// initialize physical Root Node. loaded a yaml file as a part of the constructor so we don't catch it and make the program fail to load if that happens
 		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>("ROOT_0", "dhtt_plugins::RootBehavior", root_node->params, "NONE");
 		this->spinner_cp->add_node(this->node_map["ROOT_0"]);
+		this->node_map["ROOT_0"]->register_servers();
 
 		/// initialize external services
 		this->modify_server = this->create_service<dhtt_msgs::srv::ModifyRequest>("/modify_service", std::bind(&MainServer::modify_callback, this, std::placeholders::_1, std::placeholders::_2));
@@ -321,6 +322,7 @@ namespace dhtt
 
 		this->spinner_cp->add_node(this->node_map[to_add.node_name]);
 		this->node_map[to_add.node_name]->register_with_parent();
+		this->node_map[to_add.node_name]->register_servers();
 
 		if (this->node_map[to_add.node_name]->loaded_successfully() == false)
 		{
@@ -336,8 +338,6 @@ namespace dhtt
 		(*found_parent).child_name.push_back(to_add.node_name);
 
 		this->node_list.tree_nodes.push_back(to_add);
-
-		// notify physical parent to update it's children with an internalmodifyrequest // done automatically by child
 
 
 		// add this node_name to the list of added nodes

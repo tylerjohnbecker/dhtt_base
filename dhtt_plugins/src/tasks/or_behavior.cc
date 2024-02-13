@@ -14,6 +14,8 @@ namespace dhtt_plugins
 		this->activated_child_name = "";
 
 		this->parse_params(params);
+
+		this->children_allowed = true;
 	}
 
 	std::shared_ptr<dhtt_msgs::action::Activation::Result> OrBehavior::auction_callback( dhtt::Node* container ) 

@@ -8,6 +8,8 @@ namespace dhtt_plugins
 		this->activation_potential = 0;
 
 		this->parse_params(params);
+
+		this->children_allowed = true;
 	}
 
 	std::shared_ptr<dhtt_msgs::action::Activation::Result> AndBehavior::auction_callback( dhtt::Node* container ) 

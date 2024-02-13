@@ -23,24 +23,6 @@ namespace dhtt
 		this->plugin_name = type;
 
 		this->logic->initialize(params);
-
-		// set up services and action servers
-		std::string my_register_topic = std::string(TREE_PREFIX) + "/" + name + REGISTER_CHILD_POSTFIX;
-		std::string my_activation_topic = std::string(TREE_PREFIX) + "/" + name + ACTIVATION_POSTFIX;
-		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
-
-		this->register_server = this->create_service<dhtt_msgs::srv::InternalServiceRegistration>(my_register_topic, std::bind(&Node::register_child_callback, this, std::placeholders::_1, std::placeholders::_2));
-
-		this->status_pub = this->create_publisher<dhtt_msgs::msg::Node>("/status", 10);
-
-		this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1));
-
-		this->activation_server = rclcpp_action::create_server<dhtt_msgs::action::Activation>(this, my_activation_topic,
-			std::bind(&Node::goal_activation_callback, this, std::placeholders::_1, std::placeholders::_2),
-			std::bind(&Node::cancel_activation_callback, this, std::placeholders::_1),
-			std::bind(&Node::activation_accepted_callback, this, std::placeholders::_1));
-
-		this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 	}
 
 	Node::~Node()
@@ -79,7 +61,7 @@ namespace dhtt
 			std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Request> req = std::make_shared<dhtt_msgs::srv::InternalServiceRegistration::Request>();
 			req->node_name = this->name;
 
-			std::string parent_register_topic = std::string(TREE_PREFIX) + this->parent_name + REGISTER_CHILD_POSTFIX;
+			std::string parent_register_topic = std::string(TREE_PREFIX) + "/" + this->parent_name + REGISTER_CHILD_POSTFIX;
 
 			rclcpp::Client<dhtt_msgs::srv::InternalServiceRegistration>::SharedPtr client = this->create_client<dhtt_msgs::srv::InternalServiceRegistration>(parent_register_topic);
 
@@ -115,6 +97,28 @@ namespace dhtt
 				}
 			}
 		}
+	}
+
+	void Node::register_servers()
+	{
+		// set up services and action servers
+		std::string my_register_topic = std::string(TREE_PREFIX) + "/" + name + REGISTER_CHILD_POSTFIX;
+		std::string my_activation_topic = std::string(TREE_PREFIX) + "/" + name + ACTIVATION_POSTFIX;
+		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
+
+		this->register_server = this->create_service<dhtt_msgs::srv::InternalServiceRegistration>(my_register_topic, std::bind(&Node::register_child_callback, this, std::placeholders::_1, std::placeholders::_2));
+
+		this->status_pub = this->create_publisher<dhtt_msgs::msg::Node>("/status", 10);
+
+		this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1));
+
+		this->activation_server = rclcpp_action::create_server<dhtt_msgs::action::Activation>(this, my_activation_topic,
+			std::bind(&Node::goal_activation_callback, this, std::placeholders::_1, std::placeholders::_2),
+			std::bind(&Node::cancel_activation_callback, this, std::placeholders::_1),
+			std::bind(&Node::activation_accepted_callback, this, std::placeholders::_1));
+
+		this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
+
 	}
 
 	bool Node::remove_child(std::string child_name)
@@ -262,7 +266,8 @@ namespace dhtt
 			this->update_status(dhtt_msgs::msg::NodeStatus::ACTIVE);
 
 			// spin up the auction activation thread
-			work_thread = std::make_shared<std::thread>(&Node::activate, this, goal_handle);
+			this->work_thread = std::make_shared<std::thread>(&Node::activate, this, goal_handle);
+			this->work_thread->detach();
 		}
 		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::ACTIVE )
 		{
@@ -270,8 +275,9 @@ namespace dhtt
 			{
 				this->update_status(dhtt_msgs::msg::NodeStatus::WORKING);
 
-				// spin up the thread for working
-				work_thread = std::make_shared<std::thread>(&Node::activate, this, goal_handle);
+				// spin up the thread for working and detach so that it destructs after it finishes
+				this->work_thread = std::make_shared<std::thread>(&Node::activate, this, goal_handle);
+				this->work_thread->detach();
 			}
 			else
 			{
@@ -310,7 +316,7 @@ namespace dhtt
 			to_ret = this->logic->auction_callback(this);
 
 			this->active_child_name = to_ret->local_best_node;
-			
+
 			if (this->logic->isDone())
 				this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
 		}

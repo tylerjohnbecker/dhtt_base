@@ -10,7 +10,7 @@ namespace dhtt_plugins
 		(void) params;
 
 		// only allowed for now until the task logic is implemented
-		this->children_allowed = true;
+		this->children_allowed = false;
 
 		this->parse_params(params);
 

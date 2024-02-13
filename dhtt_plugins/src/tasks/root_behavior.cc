@@ -4,10 +4,6 @@ namespace dhtt_plugins
 {
 	void RootBehavior::initialize(std::vector<std::string> params)
 	{
-		this->parse_params(params);
-
-		this->load_resources_from_yaml();
-
 		this->pub_node_ptr = std::make_shared<rclcpp::Node>("dhtt_root");
 
 		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
@@ -18,6 +14,11 @@ namespace dhtt_plugins
 		this->resource_executor->add_node(this->pub_node_ptr);
 
 		this->children_done = false;
+
+		this->children_allowed = true;
+
+		this->parse_params(params);
+		this->load_resources_from_yaml();
 	}
 
 	std::shared_ptr<dhtt_msgs::action::Activation::Result> RootBehavior::auction_callback( dhtt::Node* container ) 
@@ -98,18 +99,17 @@ namespace dhtt_plugins
 			throw std::invalid_argument("Parameters are expected in the format \"key: value\" but received in the form " + params[0] + ". Returning in error.");
 
 		std::string key = params[0].substr(0, separator_pos);
-		std::string value = params[0].substr(separator_pos, params[0].size() - separator_pos);
+		std::string value = params[0].substr(separator_pos + 2, params[0].size() - separator_pos - 2);
 
 		if ( strcmp(key.c_str(), "path") ) 
 			throw std::invalid_argument("Expected parameter path, but received " + key + ". Returning in error.");
 
-		int space_finder = 0;
-
+		// just meant to remove spaces, could be buggy
 		while ( true )
 		{
-			space_finder = value.find(" ");
+			auto space_finder = value.find(" ");
 
-			if (space_finder >= (int)value.size())
+			if (space_finder == std::string::npos)
 				break;
 
 			// should work to remove spaces

@@ -13,7 +13,7 @@ NodeList: [
 Nodes:
   ParentThen:
     type: 2
-    behavior_type: 'dhtt_plugins::TestBehavior'
+    behavior_type: 'dhtt_plugins::ThenBehavior'
     robot: 0
     parent: 'NONE'
     params: []
@@ -25,7 +25,7 @@ Nodes:
     params: []
   MidParentAnd:
     type: 1
-    behavior_type: 'dhtt_plugins::TestBehavior'
+    behavior_type: 'dhtt_plugins::AndBehavior'
     robot: 0
     parent: 'ParentThen'
     params: []
@@ -43,7 +43,7 @@ Nodes:
     params: []
   MidParentOr:
     type: 3
-    behavior_type: 'dhtt_plugins::TestBehavior'
+    behavior_type: 'dhtt_plugins::OrBehavior'
     robot: 0
     parent: 'ParentThen'
     params: []
