@@ -5,9 +5,7 @@
 #include <vector>
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
-
-#include "dhtt/tree/node.hpp"
+// #include "dhtt/tree/node.hpp"
 
 namespace dhtt
 {
@@ -36,7 +34,7 @@ namespace dhtt
 		virtual std::vector<dhtt_msgs::msg::Resource> get_retained_resources( Node* container ) = 0;
 		virtual std::vector<dhtt_msgs::msg::Resource> get_released_resources( Node* container ) = 0;
 
-		virtual bool isDone() {return true;};
+		virtual bool is_done() {return true;};
 		virtual bool can_add_child() {return this->children_allowed;};
 
 		goal_t goal_type = PERSISTENT;

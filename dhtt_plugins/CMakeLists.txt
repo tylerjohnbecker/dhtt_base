@@ -12,7 +12,7 @@ if(NOT CMAKE_CXX_STANDARD)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
+  add_compile_options(-Wall -Wextra -Wpedantic -Wno-undef)
 endif()
 
 # find dependencies
@@ -23,23 +23,24 @@ find_package(dhtt REQUIRED)
 find_package(dhtt_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 
-add_library(dhtt_plugins src/dhtt_plugins.cpp src/behaviors/test_behavior.cc src/tasks/root_behavior.cc src/tasks/and_behavior.cc src/tasks/then_behavior.cc src/tasks/or_behavior.cc)
+add_library(dhtt_plugins SHARED src/dhtt_plugins.cpp src/behaviors/test_behavior.cc src/tasks/root_behavior.cc src/tasks/and_behavior.cc src/tasks/then_behavior.cc src/tasks/or_behavior.cc)
 target_include_directories(dhtt_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-ament_target_dependencies(
-  dhtt_plugins
+target_link_libraries(dhtt_plugins dhtt::dhtt_lib)
+ament_target_dependencies( dhtt_plugins
   dhtt
   dhtt_msgs
   pluginlib
   rclcpp
+  rclcpp_action
 )
 
 pluginlib_export_plugin_description_file(dhtt plugins.xml)
 
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
-target_compile_definitions(dhtt_plugins PRIVATE "DHTT_PLUGINS_BUILDING_LIBRARY")
+# target_compile_definitions(dhtt_plugins PRIVATE "DHTT_PLUGINS_BUILDING_LIBRARY")
 
 install(
   DIRECTORY include/
@@ -64,9 +65,9 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_export_include_directories(
-  include
-)
+# ament_export_include_directories(
+#   include
+# )
 ament_export_libraries(
   dhtt_plugins
 )

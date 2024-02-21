@@ -2,7 +2,7 @@
 
 namespace dhtt
 {
-	MainServer::MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner) : rclcpp::Node(node_name), spinner_cp(spinner), total_nodes_added(1), verbose(true)
+	MainServer::MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner) : rclcpp::Node(node_name), spinner_cp(spinner), total_nodes_added(1), verbose(true), running(false)
 	{
 		/// initialize subscribers
 		this->status_sub = this->create_subscription<dhtt_msgs::msg::Node>("/status", MAX_NODE_NUM, std::bind(&MainServer::status_callback, this, std::placeholders::_1));
@@ -41,16 +41,21 @@ namespace dhtt
 
 		this->node_list.task_completion_percent = 0.0f;
 
+
 		// initialize physical Root Node. loaded a yaml file as a part of the constructor so we don't catch it and make the program fail to load if that happens
 		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>("ROOT_0", "dhtt_plugins::RootBehavior", root_node->params, "NONE");
 		this->spinner_cp->add_node(this->node_map["ROOT_0"]);
 		this->node_map["ROOT_0"]->register_servers();
+		this->node_map["ROOT_0"]->set_resource_status_updated(true);
+		this->node_map["ROOT_0"]->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
 		/// initialize external services
 		this->modify_server = this->create_service<dhtt_msgs::srv::ModifyRequest>("/modify_service", std::bind(&MainServer::modify_callback, this, std::placeholders::_1, std::placeholders::_2));
 		this->control_server = this->create_service<dhtt_msgs::srv::ControlRequest>("/control_service", std::bind(&MainServer::control_callback, this, std::placeholders::_1, std::placeholders::_2));
 		this->fetch_server = this->create_service<dhtt_msgs::srv::FetchRequest>("/fetch_service", std::bind(&MainServer::fetch_callback, this, std::placeholders::_1, std::placeholders::_2));
 		this->history_server = this->create_service<dhtt_msgs::srv::HistoryRequest>("/history_service", std::bind(&MainServer::history_callback, this,std::placeholders::_1, std::placeholders::_2));
+
+		this->client_ptr = rclcpp_action::create_client<dhtt_msgs::action::Activation>( this, "/dhtt/ROOT_0/activate");
 	}
 
 	MainServer::~MainServer()
@@ -67,6 +72,7 @@ namespace dhtt
 	void MainServer::modify_callback( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response )
 	{
 		RCLCPP_INFO(this->get_logger(), "--- Modify request received!");
+		this->publish_root_status();
 
 		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::ADD)
 		{
@@ -177,11 +183,27 @@ namespace dhtt
 	void MainServer::control_callback( const std::shared_ptr<dhtt_msgs::srv::ControlRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ControlRequest::Response> response )
 	{
 
+		RCLCPP_INFO(this->get_logger(), "--- Control request recieved!");
+		this->publish_root_status();
+
+		// start tree
+		if ( request->type == dhtt_msgs::srv::ControlRequest::Request::START )
+		{
+			RCLCPP_WARN(this->get_logger(), "Request to start task execution received!");
+
+			response->error_msg = this->start_tree();
+			response->success = not strcmp(response->error_msg.c_str(), "");
+
+			return;
+		}
 
 		// reset
 		if ( request->type == dhtt_msgs::srv::ControlRequest::Request::RESET )
 		{
+			RCLCPP_INFO(this->get_logger(), "Reset request received!");
+
 			response->error_msg = this->reset_tree();
+
 			response->success = not strcmp(response->error_msg.c_str(), "");
 
 			return;
@@ -192,6 +214,7 @@ namespace dhtt
 	{
 
 		RCLCPP_INFO(this->get_logger(), "--- Fetch request recieved!");
+		this->publish_root_status();
 
 		if ( request->return_full_subtree )
 		{
@@ -277,6 +300,7 @@ namespace dhtt
 	void MainServer::history_callback( const std::shared_ptr<dhtt_msgs::srv::HistoryRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::HistoryRequest::Response> response )
 	{
 		(void) request;
+		this->publish_root_status();
 
 		std::vector<std::string> list_cast { std::begin(this->history), std::end(this->history) };
 
@@ -364,6 +388,9 @@ namespace dhtt
 		// first load all of the yaml nodes into the message format
 		std::vector<dhtt_msgs::msg::Node> nodes_to_add;
 
+		if (this->verbose)
+			RCLCPP_INFO(this->get_logger(), "Adding subtree loaded from file %s", file_name.c_str());
+
 		// yaml-cpp example code taken from here: https://stackoverflow.com/questions/70072926/yaml-cpp-how-to-read-this-yaml-file-content-using-c-linux-using-yaml-cpp-v
 		try 
 		{
@@ -400,9 +427,6 @@ namespace dhtt
 		{
 			return exception.what();
 		}
-
-		if (this->verbose)
-			RCLCPP_INFO(this->get_logger(), "Adding subtree loaded from file %s", file_name.c_str());
 
 		// then use the add_node function which is already meant to work with node msgs
 		for ( std::vector<dhtt_msgs::msg::Node>::iterator iter = nodes_to_add.begin(); iter != nodes_to_add.end(); iter++ )
@@ -515,6 +539,12 @@ namespace dhtt
 
 	std::string MainServer::start_tree()
 	{
+		if ( this->running )
+			return "Tree is already actively running. Returning in error.";
+
+		this->run_tree_thread = std::make_shared<std::thread>(&MainServer::run_tree, this);
+		this->run_tree_thread->detach();
+
 		return "";
 	}
 
@@ -533,12 +563,12 @@ namespace dhtt
 
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> blank_rs = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
 
-		for ( std::vector<std::string>::iterator iter = this->node_list.tree_nodes[0].child_name.begin() ; iter != this->node_list.tree_nodes[0].child_name.end() ; iter++ )
-		{
-			this->remove_node( blank_rs, *iter );
-		}
+		for ( std::string iter : this->node_list.tree_nodes[0].child_name )
+			std::string blank = this->remove_node( blank_rs, iter );
 
 		this->history.clear();
+
+		this->node_map["ROOT_0"]->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
 		return "";
 	}
@@ -618,8 +648,15 @@ namespace dhtt
 		bool is_leaf = (*found_node).child_name.empty();
 
 		// if the node is working and is not the head of the history make it the head of the history. only collect behaviors not tasks (so leaves)
-		if ( data->node_status.state == dhtt_msgs::msg::NodeStatus::WORKING and ( not strcmp ( this->history.back().c_str(), data->node_name.c_str() ) ) and is_leaf )
+		if ( data->node_status.state == dhtt_msgs::msg::NodeStatus::WORKING and ( ( (int) this->history.size() == 0 ) or strcmp ( this->history.back().c_str(), data->node_name.c_str() ) ) and is_leaf )
+		{
+			RCLCPP_ERROR(this->get_logger(), "Adding node %s to history!!!!!", data->node_name.c_str());
 			this->history.push_back((*data).node_name);
+		}
+
+		// make sure to publish root status
+		if ( not strcmp(data->node_name.c_str(), "ROOT_0") )
+			this->publish_root_status();
 	}
 
 	// generally helpful functions
@@ -707,6 +744,49 @@ namespace dhtt
 		// this only happens after removing any node from the tree and I'm currently not sure why
 
 		return;
+	}
+
+	void MainServer::run_tree()
+	{	
+		// need to allow for interruptions soon but for now assume we run until the task finishes
+		this->running_mut.lock();
+		this->running = true;
+
+		RCLCPP_INFO(this->get_logger(), "Activating the root node...");
+
+		if ( not this->client_ptr->wait_for_action_server(std::chrono::seconds(10)) )
+		{
+			RCLCPP_ERROR(this->get_logger(), "Cannot reach action server to activate root 0!");
+
+			return;
+		}
+
+		auto send_goal_options = rclcpp_action::Client<dhtt_msgs::action::Activation>::SendGoalOptions();
+
+		send_goal_options.result_callback = std::bind(&MainServer::tree_result_callback, this, std::placeholders::_1);
+
+		auto activation_goal = dhtt_msgs::action::Activation::Goal();
+
+		client_ptr->async_send_goal(activation_goal, send_goal_options);
+	}
+	
+	void MainServer::tree_result_callback(const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result)
+	{
+		// empty for now, this is where we can get information about the tree once it finishes the task
+		(void) result;
+
+		this->running = false;
+		this->running_mut.unlock();
+	}
+
+	void MainServer::publish_root_status()
+	{
+		// RCLCPP_INFO(this->get_logger(), "Publishing root status!");
+
+		dhtt_msgs::msg::NodeStatus to_pub;
+		to_pub.state = this->node_list.tree_nodes[0].node_status.state;
+
+		this->root_status_pub->publish(to_pub);
 	}
 
 	dhtt_msgs::msg::Node MainServer::get_active_behavior_node()

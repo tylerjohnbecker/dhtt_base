@@ -27,6 +27,8 @@ namespace dhtt_plugins
 
 		std::vector<std::string> children = container->get_child_names();
 
+		RCLCPP_INFO(container->get_logger(), "Auction callback started activating children...");
+
 		if ( (int) children.size() == 0 )
 		{
 			to_ret->done = true;
@@ -37,7 +39,10 @@ namespace dhtt_plugins
 		}
 
 		if ( not this->started_activation )
+		{
 			this->child_queue_index = 0;
+			this->started_activation = true;
+		}
 		
 		this->child_queue_size = (int) children.size();
 
@@ -46,13 +51,16 @@ namespace dhtt_plugins
 		n_goal.passed_resources = container->get_owned_resources();
 
 		// activate all children for activation potential calculation and give the first one the resources that we were passed
-		container->activate_all_children(n_goal);
+		for (std::vector<std::string>::iterator name_iter = children.begin() + this->child_queue_index ; name_iter != children.end() ; name_iter++)
+			container->async_activate_child(*name_iter, n_goal);
 
 		container->block_for_responses_from_children();
 
+		RCLCPP_INFO(container->get_logger(), "Responses received...");
+
 		auto results = container->get_activation_results();
 
-		std::string first_child_in_queue = children.begin()[this->child_queue_index];
+		std::string first_child_in_queue = children[this->child_queue_index];
 
 		to_ret->local_best_node = first_child_in_queue;
 
@@ -62,6 +70,8 @@ namespace dhtt_plugins
 
 		for (auto const& x  : results)
 			total_sum += x.second->activation_potential;
+
+		RCLCPP_INFO(container->get_logger(), "Recommending child [%s] for activation in queue position %d..", first_child_in_queue.c_str(), this->child_queue_index) ;
 
 		to_ret->requested_resources = results[first_child_in_queue]->requested_resources;
 		to_ret->owned_resources = results[first_child_in_queue]->owned_resources;
@@ -73,8 +83,12 @@ namespace dhtt_plugins
 		// send failure back to the children not at the front of the queue
 		n_goal.success = false;
 
-		for (std::vector<std::string>::iterator name_iter = std::next(children.begin(), this->child_queue_index + 1) ; name_iter != children.end() ; name_iter++)
+		int next = this->child_queue_index + 1;
+
+		for (std::vector<std::string>::iterator name_iter = children.begin() + next ; name_iter != children.end() ; name_iter++)
 			container->async_activate_child(*name_iter, n_goal);
+
+		container->block_for_responses_from_children();
 		
 		// return the result
 		return to_ret;
@@ -92,6 +106,8 @@ namespace dhtt_plugins
 
 		std::string active = container->get_active_child_name();
 
+		RCLCPP_INFO(container->get_logger(), "Telling child %s to work!", active.c_str());
+
 		container->async_activate_child(active, n_goal);
 
 		// block until the child is done
@@ -102,16 +118,22 @@ namespace dhtt_plugins
 
 		// increment queue if the child is done
 		if ( result->done )
+		{
+			RCLCPP_INFO(container->get_logger(), "Child done incrementing queue index!");
+
 			this->child_queue_index++;
+		}
+
+		RCLCPP_INFO(container->get_logger(), "Child finished running, %d left!", (this->child_queue_size - this->child_queue_index) );
 
 		// change hands of resources and pass up
-		if ( not this->isDone() )
+		if ( not this->is_done() )
 			container->set_owned_resources(result->passed_resources);
 		else
 			to_ret->passed_resources = result->passed_resources;
 
 		to_ret->released_resources = result->released_resources;
-		to_ret->done = this->isDone();
+		to_ret->done = this->is_done();
 
 		return to_ret;
 	}
@@ -150,7 +172,7 @@ namespace dhtt_plugins
 		return container->get_owned_resources();
 	}
 
-	bool ThenBehavior::isDone()
+	bool ThenBehavior::is_done()
 	{
 		return this->child_queue_index >= this->child_queue_size;
 	}

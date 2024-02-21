@@ -15,6 +15,7 @@
 
 // ros2 includes
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
 
 // dhtt includes
 #include "dhtt/tree/node.hpp"
@@ -86,6 +87,11 @@ namespace dhtt
 		void maintain_local_subtree();
 		void fill_subtree_metrics( dhtt_msgs::msg::Subtree& to_fill );
 
+		void run_tree();
+		void tree_result_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result);
+
+		void publish_root_status();
+
 		dhtt_msgs::msg::Node get_active_behavior_node();
 		std::vector<dhtt_msgs::msg::Node> get_active_nodes();
 
@@ -104,12 +110,17 @@ namespace dhtt
 		// internal subscribers
 		rclcpp::Subscription<dhtt_msgs::msg::Node>::SharedPtr status_sub;
 
+		rclcpp_action::Client<dhtt_msgs::action::Activation>::SharedPtr client_ptr;
+
 		// mutexes
 		boost::mutex modify_mut;
+		boost::mutex running_mut;
 
 		// members
 		std::map<std::string, std::shared_ptr<dhtt::Node>> node_map; 
 		dhtt_msgs::msg::Subtree node_list; 
+
+		std::shared_ptr<std::thread> run_tree_thread;
 
 		std::list<std::string> history;
 
@@ -118,7 +129,7 @@ namespace dhtt
 
 		int total_nodes_added;
 		bool verbose;
-
+		bool running;
 	};
 
 }

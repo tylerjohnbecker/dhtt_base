@@ -25,8 +25,6 @@
 
 namespace dhtt
 {
-	class NodeType;
-
 	class Node : public rclcpp::Node
 	{
 	public:
@@ -37,6 +35,7 @@ namespace dhtt
 		std::string get_error_msg();
 
 		std::vector<dhtt_msgs::msg::Resource> get_owned_resources();
+		std::vector<dhtt_msgs::msg::Resource> get_resource_state();
 		void set_owned_resources(std::vector<dhtt_msgs::msg::Resource> set_to);
 
 		void register_with_parent();
@@ -51,6 +50,7 @@ namespace dhtt
 
 		std::vector<std::string> get_child_names();
 		std::string get_active_child_name();
+		std::string get_node_name();
 
 		bool isRequestPossible(std::vector<dhtt_msgs::msg::Resource> requested_resources);
 
@@ -98,6 +98,7 @@ namespace dhtt
 		rclcpp::Subscription<dhtt_msgs::msg::Resources>::SharedPtr resources_sub;
 
 		std::shared_ptr<std::thread> work_thread;
+		std::shared_ptr<std::thread> fail_thread;
 
 		std::vector<dhtt_msgs::msg::Resource> owned_resources;
 		std::vector<dhtt_msgs::msg::Resource> available_resources;

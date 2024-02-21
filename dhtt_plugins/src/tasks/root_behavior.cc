@@ -25,8 +25,12 @@ namespace dhtt_plugins
 	{
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> to_ret = std::make_shared<dhtt_msgs::action::Activation::Result>();
 
+		RCLCPP_INFO(container->get_logger(), "\n\n\n\tActivation received starting task execution...");
+
+		this->children_done = false;
+
 		// this relies on there only being one direct child of the root node (should enforce this as well)
-		while ( not this->isDone() )
+		while ( not this->is_done() )
 		{
 			// publish state of resources to all nodes in the tree
 			this->publish_resources();
@@ -34,12 +38,19 @@ namespace dhtt_plugins
 			// activate children
 			dhtt_msgs::action::Activation::Goal n_goal;
 
+			RCLCPP_INFO(container->get_logger(), "\tSpreading activation from root...");
+
 			container->activate_all_children(n_goal);
+
+			RCLCPP_INFO(container->get_logger(), "\tWaiting for respones...");
 
 			// get responses
 			container->block_for_responses_from_children();
 
 			auto result = container->get_activation_results();
+
+			if ( result.empty() )
+				RCLCPP_ERROR(container->get_logger(), "Empty response received!!!");
 
 			if ( not (*result.begin()).second->possible )
 			{
@@ -52,10 +63,12 @@ namespace dhtt_plugins
 
 			// update resources
 			n_goal.granted_resources = this->give_resources( (*result.begin()).second->requested_resources );
+			n_goal.success = true; 
+
+			RCLCPP_INFO(container->get_logger(), "Request accepted!");
 
 			// activate children
 			container->activate_all_children(n_goal);
-
 			// get responses
 			container->block_for_responses_from_children();
 
@@ -65,10 +78,9 @@ namespace dhtt_plugins
 			this->release_resources( (*result.begin()).second->released_resources );
 
 			this->children_done = (*result.begin()).second->done;
-
 		}
 
-		container->update_status(dhtt_msgs::msg::NodeStatus::DONE);
+		RCLCPP_INFO(container->get_logger(), "All children done. Task successfully completed!\n\n\n");
 
 		to_ret->done = true;
 
@@ -138,7 +150,7 @@ namespace dhtt_plugins
 		return std::vector<dhtt_msgs::msg::Resource>();
 	}
 
-	bool RootBehavior::isDone() 
+	bool RootBehavior::is_done() 
 	{
 		return this->children_done;
 	}

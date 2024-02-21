@@ -1,13 +1,15 @@
 NodeList: [
             'ParentThen',
             'FirstTask',
-            'MidParentAnd',
-            'SecondTask',
-            'ThirdTask',
             'MidParentOr',
-            'FourthTask',
-            'FifthTask'
+            'SecondTask',
+            'ThirdTask'
           ]
+
+expected_order: [
+                  'FirstTask',
+                  'SecondTask'
+                ]
 
 # the params for each behavior should be filled in wherever there is a n/a
 Nodes:
@@ -22,10 +24,10 @@ Nodes:
     behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
     parent: 'ParentThen'
-    params: []
-  MidParentAnd:
-    type: 1
-    behavior_type: 'dhtt_plugins::AndBehavior'
+    params: ["activation_potential: 10.0"]
+  MidParentOr:
+    type: 3
+    behavior_type: 'dhtt_plugins::OrBehavior'
     robot: 0
     parent: 'ParentThen'
     params: []
@@ -33,29 +35,11 @@ Nodes:
     type: 4
     behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
-    parent: 'MidParentAnd'
-    params: []
+    parent: 'MidParentOr'
+    params: ["activation_potential: 5.0"]
   ThirdTask:
     type: 4
     behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
-    parent: 'MidParentAnd'
-    params: []
-  MidParentOr:
-    type: 3
-    behavior_type: 'dhtt_plugins::OrBehavior'
-    robot: 0
-    parent: 'ParentThen'
-    params: []
-  FourthTask:
-    type: 4
-    behavior_type: 'dhtt_plugins::TestBehavior'
-    robot: 0
     parent: 'MidParentOr'
-    params: []
-  FifthTask:
-    type: 4
-    behavior_type: 'dhtt_plugins::TestBehavior'
-    robot: 0
-    parent: 'MidParentOr'
-    params: []
+    params: ["activation_potential: 0.0"]

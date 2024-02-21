@@ -24,6 +24,8 @@ namespace dhtt_plugins
 
 		std::vector<std::string> children = container->get_child_names();
 
+		RCLCPP_INFO(container->get_logger(), "Auction callback started activating children...");
+
 		if ( (int) children.size() == 0 )
 		{
 			to_ret->done = true;
@@ -49,6 +51,8 @@ namespace dhtt_plugins
 
 			// wait for result
 			container->block_for_responses_from_children();
+
+			RCLCPP_INFO(container->get_logger(), "Responses received...");
 
 			auto results = container->get_activation_results();
 
@@ -82,6 +86,8 @@ namespace dhtt_plugins
 
 			container->block_for_responses_from_children();
 
+			RCLCPP_INFO(container->get_logger(), "Responses received...");
+
 			auto result = container->get_activation_results();
 
 			// save result for constructing the new one
@@ -89,6 +95,8 @@ namespace dhtt_plugins
 		}
 
 		this->activation_potential = child_req->activation_potential;
+
+		RCLCPP_INFO(container->get_logger(), "Recommending child [%s] for activation..", this->activated_child_name.c_str()) ;
 
 		to_ret->local_best_node = this->activated_child_name;
 		to_ret->requested_resources = child_req->requested_resources;
@@ -132,7 +140,7 @@ namespace dhtt_plugins
 		// change hands of resources and pass up
 		to_ret->passed_resources = result->passed_resources;
 		to_ret->released_resources = result->released_resources;
-		to_ret->done = this->isDone();
+		to_ret->done = this->is_done();
 
 		return to_ret;
 	}
@@ -164,7 +172,7 @@ namespace dhtt_plugins
 		return std::vector<dhtt_msgs::msg::Resource>();
 	}
 
-	bool OrBehavior::isDone() 
+	bool OrBehavior::is_done() 
 	{
 		return this->child_done;
 	}

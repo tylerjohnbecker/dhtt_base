@@ -1,0 +1,39 @@
+NodeList: [
+            'ParentAnd',
+            'FirstTask',
+            'ThirdTask',
+            'SecondTask'
+          ]
+
+expected_order: [
+                  'FirstTask',
+                  'SecondTask',
+                  'ThirdTask'
+                ]
+
+# the params for each behavior should be filled in wherever there is a n/a
+Nodes:
+  ParentAnd:
+    type: 1
+    behavior_type: 'dhtt_plugins::AndBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: []
+  SecondTask:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'ParentAnd'
+    params: ["activation_potential: 5.0"]
+  FirstTask:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'ParentAnd'
+    params: ["activation_potential: 10.0"]
+  ThirdTask:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'ParentAnd'
+    params: ["activation_potential: 0.0"]

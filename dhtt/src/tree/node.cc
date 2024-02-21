@@ -45,6 +45,11 @@ namespace dhtt
 		return this->owned_resources;
 	}
 
+	std::vector<dhtt_msgs::msg::Resource> Node::get_resource_state()
+	{
+		return this->available_resources;
+	}
+
 	void Node::set_owned_resources(std::vector<dhtt_msgs::msg::Resource> set_to)
 	{
 		// this is an unsafe method for now. USE AT YOUR OWN DISCRETION
@@ -119,6 +124,7 @@ namespace dhtt
 
 		this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
+		RCLCPP_INFO(this->get_logger(), "\tServers registered for node %s", this->name.c_str());
 	}
 
 	bool Node::remove_child(std::string child_name)
@@ -166,14 +172,31 @@ namespace dhtt
 
 	bool Node::block_for_responses_from_children()
 	{
+		// RCLCPP_INFO(this->get_logger(), "Waiting for %d responses from children, currently received %d...", this->expected_responses, this->stored_responses );
+
 		while (this->stored_responses < this->expected_responses);
+
+		// RCLCPP_INFO(this->get_logger(), "Responses received!");
 
 		return true;
 	}
 
 	std::map<std::string, dhtt_msgs::action::Activation::Result::SharedPtr> Node::get_activation_results()
-	{
-		return this->responses;
+	{	
+		// reset values for storing responses
+		this->stored_responses = 0;
+		this->expected_responses = 0;
+
+		// RCLCPP_INFO(this->get_logger(), "Responses requested so deleting local values...");
+
+		std::map<std::string, dhtt_msgs::action::Activation::Result::SharedPtr> to_ret;
+
+		for ( auto const& x : this->responses )
+			to_ret[x.first] = x.second;
+
+		this->responses.clear();
+
+		return to_ret;
 	}
 
 	std::vector<std::string> Node::get_child_names()
@@ -184,6 +207,11 @@ namespace dhtt
 	std::string Node::get_active_child_name()
 	{
 		return this->active_child_name;
+	}
+
+	std::string Node::get_node_name()
+	{
+		return this->name;
 	}
 
 	bool Node::isRequestPossible(std::vector<dhtt_msgs::msg::Resource> requested_resources)
@@ -221,6 +249,7 @@ namespace dhtt
 		full_status.parent_name = this->parent_name;
 
 		full_status.child_name = this->child_names;
+		// we are dying here 
 		full_status.params = this->logic->params;
 
 		full_status.plugin_name = this->plugin_name;
@@ -281,20 +310,32 @@ namespace dhtt
 			}
 			else
 			{
+				RCLCPP_INFO(this->get_logger(), "Request not successful returning to state WAITING");
+
 				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
-				this->propogate_failure_down();
-				
 				this->resource_status_updated = false;
+				
+				dhtt_msgs::action::Activation::Result::SharedPtr blank_result = std::make_shared<dhtt_msgs::action::Activation::Result>();
+
+				if ( (int) this->child_names.size() > 0 )
+				{
+					this->fail_thread.reset();
+
+					this->fail_thread = std::make_shared<std::thread>(&Node::propogate_failure_down, this);
+					this->fail_thread->detach();
+				}
+
+				goal_handle->succeed(blank_result);
 			}
 		}
 	}
 
 	void Node::store_result_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name )
 	{
-		this->stored_responses++;
-
 		this->responses[node_name] = result.result;
+	
+		this->stored_responses++;
 	}
 
 	// simpler than it could be especially with some work in interruption handling
@@ -303,10 +344,14 @@ namespace dhtt
 		// collect result from children or self
 		dhtt_msgs::action::Activation::Result::SharedPtr to_ret;
 
+		RCLCPP_INFO(this->get_logger(), "Activation received from parent...");
+
 		if ( this->status.state == dhtt_msgs::msg::NodeStatus::ACTIVE )
 		{
 			// wait real quick for the status to be updated
 			while (not this->resource_status_updated);
+
+			RCLCPP_INFO(this->get_logger(), "Resource status updated activating callback");
 
 			// deal with any passed resources
 			for ( dhtt_msgs::msg::Resource passed_resource : goal_handle->get_goal()->passed_resources )
@@ -317,11 +362,13 @@ namespace dhtt
 
 			this->active_child_name = to_ret->local_best_node;
 
-			if (this->logic->isDone())
+			if (this->logic->is_done())
 				this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
 		}
 		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::WORKING )
 		{
+			RCLCPP_WARN(this->get_logger(), "Starting work!");
+
 			// add granted resources to the owned resources for the logic
 			for ( dhtt_msgs::msg::Resource granted_resource : goal_handle->get_goal()->granted_resources )
 				this->owned_resources.push_back( granted_resource );
@@ -337,7 +384,7 @@ namespace dhtt
 				
 			this->resource_status_updated = false;
 
-			if (this->logic->isDone())
+			if (this->logic->is_done())
 				this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
 			else
 				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
@@ -347,7 +394,8 @@ namespace dhtt
 			to_ret->done = true;
 		}
 
-		to_ret->activation_potential = this->calculate_activation_potential();
+		to_ret->activation_potential = this->logic->get_perceived_efficiency();
+		// this->calculate_activation_potential();
 
 		// then send result back to parent
 		goal_handle->succeed(to_ret);
@@ -363,7 +411,7 @@ namespace dhtt
 		}
 
 		// make a client and push back
-		rclcpp_action::Client<dhtt_msgs::action::Activation>::SharedPtr n_client = rclcpp_action::create_client<dhtt_msgs::action::Activation>(this, std::string(TREE_PREFIX) + request->node_name + ACTIVATION_POSTFIX);
+		rclcpp_action::Client<dhtt_msgs::action::Activation>::SharedPtr n_client = rclcpp_action::create_client<dhtt_msgs::action::Activation>(this, std::string(TREE_PREFIX) + "/" + request->node_name + ACTIVATION_POSTFIX);
 
 		this->child_names.push_back(request->node_name);
 		this->activation_clients.push_back(n_client);

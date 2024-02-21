@@ -8,6 +8,7 @@
 #include "yaml-cpp/yaml.h"
 #include "yaml-cpp/exceptions.h"
 
+#include "dhtt/tree/node.hpp"
 #include "dhtt/tree/node_type.hpp"
 
 #include "dhtt_msgs/msg/resource.hpp"
@@ -34,7 +35,7 @@ namespace dhtt_plugins
 		std::vector<dhtt_msgs::msg::Resource> get_retained_resources( dhtt::Node* container ) override;
 		std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container ) override;
 
-		bool isDone() override;
+		bool is_done() override;
 
 	protected:
 		void load_resources_from_yaml();

@@ -5,6 +5,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#include "dhtt/tree/node.hpp"
 #include "dhtt/tree/node_type.hpp"
 
 #include <vector>
@@ -28,9 +29,14 @@ namespace dhtt_plugins
 		std::vector<dhtt_msgs::msg::Resource> get_retained_resources( dhtt::Node* container ) override;
 		std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container ) override;
 
+		bool is_done() override;
+
 	protected:
 
+		bool done;
+
 		double activation_potential;
+		std::vector<dhtt_msgs::msg::Resource> necessary_resources; 
 
 	private:
 	};

@@ -124,7 +124,7 @@ class TestServerAddRemove:
 
 		wd = pathlib.Path(__file__).parent.resolve()
 
-		self.add_from_yaml(f'{wd}/test_descriptions/test_1.yaml')
+		self.add_from_yaml(f'{wd}/test_descriptions/test_simple.yaml')
 
 		fetch_rs = self.get_tree()
 
@@ -159,7 +159,7 @@ class TestServerAddRemove:
 
 		wd = pathlib.Path(__file__).parent.resolve()
 
-		self.add_from_yaml(f'{wd}/test_descriptions/test_1.yaml')
+		self.add_from_yaml(f'{wd}/test_descriptions/test_simple.yaml')
 
 		fetch_rs = self.get_tree()
 
@@ -244,7 +244,7 @@ class TestServerAddRemove:
 
 		wd = pathlib.Path(__file__).parent.resolve()
 
-		self.add_from_yaml(f'{wd}/test_descriptions/test_1.yaml')
+		self.add_from_yaml(f'{wd}/test_descriptions/test_simple.yaml')
 
 		fetch_rs = self.get_tree()
 
@@ -343,7 +343,7 @@ class TestServerAddRemove:
 
 		wd = pathlib.Path(__file__).parent.resolve()
 
-		self.add_from_yaml(f'{wd}/test_descriptions/test_1.yaml')
+		self.add_from_yaml(f'{wd}/test_descriptions/test_simple.yaml')
 
 		fetch_rs = self.get_tree()
 
@@ -402,7 +402,7 @@ class TestServerAddRemove:
 
 		wd = pathlib.Path(__file__).parent.resolve()
 
-		self.add_from_yaml(f'{wd}/test_descriptions/test_1.yaml')
+		self.add_from_yaml(f'{wd}/test_descriptions/test_simple.yaml')
 		
 		self.reset_tree()
 
