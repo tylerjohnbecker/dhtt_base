@@ -140,20 +140,6 @@ namespace dhtt_plugins
 		return this->activation_potential;
 	}
 
-	std::vector<dhtt_msgs::msg::Resource> AndBehavior::get_retained_resources( dhtt::Node* container ) 
-	{
-		(void) container;
-
-		return std::vector<dhtt_msgs::msg::Resource>();
-	}
-
-	std::vector<dhtt_msgs::msg::Resource> AndBehavior::get_released_resources( dhtt::Node* container ) 
-	{
-		(void) container;
-
-		return std::vector<dhtt_msgs::msg::Resource>();
-	}
-
 	bool AndBehavior::is_done() 
 	{
 		return this->num_active_children == 0;

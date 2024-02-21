@@ -26,8 +26,6 @@ namespace dhtt_plugins
 
 		double get_perceived_efficiency() override;
 
-		std::vector<dhtt_msgs::msg::Resource> get_retained_resources( dhtt::Node* container ) override;
-		std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container ) override;
 
 		bool is_done() override;
 

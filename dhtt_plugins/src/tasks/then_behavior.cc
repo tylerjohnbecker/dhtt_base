@@ -158,20 +158,6 @@ namespace dhtt_plugins
 		return this->activation_potential;
 	}
 
-	std::vector<dhtt_msgs::msg::Resource> ThenBehavior::get_retained_resources( dhtt::Node* container )
-	{
-		(void) container;
-
-		return std::vector<dhtt_msgs::msg::Resource>();
-	}
-
-	std::vector<dhtt_msgs::msg::Resource> ThenBehavior::get_released_resources( dhtt::Node* container )
-	{
-		(void) container;
-
-		return container->get_owned_resources();
-	}
-
 	bool ThenBehavior::is_done()
 	{
 		return this->child_queue_index >= this->child_queue_size;

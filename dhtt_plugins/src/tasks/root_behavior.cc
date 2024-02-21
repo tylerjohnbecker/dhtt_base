@@ -136,20 +136,6 @@ namespace dhtt_plugins
 		return 1.0;
 	}
 
-	std::vector<dhtt_msgs::msg::Resource> RootBehavior::get_retained_resources( dhtt::Node* container ) 
-	{
-		(void) container;
-
-		return std::vector<dhtt_msgs::msg::Resource>();
-	}
-
-	std::vector<dhtt_msgs::msg::Resource> RootBehavior::get_released_resources( dhtt::Node* container ) 
-	{
-		(void) container;
-
-		return std::vector<dhtt_msgs::msg::Resource>();
-	}
-
 	bool RootBehavior::is_done() 
 	{
 		return this->children_done;

@@ -30,10 +30,7 @@ namespace dhtt
 		virtual void parse_params(std::vector<std::string> params) = 0;
 
 		virtual double get_perceived_efficiency() = 0;
-
-		virtual std::vector<dhtt_msgs::msg::Resource> get_retained_resources( Node* container ) = 0;
-		virtual std::vector<dhtt_msgs::msg::Resource> get_released_resources( Node* container ) = 0;
-
+		
 		virtual bool is_done() {return true;};
 		virtual bool can_add_child() {return this->children_allowed;};
 

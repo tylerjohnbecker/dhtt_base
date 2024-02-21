@@ -5,6 +5,7 @@
 
 // list of plugin files to include here
 #include "dhtt_plugins/behaviors/test_behavior.hpp"
+#include "dhtt_plugins/behaviors/action_type.hpp"
 #include "dhtt_plugins/tasks/root_behavior.hpp"
 #include "dhtt_plugins/tasks/and_behavior.hpp"
 #include "dhtt_plugins/tasks/then_behavior.hpp"

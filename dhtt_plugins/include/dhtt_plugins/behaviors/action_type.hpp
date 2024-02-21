@@ -1,5 +1,5 @@
-#ifndef TEST_BEHAVIOR_HPP
-#define TEST_BEHAVIOR_HPP
+#ifndef ACTION_TYPE_HPP
+#define ACTION_TYPE_HPP
 
 #include "dhtt_plugins/visibility_control.h"
 
@@ -13,7 +13,7 @@
 
 namespace dhtt_plugins
 {
-	class TestBehavior : public dhtt::NodeType
+	class ActionType : public dhtt::NodeType
 	{
 	public:
 
@@ -22,9 +22,10 @@ namespace dhtt_plugins
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> auction_callback( dhtt::Node* container ) override;
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> work_callback( dhtt::Node* container ) override;
 
-		void parse_params( std::vector<std::string> params ) override;
+		virtual void do_work( dhtt::Node* container ) = 0;
 
-		double get_perceived_efficiency() override;
+		virtual std::vector<dhtt_msgs::msg::Resource> get_retained_resources( dhtt::Node* container ) = 0;
+		virtual std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container ) = 0;
 
 		bool is_done() override;
 
@@ -39,4 +40,4 @@ namespace dhtt_plugins
 	};
 }
 
-#endif //TEST_BEHAVIOR_HPP
+#endif //ACTION_TYPE_HPP
