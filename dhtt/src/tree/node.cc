@@ -219,9 +219,10 @@ namespace dhtt
 		return this->name;
 	}
 
-	bool Node::isRequestPossible(std::vector<dhtt_msgs::msg::Resource> requested_resources)
+	bool Node::is_request_possible(std::vector<dhtt_msgs::msg::Resource> requested_resources)
 	{
-
+		bool is_possible = true;
+	
 		dhtt_msgs::msg::Resource looking_for;
 		auto find_fulfill = [&]( dhtt_msgs::msg::Resource to_check )
 		{
@@ -232,13 +233,24 @@ namespace dhtt
 		{
 			looking_for = check;
 
-			std::vector<dhtt_msgs::msg::Resource>::iterator found_iter = std::find_if(this->available_resources.begin(), this->available_resources.end(), find_fulfill);
+			std::vector<dhtt_msgs::msg::Resource>::iterator found = std::find_if(this->available_resources.begin(), this->available_resources.end(), find_fulfill);
 
-			if ( found_iter == this->available_resources.end())
-				return false;
+			while ( found != this->available_resources.end() )
+			{
+				if ((*found).locked == false )
+					break;
+				else
+					found = std::find_if(found, this->available_resources.end(), find_fulfill);
+			}
+
+			if ( found == this->available_resources.end() )
+			{
+				is_possible = false;
+				break;
+			}
 		}
 
-		return true;
+		return is_possible;
 	}
 
 	void Node::update_status( int8_t n_state )
@@ -317,7 +329,7 @@ namespace dhtt
 			}
 			else
 			{
-				RCLCPP_INFO(this->get_logger(), "Request not successful returning to state WAITING");
+				RCLCPP_DEBUG(this->get_logger(), "Request not successful returning to state WAITING");
 
 				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
@@ -367,7 +379,7 @@ namespace dhtt
 			// wait real quick for the status to be updated
 			while (not this->resource_status_updated);
 
-			RCLCPP_INFO(this->get_logger(), "Resource status updated activating callback");
+			RCLCPP_DEBUG(this->get_logger(), "Resource status updated activating callback");
 
 			// deal with any passed resources
 			for ( dhtt_msgs::msg::Resource passed_resource : goal_handle->get_goal()->passed_resources )
@@ -388,7 +400,7 @@ namespace dhtt
 			// add granted resources to the owned resources for the logic
 			for ( dhtt_msgs::msg::Resource granted_resource : goal_handle->get_goal()->granted_resources )
 			{
-				RCLCPP_WARN(this->get_logger(), "[%s]", granted_resource.name.c_str());
+				// RCLCPP_WARN(this->get_logger(), "[%s]", granted_resource.name.c_str());
 				this->owned_resources.push_back( granted_resource );
 			}
 

@@ -651,7 +651,7 @@ namespace dhtt
 		// if the node is working and is not the head of the history make it the head of the history. only collect behaviors not tasks (so leaves)
 		if ( data->node_status.state == dhtt_msgs::msg::NodeStatus::WORKING and ( ( (int) this->history.size() == 0 ) or strcmp ( this->history.back().c_str(), data->node_name.c_str() ) ) and is_leaf )
 		{
-			RCLCPP_ERROR(this->get_logger(), "Adding node %s to history!!!!!", data->node_name.c_str());
+			RCLCPP_DEBUG(this->get_logger(), "Adding node %s to history!!!!!", data->node_name.c_str());
 			this->history.push_back((*data).node_name);
 		}
 

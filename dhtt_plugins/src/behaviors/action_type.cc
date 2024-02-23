@@ -20,7 +20,7 @@ namespace dhtt_plugins
 
 	std::shared_ptr<dhtt_msgs::action::Activation::Result> ActionType::auction_callback( dhtt::Node* container )
 	{
-		RCLCPP_INFO(container->get_logger(), "Activating and sending back request...");
+		RCLCPP_INFO(container->get_logger(), "\tActivating and sending back request...");
 
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> to_ret = std::make_shared<dhtt_msgs::action::Activation::Result>();
 
@@ -48,32 +48,7 @@ namespace dhtt_plugins
 		to_ret->requested_resources = necessary_resources;
 		to_ret->owned_resources = container->get_owned_resources();
 		to_ret->done = this->is_done();
-
-		bool is_possible = true;
-
-		auto resources = container->get_resource_state();
-
-		for ( auto resource : resources )
-		{
-			cur_resource = resource;
-			auto found = std::find_if(resources.begin(), resources.end(), find_resource);
-
-			while ( found != resources.end() )
-			{
-				if ((*found).locked == false )
-					break;
-				else
-					found = std::find_if(found, resources.end(), find_resource);
-			}
-
-			if ( found == resources.end() )
-			{
-				is_possible = false;
-				break;
-			}
-		}
-
-		to_ret->possible = is_possible;
+		to_ret->possible = container->is_request_possible(to_ret->requested_resources);
 
 		return to_ret;
 	}
@@ -84,7 +59,9 @@ namespace dhtt_plugins
 		(void) container;
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> to_ret = std::make_shared<dhtt_msgs::action::Activation::Result>();
 
-		RCLCPP_INFO(container->get_logger(), "Performing work for [%s]", container->get_node_name().c_str());
+		RCLCPP_INFO(container->get_logger(), "\tPerforming work");
+
+		this->do_work(container);
 
 		this->done = true;
 

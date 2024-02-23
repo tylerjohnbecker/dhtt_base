@@ -24,7 +24,7 @@ namespace dhtt_plugins
 
 		std::vector<std::string> children = container->get_child_names();
 
-		RCLCPP_INFO(container->get_logger(), "Auction callback started activating children...");
+		RCLCPP_INFO(container->get_logger(), "\tAuction callback started activating children...");
 
 		if ( (int) children.size() == 0 )
 		{
@@ -52,7 +52,7 @@ namespace dhtt_plugins
 			// wait for result
 			container->block_for_responses_from_children();
 
-			RCLCPP_INFO(container->get_logger(), "Responses received...");
+			RCLCPP_DEBUG(container->get_logger(), "Responses received...");
 
 			auto results = container->get_activation_results();
 
@@ -86,7 +86,7 @@ namespace dhtt_plugins
 
 			container->block_for_responses_from_children();
 
-			RCLCPP_INFO(container->get_logger(), "Responses received...");
+			RCLCPP_DEBUG(container->get_logger(), "Responses received...");
 
 			auto result = container->get_activation_results();
 
@@ -96,7 +96,7 @@ namespace dhtt_plugins
 
 		this->activation_potential = child_req->activation_potential;
 
-		RCLCPP_INFO(container->get_logger(), "Recommending child [%s] for activation..", this->activated_child_name.c_str()) ;
+		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation..", this->activated_child_name.c_str()) ;
 
 		to_ret->local_best_node = this->activated_child_name;
 		to_ret->requested_resources = child_req->requested_resources;

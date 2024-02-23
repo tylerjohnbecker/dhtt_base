@@ -27,7 +27,7 @@ namespace dhtt_plugins
 
 		std::vector<std::string> children = container->get_child_names();
 
-		RCLCPP_INFO(container->get_logger(), "Auction callback started activating children...");
+		RCLCPP_INFO(container->get_logger(), "\tAuction callback started activating children...");
 
 		if ( not this->started_activation )
 		{
@@ -56,7 +56,7 @@ namespace dhtt_plugins
 
 		container->block_for_responses_from_children();
 
-		RCLCPP_INFO(container->get_logger(), "Responses received...");
+		RCLCPP_DEBUG(container->get_logger(), "Responses received...");
 
 		auto results = container->get_activation_results();
 
@@ -71,7 +71,7 @@ namespace dhtt_plugins
 		for (auto const& x  : results)
 			total_sum += x.second->activation_potential;
 
-		RCLCPP_INFO(container->get_logger(), "Recommending child [%s] for activation in queue position %d..", first_child_in_queue.c_str(), this->child_queue_index) ;
+		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation in queue position %d..", first_child_in_queue.c_str(), this->child_queue_index) ;
 
 		to_ret->requested_resources = results[first_child_in_queue]->requested_resources;
 		to_ret->owned_resources = results[first_child_in_queue]->owned_resources;
@@ -109,7 +109,7 @@ namespace dhtt_plugins
 
 		std::string active = container->get_active_child_name();
 
-		RCLCPP_INFO(container->get_logger(), "Telling child %s to work!", active.c_str());
+		RCLCPP_DEBUG(container->get_logger(), "Telling child %s to work!", active.c_str());
 
 		container->async_activate_child(active, n_goal);
 
@@ -122,12 +122,12 @@ namespace dhtt_plugins
 		// increment queue if the child is done
 		if ( result->done )
 		{
-			RCLCPP_INFO(container->get_logger(), "Child done incrementing queue index!");
+			// RCLCPP_INFO(container->get_logger(), "Child done incrementing queue index!");
 
 			this->child_queue_index++;
 		}
 
-		RCLCPP_INFO(container->get_logger(), "Child finished running, %d left!", (this->child_queue_size - this->child_queue_index) );
+		RCLCPP_DEBUG(container->get_logger(), "Child finished running, %d left!", (this->child_queue_size - this->child_queue_index) );
 
 		// change hands of resources and pass up
 		if ( not this->is_done() )
@@ -140,7 +140,7 @@ namespace dhtt_plugins
 			container->set_passed_resources(std::vector<dhtt_msgs::msg::Resource>());
 		}
 
-		RCLCPP_INFO(container->get_logger(), "Queue index %d and Queue size %d and is done %d", this->child_queue_index, this->child_queue_size, this->is_done());
+		// RCLCPP_INFO(container->get_logger(), "Queue index %d and Queue size %d and is done %d", this->child_queue_index, this->child_queue_size, this->is_done());
 
 		to_ret->released_resources = result->released_resources;
 		to_ret->done = this->is_done();

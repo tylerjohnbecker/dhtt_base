@@ -38,11 +38,11 @@ namespace dhtt_plugins
 			// activate children
 			dhtt_msgs::action::Activation::Goal n_goal;
 
-			RCLCPP_INFO(container->get_logger(), "\tSpreading activation from root...");
+			RCLCPP_FATAL(container->get_logger(), "\tSpreading activation from root...");
 
 			container->activate_all_children(n_goal);
 
-			RCLCPP_INFO(container->get_logger(), "\tWaiting for respones...");
+			RCLCPP_FATAL(container->get_logger(), "\tWaiting for respones...\n");
 
 			// get responses
 			container->block_for_responses_from_children();
@@ -65,10 +65,10 @@ namespace dhtt_plugins
 			n_goal.granted_resources = this->give_resources( (*result.begin()).second->requested_resources );
 			n_goal.success = true; 
 
-			RCLCPP_INFO(container->get_logger(), "\tRequest accepted!");
+			RCLCPP_FATAL(container->get_logger(), "\tRequest accepted!\n");
 
-			for ( auto resource: n_goal.granted_resources )
-				RCLCPP_INFO(container->get_logger(), "\tGranting [%s]", resource.name.c_str());
+			// for ( auto resource: n_goal.granted_resources )
+			// 	RCLCPP_INFO(container->get_logger(), "\tGranting [%s]", resource.name.c_str());
 
 
 			// activate children
@@ -79,11 +79,11 @@ namespace dhtt_plugins
 			result = container->get_activation_results();
 
 			// update resources (release the ones in passed resources because if they make it to root then they have to be released anyway)
-			RCLCPP_INFO(container->get_logger(), "\tRequest complete, releasing resources!");
-			for ( auto resource:(*result.begin()).second->released_resources )
-				RCLCPP_INFO(container->get_logger(), "\tReleasing [%s]", resource.name.c_str());
-			for ( auto resource:(*result.begin()).second->passed_resources )
-				RCLCPP_INFO(container->get_logger(), "\tReleasing [%s]", resource.name.c_str());
+			RCLCPP_FATAL(container->get_logger(), "\tRequest complete, releasing resources!\n\n");
+			// for ( auto resource:(*result.begin()).second->released_resources )
+			// 	RCLCPP_INFO(container->get_logger(), "\tReleasing [%s]", resource.name.c_str());
+			// for ( auto resource:(*result.begin()).second->passed_resources )
+			// 	RCLCPP_INFO(container->get_logger(), "\tReleasing [%s]", resource.name.c_str());
 
 			this->release_resources( (*result.begin()).second->released_resources );
 			this->release_resources( (*result.begin()).second->passed_resources );

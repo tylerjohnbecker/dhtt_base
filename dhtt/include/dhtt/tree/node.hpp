@@ -53,7 +53,7 @@ namespace dhtt
 		std::string get_active_child_name();
 		std::string get_node_name();
 
-		bool isRequestPossible(std::vector<dhtt_msgs::msg::Resource> requested_resources);
+		bool is_request_possible(std::vector<dhtt_msgs::msg::Resource> requested_resources);
 
 		void update_status( int8_t n_state );
 		void set_resource_status_updated(bool to_set);

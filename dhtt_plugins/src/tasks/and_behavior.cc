@@ -20,14 +20,14 @@ namespace dhtt_plugins
 		dhtt_msgs::action::Activation::Goal n_goal;
 		n_goal.passed_resources = container->get_owned_resources();
 
-		RCLCPP_INFO(container->get_logger(), "Auction callback started activating children...");
+		RCLCPP_INFO(container->get_logger(), "\tAuction callback started activating children...");
 
 		container->activate_all_children(n_goal);
 
 		// wait for responses
 		container->block_for_responses_from_children();
 
-		RCLCPP_INFO(container->get_logger(), "Responses received...");
+		RCLCPP_DEBUG(container->get_logger(), "\tResponses received...");
 
 		auto results = container->get_activation_results();
 
@@ -44,7 +44,7 @@ namespace dhtt_plugins
 		{
 			if ( not x.second->done )
 			{
-				RCLCPP_INFO(container->get_logger(), "Evaluating child [%s] with activation potential %f...", x.first.c_str(), x.second->activation_potential);
+				RCLCPP_DEBUG(container->get_logger(), "Evaluating child [%s] with activation potential %f...", x.first.c_str(), x.second->activation_potential);
 				num_children++;
 				activation_potential_sum += x.second->activation_potential;
 
@@ -83,7 +83,7 @@ namespace dhtt_plugins
 		// return winner
 		to_ret->local_best_node = local_best_child;
 
-		RCLCPP_INFO(container->get_logger(), "Recommending child [%s] for activation..", local_best_child.c_str()) ;
+		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation..", local_best_child.c_str()) ;
 
 		if ( to_ret->possible )
 		{
@@ -120,7 +120,7 @@ namespace dhtt_plugins
 		if (result->done)
 			this->num_active_children--;
 
-		RCLCPP_WARN(container->get_logger(), "Child finished running, %d active children left.", this->num_active_children);
+		RCLCPP_DEBUG(container->get_logger(), "Child finished running, %d active children left.", this->num_active_children);
 
 		// copy and return message with this node as the local node
 		to_ret->released_resources = result->released_resources;

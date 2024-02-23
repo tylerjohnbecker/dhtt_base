@@ -35,7 +35,7 @@ namespace dhtt_plugins
 
 	std::shared_ptr<dhtt_msgs::action::Activation::Result> TestBehavior::auction_callback( dhtt::Node* container )
 	{
-		RCLCPP_INFO(container->get_logger(), "Activating and sending back request...");
+		RCLCPP_INFO(container->get_logger(), "\tActivating and sending back request...");
 
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> to_ret = std::make_shared<dhtt_msgs::action::Activation::Result>();
 
@@ -51,7 +51,7 @@ namespace dhtt_plugins
 		for ( auto resource : this->necessary_resources )
 			necessary_resources_cp.push_back(resource);
 
-		RCLCPP_INFO(container->get_logger(), "Collecting owned resources and sending request for necessary resources");
+		RCLCPP_DEBUG(container->get_logger(), "Collecting owned resources and sending request for necessary resources");
 
 		for ( auto resource : container->get_owned_resources() )
 		{
@@ -66,7 +66,7 @@ namespace dhtt_plugins
 		to_ret->owned_resources = container->get_owned_resources();
 		to_ret->done = this->is_done();
 
-		RCLCPP_INFO(container->get_logger(), "Checking if task is possible given current resource state.");
+		RCLCPP_DEBUG(container->get_logger(), "Checking if task is possible given current resource state.");
 
 		bool is_possible = true;
 
@@ -93,7 +93,7 @@ namespace dhtt_plugins
 		}
 
 		if ( not is_possible )
-			RCLCPP_WARN(container->get_logger(), "Necessary resources unavailable.");
+			RCLCPP_WARN(container->get_logger(), "\tNecessary resources unavailable.");
 
 		to_ret->possible = is_possible;
 
@@ -106,7 +106,7 @@ namespace dhtt_plugins
 		(void) container;
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> to_ret = std::make_shared<dhtt_msgs::action::Activation::Result>();
 
-		RCLCPP_INFO(container->get_logger(), "Performing work for [%s]", container->get_node_name().c_str());
+		RCLCPP_INFO(container->get_logger(), "\tPerforming work...");
 
 		this->done = true;
 
@@ -122,14 +122,14 @@ namespace dhtt_plugins
 			if (resource.type == dhtt_msgs::msg::Resource::GRIPPER and first)
 			{
 				passed.push_back(resource);
-				RCLCPP_ERROR(container->get_logger(), "Passing control of resource %s", resource.name.c_str());
+				RCLCPP_DEBUG(container->get_logger(), "Passing control of resource %s", resource.name.c_str());
 
 				first = false;
 			}
 			else
 			{
 				released.push_back(resource);
-				RCLCPP_ERROR(container->get_logger(), "Releasing control of resource %s", resource.name.c_str());
+				RCLCPP_DEBUG(container->get_logger(), "Releasing control of resource %s", resource.name.c_str());
 			}
 		}
 
