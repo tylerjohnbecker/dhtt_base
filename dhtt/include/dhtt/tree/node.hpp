@@ -35,8 +35,9 @@ namespace dhtt
 		std::string get_error_msg();
 
 		std::vector<dhtt_msgs::msg::Resource> get_owned_resources();
+		std::vector<dhtt_msgs::msg::Resource> get_passed_resources();
 		std::vector<dhtt_msgs::msg::Resource> get_resource_state();
-		void set_owned_resources(std::vector<dhtt_msgs::msg::Resource> set_to);
+		void set_passed_resources(std::vector<dhtt_msgs::msg::Resource> set_to);
 
 		void register_with_parent();
 		void register_servers();
@@ -102,6 +103,7 @@ namespace dhtt
 
 		std::vector<dhtt_msgs::msg::Resource> owned_resources;
 		std::vector<dhtt_msgs::msg::Resource> available_resources;
+		std::vector<dhtt_msgs::msg::Resource> passed_resources;
 		std::vector<std::string> child_names;
 
 		std::string name;

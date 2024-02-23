@@ -29,7 +29,13 @@ namespace dhtt_plugins
 
 		RCLCPP_INFO(container->get_logger(), "Auction callback started activating children...");
 
-		if ( (int) children.size() == 0 )
+		if ( not this->started_activation )
+		{
+			this->child_queue_index = 0;
+			this->started_activation = true;
+		}
+
+		if ( (int) children.size() == 0)
 		{
 			to_ret->done = true;
 
@@ -37,18 +43,12 @@ namespace dhtt_plugins
 
 			return to_ret;
 		}
-
-		if ( not this->started_activation )
-		{
-			this->child_queue_index = 0;
-			this->started_activation = true;
-		}
 		
 		this->child_queue_size = (int) children.size();
 
 		dhtt_msgs::action::Activation::Goal n_goal;
 
-		n_goal.passed_resources = container->get_owned_resources();
+		n_goal.passed_resources = container->get_passed_resources();
 
 		// activate all children for activation potential calculation and give the first one the resources that we were passed
 		for (std::vector<std::string>::iterator name_iter = children.begin() + this->child_queue_index ; name_iter != children.end() ; name_iter++)
@@ -104,6 +104,9 @@ namespace dhtt_plugins
 		n_goal.success = true;
 		n_goal.granted_resources = container->get_owned_resources();
 
+		for (auto resource : container->get_passed_resources())
+			n_goal.granted_resources.push_back(resource);
+
 		std::string active = container->get_active_child_name();
 
 		RCLCPP_INFO(container->get_logger(), "Telling child %s to work!", active.c_str());
@@ -128,9 +131,16 @@ namespace dhtt_plugins
 
 		// change hands of resources and pass up
 		if ( not this->is_done() )
-			container->set_owned_resources(result->passed_resources);
+		{
+			container->set_passed_resources(result->passed_resources);
+		}
 		else
+		{
 			to_ret->passed_resources = result->passed_resources;
+			container->set_passed_resources(std::vector<dhtt_msgs::msg::Resource>());
+		}
+
+		RCLCPP_INFO(container->get_logger(), "Queue index %d and Queue size %d and is done %d", this->child_queue_index, this->child_queue_size, this->is_done());
 
 		to_ret->released_resources = result->released_resources;
 		to_ret->done = this->is_done();

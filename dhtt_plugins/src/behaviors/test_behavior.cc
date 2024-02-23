@@ -15,6 +15,21 @@ namespace dhtt_plugins
 
 		this->parse_params(params);
 
+		dhtt_msgs::msg::Resource gripper;
+		gripper.type = dhtt_msgs::msg::Resource::GRIPPER;
+
+		this->necessary_resources.push_back(gripper);
+
+		dhtt_msgs::msg::Resource head;
+		head.type = dhtt_msgs::msg::Resource::HEAD;
+		
+		this->necessary_resources.push_back(head);
+		
+		dhtt_msgs::msg::Resource base;
+		base.type = dhtt_msgs::msg::Resource::BASE;
+		
+		this->necessary_resources.push_back(base);
+
 		return;
 	}
 
@@ -36,6 +51,8 @@ namespace dhtt_plugins
 		for ( auto resource : this->necessary_resources )
 			necessary_resources_cp.push_back(resource);
 
+		RCLCPP_INFO(container->get_logger(), "Collecting owned resources and sending request for necessary resources");
+
 		for ( auto resource : container->get_owned_resources() )
 		{
 			cur_resource = resource;
@@ -45,15 +62,17 @@ namespace dhtt_plugins
 				necessary_resources_cp.erase(found);
 		}
 
-		to_ret->requested_resources = necessary_resources;
+		to_ret->requested_resources = necessary_resources_cp;
 		to_ret->owned_resources = container->get_owned_resources();
 		to_ret->done = this->is_done();
+
+		RCLCPP_INFO(container->get_logger(), "Checking if task is possible given current resource state.");
 
 		bool is_possible = true;
 
 		auto resources = container->get_resource_state();
 
-		for ( auto resource : resources )
+		for ( auto resource : to_ret->requested_resources )
 		{
 			cur_resource = resource;
 			auto found = std::find_if(resources.begin(), resources.end(), find_resource);
@@ -63,7 +82,7 @@ namespace dhtt_plugins
 				if ((*found).locked == false )
 					break;
 				else
-					found = std::find_if(found, resources.end(), find_resource);
+					found = std::find_if(found + 1, resources.end(), find_resource);
 			}
 
 			if ( found == resources.end() )
@@ -72,6 +91,9 @@ namespace dhtt_plugins
 				break;
 			}
 		}
+
+		if ( not is_possible )
+			RCLCPP_WARN(container->get_logger(), "Necessary resources unavailable.");
 
 		to_ret->possible = is_possible;
 
@@ -89,7 +111,30 @@ namespace dhtt_plugins
 		this->done = true;
 
 		to_ret->done = this->is_done();
-		to_ret->released_resources = container->get_owned_resources();
+
+		std::vector<dhtt_msgs::msg::Resource> passed;
+		std::vector<dhtt_msgs::msg::Resource> released;
+
+		bool first = true;
+		
+		for (dhtt_msgs::msg::Resource resource : container->get_owned_resources())
+		{
+			if (resource.type == dhtt_msgs::msg::Resource::GRIPPER and first)
+			{
+				passed.push_back(resource);
+				RCLCPP_ERROR(container->get_logger(), "Passing control of resource %s", resource.name.c_str());
+
+				first = false;
+			}
+			else
+			{
+				released.push_back(resource);
+				RCLCPP_ERROR(container->get_logger(), "Releasing control of resource %s", resource.name.c_str());
+			}
+		}
+
+		to_ret->passed_resources = passed;
+		to_ret->released_resources = released;
 		return to_ret;
 	}
 

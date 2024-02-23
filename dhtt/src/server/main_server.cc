@@ -644,6 +644,7 @@ namespace dhtt
 			return;
 
 		(*found_node).node_status.state = data->node_status.state;
+		(*found_node).owned_resources = data->owned_resources;
 
 		bool is_leaf = (*found_node).child_name.empty();
 

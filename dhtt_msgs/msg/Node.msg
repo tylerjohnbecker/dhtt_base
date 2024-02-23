@@ -16,6 +16,9 @@ string[]				params
 int8 					type
 string					plugin_name
 
+# the resources that the node has been given access to
+dhtt_msgs/Resource[]		owned_resources
+
 # this is an indicator of the status of the node
 dhtt_msgs/NodeStatus	node_status
 

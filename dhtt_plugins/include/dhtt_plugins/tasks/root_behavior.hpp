@@ -41,6 +41,7 @@ namespace dhtt_plugins
 
 		std::vector<dhtt_msgs::msg::Resource> give_resources(std::vector<dhtt_msgs::msg::Resource> to_give);
 		void release_resources(std::vector<dhtt_msgs::msg::Resource> to_release);
+		void release_all_resources();
 
 		std::string robot_resources_file_path;
 

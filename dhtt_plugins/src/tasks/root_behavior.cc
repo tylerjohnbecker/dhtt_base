@@ -65,7 +65,11 @@ namespace dhtt_plugins
 			n_goal.granted_resources = this->give_resources( (*result.begin()).second->requested_resources );
 			n_goal.success = true; 
 
-			RCLCPP_INFO(container->get_logger(), "Request accepted!");
+			RCLCPP_INFO(container->get_logger(), "\tRequest accepted!");
+
+			for ( auto resource: n_goal.granted_resources )
+				RCLCPP_INFO(container->get_logger(), "\tGranting [%s]", resource.name.c_str());
+
 
 			// activate children
 			container->activate_all_children(n_goal);
@@ -74,11 +78,21 @@ namespace dhtt_plugins
 
 			result = container->get_activation_results();
 
-			// update resources
+			// update resources (release the ones in passed resources because if they make it to root then they have to be released anyway)
+			RCLCPP_INFO(container->get_logger(), "\tRequest complete, releasing resources!");
+			for ( auto resource:(*result.begin()).second->released_resources )
+				RCLCPP_INFO(container->get_logger(), "\tReleasing [%s]", resource.name.c_str());
+			for ( auto resource:(*result.begin()).second->passed_resources )
+				RCLCPP_INFO(container->get_logger(), "\tReleasing [%s]", resource.name.c_str());
+
 			this->release_resources( (*result.begin()).second->released_resources );
+			this->release_resources( (*result.begin()).second->passed_resources );
 
 			this->children_done = (*result.begin()).second->done;
 		}
+
+		// ensure that resources are released before next activation
+		this->release_all_resources();
 
 		RCLCPP_INFO(container->get_logger(), "All children done. Task successfully completed!\n\n\n");
 
@@ -222,5 +236,13 @@ namespace dhtt_plugins
 
 			(*found_iter).locked = false;
 		} 
+	}
+	void RootBehavior::release_all_resources()
+	{
+		for (std::vector<dhtt_msgs::msg::Resource>::iterator resource_iter = this->canonical_resources_list.begin(); resource_iter != this->canonical_resources_list.end(); resource_iter++)
+		{
+			(*resource_iter).locked = false;
+			(*resource_iter).channel = dhtt_msgs::msg::Resource::EXCLUSIVE;
+		}
 	}
 }

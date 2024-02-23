@@ -45,17 +45,22 @@ namespace dhtt
 		return this->owned_resources;
 	}
 
+	std::vector<dhtt_msgs::msg::Resource> Node::get_passed_resources()
+	{
+		return this->passed_resources;
+	}
+
 	std::vector<dhtt_msgs::msg::Resource> Node::get_resource_state()
 	{
 		return this->available_resources;
 	}
 
-	void Node::set_owned_resources(std::vector<dhtt_msgs::msg::Resource> set_to)
+	void Node::set_passed_resources(std::vector<dhtt_msgs::msg::Resource> set_to)
 	{
 		// this is an unsafe method for now. USE AT YOUR OWN DISCRETION
-		this->owned_resources.clear();
+		this->passed_resources.clear();
 
-		this->owned_resources = set_to;
+		this->passed_resources = set_to;
 	}
 
 	void Node::register_with_parent()
@@ -254,6 +259,8 @@ namespace dhtt
 
 		full_status.plugin_name = this->plugin_name;
 
+		full_status.owned_resources = this->owned_resources;
+
 		full_status.node_status = this->status;
 
 		this->status_pub->publish(full_status);
@@ -290,7 +297,7 @@ namespace dhtt
 		this->stored_responses = 0;
 		this->expected_responses = 0;
 		
-		if ( this->status.state == dhtt_msgs::msg::NodeStatus::WAITING or this->status.state == dhtt_msgs::msg::NodeStatus::DONE )
+		if ( this->status.state == dhtt_msgs::msg::NodeStatus::WAITING )
 		{
 			this->update_status(dhtt_msgs::msg::NodeStatus::ACTIVE);
 
@@ -329,6 +336,13 @@ namespace dhtt
 				goal_handle->succeed(blank_result);
 			}
 		}
+		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::DONE )
+		{
+			dhtt_msgs::action::Activation::Result::SharedPtr blank_result = std::make_shared<dhtt_msgs::action::Activation::Result>();
+			blank_result->done = true;
+
+			goal_handle->succeed(blank_result);
+		}
 	}
 
 	void Node::store_result_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name )
@@ -343,6 +357,8 @@ namespace dhtt
 	{
 		// collect result from children or self
 		dhtt_msgs::action::Activation::Result::SharedPtr to_ret;
+
+		this->owned_resources.clear();
 
 		RCLCPP_INFO(this->get_logger(), "Activation received from parent...");
 
@@ -371,16 +387,13 @@ namespace dhtt
 
 			// add granted resources to the owned resources for the logic
 			for ( dhtt_msgs::msg::Resource granted_resource : goal_handle->get_goal()->granted_resources )
+			{
+				RCLCPP_WARN(this->get_logger(), "[%s]", granted_resource.name.c_str());
 				this->owned_resources.push_back( granted_resource );
+			}
 
 			// start work 
 			to_ret = this->logic->work_callback(this);
-
-			// take passed resources and again add them to owned resources. Remove any released resources
-			this->owned_resources.clear();
-
-			for ( dhtt_msgs::msg::Resource passed_resource : to_ret->passed_resources )
-				this->owned_resources.push_back( passed_resource );
 				
 			this->resource_status_updated = false;
 

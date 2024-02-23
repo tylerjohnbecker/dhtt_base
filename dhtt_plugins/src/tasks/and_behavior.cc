@@ -102,8 +102,11 @@ namespace dhtt_plugins
 
 		// propogate success to winner
 		dhtt_msgs::action::Activation::Goal n_goal;
-		n_goal.passed_resources = container->get_owned_resources();
+		n_goal.granted_resources = container->get_owned_resources();
 		n_goal.success = true;
+
+		// for (auto resource : n_goal.passed_resources)
+		// 	RCLCPP_ERROR(container->get_logger(), "[%s]", resource.name.c_str());
 
 		std::string active_child = container->get_active_child_name();
 
@@ -130,7 +133,7 @@ namespace dhtt_plugins
 	void AndBehavior::parse_params( std::vector<std::string> params ) 
 	{
 		if ( (int) params.size() > 0 )
-			throw std::invalid_argument("Or Behaviors do not take parameters but " + ((int) params.size()) + std::string(" were given. Returning in error."));
+			throw std::invalid_argument("And Behaviors do not take parameters but " + ((int) params.size()) + std::string(" were given. Returning in error."));
 	
 		(void) params;
 	}
