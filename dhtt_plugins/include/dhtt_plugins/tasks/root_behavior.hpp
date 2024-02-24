@@ -14,6 +14,8 @@
 #include "dhtt_msgs/msg/resource.hpp"
 #include "dhtt_msgs/msg/resources.hpp"
 
+#include "dhtt_msgs/srv/internal_control_request.hpp"
+
 #include <vector>
 #include <string>
 
@@ -43,16 +45,20 @@ namespace dhtt_plugins
 		void release_resources(std::vector<dhtt_msgs::msg::Resource> to_release);
 		void release_all_resources();
 
+		void control_callback( const std::shared_ptr<dhtt_msgs::srv::InternalControlRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::InternalControlRequest::Response> response );
+
 		std::string robot_resources_file_path;
 
 		std::vector<dhtt_msgs::msg::Resource> canonical_resources_list;
 		std::string robot_name;
 
 		bool children_done;
+		bool interrupted;
 
 		std::shared_ptr<rclcpp::Node> pub_node_ptr;
 		std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> resource_executor;
 		rclcpp::Publisher<dhtt_msgs::msg::Resources>::SharedPtr status_pub;
+		rclcpp::Service<dhtt_msgs::srv::InternalControlRequest>::SharedPtr control_server;
 
 	private:
 	};

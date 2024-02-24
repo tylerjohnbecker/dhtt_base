@@ -7,8 +7,11 @@ namespace dhtt_plugins
 		this->pub_node_ptr = std::make_shared<rclcpp::Node>("dhtt_root");
 
 		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
+		std::string control_topic = std::string(TREE_PREFIX) + CONTROL_POSTFIX;	
 
 		this->status_pub = this->pub_node_ptr->create_publisher<dhtt_msgs::msg::Resources>(resources_topic, 10);
+
+		this->control_server = this->pub_node_ptr->create_service<dhtt_msgs::srv::InternalControlRequest>(control_topic, std::bind(&RootBehavior::control_callback, this, std::placeholders::_1, std::placeholders::_2));
 
 		this->resource_executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 		this->resource_executor->add_node(this->pub_node_ptr);
@@ -16,6 +19,7 @@ namespace dhtt_plugins
 		this->children_done = false;
 
 		this->children_allowed = true;
+		this->interrupted = false;
 
 		this->parse_params(params);
 		this->load_resources_from_yaml();
@@ -28,9 +32,10 @@ namespace dhtt_plugins
 		RCLCPP_INFO(container->get_logger(), "\n\n\n\tActivation received starting task execution...");
 
 		this->children_done = false;
+		this->interrupted = false;
 
 		// this relies on there only being one direct child of the root node (should enforce this as well)
-		while ( not this->is_done() )
+		while ( not this->is_done() and not this->interrupted )
 		{
 			// publish state of resources to all nodes in the tree
 			this->publish_resources();
@@ -79,7 +84,7 @@ namespace dhtt_plugins
 			result = container->get_activation_results();
 
 			// update resources (release the ones in passed resources because if they make it to root then they have to be released anyway)
-			RCLCPP_FATAL(container->get_logger(), "\tRequest complete, releasing resources!\n\n");
+			RCLCPP_FATAL(container->get_logger(), "\tRequest complete, releasing resources!\n\n --- --- ---");
 			// for ( auto resource:(*result.begin()).second->released_resources )
 			// 	RCLCPP_INFO(container->get_logger(), "\tReleasing [%s]", resource.name.c_str());
 			// for ( auto resource:(*result.begin()).second->passed_resources )
@@ -92,11 +97,12 @@ namespace dhtt_plugins
 		}
 
 		// ensure that resources are released before next activation
-		this->release_all_resources();
+		if ( this->is_done() )
+			this->release_all_resources();
 
 		RCLCPP_INFO(container->get_logger(), "All children done. Task successfully completed!\n\n\n");
 
-		to_ret->done = true;
+		to_ret->done = this->is_done();
 
 		return to_ret;
 	}
@@ -244,5 +250,22 @@ namespace dhtt_plugins
 			(*resource_iter).locked = false;
 			(*resource_iter).channel = dhtt_msgs::msg::Resource::EXCLUSIVE;
 		}
+	}
+
+	void RootBehavior::control_callback( const std::shared_ptr<dhtt_msgs::srv::InternalControlRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::InternalControlRequest::Response> response )
+	{
+		if ( request->control_code == dhtt_msgs::srv::InternalControlRequest::Request::GRACEFULSTOP )
+		{
+			this->interrupted = true;
+
+			response->success = true;
+
+			return;
+		}
+
+		response->success = false;
+		response->error_msg = "Unable to complete request.";
+
+		return;
 	}
 }

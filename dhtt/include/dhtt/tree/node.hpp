@@ -22,6 +22,7 @@
 #define REGISTER_CHILD_POSTFIX "/register_child"
 #define ACTIVATION_POSTFIX "/activate"
 #define RESOURCES_POSTFIX "/resource"
+#define CONTROL_POSTFIX "/control"
 
 namespace dhtt
 {
