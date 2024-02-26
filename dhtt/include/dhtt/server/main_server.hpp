@@ -111,6 +111,7 @@ namespace dhtt
 		rclcpp::Subscription<dhtt_msgs::msg::Node>::SharedPtr status_sub;
 
 		rclcpp_action::Client<dhtt_msgs::action::Activation>::SharedPtr client_ptr;
+		rclcpp::Client<dhtt_msgs::srv::InternalControlRequest>::SharedPtr internal_control_client;
 
 		// mutexes
 		boost::mutex modify_mut;

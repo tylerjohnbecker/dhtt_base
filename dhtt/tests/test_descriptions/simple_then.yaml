@@ -30,10 +30,10 @@ Nodes:
     behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
     parent: 'ParentThen'
-    params: ["activation_potential: 10.0"]
+    params: ["activation_potential: 0.0"]
   ThirdTask:
     type: 4
     behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
     parent: 'ParentThen'
-    params: ["activation_potential: 0.0"]
+    params: ["activation_potential: 10.0"]

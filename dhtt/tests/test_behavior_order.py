@@ -159,7 +159,7 @@ class TestServerBehaviorOrder:
 			assert rclpy.ok()
 
 	def wait_for_waiting(self):
-		while self.node.root_state != NodeStatus.WAITING and rclpy.ok():
+		while TestServerBehaviorOrder.node.root_state != NodeStatus.WAITING and rclpy.ok():
 			rclpy.spin_once(TestServerBehaviorOrder.node)
 			
 		assert rclpy.ok()
@@ -171,7 +171,7 @@ class TestServerBehaviorOrder:
 		# spin_thread = Thread(target=self.spin_sub)
 		# spin_thread.start()
 
-		while self.node.root_state != NodeStatus.DONE and rclpy.ok():
+		while TestServerBehaviorOrder.node.root_state != NodeStatus.DONE and rclpy.ok():
 			rclpy.spin_once(TestServerBehaviorOrder.node)
 
 		# self.ok = False

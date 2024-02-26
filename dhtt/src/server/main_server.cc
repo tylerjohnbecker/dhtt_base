@@ -41,7 +41,6 @@ namespace dhtt
 
 		this->node_list.task_completion_percent = 0.0f;
 
-
 		// initialize physical Root Node. loaded a yaml file as a part of the constructor so we don't catch it and make the program fail to load if that happens
 		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>("ROOT_0", "dhtt_plugins::RootBehavior", root_node->params, "NONE");
 		this->spinner_cp->add_node(this->node_map["ROOT_0"]);
@@ -56,6 +55,7 @@ namespace dhtt
 		this->history_server = this->create_service<dhtt_msgs::srv::HistoryRequest>("/history_service", std::bind(&MainServer::history_callback, this,std::placeholders::_1, std::placeholders::_2));
 
 		this->client_ptr = rclcpp_action::create_client<dhtt_msgs::action::Activation>( this, "/dhtt/ROOT_0/activate");
+		this->internal_control_client = this->create_client<dhtt_msgs::srv::InternalControlRequest>("/dhtt/control");
 	}
 
 	MainServer::~MainServer()
@@ -171,6 +171,61 @@ namespace dhtt
 			return;
 		}
 
+		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::MUTATE or request->type == dhtt_msgs::srv::ModifyRequest::Request::PARAM_UPDATE )
+		{
+			std::lock_guard<boost::mutex> guard(this->modify_mut);
+			
+			if ( (int) request->to_modify.size() == 0 )
+			{
+				response->success = false;
+				response->error_msg = "Failed to remove nodes because no nodes to remove were given.";
+				
+				RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+
+				return;
+			}
+
+			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
+			{
+
+				dhtt_msgs::msg::Subtree tmp = this->fetch_subtree_by_name(*iter);
+
+				if ( tmp.tree_status == -1)
+				{
+					response->error_msg = "Node with name " + (*iter) + " not found. Returning in error!";
+					response->success = false;
+
+					return;
+				}
+
+				RCLCPP_INFO(this->get_logger(), "Mutating node [%s] to type %s", (*iter).c_str(), request->mutate_type.c_str());
+
+				// construct internal modify Request
+				std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
+				std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
+
+				req->type = request->type;
+				req->to_modify.push_back(*iter);
+				req->mutate_type = request->mutate_type;
+				req->params = request->params;
+
+				this->node_map[(*iter)]->modify(req, res);
+
+				response->error_msg = res->error_msg;
+				response->success = not strcmp(response->error_msg.c_str(), "");
+
+				// exit early if modification fails
+				if ( not response->success )
+				{
+					RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+
+					return;
+				}
+			}
+
+			return;
+		}
+
 		// currently skipping other modification types
 		response->error_msg = "Unknown request type " + std::to_string(request->type) + " chosen. Returning in error.";
 		response->success = false;
@@ -205,6 +260,36 @@ namespace dhtt
 			response->error_msg = this->reset_tree();
 
 			response->success = not strcmp(response->error_msg.c_str(), "");
+
+			return;
+		}
+
+		if (request->type == dhtt_msgs::srv::ControlRequest::Request::STOP )
+		{
+			RCLCPP_INFO(this->get_logger(), "Interrupt request received!");
+
+			std::shared_ptr<dhtt_msgs::srv::InternalControlRequest::Request> rq = std::make_shared<dhtt_msgs::srv::InternalControlRequest::Request>();
+			rq->control_code = dhtt_msgs::srv::InternalControlRequest::Request::GRACEFULSTOP;
+
+			{
+				using namespace std::chrono_literals;
+
+				if ( not this->internal_control_client->wait_for_service(1s))
+				{
+					response->error_msg = "Unable to reach interal control server. Returning in error.";
+					response->success = false;
+
+					RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+
+					return;
+				}
+			}
+
+			// this is somewhat dangerous as the request can fail it just shouldn't fail
+			auto result = this->internal_control_client->async_send_request(rq);
+
+			response->error_msg = "";
+			response->success = true;
 
 			return;
 		}
@@ -541,6 +626,10 @@ namespace dhtt
 	{
 		if ( this->running )
 			return "Tree is already actively running. Returning in error.";
+		{
+			// there is no harm in starting a finished tree so just let the root know to try
+			this->node_map["ROOT_0"]->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
+		}
 
 		this->run_tree_thread = std::make_shared<std::thread>(&MainServer::run_tree, this);
 		this->run_tree_thread->detach();
@@ -645,13 +734,14 @@ namespace dhtt
 
 		(*found_node).node_status.state = data->node_status.state;
 		(*found_node).owned_resources = data->owned_resources;
+		(*found_node).plugin_name = data->plugin_name;
 
 		bool is_leaf = (*found_node).child_name.empty();
 
 		// if the node is working and is not the head of the history make it the head of the history. only collect behaviors not tasks (so leaves)
 		if ( data->node_status.state == dhtt_msgs::msg::NodeStatus::WORKING and ( ( (int) this->history.size() == 0 ) or strcmp ( this->history.back().c_str(), data->node_name.c_str() ) ) and is_leaf )
 		{
-			RCLCPP_DEBUG(this->get_logger(), "Adding node %s to history!!!!!", data->node_name.c_str());
+			RCLCPP_WARN(this->get_logger(), "Adding node %s to history!!!!!", data->node_name.c_str());
 			this->history.push_back((*data).node_name);
 		}
 
@@ -775,6 +865,8 @@ namespace dhtt
 	{
 		// empty for now, this is where we can get information about the tree once it finishes the task
 		(void) result;
+
+		RCLCPP_INFO(this->get_logger(), "Tree finished running...");
 
 		this->running = false;
 		this->running_mut.unlock();

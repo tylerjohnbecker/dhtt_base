@@ -63,6 +63,7 @@ if(BUILD_TESTING)
   set(_pytest_tests
     tests/test_add_remove.py
     tests/test_behavior_order.py
+    tests/test_dynamic_changes.py
     )
 
   foreach(_test_path ${_pytest_tests})

@@ -61,10 +61,19 @@ namespace dhtt_plugins
 
 			for ( auto const& x : results )
 			{
-				if ( x.second->activation_potential > current_max and x.second->possible )
+				if ( x.second->activation_potential > current_max and x.second->possible and not x.second->done )
 				{
 					current_max = x.second->activation_potential;
 					this->activated_child_name = x.first;
+				}
+
+				// if we for some reason already have a finished child then we have to pass that up and we are also done
+				if ( x.second->done )
+				{
+					current_max = 1;
+					this->activated_child_name = x.first;
+
+					break;
 				}
 			}
 
@@ -78,6 +87,14 @@ namespace dhtt_plugins
 			this->has_chosen_child = true;
 
 			child_req = results[this->activated_child_name];
+
+			n_goal.success = false;
+
+			for ( auto iter : container->get_child_names() )
+				if ( strcmp( iter.c_str(), this->activated_child_name.c_str() ) )
+					container->async_activate_child(iter, n_goal);
+				
+			container->block_for_responses_from_children();
 		}
 		else
 		{
@@ -96,7 +113,7 @@ namespace dhtt_plugins
 
 		this->activation_potential = child_req->activation_potential;
 
-		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation..", this->activated_child_name.c_str()) ;
+		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation which is done [%d]...", this->activated_child_name.c_str(), child_req->done) ;
 
 		to_ret->local_best_node = this->activated_child_name;
 		to_ret->requested_resources = child_req->requested_resources;

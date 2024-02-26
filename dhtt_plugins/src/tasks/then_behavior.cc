@@ -62,6 +62,12 @@ namespace dhtt_plugins
 
 		std::string first_child_in_queue = children[this->child_queue_index];
 
+		while ( results[first_child_in_queue]->done and this->child_queue_index < this->child_queue_size - 1)
+		{
+			this->child_queue_index++;
+			first_child_in_queue = children[this->child_queue_index];
+		}
+
 		to_ret->local_best_node = first_child_in_queue;
 
 		// calculate activation potential
@@ -109,7 +115,7 @@ namespace dhtt_plugins
 
 		std::string active = container->get_active_child_name();
 
-		RCLCPP_DEBUG(container->get_logger(), "Telling child %s to work!", active.c_str());
+		RCLCPP_WARN(container->get_logger(), "Telling child %s to work!", active.c_str());
 
 		container->async_activate_child(active, n_goal);
 
@@ -127,7 +133,7 @@ namespace dhtt_plugins
 			this->child_queue_index++;
 		}
 
-		RCLCPP_DEBUG(container->get_logger(), "Child finished running, %d left!", (this->child_queue_size - this->child_queue_index) );
+		RCLCPP_WARN(container->get_logger(), "Child finished running, %d left!", (this->child_queue_size - this->child_queue_index) );
 
 		// change hands of resources and pass up
 		if ( not this->is_done() )

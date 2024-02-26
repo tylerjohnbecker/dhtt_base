@@ -1,9 +1,12 @@
 ### FOR USE BY MAIN SERVER ONLY
 # type of request (see constants below)
-int8 				request_type
+int8 				type
 	
 # optional: node name to add or remove (added nodes are already constructed by the server)
 string 				node_name
+
+# optional: type of node to become
+string 				plugin_name
 
 # optional: params to change in the node this request was sent to
 string[] 			params

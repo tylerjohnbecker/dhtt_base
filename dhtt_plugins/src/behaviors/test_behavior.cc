@@ -162,6 +162,7 @@ namespace dhtt_plugins
 			throw std::invalid_argument("Class TestBehavior only expects parameter activation_potential, but received " + key + ". Returning in error.");
 
 		this->activation_potential = atof(value.c_str());
+		this->params = params;
 	}
 
 	double TestBehavior::get_perceived_efficiency()

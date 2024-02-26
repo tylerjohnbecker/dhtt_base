@@ -13,6 +13,7 @@
 #include "dhtt_msgs/msg/node_status.hpp"
 
 #include "dhtt_msgs/srv/internal_service_registration.hpp"
+#include "dhtt_msgs/srv/modify_request.hpp"
 
 #include "dhtt_msgs/action/activation.hpp"
 
@@ -31,6 +32,8 @@ namespace dhtt
 	public:
 		Node(std::string name, std::string type, std::vector<std::string> params, std::string parent_name);
 		~Node();
+
+		friend class MainServer;
 
 		bool loaded_successfully();
 		std::string get_error_msg();
@@ -72,6 +75,7 @@ namespace dhtt
 
 		// service callbacks
 		void register_child_callback(std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Request> request, std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Response> response);
+		void modify(std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response);
 
 		// subscriber callbacks
 		void resource_availability_callback( const dhtt_msgs::msg::Resources::SharedPtr canonical_list );
@@ -101,6 +105,8 @@ namespace dhtt
 
 		std::shared_ptr<std::thread> work_thread;
 		std::shared_ptr<std::thread> fail_thread;
+
+		std::mutex logic_mut;
 
 		std::vector<dhtt_msgs::msg::Resource> owned_resources;
 		std::vector<dhtt_msgs::msg::Resource> available_resources;

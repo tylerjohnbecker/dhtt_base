@@ -34,7 +34,6 @@ namespace dhtt_plugins
 
 		double get_perceived_efficiency() override;
 
-
 		bool is_done() override;
 
 	protected:
@@ -47,6 +46,8 @@ namespace dhtt_plugins
 
 		void control_callback( const std::shared_ptr<dhtt_msgs::srv::InternalControlRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::InternalControlRequest::Response> response );
 
+		void async_spin();
+
 		std::string robot_resources_file_path;
 
 		std::vector<dhtt_msgs::msg::Resource> canonical_resources_list;
@@ -54,11 +55,14 @@ namespace dhtt_plugins
 
 		bool children_done;
 		bool interrupted;
+		bool slow;
 
 		std::shared_ptr<rclcpp::Node> pub_node_ptr;
 		std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> resource_executor;
 		rclcpp::Publisher<dhtt_msgs::msg::Resources>::SharedPtr status_pub;
 		rclcpp::Service<dhtt_msgs::srv::InternalControlRequest>::SharedPtr control_server;
+
+		std::shared_ptr<std::thread> spin_thread;
 
 	private:
 	};

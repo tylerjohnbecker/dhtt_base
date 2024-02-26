@@ -23,6 +23,11 @@ namespace dhtt_plugins
 
 		this->parse_params(params);
 		this->load_resources_from_yaml();
+
+		this->spin_thread = std::make_shared<std::thread>(&RootBehavior::async_spin, this);
+		this->spin_thread->detach();
+
+		this->slow = true;
 	}
 
 	std::shared_ptr<dhtt_msgs::action::Activation::Result> RootBehavior::auction_callback( dhtt::Node* container ) 
@@ -37,6 +42,7 @@ namespace dhtt_plugins
 		// this relies on there only being one direct child of the root node (should enforce this as well)
 		while ( not this->is_done() and not this->interrupted )
 		{
+
 			// publish state of resources to all nodes in the tree
 			this->publish_resources();
 
@@ -56,14 +62,20 @@ namespace dhtt_plugins
 
 			if ( result.empty() )
 				RCLCPP_ERROR(container->get_logger(), "Empty response received!!!");
+			
+			if ( (*result.begin()).second->done )
+			{
+				RCLCPP_FATAL(container->get_logger(), "\tChildren done early!");
+
+				this->children_done = (*result.begin()).second->done;
+				break;
+			}
 
 			if ( not (*result.begin()).second->possible )
 			{
 				container->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
-				to_ret->done = false;
-
-				return to_ret;
+				break;
 			}
 
 			// update resources
@@ -94,13 +106,24 @@ namespace dhtt_plugins
 			this->release_resources( (*result.begin()).second->passed_resources );
 
 			this->children_done = (*result.begin()).second->done;
+
+			if (this->slow)
+				rclcpp::sleep_for(std::chrono::milliseconds(100));
 		}
+		
+		this->release_all_resources();
 
 		// ensure that resources are released before next activation
 		if ( this->is_done() )
-			this->release_all_resources();
+		{
+			RCLCPP_INFO(container->get_logger(), "All children done. Task successfully completed!\n\n\n");
+		}
+		else
+		{
+			RCLCPP_INFO(container->get_logger(), "Task interrupted. Returning to state WAITING.\n\n\n");
 
-		RCLCPP_INFO(container->get_logger(), "All children done. Task successfully completed!\n\n\n");
+			container->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
+		}
 
 		to_ret->done = this->is_done();
 
@@ -259,6 +282,7 @@ namespace dhtt_plugins
 			this->interrupted = true;
 
 			response->success = true;
+			response->error_msg = "";
 
 			return;
 		}
@@ -267,5 +291,11 @@ namespace dhtt_plugins
 		response->error_msg = "Unable to complete request.";
 
 		return;
+	}
+
+	void RootBehavior::async_spin()
+	{
+		while ( rclcpp::ok() )
+			this->resource_executor->spin_once();
 	}
 }

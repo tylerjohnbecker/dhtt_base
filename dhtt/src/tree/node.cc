@@ -266,7 +266,6 @@ namespace dhtt
 		full_status.parent_name = this->parent_name;
 
 		full_status.child_name = this->child_names;
-		// we are dying here 
 		full_status.params = this->logic->params;
 
 		full_status.plugin_name = this->plugin_name;
@@ -370,6 +369,8 @@ namespace dhtt
 		// collect result from children or self
 		dhtt_msgs::action::Activation::Result::SharedPtr to_ret;
 
+		std::lock_guard<std::mutex> guard(this->logic_mut);
+
 		this->owned_resources.clear();
 
 		RCLCPP_INFO(this->get_logger(), "Activation received from parent...");
@@ -428,6 +429,8 @@ namespace dhtt
 
 	void Node::register_child_callback(std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Request> request, std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Response> response)
 	{
+		// std::lock_guard<std::mutex> guard(this->logic_mut);
+
 		if (not this->logic->can_add_child())
 		{
 			response->success = false;
@@ -441,6 +444,83 @@ namespace dhtt
 		this->child_names.push_back(request->node_name);
 		this->activation_clients.push_back(n_client);
 		response->success = true;
+	}
+	
+	void Node::modify(std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response)
+	{
+		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::MUTATE )
+		{
+			std::lock_guard<std::mutex> guard(this->logic_mut);
+
+			std::shared_ptr<NodeType> temp_logic;
+
+			try
+			{
+				temp_logic = node_type_loader.createSharedInstance(request->mutate_type);
+
+				temp_logic->initialize(request->params);
+			}
+			catch (std::exception& ex)
+			{
+				response->error_msg = "Error when loading plugin " + request->mutate_type + ": " + ex.what();
+				response->success = false;
+
+				return;
+			}
+
+			if ( this->logic->can_add_child() != temp_logic->can_add_child() and ( (int) this->child_names.size() > 0 ) )
+			{
+				response->error_msg = "Error when processing mutation request: This node has children but the new plugin cannot have children. Returning in error.";
+				response->success = false;
+
+				return;
+			}
+
+			this->logic.reset();
+
+			this->logic = temp_logic;
+
+			this->plugin_name = request->mutate_type;
+
+			response->error_msg = "";
+			response->success = true;
+
+			int8_t n_status = dhtt_msgs::msg::NodeStatus::WAITING;
+
+			if ( this->status.state == dhtt_msgs::msg::NodeStatus::ACTIVE )
+				n_status = dhtt_msgs::msg::NodeStatus::ACTIVE;
+
+			this->update_status(n_status);
+
+			return;
+		}
+
+		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::PARAM_UPDATE )
+		{
+			std::lock_guard<std::mutex> guard(this->logic_mut);
+
+			this->logic->params.clear();
+
+			try
+			{
+				this->logic->parse_params(request->params);
+			}
+			catch (std::exception& ex)
+			{
+				response->error_msg = std::string("Error parsing new params: ") + ex.what();
+				response->success = false;
+
+				return;
+			}
+
+			response->error_msg = "";
+			response->success = true;
+
+			this->update_status(this->status.state);
+
+			return;
+		}
+
 	}
 
 	void Node::resource_availability_callback( const dhtt_msgs::msg::Resources::SharedPtr canonical_list )
