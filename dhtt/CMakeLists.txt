@@ -55,8 +55,14 @@ target_link_libraries(start_server dhtt_lib ${YAML_CPP_LIBRARIES} ${Boost_LIBRAR
 install(TARGETS start_server 
   DESTINATION lib/${PROJECT_NAME})
 
-
 ament_python_install_package(${PROJECT_NAME})
+
+install(PROGRAMS
+  scripts/experiment_1.py
+  scripts/experiment_2.py
+  scripts/experiment_3.py
+  scripts/visualize_results.py
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)

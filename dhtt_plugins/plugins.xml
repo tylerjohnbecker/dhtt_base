@@ -2,6 +2,15 @@
 	<class type="dhtt_plugins::TestBehavior" base_class_type="dhtt::NodeType">
 		<description>Filler behavior for testing the functionality of dhtts</description>
 	</class>
+	<class type="dhtt_plugins::MoveBehavior" base_class_type="dhtt::NodeType">
+		<description>Behavior to move the robot through a ros1 bridge</description>
+	</class>
+	<class type="dhtt_plugins::PickBehavior" base_class_type="dhtt::NodeType">
+		<description>Behavior to command a robot to pick an object over a ros1 bridge</description>
+	</class>
+	<class type="dhtt_plugins::PlaceBehavior" base_class_type="dhtt::NodeType">
+		<description>Behavior to command a robot to place an object over a ros1 bridge</description>
+	</class>
 	<class type="dhtt_plugins::RootBehavior" base_class_type="dhtt::NodeType">
 		<description>Task node which can only be the topmost node in the tree. A tree can only have one root. The root node's job is to manage the resources of the robot and to begin the activation cycle of the tree. The root node also acts as the major connect with the main server control services.</description>
 	</class>

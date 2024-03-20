@@ -9,11 +9,21 @@ namespace dhtt_plugins
 		// these just supress warnings regarding not using function params
 		(void) params;
 
+		// just a random hopefully unique name
+		const void * address = static_cast<const void*>(this);
+		std::stringstream ss;
+		ss << "action_" << address;
+
+		this->pub_node_ptr = std::make_shared<rclcpp::Node>(ss.str().c_str());
+
 		// only allowed for now until the task logic is implemented
 		this->children_allowed = false;
 		this->done = false;
 
 		this->parse_params(params);
+
+		this->executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
+		this->executor->add_node(this->pub_node_ptr);
 
 		return;
 	}

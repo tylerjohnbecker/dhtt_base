@@ -107,8 +107,8 @@ namespace dhtt_plugins
 
 			this->children_done = (*result.begin()).second->done;
 
-			if (this->slow)
-				rclcpp::sleep_for(std::chrono::milliseconds(100));
+			// if (this->slow)
+			rclcpp::sleep_for(std::chrono::milliseconds(1000));
 		}
 		
 		this->release_all_resources();

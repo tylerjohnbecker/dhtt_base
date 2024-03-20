@@ -1,3 +1,6 @@
+# header containing the timestamp of the msg
+std_msgs/Header			head
+
 # this is the topic name of the node in the tree
 string 					node_name
 

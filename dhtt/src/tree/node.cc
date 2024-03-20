@@ -261,6 +261,9 @@ namespace dhtt
 		// send update to status topic
 		dhtt_msgs::msg::Node full_status;
 
+		full_status.head.stamp = this->now();
+		full_status.head.frame_id = "";
+
 		full_status.node_name = this->name;
 		full_status.parent = -1;
 		full_status.parent_name = this->parent_name;
@@ -451,6 +454,8 @@ namespace dhtt
 		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::MUTATE )
 		{
 			std::lock_guard<std::mutex> guard(this->logic_mut);
+
+			this->update_status(dhtt_msgs::msg::NodeStatus::MUTATING);
 
 			std::shared_ptr<NodeType> temp_logic;
 

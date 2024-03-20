@@ -20,6 +20,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'experiment_1 = dhtt.experiment_1:main',
+            'experiment_2 = dhtt.experiment_2:main',
+            'experiment_3 = dhtt.experiment_3:main'
         ],
     },
 )

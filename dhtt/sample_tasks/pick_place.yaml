@@ -10,30 +10,31 @@ NodeList: [
 Nodes:
   PickAndPlace:
     type: 2
+    behavior_type: "dhtt_plugins::ThenBehavior"
     robot: 0
     parent: 'NONE'
     params: []
   MoveToObject:
     type: 4
-    type_plugin: "MoveBehavior"
+    behavior_type: "dhtt_plugins::MoveBehavior"
     robot: 0
     parent: 'PickAndPlace'
-    params: ['dest: n/a']
+    params: ['activation_potential: 1.0', 'dest: home']
   PickObject:
     type: 4
-    type_plugin: "PickBehavior"
+    behavior_type: "dhtt_plugins::PickBehavior"
     robot: 0
     parent: 'PickAndPlace'
-    params: ['object: n/a']
+    params: ['activation_potential: 1.0', 'object: any']
   MoveToDestination:
     type: 4
-    type_plugin: "MoveBehavior"
+    behavior_type: "dhtt_plugins::MoveBehavior"
     robot: 0
     parent: 'PickAndPlace'
-    params: ['dest: n/a']
+    params: ['activation_potential: 1.0', 'dest: depot_5']
   PlaceObject:
     type: 4
-    type_plugin: "PlaceBehavior"
+    behavior_type: "dhtt_plugins::PlaceBehavior"
     robot: 0
     parent: 'PickAndPlace'
-    params: ['loc: n/a']
+    params: ['activation_potential: 1.0']
