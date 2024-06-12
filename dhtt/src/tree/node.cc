@@ -137,6 +137,10 @@ namespace dhtt
 		auto found_name = [&]( std::string to_check ) { return not strcmp(to_check.c_str(), child_name.c_str()); };
 
 		auto found_iter = std::find_if(this->child_names.begin(), this->child_names.end(), found_name);
+
+		if ( found_iter == this->child_names.end() )
+			return false;
+
 		int found_index = std::distance(this->child_names.begin(), found_iter);
 
 		this->activation_clients.erase(std::next(this->activation_clients.begin(), found_index));
