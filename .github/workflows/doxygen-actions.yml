@@ -1,9 +1,9 @@
 name: Doxygen Action            
-  uses: mattnotmitt/doxygen-action@1.9.8
-  with:
-  	doxyfile-path: ./config
+uses: mattnotmitt/doxygen-action@1.9.8
+with:
+	doxyfile-path: ./config
 name: Deploy
-  uses: peaceiris/actions-gh-pages@v4
-  with:
-    github_token: ${{ secrets.GITHUB_TOKEN }}
-    publish_dir: ./html
+uses: peaceiris/actions-gh-pages@v4
+with:
+  github_token: ${{ secrets.GITHUB_TOKEN }}
+  publish_dir: ./html
