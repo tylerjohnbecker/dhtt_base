@@ -17,8 +17,10 @@ jobs:
       - uses: mattnotmitt/doxygen-action@v1.9.5
         with:
           doxyfile-path: ./config
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
       - run: |
-          git checkout gh-pages
           git add -f ./html ./latex
           git config --global user.name "Tyler Becker"
           git config --global user.email "tylerjohnbecker@user.noreply.github.com"
