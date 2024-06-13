@@ -14,12 +14,12 @@ jobs:
         uses: actions/checkout@v4
       - run: cd ${{ github.workspace }}
       - run: git checkout main
-      # - run: doxygen ./config
       - uses: mattnotmitt/doxygen-action@v1.9.5
         with:
           doxyfile-path: ./config
-      - run: git add -f ./html ./latex
       - run: |
+          git checkout gh-pages
+          git add -f ./html ./latex
           git config --global user.name "Tyler Becker"
           git config --global user.email "tylerjohnbecker@user.noreply.github.com"
           git commit -m "doxygen changes"
