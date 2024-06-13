@@ -31,8 +31,8 @@ namespace dhtt
 	/**
 	 * \brief dHTT Node class for all nodes on the tree
 	 * 
-	 * Main Node class for behaviors and tasks on the tree. Facilitates auction behavior, main tree communication protocals, status updates and maintenance, and communication with the Main Server.
-	 * 	All node specific logic is kept as a private plugin member that is loaded when the object is created (dhtt::NodeType).
+	 * Main Node class for behaviors and tasks on the tree. Facilitates auction behavior, activation spreading behavior, basic resource management, status updates and maintenance, and communication with the Main Server.
+	 * 	All node specific logic is kept as a private plugin member that is loaded when the object is created (dhtt::NodeType). 
 	 */
 	class Node : public rclcpp::Node
 	{
