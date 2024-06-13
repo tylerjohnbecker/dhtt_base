@@ -10,14 +10,11 @@ jobs:
       contents: write
       issues: write
     steps:
-      # - name: Doxygen Action            
-      #   uses: mattnotmitt/doxygen-action@1.9.8
-      #   with:
-      #   	doxyfile-path: ./config
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./html
+      - run: git checkout main
+      - run: doxygen ./config
+      - run: git checkout gh-pages
+      - run: git add ./html ./latex
+      - run: git commit -m "doxygen changes"
+      - run: git push origin gh-pages
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
