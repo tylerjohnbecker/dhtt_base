@@ -3,6 +3,7 @@
 # with:
 # 	doxyfile-path: ./config
 name: Deploy
+on: push
 uses: peaceiris/actions-gh-pages@v4
 with:
   github_token: ${{ secrets.GITHUB_TOKEN }}
