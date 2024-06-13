@@ -18,7 +18,7 @@ jobs:
         with:
           doxyfile-path: ./config
       - run: |
-          git fetch origin master:gh-pages
+          git fetch origin 
           git checkout gh-pages
           git add -f ./html ./latex
           git config --global user.name "Tyler Becker"
