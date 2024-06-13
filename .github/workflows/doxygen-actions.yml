@@ -21,6 +21,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: gh-pages
+          token: ${{ secrets.GITHUB_TOKEN }}
       - run: |
           git add -f ./html ./latex
           git config --global user.name "Tyler Becker"
