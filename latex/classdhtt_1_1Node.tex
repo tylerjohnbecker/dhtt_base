@@ -1,0 +1,932 @@
+\hypertarget{classdhtt_1_1Node}{}\doxysection{dhtt\+::Node Class Reference}
+\label{classdhtt_1_1Node}\index{dhtt::Node@{dhtt::Node}}
+
+
+d\+H\+TT \mbox{\hyperlink{classdhtt_1_1Node}{Node}} class for all nodes on the tree  
+
+
+
+
+{\ttfamily \#include $<$node.\+hpp$>$}
+
+
+
+Inheritance diagram for dhtt\+::Node\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=157pt]{classdhtt_1_1Node__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for dhtt\+::Node\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=157pt]{classdhtt_1_1Node__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classdhtt_1_1Node_ad92bd3188be032af09313bdc5f533650}{Node}} (std\+::string \mbox{\hyperlink{classdhtt_1_1Node_a115da70a32b17f9913d7bfb57180afe3}{name}}, std\+::string type, std\+::vector$<$ std\+::string $>$ params, std\+::string \mbox{\hyperlink{classdhtt_1_1Node_a4f3abfadbbda36594d1976a3d960fc09}{parent\+\_\+name}})
+\begin{DoxyCompactList}\small\item\em Constructor for the node class. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classdhtt_1_1Node_a36bce3e0e7d7593a5b63b637f39cfee1}{$\sim$\+Node}} ()
+\item 
+bool \mbox{\hyperlink{classdhtt_1_1Node_a37e3f9bfad1ce41f0279baa58f0c91cf}{loaded\+\_\+successfully}} ()
+\begin{DoxyCompactList}\small\item\em returns the value of successful\+\_\+load \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1Node_aaa42c6f51d16f6e9840765b18ec01feb}{get\+\_\+error\+\_\+msg}} ()
+\begin{DoxyCompactList}\small\item\em getter method for error msg \end{DoxyCompactList}\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt_1_1Node_a5ee8a1d48ccb24806a6eeef7df2f60fb}{get\+\_\+owned\+\_\+resources}} ()
+\begin{DoxyCompactList}\small\item\em Returns all currently owned resources of the node. \end{DoxyCompactList}\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt_1_1Node_aaa143fe197be0b7b875939af02a8d1d8}{get\+\_\+passed\+\_\+resources}} ()
+\begin{DoxyCompactList}\small\item\em Returns all resources passed to a node by the parent. \end{DoxyCompactList}\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt_1_1Node_a4fdcf763e9050f5d023bca285b819ec7}{get\+\_\+resource\+\_\+state}} ()
+\begin{DoxyCompactList}\small\item\em Returns the node\textquotesingle{}s copy of the resource state. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1Node_abea1f61420a615e9ee1eca5e9e0be309}{set\+\_\+passed\+\_\+resources}} (std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ set\+\_\+to)
+\begin{DoxyCompactList}\small\item\em setter method for passsed resources \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1Node_a08edd24fae1fac092d475d664518ad79}{register\+\_\+with\+\_\+parent}} ()
+\begin{DoxyCompactList}\small\item\em registers this node with it\textquotesingle{}s parent \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1Node_a81eec6c70d038bbafc18f01948e1accb}{register\+\_\+servers}} ()
+\begin{DoxyCompactList}\small\item\em registers the necessary servers, publishers, action servers, etc. of this node. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classdhtt_1_1Node_a4ab197eb83045145e50502a968ea217d}{remove\+\_\+child}} (std\+::string child\+\_\+name)
+\begin{DoxyCompactList}\small\item\em removes a child from this node\textquotesingle{}s list of children \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1Node_add5be2961f87d9ee2e539e35505194c0}{async\+\_\+activate\+\_\+child}} (std\+::string child\+\_\+name, dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Goal activation\+\_\+goal)
+\begin{DoxyCompactList}\small\item\em spreads activation to child without busy wait \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1Node_a43572741c70d55807c8b434ac52954d4}{activate\+\_\+all\+\_\+children}} (dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Goal activation\+\_\+goal)
+\begin{DoxyCompactList}\small\item\em spreads activation to all children \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classdhtt_1_1Node_ad5d6810ec6bdac8d5b24fffe656b64a4}{block\+\_\+for\+\_\+responses\+\_\+from\+\_\+children}} ()
+\begin{DoxyCompactList}\small\item\em busy waits until the number of responses equals the number of activations sent out \end{DoxyCompactList}\item 
+std\+::map$<$ std\+::string, dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result\+::\+Shared\+Ptr $>$ \mbox{\hyperlink{classdhtt_1_1Node_afcb6c7373ee646f938fb0b8840d115a2}{get\+\_\+activation\+\_\+results}} ()
+\begin{DoxyCompactList}\small\item\em getter for the responses from children \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1Node_aa5d93ab7a140c45ac9995f75d9cd3674}{get\+\_\+child\+\_\+names}} ()
+\begin{DoxyCompactList}\small\item\em getter for the list of child\+\_\+names \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1Node_a584c036236421f9e6bb9cc40cfa44932}{get\+\_\+active\+\_\+child\+\_\+name}} ()
+\begin{DoxyCompactList}\small\item\em getter for the name of the current active child \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1Node_a5fb2d4018cb17c6427840fba0793920b}{get\+\_\+node\+\_\+name}} ()
+\begin{DoxyCompactList}\small\item\em getter for this node\textquotesingle{}s name as set in the constructor \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classdhtt_1_1Node_ad4e4a75ed50052a5abda45df148bbeb2}{is\+\_\+request\+\_\+possible}} (std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ requested\+\_\+resources)
+\begin{DoxyCompactList}\small\item\em checks whether a request of given resources can be fulfilled \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1Node_ad2dbd4ea3713bc091c3fdf9fa0b02378}{update\+\_\+status}} (int8\+\_\+t n\+\_\+state)
+\begin{DoxyCompactList}\small\item\em updates the internal status and reports to \mbox{\hyperlink{classdhtt_1_1MainServer}{Main\+Server}} \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1Node_a9108ed5afb76cb5455fa2a59ff57c1ca}{set\+\_\+resource\+\_\+status\+\_\+updated}} (bool to\+\_\+set)
+\begin{DoxyCompactList}\small\item\em setter for internal resource\+\_\+status\+\_\+updated flag \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+rclcpp\+\_\+action\+::\+Goal\+Response \mbox{\hyperlink{classdhtt_1_1Node_ae24d6923631c252ec3801f73e204dc93}{goal\+\_\+activation\+\_\+callback}} (const rclcpp\+\_\+action\+::\+Goal\+U\+U\+ID \&uuid, std\+::shared\+\_\+ptr$<$ const dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Goal $>$ goal)
+\begin{DoxyCompactList}\small\item\em goal callback for activation action server \end{DoxyCompactList}\item 
+rclcpp\+\_\+action\+::\+Cancel\+Response \mbox{\hyperlink{classdhtt_1_1Node_a519fb405b20ede86390bcfca58843daf}{cancel\+\_\+activation\+\_\+callback}} (const std\+::shared\+\_\+ptr$<$ rclcpp\+\_\+action\+::\+Server\+Goal\+Handle$<$ dhtt\+\_\+msgs\+::action\+::\+Activation $>$$>$ goal\+\_\+handle)
+\begin{DoxyCompactList}\small\item\em cancel callback for activation action server \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1Node_a13555af4fe306f15d4f47f15f473363a}{activation\+\_\+accepted\+\_\+callback}} (const std\+::shared\+\_\+ptr$<$ rclcpp\+\_\+action\+::\+Server\+Goal\+Handle$<$ dhtt\+\_\+msgs\+::action\+::\+Activation $>$$>$ goal\+\_\+handle)
+\begin{DoxyCompactList}\small\item\em maintains the finite state machine status of the node after activation is received \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1Node_a5a8ca21dcee3cf3bb135e65025652089}{store\+\_\+result\+\_\+callback}} (const rclcpp\+\_\+action\+::\+Client\+Goal\+Handle$<$ dhtt\+\_\+msgs\+::action\+::\+Activation $>$\+::Wrapped\+Result \&result, std\+::string node\+\_\+name)
+\begin{DoxyCompactList}\small\item\em stores results received from activating children \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1Node_a7585bb03350780e9cc7f6c11dccd7f12}{activate}} (const std\+::shared\+\_\+ptr$<$ rclcpp\+\_\+action\+::\+Server\+Goal\+Handle$<$ dhtt\+\_\+msgs\+::action\+::\+Activation $>$$>$ goal\+\_\+handle)
+\begin{DoxyCompactList}\small\item\em activates the auction mechanism of task nodes and behavior nodes \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1Node_a897a837a45fc8244c894a6af4e90e3e6}{register\+\_\+child\+\_\+callback}} (std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Internal\+Service\+Registration\+::\+Request $>$ request, std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Internal\+Service\+Registration\+::\+Response $>$ response)
+\begin{DoxyCompactList}\small\item\em registers a new child with this node \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1Node_a83e3d2d35fe6b2fa44ada2cfc3ba9ab1}{modify}} (std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Request $>$ request, std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$ response)
+\begin{DoxyCompactList}\small\item\em callback to modify the parameters or nodetype of this node \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1Node_a805bd21c787aa191ad0a3dd409e1a6e3}{resource\+\_\+availability\+\_\+callback}} (const dhtt\+\_\+msgs\+::msg\+::\+Resources\+::\+Shared\+Ptr canonical\+\_\+list)
+\begin{DoxyCompactList}\small\item\em callback for receiving the resource state from root node \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classdhtt_1_1Node_a424d19e6aa8d4ef7ec6b64921c75917e}{check\+\_\+preconditions}} ()
+\begin{DoxyCompactList}\small\item\em checks if the preconditions of the node are met \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{classdhtt_1_1Node_a45a2c5747ea46bbaa1e8156a988010a1}{calculate\+\_\+activation\+\_\+potential}} ()
+\begin{DoxyCompactList}\small\item\em calculates activation potential as a function of the estimate from the \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} plugin \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1Node_afb92c70ed98b5c511d83714c8e6c6e8b}{propogate\+\_\+failure\+\_\+down}} ()
+\begin{DoxyCompactList}\small\item\em sends failure to the currently active child \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+rclcpp\+\_\+action\+::\+Server$<$ dhtt\+\_\+msgs\+::action\+::\+Activation $>$\+::Shared\+Ptr \mbox{\hyperlink{classdhtt_1_1Node_a9e98e92fe184135277cc7049d5a63496}{activation\+\_\+server}}
+\item 
+std\+::vector$<$ rclcpp\+\_\+action\+::\+Client$<$ dhtt\+\_\+msgs\+::action\+::\+Activation $>$\+::Shared\+Ptr $>$ \mbox{\hyperlink{classdhtt_1_1Node_a79ba86630915946a9dac86fce50fce61}{activation\+\_\+clients}}
+\item 
+std\+::map$<$ std\+::string, dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result\+::\+Shared\+Ptr $>$ \mbox{\hyperlink{classdhtt_1_1Node_a09debead42c6b70e4123399287fb93fc}{responses}}
+\item 
+rclcpp\+::\+Service$<$ dhtt\+\_\+msgs\+::srv\+::\+Internal\+Service\+Registration $>$\+::Shared\+Ptr \mbox{\hyperlink{classdhtt_1_1Node_a9cf5a4107d5904d93cfa6944711a3f9b}{register\+\_\+server}}
+\item 
+pluginlib\+::\+Class\+Loader$<$ \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} $>$ \mbox{\hyperlink{classdhtt_1_1Node_affb2cbd2fcf92c8febb91c0faeb004b8}{node\+\_\+type\+\_\+loader}}
+\item 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} $>$ \mbox{\hyperlink{classdhtt_1_1Node_a0130f80212b348e627f0f481842579cc}{logic}}
+\item 
+dhtt\+\_\+msgs\+::msg\+::\+Node\+Status \mbox{\hyperlink{classdhtt_1_1Node_aeae83bf58d1fde65b0a0c881896ee719}{status}}
+\item 
+rclcpp\+::\+Publisher$<$ dhtt\+\_\+msgs\+::msg\+::\+Node $>$\+::Shared\+Ptr \mbox{\hyperlink{classdhtt_1_1Node_a88afcf53bea2ad042b46021880ace44d}{status\+\_\+pub}}
+\item 
+rclcpp\+::\+Subscription$<$ dhtt\+\_\+msgs\+::msg\+::\+Resources $>$\+::Shared\+Ptr \mbox{\hyperlink{classdhtt_1_1Node_a3d2fbe7dd850b48bd9c19f8f1a6a6bb7}{resources\+\_\+sub}}
+\item 
+std\+::shared\+\_\+ptr$<$ std\+::thread $>$ \mbox{\hyperlink{classdhtt_1_1Node_adacbb4c5cc6ab3a8207c3bbb323ef835}{work\+\_\+thread}}
+\item 
+std\+::shared\+\_\+ptr$<$ std\+::thread $>$ \mbox{\hyperlink{classdhtt_1_1Node_adf28761993492b849f1b7c9e12596038}{fail\+\_\+thread}}
+\item 
+std\+::mutex \mbox{\hyperlink{classdhtt_1_1Node_affbfc7bfc2c776c5a425cb5984029773}{logic\+\_\+mut}}
+\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt_1_1Node_abdd751af66b71c886d2161cf7328355f}{owned\+\_\+resources}}
+\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt_1_1Node_ad80c0534f216a1096edf5445249b8d64}{available\+\_\+resources}}
+\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt_1_1Node_ae27cd76b756f33a2227b41ca1b326107}{passed\+\_\+resources}}
+\item 
+std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1Node_aa7de5cfc418a185d27f950202e533137}{child\+\_\+names}}
+\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1Node_a115da70a32b17f9913d7bfb57180afe3}{name}}
+\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1Node_a4f3abfadbbda36594d1976a3d960fc09}{parent\+\_\+name}}
+\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1Node_abcacf32d8e8065c230f844eb918001f4}{plugin\+\_\+name}}
+\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1Node_ae11459053c91e69999dedff767c56a05}{active\+\_\+child\+\_\+name}}
+\item 
+double \mbox{\hyperlink{classdhtt_1_1Node_a1b49263c05ba78bb41cd3336e8e9e02c}{activation\+\_\+potential}}
+\item 
+int \mbox{\hyperlink{classdhtt_1_1Node_a5a1f2aa9088813141a9ede68feb08ea6}{activation\+\_\+level}}
+\item 
+int \mbox{\hyperlink{classdhtt_1_1Node_ac64f1fd3395011657540ee61f2e8a62a}{stored\+\_\+responses}}
+\item 
+int \mbox{\hyperlink{classdhtt_1_1Node_a0a8dbb0d9b10b3c0b5c9786b0b359566}{expected\+\_\+responses}}
+\item 
+int \mbox{\hyperlink{classdhtt_1_1Node_a72b463e4482459cd0169730186d7c33c}{priority}}
+\item 
+bool \mbox{\hyperlink{classdhtt_1_1Node_aa76f51b40e4e16ea3ef77e2c8686210d}{resource\+\_\+status\+\_\+updated}}
+\item 
+bool \mbox{\hyperlink{classdhtt_1_1Node_a6a6d05d6ac1e66dc3644019f0e14c950}{successful\+\_\+load}}
+\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1Node_afaf15d27c12996d5a6da426c4383e7a2}{error\+\_\+msg}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classdhtt_1_1Node_ad3110d30a2ea101864dce37006de54f1}{Main\+Server}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+d\+H\+TT \mbox{\hyperlink{classdhtt_1_1Node}{Node}} class for all nodes on the tree 
+
+Main \mbox{\hyperlink{classdhtt_1_1Node}{Node}} class for behaviors and tasks on the tree. Facilitates auction behavior, main tree communication protocals, status updates and maintenance, and communication with the Main Server. All node specific logic is kept as a private plugin member that is loaded when the object is created (\mbox{\hyperlink{classdhtt_1_1NodeType}{dhtt\+::\+Node\+Type}}). 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classdhtt_1_1Node_ad92bd3188be032af09313bdc5f533650}\label{classdhtt_1_1Node_ad92bd3188be032af09313bdc5f533650}} 
+\index{dhtt::Node@{dhtt::Node}!Node@{Node}}
+\index{Node@{Node}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{Node()}{Node()}}
+{\footnotesize\ttfamily dhtt\+::\+Node\+::\+Node (\begin{DoxyParamCaption}\item[{std\+::string}]{name,  }\item[{std\+::string}]{type,  }\item[{std\+::vector$<$ std\+::string $>$}]{params,  }\item[{std\+::string}]{parent\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Constructor for the node class. 
+
+Initializes all values simply. If the given plugin name cannot be loaded for some reason does not construct. Errors are flagged through successful\+\_\+load and error messages are stored in error\+\_\+msg.
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & name of the node being created (should be unique) \\
+\hline
+{\em type} & exact name of the plugin to load (ex. dhtt\+\_\+plugins\+::\+And\+Behavior) \\
+\hline
+{\em params} & parameter list for the given plugin (a list of string parameters) \\
+\hline
+{\em parent\+\_\+name} & name of this nodes parent (parent is notified of new child through \mbox{\hyperlink{classdhtt_1_1MainServer}{dhtt\+::\+Main\+Server}})\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a36bce3e0e7d7593a5b63b637f39cfee1}\label{classdhtt_1_1Node_a36bce3e0e7d7593a5b63b637f39cfee1}} 
+\index{dhtt::Node@{dhtt::Node}!````~Node@{$\sim$Node}}
+\index{````~Node@{$\sim$Node}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{$\sim$Node()}{~Node()}}
+{\footnotesize\ttfamily dhtt\+::\+Node\+::$\sim$\+Node (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt_1_1Node_a7585bb03350780e9cc7f6c11dccd7f12}\label{classdhtt_1_1Node_a7585bb03350780e9cc7f6c11dccd7f12}} 
+\index{dhtt::Node@{dhtt::Node}!activate@{activate}}
+\index{activate@{activate}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{activate()}{activate()}}
+{\footnotesize\ttfamily void dhtt\+::\+Node\+::activate (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ rclcpp\+\_\+action\+::\+Server\+Goal\+Handle$<$ dhtt\+\_\+msgs\+::action\+::\+Activation $>$$>$}]{goal\+\_\+handle }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+activates the auction mechanism of task nodes and behavior nodes 
+
+The major functionality of the activate function is described in the paper on d\+H\+TT\textquotesingle{}s extensively. Essentially, this function runs the internal logic of the \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} plugin for this node. It performs the following steps\+:
+\begin{DoxyItemize}
+\item if the node is active it runs the auction\+\_\+callback of the \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} plugin and then collects and sends back the request
+\item if the node is working it runs the work\+\_\+callback of the \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} plugin and then releases and passes the appropriate resources
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em goal\+\_\+handle} & internal action\+\_\+server representation of the current goal\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a43572741c70d55807c8b434ac52954d4}\label{classdhtt_1_1Node_a43572741c70d55807c8b434ac52954d4}} 
+\index{dhtt::Node@{dhtt::Node}!activate\_all\_children@{activate\_all\_children}}
+\index{activate\_all\_children@{activate\_all\_children}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{activate\_all\_children()}{activate\_all\_children()}}
+{\footnotesize\ttfamily void dhtt\+::\+Node\+::activate\+\_\+all\+\_\+children (\begin{DoxyParamCaption}\item[{dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Goal}]{activation\+\_\+goal }\end{DoxyParamCaption})}
+
+
+
+spreads activation to all children 
+
+iterates through list and utilizes the async\+\_\+activate\+\_\+child method
+
+
+\begin{DoxyParams}{Parameters}
+{\em activation\+\_\+goal} & goal to send to children\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a13555af4fe306f15d4f47f15f473363a}\label{classdhtt_1_1Node_a13555af4fe306f15d4f47f15f473363a}} 
+\index{dhtt::Node@{dhtt::Node}!activation\_accepted\_callback@{activation\_accepted\_callback}}
+\index{activation\_accepted\_callback@{activation\_accepted\_callback}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{activation\_accepted\_callback()}{activation\_accepted\_callback()}}
+{\footnotesize\ttfamily void dhtt\+::\+Node\+::activation\+\_\+accepted\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ rclcpp\+\_\+action\+::\+Server\+Goal\+Handle$<$ dhtt\+\_\+msgs\+::action\+::\+Activation $>$$>$}]{goal\+\_\+handle }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+maintains the finite state machine status of the node after activation is received 
+
+The activation mechanism of a node is described extensively in the paper for d\+H\+TT\textquotesingle{}s, however, it essentially does\+:
+\begin{DoxyItemize}
+\item if the node is waiting it becomes active
+\item if the node is active and gets a successful activation it begins working
+\item if the node is active and gets a unsuccessful activation it goes back to waiting
+\item if the node is done it just immediately sends a response and stops
+\end{DoxyItemize}
+
+if the node becomes active or working it starts a separate thread and runs the activate function. if it goes back to waiting it propogates the unsuccessful activation down to it\textquotesingle{}s children as well.
+
+
+\begin{DoxyParams}{Parameters}
+{\em goal\+\_\+handle} & internal action server representation of the goal\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_add5be2961f87d9ee2e539e35505194c0}\label{classdhtt_1_1Node_add5be2961f87d9ee2e539e35505194c0}} 
+\index{dhtt::Node@{dhtt::Node}!async\_activate\_child@{async\_activate\_child}}
+\index{async\_activate\_child@{async\_activate\_child}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{async\_activate\_child()}{async\_activate\_child()}}
+{\footnotesize\ttfamily void dhtt\+::\+Node\+::async\+\_\+activate\+\_\+child (\begin{DoxyParamCaption}\item[{std\+::string}]{child\+\_\+name,  }\item[{dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Goal}]{activation\+\_\+goal }\end{DoxyParamCaption})}
+
+
+
+spreads activation to child without busy wait 
+
+This is meant to be used to spread activation throughout the tree, then there are specifically designed methods for waiting for responses from multiple children
+
+
+\begin{DoxyParams}{Parameters}
+{\em child\+\_\+name} & name of child to activate \\
+\hline
+{\em activation\+\_\+goal} & goal to send to child\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_ad5d6810ec6bdac8d5b24fffe656b64a4}\label{classdhtt_1_1Node_ad5d6810ec6bdac8d5b24fffe656b64a4}} 
+\index{dhtt::Node@{dhtt::Node}!block\_for\_responses\_from\_children@{block\_for\_responses\_from\_children}}
+\index{block\_for\_responses\_from\_children@{block\_for\_responses\_from\_children}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{block\_for\_responses\_from\_children()}{block\_for\_responses\_from\_children()}}
+{\footnotesize\ttfamily bool dhtt\+::\+Node\+::block\+\_\+for\+\_\+responses\+\_\+from\+\_\+children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+busy waits until the number of responses equals the number of activations sent out 
+
+number of activations is incremented with each call of async\+\_\+activate\+\_\+child, number of responses is counted in the store\+\_\+result\+\_\+callback
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a45a2c5747ea46bbaa1e8156a988010a1}\label{classdhtt_1_1Node_a45a2c5747ea46bbaa1e8156a988010a1}} 
+\index{dhtt::Node@{dhtt::Node}!calculate\_activation\_potential@{calculate\_activation\_potential}}
+\index{calculate\_activation\_potential@{calculate\_activation\_potential}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{calculate\_activation\_potential()}{calculate\_activation\_potential()}}
+{\footnotesize\ttfamily double dhtt\+::\+Node\+::calculate\+\_\+activation\+\_\+potential (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+calculates activation potential as a function of the estimate from the \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} plugin 
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000001}{Deprecated}}]\end{DoxyRefDesc}
+
+
+\begin{DoxyReturn}{Returns}
+activation\+\_\+potential of the node 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a519fb405b20ede86390bcfca58843daf}\label{classdhtt_1_1Node_a519fb405b20ede86390bcfca58843daf}} 
+\index{dhtt::Node@{dhtt::Node}!cancel\_activation\_callback@{cancel\_activation\_callback}}
+\index{cancel\_activation\_callback@{cancel\_activation\_callback}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{cancel\_activation\_callback()}{cancel\_activation\_callback()}}
+{\footnotesize\ttfamily rclcpp\+\_\+action\+::\+Cancel\+Response dhtt\+::\+Node\+::cancel\+\_\+activation\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ rclcpp\+\_\+action\+::\+Server\+Goal\+Handle$<$ dhtt\+\_\+msgs\+::action\+::\+Activation $>$$>$}]{goal\+\_\+handle }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+cancel callback for activation action server 
+
+currently accepts any cancel request. This should perform some logic to immediately stop the node from activating and propogate the cancellation down, however, this is currently not implemented.
+
+
+\begin{DoxyParams}{Parameters}
+{\em goal\+\_\+handle} & internal action server representation of the goal which is to be cancelled\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+always accepts the cancel request for now 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a424d19e6aa8d4ef7ec6b64921c75917e}\label{classdhtt_1_1Node_a424d19e6aa8d4ef7ec6b64921c75917e}} 
+\index{dhtt::Node@{dhtt::Node}!check\_preconditions@{check\_preconditions}}
+\index{check\_preconditions@{check\_preconditions}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{check\_preconditions()}{check\_preconditions()}}
+{\footnotesize\ttfamily bool dhtt\+::\+Node\+::check\+\_\+preconditions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+checks if the preconditions of the node are met 
+
+Currently this is not implemented until preconditions are being checked by the tree.
+
+\begin{DoxyReturn}{Returns}
+True always for now 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_afcb6c7373ee646f938fb0b8840d115a2}\label{classdhtt_1_1Node_afcb6c7373ee646f938fb0b8840d115a2}} 
+\index{dhtt::Node@{dhtt::Node}!get\_activation\_results@{get\_activation\_results}}
+\index{get\_activation\_results@{get\_activation\_results}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{get\_activation\_results()}{get\_activation\_results()}}
+{\footnotesize\ttfamily std\+::map$<$std\+::string, dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result\+::\+Shared\+Ptr$>$ dhtt\+::\+Node\+::get\+\_\+activation\+\_\+results (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+getter for the responses from children 
+
+Should only be called after block\+\_\+for\+\_\+responses\+\_\+from\+\_\+children.
+
+\begin{DoxyReturn}{Returns}
+map of child\+\_\+names to the response they sent back after activating 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a584c036236421f9e6bb9cc40cfa44932}\label{classdhtt_1_1Node_a584c036236421f9e6bb9cc40cfa44932}} 
+\index{dhtt::Node@{dhtt::Node}!get\_active\_child\_name@{get\_active\_child\_name}}
+\index{get\_active\_child\_name@{get\_active\_child\_name}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{get\_active\_child\_name()}{get\_active\_child\_name()}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Node\+::get\+\_\+active\+\_\+child\+\_\+name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+getter for the name of the current active child 
+
+\begin{DoxyReturn}{Returns}
+either returns the name of the active child or a blank string if no children are active 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_aa5d93ab7a140c45ac9995f75d9cd3674}\label{classdhtt_1_1Node_aa5d93ab7a140c45ac9995f75d9cd3674}} 
+\index{dhtt::Node@{dhtt::Node}!get\_child\_names@{get\_child\_names}}
+\index{get\_child\_names@{get\_child\_names}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{get\_child\_names()}{get\_child\_names()}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::string$>$ dhtt\+::\+Node\+::get\+\_\+child\+\_\+names (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+getter for the list of child\+\_\+names 
+
+\begin{DoxyReturn}{Returns}
+internal list of children 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_aaa42c6f51d16f6e9840765b18ec01feb}\label{classdhtt_1_1Node_aaa42c6f51d16f6e9840765b18ec01feb}} 
+\index{dhtt::Node@{dhtt::Node}!get\_error\_msg@{get\_error\_msg}}
+\index{get\_error\_msg@{get\_error\_msg}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{get\_error\_msg()}{get\_error\_msg()}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Node\+::get\+\_\+error\+\_\+msg (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+getter method for error msg 
+
+\begin{DoxyReturn}{Returns}
+error message from loading the plugin (blank if no error occurred) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a5fb2d4018cb17c6427840fba0793920b}\label{classdhtt_1_1Node_a5fb2d4018cb17c6427840fba0793920b}} 
+\index{dhtt::Node@{dhtt::Node}!get\_node\_name@{get\_node\_name}}
+\index{get\_node\_name@{get\_node\_name}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{get\_node\_name()}{get\_node\_name()}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Node\+::get\+\_\+node\+\_\+name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+getter for this node\textquotesingle{}s name as set in the constructor 
+
+\begin{DoxyReturn}{Returns}
+the unique name of this node 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a5ee8a1d48ccb24806a6eeef7df2f60fb}\label{classdhtt_1_1Node_a5ee8a1d48ccb24806a6eeef7df2f60fb}} 
+\index{dhtt::Node@{dhtt::Node}!get\_owned\_resources@{get\_owned\_resources}}
+\index{get\_owned\_resources@{get\_owned\_resources}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{get\_owned\_resources()}{get\_owned\_resources()}}
+{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+::\+Node\+::get\+\_\+owned\+\_\+resources (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Returns all currently owned resources of the node. 
+
+Task and behavior nodes request and then receive resources from the root node of the d\+H\+TT. All passed resources are owned as soon as an auction begins.
+
+\begin{DoxyReturn}{Returns}
+vector of owned resources 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_aaa143fe197be0b7b875939af02a8d1d8}\label{classdhtt_1_1Node_aaa143fe197be0b7b875939af02a8d1d8}} 
+\index{dhtt::Node@{dhtt::Node}!get\_passed\_resources@{get\_passed\_resources}}
+\index{get\_passed\_resources@{get\_passed\_resources}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{get\_passed\_resources()}{get\_passed\_resources()}}
+{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+::\+Node\+::get\+\_\+passed\+\_\+resources (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Returns all resources passed to a node by the parent. 
+
+Resources can be passed to the next node under a T\+H\+EN node in order to maintain control of them. The message is passed up to the next T\+H\+EN node and then given to the next child under that node. If the passed resources are sent all the way to the root node then they are released.
+
+\begin{DoxyReturn}{Returns}
+list of passed resources. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a4fdcf763e9050f5d023bca285b819ec7}\label{classdhtt_1_1Node_a4fdcf763e9050f5d023bca285b819ec7}} 
+\index{dhtt::Node@{dhtt::Node}!get\_resource\_state@{get\_resource\_state}}
+\index{get\_resource\_state@{get\_resource\_state}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{get\_resource\_state()}{get\_resource\_state()}}
+{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+::\+Node\+::get\+\_\+resource\+\_\+state (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Returns the node\textquotesingle{}s copy of the resource state. 
+
+the state of the available resources on the robot is maintained by the root node of the tree. The state is also given to each node in the tree through an internal topic each time the state of the resources is changed.
+
+\begin{DoxyReturn}{Returns}
+list of all resources on the robot (owned or otherwise) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_ae24d6923631c252ec3801f73e204dc93}\label{classdhtt_1_1Node_ae24d6923631c252ec3801f73e204dc93}} 
+\index{dhtt::Node@{dhtt::Node}!goal\_activation\_callback@{goal\_activation\_callback}}
+\index{goal\_activation\_callback@{goal\_activation\_callback}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{goal\_activation\_callback()}{goal\_activation\_callback()}}
+{\footnotesize\ttfamily rclcpp\+\_\+action\+::\+Goal\+Response dhtt\+::\+Node\+::goal\+\_\+activation\+\_\+callback (\begin{DoxyParamCaption}\item[{const rclcpp\+\_\+action\+::\+Goal\+U\+U\+ID \&}]{uuid,  }\item[{std\+::shared\+\_\+ptr$<$ const dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Goal $>$}]{goal }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+goal callback for activation action server 
+
+Just accepts any goal that is given as activation will only be sent by the parent and only one at a time for now. The actual handling of whether the node should become active is performed in the activation\+\_\+accepted\+\_\+callback
+
+
+\begin{DoxyParams}{Parameters}
+{\em uuid} & internal action server param (not used in this callback) \\
+\hline
+{\em goal} & goal passed in for activation (not used in this callback)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+always accept the goal right now 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_ad4e4a75ed50052a5abda45df148bbeb2}\label{classdhtt_1_1Node_ad4e4a75ed50052a5abda45df148bbeb2}} 
+\index{dhtt::Node@{dhtt::Node}!is\_request\_possible@{is\_request\_possible}}
+\index{is\_request\_possible@{is\_request\_possible}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{is\_request\_possible()}{is\_request\_possible()}}
+{\footnotesize\ttfamily bool dhtt\+::\+Node\+::is\+\_\+request\+\_\+possible (\begin{DoxyParamCaption}\item[{std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$}]{requested\+\_\+resources }\end{DoxyParamCaption})}
+
+
+
+checks whether a request of given resources can be fulfilled 
+
+looks at the internal list of available resources (as given by the root node\textquotesingle{}s message) and the given requested resources. if the list of available resources could be updated to match the request then the request is possible.
+
+
+\begin{DoxyParams}{Parameters}
+{\em requested\+\_\+resources} & list of requested resources (necessary\+\_\+resources -\/ passed\+\_\+resources)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the request is possible, false otherwise 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a37e3f9bfad1ce41f0279baa58f0c91cf}\label{classdhtt_1_1Node_a37e3f9bfad1ce41f0279baa58f0c91cf}} 
+\index{dhtt::Node@{dhtt::Node}!loaded\_successfully@{loaded\_successfully}}
+\index{loaded\_successfully@{loaded\_successfully}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{loaded\_successfully()}{loaded\_successfully()}}
+{\footnotesize\ttfamily bool dhtt\+::\+Node\+::loaded\+\_\+successfully (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+returns the value of successful\+\_\+load 
+
+meant for checking whether the plugin was able to be loaded
+
+\begin{DoxyReturn}{Returns}
+True if plugin loaded, false otherwise 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a83e3d2d35fe6b2fa44ada2cfc3ba9ab1}\label{classdhtt_1_1Node_a83e3d2d35fe6b2fa44ada2cfc3ba9ab1}} 
+\index{dhtt::Node@{dhtt::Node}!modify@{modify}}
+\index{modify@{modify}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{modify()}{modify()}}
+{\footnotesize\ttfamily void dhtt\+::\+Node\+::modify (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+callback to modify the parameters or nodetype of this node 
+
+To modify the parameters of a node this method utilizes the \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} plugin\textquotesingle{}s parse\+\_\+params function and propogates any error message back in the response. To modify the type the same logic used to create the plugin initially in the constructor is used and the same error\+\_\+msg is propogated through the response. If the new plugin is not successfully created the old plugin will be kept instead.
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & Modify\+Request from \mbox{\hyperlink{classdhtt_1_1MainServer}{Main\+Server}} \\
+\hline
+{\em response} & Modify\+Request response. will contain any error\+\_\+msg from the modification\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_afb92c70ed98b5c511d83714c8e6c6e8b}\label{classdhtt_1_1Node_afb92c70ed98b5c511d83714c8e6c6e8b}} 
+\index{dhtt::Node@{dhtt::Node}!propogate\_failure\_down@{propogate\_failure\_down}}
+\index{propogate\_failure\_down@{propogate\_failure\_down}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{propogate\_failure\_down()}{propogate\_failure\_down()}}
+{\footnotesize\ttfamily void dhtt\+::\+Node\+::propogate\+\_\+failure\+\_\+down (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+sends failure to the currently active child 
+
+essentially just build a failure activation goal, sends it down to the active child, and blocks for a response.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a897a837a45fc8244c894a6af4e90e3e6}\label{classdhtt_1_1Node_a897a837a45fc8244c894a6af4e90e3e6}} 
+\index{dhtt::Node@{dhtt::Node}!register\_child\_callback@{register\_child\_callback}}
+\index{register\_child\_callback@{register\_child\_callback}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{register\_child\_callback()}{register\_child\_callback()}}
+{\footnotesize\ttfamily void dhtt\+::\+Node\+::register\+\_\+child\+\_\+callback (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Internal\+Service\+Registration\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Internal\+Service\+Registration\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+registers a new child with this node 
+
+Adds the name of the child to the list and creates an Action\+Client to activate that child (the topic is constructed from the child\textquotesingle{}s name)
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & the Internal\+Service\+Registration request \\
+\hline
+{\em response} & the Internal\+Service\+Registration response\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a81eec6c70d038bbafc18f01948e1accb}\label{classdhtt_1_1Node_a81eec6c70d038bbafc18f01948e1accb}} 
+\index{dhtt::Node@{dhtt::Node}!register\_servers@{register\_servers}}
+\index{register\_servers@{register\_servers}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{register\_servers()}{register\_servers()}}
+{\footnotesize\ttfamily void dhtt\+::\+Node\+::register\+\_\+servers (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+registers the necessary servers, publishers, action servers, etc. of this node. 
+
+should only be used by \mbox{\hyperlink{classdhtt_1_1MainServer}{Main\+Server}}.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a08edd24fae1fac092d475d664518ad79}\label{classdhtt_1_1Node_a08edd24fae1fac092d475d664518ad79}} 
+\index{dhtt::Node@{dhtt::Node}!register\_with\_parent@{register\_with\_parent}}
+\index{register\_with\_parent@{register\_with\_parent}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{register\_with\_parent()}{register\_with\_parent()}}
+{\footnotesize\ttfamily void dhtt\+::\+Node\+::register\+\_\+with\+\_\+parent (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+registers this node with it\textquotesingle{}s parent 
+
+sends a service request to the the registration topic of the parent node (found through the given parent name). If this fails then the succesful\+\_\+load flag is flipped and an error\+\_\+msg is saved.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a4ab197eb83045145e50502a968ea217d}\label{classdhtt_1_1Node_a4ab197eb83045145e50502a968ea217d}} 
+\index{dhtt::Node@{dhtt::Node}!remove\_child@{remove\_child}}
+\index{remove\_child@{remove\_child}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{remove\_child()}{remove\_child()}}
+{\footnotesize\ttfamily bool dhtt\+::\+Node\+::remove\+\_\+child (\begin{DoxyParamCaption}\item[{std\+::string}]{child\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+removes a child from this node\textquotesingle{}s list of children 
+
+the child is already destructed by the \mbox{\hyperlink{classdhtt_1_1MainServer}{Main\+Server}} if it is being removed so the only job of this node is to remove it from the list (or forget that it exists).
+
+
+\begin{DoxyParams}{Parameters}
+{\em child\+\_\+name} & name of the child to remove\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the child was removed, false otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a805bd21c787aa191ad0a3dd409e1a6e3}\label{classdhtt_1_1Node_a805bd21c787aa191ad0a3dd409e1a6e3}} 
+\index{dhtt::Node@{dhtt::Node}!resource\_availability\_callback@{resource\_availability\_callback}}
+\index{resource\_availability\_callback@{resource\_availability\_callback}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{resource\_availability\_callback()}{resource\_availability\_callback()}}
+{\footnotesize\ttfamily void dhtt\+::\+Node\+::resource\+\_\+availability\+\_\+callback (\begin{DoxyParamCaption}\item[{const dhtt\+\_\+msgs\+::msg\+::\+Resources\+::\+Shared\+Ptr}]{canonical\+\_\+list }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+callback for receiving the resource state from root node 
+
+sets the flag resource\+\_\+status\+\_\+updated to true
+
+
+\begin{DoxyParams}{Parameters}
+{\em canonical\+\_\+list} & Resources message sent from the root node.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_abea1f61420a615e9ee1eca5e9e0be309}\label{classdhtt_1_1Node_abea1f61420a615e9ee1eca5e9e0be309}} 
+\index{dhtt::Node@{dhtt::Node}!set\_passed\_resources@{set\_passed\_resources}}
+\index{set\_passed\_resources@{set\_passed\_resources}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{set\_passed\_resources()}{set\_passed\_resources()}}
+{\footnotesize\ttfamily void dhtt\+::\+Node\+::set\+\_\+passed\+\_\+resources (\begin{DoxyParamCaption}\item[{std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$}]{set\+\_\+to }\end{DoxyParamCaption})}
+
+
+
+setter method for passsed resources 
+
+meant to be utilized by plugins in order to pass the resources that should be held. T\+H\+EN nodes will clear this list, and behavior nodes will set this to owned resources that should be passed. Currently the fidelity of resources is not checked so bugs may occur if these resources don\textquotesingle{}t exist, or are not owned.
+
+
+\begin{DoxyParams}{Parameters}
+{\em set\+\_\+to} & a list of resources to pass\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a9108ed5afb76cb5455fa2a59ff57c1ca}\label{classdhtt_1_1Node_a9108ed5afb76cb5455fa2a59ff57c1ca}} 
+\index{dhtt::Node@{dhtt::Node}!set\_resource\_status\_updated@{set\_resource\_status\_updated}}
+\index{set\_resource\_status\_updated@{set\_resource\_status\_updated}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{set\_resource\_status\_updated()}{set\_resource\_status\_updated()}}
+{\footnotesize\ttfamily void dhtt\+::\+Node\+::set\+\_\+resource\+\_\+status\+\_\+updated (\begin{DoxyParamCaption}\item[{bool}]{to\+\_\+set }\end{DoxyParamCaption})}
+
+
+
+setter for internal resource\+\_\+status\+\_\+updated flag 
+
+This flag is important to check if a request is possible properly (i.\+e. wait until the available\+\_\+resources are updated first)
+
+
+\begin{DoxyParams}{Parameters}
+{\em to\+\_\+set} & new value for the resource\+\_\+status\+\_\+updated flag\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_a5a8ca21dcee3cf3bb135e65025652089}\label{classdhtt_1_1Node_a5a8ca21dcee3cf3bb135e65025652089}} 
+\index{dhtt::Node@{dhtt::Node}!store\_result\_callback@{store\_result\_callback}}
+\index{store\_result\_callback@{store\_result\_callback}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{store\_result\_callback()}{store\_result\_callback()}}
+{\footnotesize\ttfamily void dhtt\+::\+Node\+::store\+\_\+result\+\_\+callback (\begin{DoxyParamCaption}\item[{const rclcpp\+\_\+action\+::\+Client\+Goal\+Handle$<$ dhtt\+\_\+msgs\+::action\+::\+Activation $>$\+::Wrapped\+Result \&}]{result,  }\item[{std\+::string}]{node\+\_\+name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+stores results received from activating children 
+
+Also increments the number of results gotten back so that the busy wait can end after enough responses are received.
+
+
+\begin{DoxyParams}{Parameters}
+{\em result} & action server result sent back from child to be saved \\
+\hline
+{\em node\+\_\+name} & child from which the result was received (saved when the result callback was bound)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1Node_ad2dbd4ea3713bc091c3fdf9fa0b02378}\label{classdhtt_1_1Node_ad2dbd4ea3713bc091c3fdf9fa0b02378}} 
+\index{dhtt::Node@{dhtt::Node}!update\_status@{update\_status}}
+\index{update\_status@{update\_status}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{update\_status()}{update\_status()}}
+{\footnotesize\ttfamily void dhtt\+::\+Node\+::update\+\_\+status (\begin{DoxyParamCaption}\item[{int8\+\_\+t}]{n\+\_\+state }\end{DoxyParamCaption})}
+
+
+
+updates the internal status and reports to \mbox{\hyperlink{classdhtt_1_1MainServer}{Main\+Server}} 
+
+just changes the internal state then builds and sends a status message on the /status topic which updates the representation on \mbox{\hyperlink{classdhtt_1_1MainServer}{Main\+Server}}. This is the only way that should be used to changed the internal state of a node.
+
+
+\begin{DoxyParams}{Parameters}
+{\em n\+\_\+state} & new state of the node to change to\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+\doxysubsection{Friends And Related Function Documentation}
+\mbox{\Hypertarget{classdhtt_1_1Node_ad3110d30a2ea101864dce37006de54f1}\label{classdhtt_1_1Node_ad3110d30a2ea101864dce37006de54f1}} 
+\index{dhtt::Node@{dhtt::Node}!MainServer@{MainServer}}
+\index{MainServer@{MainServer}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{MainServer}{MainServer}}
+{\footnotesize\ttfamily friend class \mbox{\hyperlink{classdhtt_1_1MainServer}{Main\+Server}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classdhtt_1_1Node_a79ba86630915946a9dac86fce50fce61}\label{classdhtt_1_1Node_a79ba86630915946a9dac86fce50fce61}} 
+\index{dhtt::Node@{dhtt::Node}!activation\_clients@{activation\_clients}}
+\index{activation\_clients@{activation\_clients}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{activation\_clients}{activation\_clients}}
+{\footnotesize\ttfamily std\+::vector$<$rclcpp\+\_\+action\+::\+Client$<$dhtt\+\_\+msgs\+::action\+::\+Activation$>$\+::Shared\+Ptr$>$ dhtt\+::\+Node\+::activation\+\_\+clients\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_a5a1f2aa9088813141a9ede68feb08ea6}\label{classdhtt_1_1Node_a5a1f2aa9088813141a9ede68feb08ea6}} 
+\index{dhtt::Node@{dhtt::Node}!activation\_level@{activation\_level}}
+\index{activation\_level@{activation\_level}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{activation\_level}{activation\_level}}
+{\footnotesize\ttfamily int dhtt\+::\+Node\+::activation\+\_\+level\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_a1b49263c05ba78bb41cd3336e8e9e02c}\label{classdhtt_1_1Node_a1b49263c05ba78bb41cd3336e8e9e02c}} 
+\index{dhtt::Node@{dhtt::Node}!activation\_potential@{activation\_potential}}
+\index{activation\_potential@{activation\_potential}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{activation\_potential}{activation\_potential}}
+{\footnotesize\ttfamily double dhtt\+::\+Node\+::activation\+\_\+potential\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_a9e98e92fe184135277cc7049d5a63496}\label{classdhtt_1_1Node_a9e98e92fe184135277cc7049d5a63496}} 
+\index{dhtt::Node@{dhtt::Node}!activation\_server@{activation\_server}}
+\index{activation\_server@{activation\_server}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{activation\_server}{activation\_server}}
+{\footnotesize\ttfamily rclcpp\+\_\+action\+::\+Server$<$dhtt\+\_\+msgs\+::action\+::\+Activation$>$\+::Shared\+Ptr dhtt\+::\+Node\+::activation\+\_\+server\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_ae11459053c91e69999dedff767c56a05}\label{classdhtt_1_1Node_ae11459053c91e69999dedff767c56a05}} 
+\index{dhtt::Node@{dhtt::Node}!active\_child\_name@{active\_child\_name}}
+\index{active\_child\_name@{active\_child\_name}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{active\_child\_name}{active\_child\_name}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Node\+::active\+\_\+child\+\_\+name\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_ad80c0534f216a1096edf5445249b8d64}\label{classdhtt_1_1Node_ad80c0534f216a1096edf5445249b8d64}} 
+\index{dhtt::Node@{dhtt::Node}!available\_resources@{available\_resources}}
+\index{available\_resources@{available\_resources}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{available\_resources}{available\_resources}}
+{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+::\+Node\+::available\+\_\+resources\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_aa7de5cfc418a185d27f950202e533137}\label{classdhtt_1_1Node_aa7de5cfc418a185d27f950202e533137}} 
+\index{dhtt::Node@{dhtt::Node}!child\_names@{child\_names}}
+\index{child\_names@{child\_names}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{child\_names}{child\_names}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::string$>$ dhtt\+::\+Node\+::child\+\_\+names\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_afaf15d27c12996d5a6da426c4383e7a2}\label{classdhtt_1_1Node_afaf15d27c12996d5a6da426c4383e7a2}} 
+\index{dhtt::Node@{dhtt::Node}!error\_msg@{error\_msg}}
+\index{error\_msg@{error\_msg}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{error\_msg}{error\_msg}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Node\+::error\+\_\+msg\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_a0a8dbb0d9b10b3c0b5c9786b0b359566}\label{classdhtt_1_1Node_a0a8dbb0d9b10b3c0b5c9786b0b359566}} 
+\index{dhtt::Node@{dhtt::Node}!expected\_responses@{expected\_responses}}
+\index{expected\_responses@{expected\_responses}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{expected\_responses}{expected\_responses}}
+{\footnotesize\ttfamily int dhtt\+::\+Node\+::expected\+\_\+responses\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_adf28761993492b849f1b7c9e12596038}\label{classdhtt_1_1Node_adf28761993492b849f1b7c9e12596038}} 
+\index{dhtt::Node@{dhtt::Node}!fail\_thread@{fail\_thread}}
+\index{fail\_thread@{fail\_thread}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{fail\_thread}{fail\_thread}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$std\+::thread$>$ dhtt\+::\+Node\+::fail\+\_\+thread\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_a0130f80212b348e627f0f481842579cc}\label{classdhtt_1_1Node_a0130f80212b348e627f0f481842579cc}} 
+\index{dhtt::Node@{dhtt::Node}!logic@{logic}}
+\index{logic@{logic}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{logic}{logic}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$\mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}}$>$ dhtt\+::\+Node\+::logic\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_affbfc7bfc2c776c5a425cb5984029773}\label{classdhtt_1_1Node_affbfc7bfc2c776c5a425cb5984029773}} 
+\index{dhtt::Node@{dhtt::Node}!logic\_mut@{logic\_mut}}
+\index{logic\_mut@{logic\_mut}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{logic\_mut}{logic\_mut}}
+{\footnotesize\ttfamily std\+::mutex dhtt\+::\+Node\+::logic\+\_\+mut\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_a115da70a32b17f9913d7bfb57180afe3}\label{classdhtt_1_1Node_a115da70a32b17f9913d7bfb57180afe3}} 
+\index{dhtt::Node@{dhtt::Node}!name@{name}}
+\index{name@{name}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{name}{name}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Node\+::name\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_affb2cbd2fcf92c8febb91c0faeb004b8}\label{classdhtt_1_1Node_affb2cbd2fcf92c8febb91c0faeb004b8}} 
+\index{dhtt::Node@{dhtt::Node}!node\_type\_loader@{node\_type\_loader}}
+\index{node\_type\_loader@{node\_type\_loader}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{node\_type\_loader}{node\_type\_loader}}
+{\footnotesize\ttfamily pluginlib\+::\+Class\+Loader$<$\mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}}$>$ dhtt\+::\+Node\+::node\+\_\+type\+\_\+loader\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_abdd751af66b71c886d2161cf7328355f}\label{classdhtt_1_1Node_abdd751af66b71c886d2161cf7328355f}} 
+\index{dhtt::Node@{dhtt::Node}!owned\_resources@{owned\_resources}}
+\index{owned\_resources@{owned\_resources}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{owned\_resources}{owned\_resources}}
+{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+::\+Node\+::owned\+\_\+resources\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_a4f3abfadbbda36594d1976a3d960fc09}\label{classdhtt_1_1Node_a4f3abfadbbda36594d1976a3d960fc09}} 
+\index{dhtt::Node@{dhtt::Node}!parent\_name@{parent\_name}}
+\index{parent\_name@{parent\_name}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{parent\_name}{parent\_name}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Node\+::parent\+\_\+name\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_ae27cd76b756f33a2227b41ca1b326107}\label{classdhtt_1_1Node_ae27cd76b756f33a2227b41ca1b326107}} 
+\index{dhtt::Node@{dhtt::Node}!passed\_resources@{passed\_resources}}
+\index{passed\_resources@{passed\_resources}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{passed\_resources}{passed\_resources}}
+{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+::\+Node\+::passed\+\_\+resources\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_abcacf32d8e8065c230f844eb918001f4}\label{classdhtt_1_1Node_abcacf32d8e8065c230f844eb918001f4}} 
+\index{dhtt::Node@{dhtt::Node}!plugin\_name@{plugin\_name}}
+\index{plugin\_name@{plugin\_name}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{plugin\_name}{plugin\_name}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Node\+::plugin\+\_\+name\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_a72b463e4482459cd0169730186d7c33c}\label{classdhtt_1_1Node_a72b463e4482459cd0169730186d7c33c}} 
+\index{dhtt::Node@{dhtt::Node}!priority@{priority}}
+\index{priority@{priority}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{priority}{priority}}
+{\footnotesize\ttfamily int dhtt\+::\+Node\+::priority\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_a9cf5a4107d5904d93cfa6944711a3f9b}\label{classdhtt_1_1Node_a9cf5a4107d5904d93cfa6944711a3f9b}} 
+\index{dhtt::Node@{dhtt::Node}!register\_server@{register\_server}}
+\index{register\_server@{register\_server}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{register\_server}{register\_server}}
+{\footnotesize\ttfamily rclcpp\+::\+Service$<$dhtt\+\_\+msgs\+::srv\+::\+Internal\+Service\+Registration$>$\+::Shared\+Ptr dhtt\+::\+Node\+::register\+\_\+server\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_aa76f51b40e4e16ea3ef77e2c8686210d}\label{classdhtt_1_1Node_aa76f51b40e4e16ea3ef77e2c8686210d}} 
+\index{dhtt::Node@{dhtt::Node}!resource\_status\_updated@{resource\_status\_updated}}
+\index{resource\_status\_updated@{resource\_status\_updated}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{resource\_status\_updated}{resource\_status\_updated}}
+{\footnotesize\ttfamily bool dhtt\+::\+Node\+::resource\+\_\+status\+\_\+updated\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_a3d2fbe7dd850b48bd9c19f8f1a6a6bb7}\label{classdhtt_1_1Node_a3d2fbe7dd850b48bd9c19f8f1a6a6bb7}} 
+\index{dhtt::Node@{dhtt::Node}!resources\_sub@{resources\_sub}}
+\index{resources\_sub@{resources\_sub}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{resources\_sub}{resources\_sub}}
+{\footnotesize\ttfamily rclcpp\+::\+Subscription$<$dhtt\+\_\+msgs\+::msg\+::\+Resources$>$\+::Shared\+Ptr dhtt\+::\+Node\+::resources\+\_\+sub\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_a09debead42c6b70e4123399287fb93fc}\label{classdhtt_1_1Node_a09debead42c6b70e4123399287fb93fc}} 
+\index{dhtt::Node@{dhtt::Node}!responses@{responses}}
+\index{responses@{responses}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{responses}{responses}}
+{\footnotesize\ttfamily std\+::map$<$std\+::string, dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result\+::\+Shared\+Ptr$>$ dhtt\+::\+Node\+::responses\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_aeae83bf58d1fde65b0a0c881896ee719}\label{classdhtt_1_1Node_aeae83bf58d1fde65b0a0c881896ee719}} 
+\index{dhtt::Node@{dhtt::Node}!status@{status}}
+\index{status@{status}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{status}{status}}
+{\footnotesize\ttfamily dhtt\+\_\+msgs\+::msg\+::\+Node\+Status dhtt\+::\+Node\+::status\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_a88afcf53bea2ad042b46021880ace44d}\label{classdhtt_1_1Node_a88afcf53bea2ad042b46021880ace44d}} 
+\index{dhtt::Node@{dhtt::Node}!status\_pub@{status\_pub}}
+\index{status\_pub@{status\_pub}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{status\_pub}{status\_pub}}
+{\footnotesize\ttfamily rclcpp\+::\+Publisher$<$dhtt\+\_\+msgs\+::msg\+::\+Node$>$\+::Shared\+Ptr dhtt\+::\+Node\+::status\+\_\+pub\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_ac64f1fd3395011657540ee61f2e8a62a}\label{classdhtt_1_1Node_ac64f1fd3395011657540ee61f2e8a62a}} 
+\index{dhtt::Node@{dhtt::Node}!stored\_responses@{stored\_responses}}
+\index{stored\_responses@{stored\_responses}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{stored\_responses}{stored\_responses}}
+{\footnotesize\ttfamily int dhtt\+::\+Node\+::stored\+\_\+responses\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_a6a6d05d6ac1e66dc3644019f0e14c950}\label{classdhtt_1_1Node_a6a6d05d6ac1e66dc3644019f0e14c950}} 
+\index{dhtt::Node@{dhtt::Node}!successful\_load@{successful\_load}}
+\index{successful\_load@{successful\_load}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{successful\_load}{successful\_load}}
+{\footnotesize\ttfamily bool dhtt\+::\+Node\+::successful\+\_\+load\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1Node_adacbb4c5cc6ab3a8207c3bbb323ef835}\label{classdhtt_1_1Node_adacbb4c5cc6ab3a8207c3bbb323ef835}} 
+\index{dhtt::Node@{dhtt::Node}!work\_thread@{work\_thread}}
+\index{work\_thread@{work\_thread}!dhtt::Node@{dhtt::Node}}
+\doxysubsubsection{\texorpdfstring{work\_thread}{work\_thread}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$std\+::thread$>$ dhtt\+::\+Node\+::work\+\_\+thread\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt/include/dhtt/tree/\mbox{\hyperlink{node_8hpp}{node.\+hpp}}\end{DoxyCompactItemize}

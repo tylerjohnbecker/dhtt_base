@@ -1,0 +1,215 @@
+\hypertarget{classdhtt_1_1NodeType}{}\doxysection{dhtt\+::Node\+Type Class Reference}
+\label{classdhtt_1_1NodeType}\index{dhtt::NodeType@{dhtt::NodeType}}
+
+
+Base class describing the logic of the nodes.  
+
+
+
+
+{\ttfamily \#include $<$node\+\_\+type.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}{initialize}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}})=0
+\begin{DoxyCompactList}\small\item\em abstract initialize function for all \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} classes \end{DoxyCompactList}\item 
+virtual std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a4a0e8daedf33d0b55327a6a009b49b5d}{auction\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$container)=0
+\begin{DoxyCompactList}\small\item\em functionality for completing an auction \end{DoxyCompactList}\item 
+virtual std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a289ec0cb763052521b83aff62a41600f}{work\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$container)=0
+\begin{DoxyCompactList}\small\item\em functionality for performing work \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}})=0
+\begin{DoxyCompactList}\small\item\em method to parse the input parameters for the \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} \end{DoxyCompactList}\item 
+virtual double \mbox{\hyperlink{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c845}{get\+\_\+perceived\+\_\+efficiency}} ()=0
+\begin{DoxyCompactList}\small\item\em calculates the activation potential of the node locally \end{DoxyCompactList}\item 
+virtual bool \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}{is\+\_\+done}} ()
+\begin{DoxyCompactList}\small\item\em check for if the node is finished running \end{DoxyCompactList}\item 
+virtual bool \mbox{\hyperlink{classdhtt_1_1NodeType_a27786baa37dcfb24f406bf0becf5d428}{can\+\_\+add\+\_\+child}} ()
+\begin{DoxyCompactList}\small\item\em whether or not this node can have children \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008}{goal\+\_\+t}} \mbox{\hyperlink{classdhtt_1_1NodeType_a38eb2cd34604afab4f82972fded433ab}{goal\+\_\+type}} = \mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008adb421c8b35e9d91c2e0f520567fac9b7}{P\+E\+R\+S\+I\+S\+T\+E\+NT}}
+\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a425a99e3ab63a286168b02cac8e2ef2d}{necessary\+\_\+resources}}
+\item 
+std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}
+\item 
+std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_aeeef5c0db14ade9f9babe3f532195abe}{preconditions}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classdhtt_1_1NodeType_a19ba84ac2216554b7830b2be2eb0f3d4}{children\+\_\+allowed}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Base class describing the logic of the nodes. 
+
+This is an interface for how to write the logic of a node. This encompasses both task nodes and behavior nodes. Each node needs describe how to initialize, how to perform the auction, what work to perform, how to parse params, and how to calculate activation\+\_\+potential. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a4a0e8daedf33d0b55327a6a009b49b5d}\label{classdhtt_1_1NodeType_a4a0e8daedf33d0b55327a6a009b49b5d}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!auction\_callback@{auction\_callback}}
+\index{auction\_callback@{auction\_callback}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{auction\_callback()}{auction\_callback()}}
+{\footnotesize\ttfamily virtual std\+::shared\+\_\+ptr$<$dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result$>$ dhtt\+::\+Node\+Type\+::auction\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+functionality for completing an auction 
+
+This describes what the node should consider when it is first activated (i.\+e. when it starts an auction). Behavior nodes should request any resources that they need to begin working, and task nodes should spread activation to their children and propogate their choice up afterwards
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & pointer to the node class which owns the node type in order to give use of the public methods.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns the result part of the Activation action in order to function with the \mbox{\hyperlink{classdhtt_1_1Node}{Node}} class. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a27786baa37dcfb24f406bf0becf5d428}\label{classdhtt_1_1NodeType_a27786baa37dcfb24f406bf0becf5d428}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!can\_add\_child@{can\_add\_child}}
+\index{can\_add\_child@{can\_add\_child}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{can\_add\_child()}{can\_add\_child()}}
+{\footnotesize\ttfamily virtual bool dhtt\+::\+Node\+Type\+::can\+\_\+add\+\_\+child (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+whether or not this node can have children 
+
+Generally, behavior nodes cannot have children so in that case they should not be allowed to, however, task nodes can so all nodes can choose to override this function to set different constraints on a nodes ability to have children (e.\+g. throttling the number of children to a max number).
+
+\begin{DoxyReturn}{Returns}
+true if a child can be added. false otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c845}\label{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c845}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
+\index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{get\_perceived\_efficiency()}{get\_perceived\_efficiency()}}
+{\footnotesize\ttfamily virtual double dhtt\+::\+Node\+Type\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+calculates the activation potential of the node locally 
+
+This looks at the calculation that this node locally uses, meaning some function of the childrens\textquotesingle{} activation potential for task nodes and some function (like distance) for behavior nodes.
+
+\begin{DoxyReturn}{Returns}
+activation potential value (0 -\/$>$ 1 by convention) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}\label{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!initialize@{initialize}}
+\index{initialize@{initialize}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily virtual void dhtt\+::\+Node\+Type\+::initialize (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$}]{params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+abstract initialize function for all \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} classes 
+
+Node\+Types can only initialize with some params given in a vector. The params should be described in the description file as shown in the sample\+\_\+tasks in the dhtt package. the params should also in general be parsed in the parse\+\_\+params function which is also used when parameters are modified.
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & the params to initialize the \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} with (taken from description file usually)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}\label{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!is\_done@{is\_done}}
+\index{is\_done@{is\_done}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{is\_done()}{is\_done()}}
+{\footnotesize\ttfamily virtual bool dhtt\+::\+Node\+Type\+::is\+\_\+done (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+check for if the node is finished running 
+
+just uses the logic of the node to find out if it is done running already. For behaviors this returns true once the work is complete, and for tasks this is complete when the logic dictates (A\+ND is done when all children are done, etc.).
+
+\begin{DoxyReturn}{Returns}
+true if the node is done. false otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}\label{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!parse\_params@{parse\_params}}
+\index{parse\_params@{parse\_params}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{parse\_params()}{parse\_params()}}
+{\footnotesize\ttfamily virtual void dhtt\+::\+Node\+Type\+::parse\+\_\+params (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$}]{params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+method to parse the input parameters for the \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} 
+
+generally should take the parameters from the description file and parse them in some way. This could include just setting flags, getting topic names for information retrieval, etc.
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & list of params taken from the description file (usually in key, value pairs by convention)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a289ec0cb763052521b83aff62a41600f}\label{classdhtt_1_1NodeType_a289ec0cb763052521b83aff62a41600f}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!work\_callback@{work\_callback}}
+\index{work\_callback@{work\_callback}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{work\_callback()}{work\_callback()}}
+{\footnotesize\ttfamily virtual std\+::shared\+\_\+ptr$<$dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result$>$ dhtt\+::\+Node\+Type\+::work\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+functionality for performing work 
+
+This describes what a node should do when it\textquotesingle{}s request for resources is approved and it can begin working. Behaviors should perform some action and then return the success of that action and tasks should propogate the message down and wait for the response (or perform some other action first in special cases). For an example of how to pass resources the d\+H\+TT plugins actions should suffice.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & pointer to the node class which owns the node type in order to give use of the public methods.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns the result part of the Activation action in order to function with the \mbox{\hyperlink{classdhtt_1_1Node}{Node}} class. For behaviors this should contain the resources that need to be released. 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a19ba84ac2216554b7830b2be2eb0f3d4}\label{classdhtt_1_1NodeType_a19ba84ac2216554b7830b2be2eb0f3d4}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!children\_allowed@{children\_allowed}}
+\index{children\_allowed@{children\_allowed}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{children\_allowed}{children\_allowed}}
+{\footnotesize\ttfamily bool dhtt\+::\+Node\+Type\+::children\+\_\+allowed\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a38eb2cd34604afab4f82972fded433ab}\label{classdhtt_1_1NodeType_a38eb2cd34604afab4f82972fded433ab}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!goal\_type@{goal\_type}}
+\index{goal\_type@{goal\_type}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{goal\_type}{goal\_type}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008}{goal\+\_\+t}} dhtt\+::\+Node\+Type\+::goal\+\_\+type = \mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008adb421c8b35e9d91c2e0f520567fac9b7}{P\+E\+R\+S\+I\+S\+T\+E\+NT}}}
+
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a425a99e3ab63a286168b02cac8e2ef2d}\label{classdhtt_1_1NodeType_a425a99e3ab63a286168b02cac8e2ef2d}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!necessary\_resources@{necessary\_resources}}
+\index{necessary\_resources@{necessary\_resources}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{necessary\_resources}{necessary\_resources}}
+{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+::\+Node\+Type\+::necessary\+\_\+resources}
+
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}\label{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!params@{params}}
+\index{params@{params}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{params}{params}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::string$>$ dhtt\+::\+Node\+Type\+::params}
+
+\mbox{\Hypertarget{classdhtt_1_1NodeType_aeeef5c0db14ade9f9babe3f532195abe}\label{classdhtt_1_1NodeType_aeeef5c0db14ade9f9babe3f532195abe}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!preconditions@{preconditions}}
+\index{preconditions@{preconditions}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{preconditions}{preconditions}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::string$>$ dhtt\+::\+Node\+Type\+::preconditions}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt/include/dhtt/tree/\mbox{\hyperlink{node__type_8hpp}{node\+\_\+type.\+hpp}}\end{DoxyCompactItemize}
