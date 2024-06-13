@@ -1,0 +1,168 @@
+\hypertarget{node_8hpp_source}{}\doxysection{node.\+hpp}
+\label{node_8hpp_source}\index{dhtt/include/dhtt/tree/node.hpp@{dhtt/include/dhtt/tree/node.hpp}}
+\mbox{\hyperlink{node_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef NODE\_HPP}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define NODE\_HPP}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include <memory>}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include <chrono>}}
+\DoxyCodeLine{6 }
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#include "{}pluginlib/class\_loader.hpp"{}}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include "{}rclcpp\_action/rclcpp\_action.hpp"{}}}
+\DoxyCodeLine{9 }
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#include "{}dhtt\_msgs/msg/node.hpp"{}}}
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include "{}dhtt\_msgs/msg/resource.hpp"{}}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include "{}dhtt\_msgs/msg/resources.hpp"{}}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include "{}dhtt\_msgs/msg/node\_status.hpp"{}}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include "{}dhtt\_msgs/srv/internal\_service\_registration.hpp"{}}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include "{}dhtt\_msgs/srv/modify\_request.hpp"{}}}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#include "{}dhtt\_msgs/action/activation.hpp"{}}}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{node__type_8hpp}{dhtt/tree/node\_type.hpp}}"{}}}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#define TREE\_PREFIX "{}/dhtt"{}}}
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#define REGISTER\_CHILD\_POSTFIX "{}/register\_child"{}}}
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#define ACTIVATION\_POSTFIX "{}/activate"{}}}
+\DoxyCodeLine{25 \textcolor{preprocessor}{\#define RESOURCES\_POSTFIX "{}/resource"{}}}
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#define CONTROL\_POSTFIX "{}/control"{}}}
+\DoxyCodeLine{27 }
+\DoxyCodeLine{28 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedhtt}{dhtt}}}
+\DoxyCodeLine{29 \{}
+\DoxyCodeLine{30 }
+\DoxyCodeLine{37     \textcolor{keyword}{class }\mbox{\hyperlink{classdhtt_1_1Node}{Node}} : \textcolor{keyword}{public} rclcpp::Node}
+\DoxyCodeLine{38     \{}
+\DoxyCodeLine{39     \textcolor{keyword}{public}:}
+\DoxyCodeLine{40 }
+\DoxyCodeLine{54         \mbox{\hyperlink{classdhtt_1_1Node_ad92bd3188be032af09313bdc5f533650}{Node}}(std::string \mbox{\hyperlink{classdhtt_1_1Node_a115da70a32b17f9913d7bfb57180afe3}{name}}, std::string type, std::vector<std::string> params, std::string \mbox{\hyperlink{classdhtt_1_1Node_a4f3abfadbbda36594d1976a3d960fc09}{parent\_name}});}
+\DoxyCodeLine{55         \mbox{\hyperlink{classdhtt_1_1Node_a36bce3e0e7d7593a5b63b637f39cfee1}{\string~Node}}();}
+\DoxyCodeLine{56 }
+\DoxyCodeLine{57         \textcolor{keyword}{friend} \textcolor{keyword}{class }\mbox{\hyperlink{classdhtt_1_1MainServer}{MainServer}};}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{66         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt_1_1Node_a37e3f9bfad1ce41f0279baa58f0c91cf}{loaded\_successfully}}();}
+\DoxyCodeLine{67 }
+\DoxyCodeLine{73         std::string \mbox{\hyperlink{classdhtt_1_1Node_aaa42c6f51d16f6e9840765b18ec01feb}{get\_error\_msg}}();}
+\DoxyCodeLine{74 }
+\DoxyCodeLine{82         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt_1_1Node_a33b8aeec2ee92d5e4d1cb829f6f34515}{get\_owned\_resources}}();}
+\DoxyCodeLine{83 }
+\DoxyCodeLine{92         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt_1_1Node_a38ef2a767d8d750e5fbe0eab07fb6e40}{get\_passed\_resources}}();}
+\DoxyCodeLine{93 }
+\DoxyCodeLine{102         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt_1_1Node_a5808acf03ace257d187a6e5b1bafc0b5}{get\_resource\_state}}();}
+\DoxyCodeLine{103 }
+\DoxyCodeLine{114         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1Node_abea1f61420a615e9ee1eca5e9e0be309}{set\_passed\_resources}}(std::vector<dhtt\_msgs::msg::Resource> set\_to);}
+\DoxyCodeLine{115 }
+\DoxyCodeLine{124         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1Node_a08edd24fae1fac092d475d664518ad79}{register\_with\_parent}}();}
+\DoxyCodeLine{125 }
+\DoxyCodeLine{133         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1Node_a81eec6c70d038bbafc18f01948e1accb}{register\_servers}}();}
+\DoxyCodeLine{134 }
+\DoxyCodeLine{144         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt_1_1Node_a4ab197eb83045145e50502a968ea217d}{remove\_child}}(std::string child\_name);}
+\DoxyCodeLine{145 }
+\DoxyCodeLine{146         \textcolor{comment}{// helpers for nodetype}}
+\DoxyCodeLine{157 \textcolor{comment}{}        \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1Node_add5be2961f87d9ee2e539e35505194c0}{async\_activate\_child}}(std::string child\_name, dhtt\_msgs::action::Activation::Goal activation\_goal);}
+\DoxyCodeLine{158 }
+\DoxyCodeLine{168         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1Node_a43572741c70d55807c8b434ac52954d4}{activate\_all\_children}}(dhtt\_msgs::action::Activation::Goal activation\_goal);}
+\DoxyCodeLine{169 }
+\DoxyCodeLine{177         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt_1_1Node_ad5d6810ec6bdac8d5b24fffe656b64a4}{block\_for\_responses\_from\_children}}();}
+\DoxyCodeLine{178 }
+\DoxyCodeLine{186         std::map<std::string, dhtt\_msgs::action::Activation::Result::SharedPtr> \mbox{\hyperlink{classdhtt_1_1Node_ada935ab4d0264b8ac07ba6bc44fa5415}{get\_activation\_results}}(); }
+\DoxyCodeLine{187 }
+\DoxyCodeLine{193         std::vector<std::string> \mbox{\hyperlink{classdhtt_1_1Node_a86e8ecc379d3d878c380341885c1f97a}{get\_child\_names}}();}
+\DoxyCodeLine{194 }
+\DoxyCodeLine{200         std::string \mbox{\hyperlink{classdhtt_1_1Node_a584c036236421f9e6bb9cc40cfa44932}{get\_active\_child\_name}}();}
+\DoxyCodeLine{201 }
+\DoxyCodeLine{207         std::string \mbox{\hyperlink{classdhtt_1_1Node_a5fb2d4018cb17c6427840fba0793920b}{get\_node\_name}}();}
+\DoxyCodeLine{208 }
+\DoxyCodeLine{219         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt_1_1Node_ad4e4a75ed50052a5abda45df148bbeb2}{is\_request\_possible}}(std::vector<dhtt\_msgs::msg::Resource> requested\_resources);}
+\DoxyCodeLine{220 }
+\DoxyCodeLine{231         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1Node_ad2dbd4ea3713bc091c3fdf9fa0b02378}{update\_status}}( int8\_t n\_state );}
+\DoxyCodeLine{232 }
+\DoxyCodeLine{242         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1Node_a9108ed5afb76cb5455fa2a59ff57c1ca}{set\_resource\_status\_updated}}(\textcolor{keywordtype}{bool} to\_set);}
+\DoxyCodeLine{243 }
+\DoxyCodeLine{244     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{245 }
+\DoxyCodeLine{246         \textcolor{comment}{// activation action server callbacks}}
+\DoxyCodeLine{258 \textcolor{comment}{}        rclcpp\_action::GoalResponse \mbox{\hyperlink{classdhtt_1_1Node_ae24d6923631c252ec3801f73e204dc93}{goal\_activation\_callback}}(\textcolor{keyword}{const} rclcpp\_action::GoalUUID\& uuid, std::shared\_ptr<const dhtt\_msgs::action::Activation::Goal> goal);}
+\DoxyCodeLine{259 }
+\DoxyCodeLine{270         rclcpp\_action::CancelResponse \mbox{\hyperlink{classdhtt_1_1Node_a1ed7038713a59e3526fdbf034cd73e9e}{cancel\_activation\_callback}}(\textcolor{keyword}{const} std::shared\_ptr<rclcpp\_action::ServerGoalHandle<dhtt\_msgs::action::Activation>> goal\_handle);}
+\DoxyCodeLine{271 }
+\DoxyCodeLine{288         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1Node_aaf2ede9121a77dfc37a07867125b7b5f}{activation\_accepted\_callback}}(\textcolor{keyword}{const} std::shared\_ptr<rclcpp\_action::ServerGoalHandle<dhtt\_msgs::action::Activation>> goal\_handle);}
+\DoxyCodeLine{289 }
+\DoxyCodeLine{300         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1Node_a5a8ca21dcee3cf3bb135e65025652089}{store\_result\_callback}}( \textcolor{keyword}{const} rclcpp\_action::ClientGoalHandle<dhtt\_msgs::action::Activation>::WrappedResult \& result, std::string node\_name );}
+\DoxyCodeLine{301 }
+\DoxyCodeLine{314         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1Node_ae95f75aa26af308add5662cea5d38acc}{activate}}(\textcolor{keyword}{const} std::shared\_ptr<rclcpp\_action::ServerGoalHandle<dhtt\_msgs::action::Activation>> goal\_handle);}
+\DoxyCodeLine{315 }
+\DoxyCodeLine{316         \textcolor{comment}{// service callbacks}}
+\DoxyCodeLine{327 \textcolor{comment}{}        \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1Node_a897a837a45fc8244c894a6af4e90e3e6}{register\_child\_callback}}(std::shared\_ptr<dhtt\_msgs::srv::InternalServiceRegistration::Request> request, std::shared\_ptr<dhtt\_msgs::srv::InternalServiceRegistration::Response> response);}
+\DoxyCodeLine{328 }
+\DoxyCodeLine{341         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1Node_a83e3d2d35fe6b2fa44ada2cfc3ba9ab1}{modify}}(std::shared\_ptr<dhtt\_msgs::srv::ModifyRequest::Request> request, std::shared\_ptr<dhtt\_msgs::srv::ModifyRequest::Response> response);}
+\DoxyCodeLine{342 }
+\DoxyCodeLine{343         \textcolor{comment}{// subscriber callbacks}}
+\DoxyCodeLine{344 }
+\DoxyCodeLine{354         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1Node_a805bd21c787aa191ad0a3dd409e1a6e3}{resource\_availability\_callback}}( \textcolor{keyword}{const} dhtt\_msgs::msg::Resources::SharedPtr canonical\_list );}
+\DoxyCodeLine{355 }
+\DoxyCodeLine{356         \textcolor{comment}{// helpful member functions}}
+\DoxyCodeLine{357 }
+\DoxyCodeLine{365         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt_1_1Node_a424d19e6aa8d4ef7ec6b64921c75917e}{check\_preconditions}}();}
+\DoxyCodeLine{366 }
+\DoxyCodeLine{374         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt_1_1Node_a45a2c5747ea46bbaa1e8156a988010a1}{calculate\_activation\_potential}}();}
+\DoxyCodeLine{375 }
+\DoxyCodeLine{383         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1Node_afb92c70ed98b5c511d83714c8e6c6e8b}{propogate\_failure\_down}}();}
+\DoxyCodeLine{384 }
+\DoxyCodeLine{385         \textcolor{comment}{// activation server}}
+\DoxyCodeLine{386         rclcpp\_action::Server<dhtt\_msgs::action::Activation>::SharedPtr \mbox{\hyperlink{classdhtt_1_1Node_a9e98e92fe184135277cc7049d5a63496}{activation\_server}};}
+\DoxyCodeLine{387 }
+\DoxyCodeLine{388         \textcolor{comment}{// activation clients}}
+\DoxyCodeLine{389         std::vector<rclcpp\_action::Client<dhtt\_msgs::action::Activation>::SharedPtr> \mbox{\hyperlink{classdhtt_1_1Node_a79ba86630915946a9dac86fce50fce61}{activation\_clients}};}
+\DoxyCodeLine{390         std::map<std::string, dhtt\_msgs::action::Activation::Result::SharedPtr> \mbox{\hyperlink{classdhtt_1_1Node_a09debead42c6b70e4123399287fb93fc}{responses}};}
+\DoxyCodeLine{391 }
+\DoxyCodeLine{392         \textcolor{comment}{// services}}
+\DoxyCodeLine{393         rclcpp::Service<dhtt\_msgs::srv::InternalServiceRegistration>::SharedPtr \mbox{\hyperlink{classdhtt_1_1Node_a9cf5a4107d5904d93cfa6944711a3f9b}{register\_server}};}
+\DoxyCodeLine{394 }
+\DoxyCodeLine{395         \textcolor{comment}{// members}}
+\DoxyCodeLine{396         pluginlib::ClassLoader<NodeType> \mbox{\hyperlink{classdhtt_1_1Node_affb2cbd2fcf92c8febb91c0faeb004b8}{node\_type\_loader}};}
+\DoxyCodeLine{397         std::shared\_ptr<NodeType> \mbox{\hyperlink{classdhtt_1_1Node_a0130f80212b348e627f0f481842579cc}{logic}};}
+\DoxyCodeLine{398 }
+\DoxyCodeLine{399         dhtt\_msgs::msg::NodeStatus \mbox{\hyperlink{classdhtt_1_1Node_aeae83bf58d1fde65b0a0c881896ee719}{status}};}
+\DoxyCodeLine{400         rclcpp::Publisher<dhtt\_msgs::msg::Node>::SharedPtr \mbox{\hyperlink{classdhtt_1_1Node_a88afcf53bea2ad042b46021880ace44d}{status\_pub}};}
+\DoxyCodeLine{401         rclcpp::Subscription<dhtt\_msgs::msg::Resources>::SharedPtr \mbox{\hyperlink{classdhtt_1_1Node_a3d2fbe7dd850b48bd9c19f8f1a6a6bb7}{resources\_sub}};}
+\DoxyCodeLine{402 }
+\DoxyCodeLine{403         std::shared\_ptr<std::thread> \mbox{\hyperlink{classdhtt_1_1Node_adacbb4c5cc6ab3a8207c3bbb323ef835}{work\_thread}};}
+\DoxyCodeLine{404         std::shared\_ptr<std::thread> \mbox{\hyperlink{classdhtt_1_1Node_adf28761993492b849f1b7c9e12596038}{fail\_thread}};}
+\DoxyCodeLine{405 }
+\DoxyCodeLine{406         std::mutex \mbox{\hyperlink{classdhtt_1_1Node_affbfc7bfc2c776c5a425cb5984029773}{logic\_mut}};}
+\DoxyCodeLine{407 }
+\DoxyCodeLine{408         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt_1_1Node_abdd751af66b71c886d2161cf7328355f}{owned\_resources}};}
+\DoxyCodeLine{409         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt_1_1Node_ad80c0534f216a1096edf5445249b8d64}{available\_resources}};}
+\DoxyCodeLine{410         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt_1_1Node_ae27cd76b756f33a2227b41ca1b326107}{passed\_resources}};}
+\DoxyCodeLine{411         std::vector<std::string> \mbox{\hyperlink{classdhtt_1_1Node_aa7de5cfc418a185d27f950202e533137}{child\_names}};}
+\DoxyCodeLine{412 }
+\DoxyCodeLine{413         std::string \mbox{\hyperlink{classdhtt_1_1Node_a115da70a32b17f9913d7bfb57180afe3}{name}};}
+\DoxyCodeLine{414         std::string \mbox{\hyperlink{classdhtt_1_1Node_a4f3abfadbbda36594d1976a3d960fc09}{parent\_name}};}
+\DoxyCodeLine{415         std::string \mbox{\hyperlink{classdhtt_1_1Node_abcacf32d8e8065c230f844eb918001f4}{plugin\_name}};}
+\DoxyCodeLine{416 }
+\DoxyCodeLine{417         std::string \mbox{\hyperlink{classdhtt_1_1Node_ae11459053c91e69999dedff767c56a05}{active\_child\_name}};}
+\DoxyCodeLine{418 }
+\DoxyCodeLine{419         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt_1_1Node_a1b49263c05ba78bb41cd3336e8e9e02c}{activation\_potential}};}
+\DoxyCodeLine{420 }
+\DoxyCodeLine{421         \textcolor{comment}{// not sure if i need this}}
+\DoxyCodeLine{422         \textcolor{keywordtype}{int} \mbox{\hyperlink{classdhtt_1_1Node_a5a1f2aa9088813141a9ede68feb08ea6}{activation\_level}};       }
+\DoxyCodeLine{423         \textcolor{keywordtype}{int} \mbox{\hyperlink{classdhtt_1_1Node_ac64f1fd3395011657540ee61f2e8a62a}{stored\_responses}};}
+\DoxyCodeLine{424         \textcolor{keywordtype}{int} \mbox{\hyperlink{classdhtt_1_1Node_a0a8dbb0d9b10b3c0b5c9786b0b359566}{expected\_responses}};}
+\DoxyCodeLine{425 }
+\DoxyCodeLine{426         \textcolor{keywordtype}{int} \mbox{\hyperlink{classdhtt_1_1Node_a72b463e4482459cd0169730186d7c33c}{priority}};}
+\DoxyCodeLine{427 }
+\DoxyCodeLine{428         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt_1_1Node_aa76f51b40e4e16ea3ef77e2c8686210d}{resource\_status\_updated}};}
+\DoxyCodeLine{429 }
+\DoxyCodeLine{430         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt_1_1Node_a6a6d05d6ac1e66dc3644019f0e14c950}{successful\_load}};}
+\DoxyCodeLine{431         std::string \mbox{\hyperlink{classdhtt_1_1Node_afaf15d27c12996d5a6da426c4383e7a2}{error\_msg}};}
+\DoxyCodeLine{432 }
+\DoxyCodeLine{433     \textcolor{keyword}{private}:}
+\DoxyCodeLine{434     \};}
+\DoxyCodeLine{435 }
+\DoxyCodeLine{436 \}}
+\DoxyCodeLine{437 }
+\DoxyCodeLine{438 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// NODE\_HPP}}
+
+\end{DoxyCode}

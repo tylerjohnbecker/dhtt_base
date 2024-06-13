@@ -1,0 +1,14 @@
+digraph "dhtt/include/dhtt/server"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  compound=true
+  subgraph clusterdir_b119dd001e3bbdc1954b89cd9f0d501d {
+    graph [ bgcolor="#edf0f7", pencolor="grey50", label="dhtt", fontname=Helvetica,fontsize=10 style="filled,dashed", URL="dir_b119dd001e3bbdc1954b89cd9f0d501d.html",tooltip=""]
+  dir_e69c21c7aabdc3d96a24d6b9f9ac91e6 [label="tree", fillcolor="#a2b4d6", color="grey25", style="filled", URL="dir_e69c21c7aabdc3d96a24d6b9f9ac91e6.html",tooltip=""];
+  dir_23ca53036a1b9d034c7b7c1f93f0fe21 [label="server", fillcolor="#edf0f7", color="grey25", style="filled,bold", URL="dir_23ca53036a1b9d034c7b7c1f93f0fe21.html",tooltip=""];
+  }
+  dir_23ca53036a1b9d034c7b7c1f93f0fe21->dir_e69c21c7aabdc3d96a24d6b9f9ac91e6 [headlabel="1", labeldistance=1.5 headhref="dir_000003_000004.html" color="steelblue1" fontcolor="steelblue1"];
+}

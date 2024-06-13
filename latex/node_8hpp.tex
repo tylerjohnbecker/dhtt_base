@@ -12,42 +12,32 @@
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/srv/modify\+\_\+request.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/action/activation.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt/tree/node\+\_\+type.\+hpp\char`\"{}}\newline
-Include dependency graph for node.\+hpp\+:\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=350pt]{node_8hpp__incl}
-\end{center}
-\end{figure}
-This graph shows which files directly or indirectly include this file\+:\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=211pt]{node_8hpp__dep__incl}
-\end{center}
-\end{figure}
+Include dependency graph for node.\+hpp\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
 \doxysubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}}
-\begin{DoxyCompactList}\small\item\em d\+H\+TT \mbox{\hyperlink{classdhtt_1_1Node}{Node}} class for all nodes on the tree \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em d\+HTT \mbox{\hyperlink{classdhtt_1_1Node}{Node}} class for all nodes on the tree \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Namespaces}
 \begin{DoxyCompactItemize}
 \item 
- \mbox{\hyperlink{namespacedhtt}{dhtt}}
+namespace \mbox{\hyperlink{namespacedhtt}{dhtt}}
 \end{DoxyCompactItemize}
 \doxysubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\#define \mbox{\hyperlink{node_8hpp_a0b4c745b53e6916b0a8ea5520d1ede12}{T\+R\+E\+E\+\_\+\+P\+R\+E\+F\+IX}}~\char`\"{}/dhtt\char`\"{}
+\#define \mbox{\hyperlink{node_8hpp_a0b4c745b53e6916b0a8ea5520d1ede12}{TREE\+\_\+\+PREFIX}}~\char`\"{}/dhtt\char`\"{}
 \item 
-\#define \mbox{\hyperlink{node_8hpp_ae32a692deaa3a778c25d52f2b63322bc}{R\+E\+G\+I\+S\+T\+E\+R\+\_\+\+C\+H\+I\+L\+D\+\_\+\+P\+O\+S\+T\+F\+IX}}~\char`\"{}/register\+\_\+child\char`\"{}
+\#define \mbox{\hyperlink{node_8hpp_ae32a692deaa3a778c25d52f2b63322bc}{REGISTER\+\_\+\+CHILD\+\_\+\+POSTFIX}}~\char`\"{}/register\+\_\+child\char`\"{}
 \item 
-\#define \mbox{\hyperlink{node_8hpp_afaf57526d195e6c04efce9d8cb8d1082}{A\+C\+T\+I\+V\+A\+T\+I\+O\+N\+\_\+\+P\+O\+S\+T\+F\+IX}}~\char`\"{}/activate\char`\"{}
+\#define \mbox{\hyperlink{node_8hpp_afaf57526d195e6c04efce9d8cb8d1082}{ACTIVATION\+\_\+\+POSTFIX}}~\char`\"{}/activate\char`\"{}
 \item 
-\#define \mbox{\hyperlink{node_8hpp_ae549cb06a6c0c8989e42b0bbf8d44728}{R\+E\+S\+O\+U\+R\+C\+E\+S\+\_\+\+P\+O\+S\+T\+F\+IX}}~\char`\"{}/resource\char`\"{}
+\#define \mbox{\hyperlink{node_8hpp_ae549cb06a6c0c8989e42b0bbf8d44728}{RESOURCES\+\_\+\+POSTFIX}}~\char`\"{}/resource\char`\"{}
 \item 
-\#define \mbox{\hyperlink{node_8hpp_abe6a7b3393adc1231c17f63de3a3ca0e}{C\+O\+N\+T\+R\+O\+L\+\_\+\+P\+O\+S\+T\+F\+IX}}~\char`\"{}/control\char`\"{}
+\#define \mbox{\hyperlink{node_8hpp_abe6a7b3393adc1231c17f63de3a3ca0e}{CONTROL\+\_\+\+POSTFIX}}~\char`\"{}/control\char`\"{}
 \end{DoxyCompactItemize}
 
 
@@ -56,29 +46,29 @@ class \mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}}
 \index{node.hpp@{node.hpp}!ACTIVATION\_POSTFIX@{ACTIVATION\_POSTFIX}}
 \index{ACTIVATION\_POSTFIX@{ACTIVATION\_POSTFIX}!node.hpp@{node.hpp}}
 \doxysubsubsection{\texorpdfstring{ACTIVATION\_POSTFIX}{ACTIVATION\_POSTFIX}}
-{\footnotesize\ttfamily \#define A\+C\+T\+I\+V\+A\+T\+I\+O\+N\+\_\+\+P\+O\+S\+T\+F\+IX~\char`\"{}/activate\char`\"{}}
+{\footnotesize\ttfamily \#define ACTIVATION\+\_\+\+POSTFIX~\char`\"{}/activate\char`\"{}}
 
 \mbox{\Hypertarget{node_8hpp_abe6a7b3393adc1231c17f63de3a3ca0e}\label{node_8hpp_abe6a7b3393adc1231c17f63de3a3ca0e}} 
 \index{node.hpp@{node.hpp}!CONTROL\_POSTFIX@{CONTROL\_POSTFIX}}
 \index{CONTROL\_POSTFIX@{CONTROL\_POSTFIX}!node.hpp@{node.hpp}}
 \doxysubsubsection{\texorpdfstring{CONTROL\_POSTFIX}{CONTROL\_POSTFIX}}
-{\footnotesize\ttfamily \#define C\+O\+N\+T\+R\+O\+L\+\_\+\+P\+O\+S\+T\+F\+IX~\char`\"{}/control\char`\"{}}
+{\footnotesize\ttfamily \#define CONTROL\+\_\+\+POSTFIX~\char`\"{}/control\char`\"{}}
 
 \mbox{\Hypertarget{node_8hpp_ae32a692deaa3a778c25d52f2b63322bc}\label{node_8hpp_ae32a692deaa3a778c25d52f2b63322bc}} 
 \index{node.hpp@{node.hpp}!REGISTER\_CHILD\_POSTFIX@{REGISTER\_CHILD\_POSTFIX}}
 \index{REGISTER\_CHILD\_POSTFIX@{REGISTER\_CHILD\_POSTFIX}!node.hpp@{node.hpp}}
 \doxysubsubsection{\texorpdfstring{REGISTER\_CHILD\_POSTFIX}{REGISTER\_CHILD\_POSTFIX}}
-{\footnotesize\ttfamily \#define R\+E\+G\+I\+S\+T\+E\+R\+\_\+\+C\+H\+I\+L\+D\+\_\+\+P\+O\+S\+T\+F\+IX~\char`\"{}/register\+\_\+child\char`\"{}}
+{\footnotesize\ttfamily \#define REGISTER\+\_\+\+CHILD\+\_\+\+POSTFIX~\char`\"{}/register\+\_\+child\char`\"{}}
 
 \mbox{\Hypertarget{node_8hpp_ae549cb06a6c0c8989e42b0bbf8d44728}\label{node_8hpp_ae549cb06a6c0c8989e42b0bbf8d44728}} 
 \index{node.hpp@{node.hpp}!RESOURCES\_POSTFIX@{RESOURCES\_POSTFIX}}
 \index{RESOURCES\_POSTFIX@{RESOURCES\_POSTFIX}!node.hpp@{node.hpp}}
 \doxysubsubsection{\texorpdfstring{RESOURCES\_POSTFIX}{RESOURCES\_POSTFIX}}
-{\footnotesize\ttfamily \#define R\+E\+S\+O\+U\+R\+C\+E\+S\+\_\+\+P\+O\+S\+T\+F\+IX~\char`\"{}/resource\char`\"{}}
+{\footnotesize\ttfamily \#define RESOURCES\+\_\+\+POSTFIX~\char`\"{}/resource\char`\"{}}
 
 \mbox{\Hypertarget{node_8hpp_a0b4c745b53e6916b0a8ea5520d1ede12}\label{node_8hpp_a0b4c745b53e6916b0a8ea5520d1ede12}} 
 \index{node.hpp@{node.hpp}!TREE\_PREFIX@{TREE\_PREFIX}}
 \index{TREE\_PREFIX@{TREE\_PREFIX}!node.hpp@{node.hpp}}
 \doxysubsubsection{\texorpdfstring{TREE\_PREFIX}{TREE\_PREFIX}}
-{\footnotesize\ttfamily \#define T\+R\+E\+E\+\_\+\+P\+R\+E\+F\+IX~\char`\"{}/dhtt\char`\"{}}
+{\footnotesize\ttfamily \#define TREE\+\_\+\+PREFIX~\char`\"{}/dhtt\char`\"{}}
 

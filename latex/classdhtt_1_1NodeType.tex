@@ -14,9 +14,9 @@ Base class describing the logic of the nodes.
 \item 
 virtual void \mbox{\hyperlink{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}{initialize}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}})=0
 \begin{DoxyCompactList}\small\item\em abstract initialize function for all \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} classes \end{DoxyCompactList}\item 
-virtual std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a4a0e8daedf33d0b55327a6a009b49b5d}{auction\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$container)=0
+virtual std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5e52}{auction\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$container)=0
 \begin{DoxyCompactList}\small\item\em functionality for completing an auction \end{DoxyCompactList}\item 
-virtual std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a289ec0cb763052521b83aff62a41600f}{work\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$container)=0
+virtual std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610e91}{work\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$container)=0
 \begin{DoxyCompactList}\small\item\em functionality for performing work \end{DoxyCompactList}\item 
 virtual void \mbox{\hyperlink{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}})=0
 \begin{DoxyCompactList}\small\item\em method to parse the input parameters for the \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} \end{DoxyCompactList}\item 
@@ -29,7 +29,7 @@ virtual bool \mbox{\hyperlink{classdhtt_1_1NodeType_a27786baa37dcfb24f406bf0becf
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008}{goal\+\_\+t}} \mbox{\hyperlink{classdhtt_1_1NodeType_a38eb2cd34604afab4f82972fded433ab}{goal\+\_\+type}} = \mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008adb421c8b35e9d91c2e0f520567fac9b7}{P\+E\+R\+S\+I\+S\+T\+E\+NT}}
+\mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008}{goal\+\_\+t}} \mbox{\hyperlink{classdhtt_1_1NodeType_a38eb2cd34604afab4f82972fded433ab}{goal\+\_\+type}} = \mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008adb421c8b35e9d91c2e0f520567fac9b7}{PERSISTENT}}
 \item 
 std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a425a99e3ab63a286168b02cac8e2ef2d}{necessary\+\_\+resources}}
 \item 
@@ -50,11 +50,11 @@ Base class describing the logic of the nodes.
 This is an interface for how to write the logic of a node. This encompasses both task nodes and behavior nodes. Each node needs describe how to initialize, how to perform the auction, what work to perform, how to parse params, and how to calculate activation\+\_\+potential. 
 
 \doxysubsection{Member Function Documentation}
-\mbox{\Hypertarget{classdhtt_1_1NodeType_a4a0e8daedf33d0b55327a6a009b49b5d}\label{classdhtt_1_1NodeType_a4a0e8daedf33d0b55327a6a009b49b5d}} 
+\mbox{\Hypertarget{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5e52}\label{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5e52}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!auction\_callback@{auction\_callback}}
 \index{auction\_callback@{auction\_callback}!dhtt::NodeType@{dhtt::NodeType}}
 \doxysubsubsection{\texorpdfstring{auction\_callback()}{auction\_callback()}}
-{\footnotesize\ttfamily virtual std\+::shared\+\_\+ptr$<$dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result$>$ dhtt\+::\+Node\+Type\+::auction\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+{\footnotesize\ttfamily virtual std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ dhtt\+::\+Node\+Type\+::auction\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
 
 
 
@@ -98,7 +98,7 @@ calculates the activation potential of the node locally
 This looks at the calculation that this node locally uses, meaning some function of the childrens\textquotesingle{} activation potential for task nodes and some function (like distance) for behavior nodes.
 
 \begin{DoxyReturn}{Returns}
-activation potential value (0 -\/$>$ 1 by convention) 
+activation potential value (0 -\/\texorpdfstring{$>$}{>} 1 by convention) 
 \end{DoxyReturn}
 \mbox{\Hypertarget{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}\label{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!initialize@{initialize}}
@@ -130,7 +130,7 @@ void
 
 check for if the node is finished running 
 
-just uses the logic of the node to find out if it is done running already. For behaviors this returns true once the work is complete, and for tasks this is complete when the logic dictates (A\+ND is done when all children are done, etc.).
+just uses the logic of the node to find out if it is done running already. For behaviors this returns true once the work is complete, and for tasks this is complete when the logic dictates (AND is done when all children are done, etc.).
 
 \begin{DoxyReturn}{Returns}
 true if the node is done. false otherwise. 
@@ -155,17 +155,17 @@ generally should take the parameters from the description file and parse them in
 \begin{DoxyReturn}{Returns}
 void 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classdhtt_1_1NodeType_a289ec0cb763052521b83aff62a41600f}\label{classdhtt_1_1NodeType_a289ec0cb763052521b83aff62a41600f}} 
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610e91}\label{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610e91}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!work\_callback@{work\_callback}}
 \index{work\_callback@{work\_callback}!dhtt::NodeType@{dhtt::NodeType}}
 \doxysubsubsection{\texorpdfstring{work\_callback()}{work\_callback()}}
-{\footnotesize\ttfamily virtual std\+::shared\+\_\+ptr$<$dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result$>$ dhtt\+::\+Node\+Type\+::work\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+{\footnotesize\ttfamily virtual std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ dhtt\+::\+Node\+Type\+::work\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
 
 
 
 functionality for performing work 
 
-This describes what a node should do when it\textquotesingle{}s request for resources is approved and it can begin working. Behaviors should perform some action and then return the success of that action and tasks should propogate the message down and wait for the response (or perform some other action first in special cases). For an example of how to pass resources the d\+H\+TT plugins actions should suffice.
+This describes what a node should do when it\textquotesingle{}s request for resources is approved and it can begin working. Behaviors should perform some action and then return the success of that action and tasks should propogate the message down and wait for the response (or perform some other action first in special cases). For an example of how to pass resources the d\+HTT plugins actions should suffice.
 
 
 \begin{DoxyParams}{Parameters}
@@ -188,7 +188,7 @@ returns the result part of the Activation action in order to function with the \
 \index{dhtt::NodeType@{dhtt::NodeType}!goal\_type@{goal\_type}}
 \index{goal\_type@{goal\_type}!dhtt::NodeType@{dhtt::NodeType}}
 \doxysubsubsection{\texorpdfstring{goal\_type}{goal\_type}}
-{\footnotesize\ttfamily \mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008}{goal\+\_\+t}} dhtt\+::\+Node\+Type\+::goal\+\_\+type = \mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008adb421c8b35e9d91c2e0f520567fac9b7}{P\+E\+R\+S\+I\+S\+T\+E\+NT}}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008}{goal\+\_\+t}} dhtt\+::\+Node\+Type\+::goal\+\_\+type = \mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008adb421c8b35e9d91c2e0f520567fac9b7}{PERSISTENT}}}
 
 \mbox{\Hypertarget{classdhtt_1_1NodeType_a425a99e3ab63a286168b02cac8e2ef2d}\label{classdhtt_1_1NodeType_a425a99e3ab63a286168b02cac8e2ef2d}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!necessary\_resources@{necessary\_resources}}
