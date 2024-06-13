@@ -10,6 +10,9 @@ jobs:
       contents: write
       issues: write
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - run: cd ${{ github.workspace }}
       - run: git checkout main
       - run: doxygen ./config
       - run: git checkout gh-pages
@@ -18,3 +21,4 @@ jobs:
       - run: git push origin gh-pages
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: cd .. && rm -rf ${{ github.workspace }}
