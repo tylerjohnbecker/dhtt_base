@@ -18,7 +18,7 @@ jobs:
       - uses: mattnotmitt/doxygen-action@v1.9.5
         with:
           doxyfile-path: ./config
-      - run: git add ./html ./latex
+      - run: git add -f ./html ./latex
       - run: git commit -m "doxygen changes"
       - run: git push origin gh-pages
         env:
