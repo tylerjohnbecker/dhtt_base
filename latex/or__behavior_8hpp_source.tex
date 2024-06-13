@@ -1,0 +1,49 @@
+\hypertarget{or__behavior_8hpp_source}{}\doxysection{or\+\_\+behavior.\+hpp}
+\label{or__behavior_8hpp_source}\index{dhtt\_plugins/include/dhtt\_plugins/tasks/or\_behavior.hpp@{dhtt\_plugins/include/dhtt\_plugins/tasks/or\_behavior.hpp}}
+\mbox{\hyperlink{or__behavior_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef OR\_BEHAVIOR\_HPP}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define OR\_BEHAVIOR\_HPP}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include "{}dhtt\_plugins/visibility\_control.h"{}}}
+\DoxyCodeLine{5 }
+\DoxyCodeLine{6 \textcolor{preprocessor}{\#include "{}rclcpp/rclcpp.hpp"{}}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{node_8hpp}{dhtt/tree/node.hpp}}"{}}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{node__type_8hpp}{dhtt/tree/node\_type.hpp}}"{}}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <string>}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedhtt__plugins}{dhtt\_plugins}}}
+\DoxyCodeLine{15 \{}
+\DoxyCodeLine{16     \textcolor{keyword}{class }\mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior}{OrBehavior}} : \textcolor{keyword}{public} \mbox{\hyperlink{classdhtt_1_1NodeType}{dhtt::NodeType}}}
+\DoxyCodeLine{17     \{}
+\DoxyCodeLine{18     \textcolor{keyword}{public}:}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a907a6b140ea345f4924d0bc770a73baa}{initialize}}(std::vector<std::string> \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) \textcolor{keyword}{override};}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22         std::shared\_ptr<dhtt\_msgs::action::Activation::Result> \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a4d5bef6f08a3f8b41c08627c7e49529f}{auction\_callback}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
+\DoxyCodeLine{23         std::shared\_ptr<dhtt\_msgs::action::Activation::Result> \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_ada2499282514c8a53c52703419a5b6e1}{work\_callback}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a0da23d587157936fe57313a799545556}{parse\_params}}( std::vector<std::string> \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}} ) \textcolor{keyword}{override};}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{27         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a329f1af3a1e7653c9ba47ef1887eb678}{get\_perceived\_efficiency}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a92c4a1767ead32d681ac925f1422e4b7}{is\_done}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{31 }
+\DoxyCodeLine{32     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{33         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_aa07003eb60735f7db9e5cbe35988a861}{has\_chosen\_child}};}
+\DoxyCodeLine{34         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a690d84f871a70a9a8cd5e7c7bc48e3fd}{child\_has\_run}};}
+\DoxyCodeLine{35         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a517f5e52e7c48a44c45c9d6b52536ad6}{child\_done}};}
+\DoxyCodeLine{36         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a2ace6315abbaa6e1fa0592741e1240a6}{activation\_potential}};}
+\DoxyCodeLine{37 }
+\DoxyCodeLine{38         std::string \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a4aff8507c71ff92d829cd64805a01cdf}{activated\_child\_name}};}
+\DoxyCodeLine{39     \textcolor{keyword}{private}:}
+\DoxyCodeLine{40     \};}
+\DoxyCodeLine{41 \}}
+\DoxyCodeLine{42 }
+\DoxyCodeLine{43 \textcolor{preprocessor}{\#endif }\textcolor{comment}{//OR\_BEHAVIOR\_HPP}}
+
+\end{DoxyCode}

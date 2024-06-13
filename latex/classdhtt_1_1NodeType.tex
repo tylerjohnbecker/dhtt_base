@@ -9,6 +9,10 @@ Base class describing the logic of the nodes.
 
 {\ttfamily \#include $<$node\+\_\+type.\+hpp$>$}
 
+
+
+Inheritance diagram for dhtt\+::Node\+Type\+:
+% FIG 0
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -70,6 +74,10 @@ This describes what the node should consider when it is first activated (i.\+e. 
 \begin{DoxyReturn}{Returns}
 returns the result part of the Activation action in order to function with the \mbox{\hyperlink{classdhtt_1_1Node}{Node}} class. 
 \end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a85e7c1065776a83857a0638b2ce8f9c4}{dhtt\+\_\+plugins\+::\+Action\+Type}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_aae9cdfe2c52650867d780d21d5e69bcd}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a86b264bee7ad6c1e3b75dd317aebebcf}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a4d5bef6f08a3f8b41c08627c7e49529f}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a015dfd866e959e263f2a8f61338dba0d}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a3563798f0425ee7d7b40bdac6e978bf7}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
+
 \mbox{\Hypertarget{classdhtt_1_1NodeType_a27786baa37dcfb24f406bf0becf5d428}\label{classdhtt_1_1NodeType_a27786baa37dcfb24f406bf0becf5d428}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!can\_add\_child@{can\_add\_child}}
 \index{can\_add\_child@{can\_add\_child}!dhtt::NodeType@{dhtt::NodeType}}
@@ -100,6 +108,10 @@ This looks at the calculation that this node locally uses, meaning some function
 \begin{DoxyReturn}{Returns}
 activation potential value (0 -\/\texorpdfstring{$>$}{>} 1 by convention) 
 \end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a681ce76a8fa7e782b207528d42d70948}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a76d1eb08379af8dd321b46c8c9aeb5e6}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a979d6362a4ccbfb6f8940abe8dec3528}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a41df48ed3feab14f2139cf7a0e40c3db}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a5e95d5ca715b6b7bef822c4344ea0c72}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a329f1af3a1e7653c9ba47ef1887eb678}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_ac53435698f66a9429b45a088418937a0}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a02598da3b388720f1c739263c00dd102}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
+
 \mbox{\Hypertarget{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}\label{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!initialize@{initialize}}
 \index{initialize@{initialize}!dhtt::NodeType@{dhtt::NodeType}}
@@ -120,6 +132,10 @@ Node\+Types can only initialize with some params given in a vector. The params s
 \begin{DoxyReturn}{Returns}
 void 
 \end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a381962c71b85e6a8517845db1a737f79}{dhtt\+\_\+plugins\+::\+Action\+Type}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a34c108b8860540d505d0476525a92ac6}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a30cad3c2a60361f4c466b48f73a0cedc}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a907a6b140ea345f4924d0bc770a73baa}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_aae062c8fec3f8a4fa5e9126cea2c6b50}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a753bc54bd168f168e48ad390c4ec39fe}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
+
 \mbox{\Hypertarget{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}\label{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!is\_done@{is\_done}}
 \index{is\_done@{is\_done}!dhtt::NodeType@{dhtt::NodeType}}
@@ -135,6 +151,10 @@ just uses the logic of the node to find out if it is done running already. For b
 \begin{DoxyReturn}{Returns}
 true if the node is done. false otherwise. 
 \end{DoxyReturn}
+
+
+Reimplemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a5dada7d97dfbd1bed5abfb9ccb295a62}{dhtt\+\_\+plugins\+::\+Action\+Type}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a2580bc3be934ae1d30935ed6f728cd99}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a157f515115c440e6e56b365aa335331d}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a92c4a1767ead32d681ac925f1422e4b7}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_acbc1a286b6dd5fbe749de264234bba35}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a01842ab0a7a2626eecb8ef90edf709a9}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
+
 \mbox{\Hypertarget{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}\label{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!parse\_params@{parse\_params}}
 \index{parse\_params@{parse\_params}!dhtt::NodeType@{dhtt::NodeType}}
@@ -155,6 +175,10 @@ generally should take the parameters from the description file and parse them in
 \begin{DoxyReturn}{Returns}
 void 
 \end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a46e21bf8e3f45d62435a98788ab76c29}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a269c4453c62c41414eccfb703d054d3e}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a29056fe823577f83368840e8fba2d4d5}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_ad0b02769b0caebc9a9f3fb3d6ebb7f0d}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a2fd6b86b0ec6b7ce3d3b175681693d0e}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a0da23d587157936fe57313a799545556}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a18cfc69c8758a765880aa2554093d54e}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a1dfa931dbde1fdba3eeb10e9a30a890e}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
+
 \mbox{\Hypertarget{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610e91}\label{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610e91}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!work\_callback@{work\_callback}}
 \index{work\_callback@{work\_callback}!dhtt::NodeType@{dhtt::NodeType}}
@@ -175,6 +199,10 @@ This describes what a node should do when it\textquotesingle{}s request for reso
 \begin{DoxyReturn}{Returns}
 returns the result part of the Activation action in order to function with the \mbox{\hyperlink{classdhtt_1_1Node}{Node}} class. For behaviors this should contain the resources that need to be released. 
 \end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a56a3ef4023591aef5d034b6355a39715}{dhtt\+\_\+plugins\+::\+Action\+Type}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_afa00322a98999a964b482a8b35f9a57a}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a9f76f12b4ceedc96bf82261f1a0da449}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_ada2499282514c8a53c52703419a5b6e1}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a85c6d010658071484e6aa8c597fc85d3}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_ab656aa2dc5076b61108d97d6871800ec}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
+
 
 
 \doxysubsection{Member Data Documentation}

@@ -1,0 +1,207 @@
+\hypertarget{classdhtt__plugins_1_1ActionType}{}\doxysection{dhtt\+\_\+plugins\+::Action\+Type Class Reference}
+\label{classdhtt__plugins_1_1ActionType}\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+
+
+{\ttfamily \#include $<$action\+\_\+type.\+hpp$>$}
+
+
+
+Inheritance diagram for dhtt\+\_\+plugins\+::Action\+Type\+:
+% FIG 0
+
+
+Collaboration diagram for dhtt\+\_\+plugins\+::Action\+Type\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a381962c71b85e6a8517845db1a737f79}{initialize}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
+\begin{DoxyCompactList}\small\item\em abstract initialize function for all Node\+Type classes \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a85e7c1065776a83857a0638b2ce8f9c4}{auction\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em functionality for completing an auction \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a56a3ef4023591aef5d034b6355a39715}{work\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em functionality for performing work \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308d820d358e245a69e}{do\+\_\+work}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container)=0
+\item 
+virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468d32558133e56b6}{get\+\_\+retained\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container)=0
+\item 
+virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}{get\+\_\+released\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container)=0
+\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a5dada7d97dfbd1bed5abfb9ccb295a62}{is\+\_\+done}} () override
+\begin{DoxyCompactList}\small\item\em check for if the node is finished running \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a9b84d261334eb62f46f486d32d921619}{done}}
+\item 
+double \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a002adba9f472d4b3bdf329cd49824d98}{activation\+\_\+potential}}
+\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_aa23c79790c31c709b956dd2f3a1f6990}{necessary\+\_\+resources}}
+\item 
+std\+::shared\+\_\+ptr$<$ rclcpp\+::\+Node $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4ba037e1b5e2f516742154581775d237}{pub\+\_\+node\+\_\+ptr}}
+\item 
+std\+::shared\+\_\+ptr$<$ rclcpp\+::executors\+::\+Single\+Threaded\+Executor $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_accb37da08c81000f71808aff42ce434e}{executor}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a85e7c1065776a83857a0638b2ce8f9c4}\label{classdhtt__plugins_1_1ActionType_a85e7c1065776a83857a0638b2ce8f9c4}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!auction\_callback@{auction\_callback}}
+\index{auction\_callback@{auction\_callback}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{auction\_callback()}{auction\_callback()}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::auction\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+functionality for completing an auction 
+
+This describes what the node should consider when it is first activated (i.\+e. when it starts an auction). Behavior nodes should request any resources that they need to begin working, and task nodes should spread activation to their children and propogate their choice up afterwards
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & pointer to the node class which owns the node type in order to give use of the public methods.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns the result part of the Activation action in order to function with the Node class. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5e52}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a21045341e10bb308d820d358e245a69e}\label{classdhtt__plugins_1_1ActionType_a21045341e10bb308d820d358e245a69e}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!do\_work@{do\_work}}
+\index{do\_work@{do\_work}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{do\_work()}{do\_work()}}
+{\footnotesize\ttfamily virtual void dhtt\+\_\+plugins\+::\+Action\+Type\+::do\+\_\+work (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a20c025ec89cb2678f2e08fd55da42bcc}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a87cad3b5c19a0cf536c6f30e0a1d402c}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a722634e89fd4b4d337abb8e380a0797d}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}\label{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!get\_released\_resources@{get\_released\_resources}}
+\index{get\_released\_resources@{get\_released\_resources}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{get\_released\_resources()}{get\_released\_resources()}}
+{\footnotesize\ttfamily virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::get\+\_\+released\+\_\+resources (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a337349f5a15c96ae5922fb1858a43a1a}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a639226ff83f42910100b6b2a810fddd2}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a7a12629730d602b9ea3d424935993e7b}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468d32558133e56b6}\label{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468d32558133e56b6}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!get\_retained\_resources@{get\_retained\_resources}}
+\index{get\_retained\_resources@{get\_retained\_resources}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{get\_retained\_resources()}{get\_retained\_resources()}}
+{\footnotesize\ttfamily virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::get\+\_\+retained\+\_\+resources (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a080dcf3afc2376066296b00107860dd4}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_aef37bea635b234e661d71cd9deec8c5d}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a0f9901857b22b0e429ff737233e4ee10}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a381962c71b85e6a8517845db1a737f79}\label{classdhtt__plugins_1_1ActionType_a381962c71b85e6a8517845db1a737f79}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!initialize@{initialize}}
+\index{initialize@{initialize}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Action\+Type\+::initialize (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$}]{params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+abstract initialize function for all Node\+Type classes 
+
+Node\+Types can only initialize with some params given in a vector. The params should be described in the description file as shown in the sample\+\_\+tasks in the dhtt package. the params should also in general be parsed in the parse\+\_\+params function which is also used when parameters are modified.
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & the params to initialize the Node\+Type with (taken from description file usually)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a5dada7d97dfbd1bed5abfb9ccb295a62}\label{classdhtt__plugins_1_1ActionType_a5dada7d97dfbd1bed5abfb9ccb295a62}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!is\_done@{is\_done}}
+\index{is\_done@{is\_done}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{is\_done()}{is\_done()}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Action\+Type\+::is\+\_\+done (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+check for if the node is finished running 
+
+just uses the logic of the node to find out if it is done running already. For behaviors this returns true once the work is complete, and for tasks this is complete when the logic dictates (AND is done when all children are done, etc.).
+
+\begin{DoxyReturn}{Returns}
+true if the node is done. false otherwise. 
+\end{DoxyReturn}
+
+
+Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a56a3ef4023591aef5d034b6355a39715}\label{classdhtt__plugins_1_1ActionType_a56a3ef4023591aef5d034b6355a39715}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!work\_callback@{work\_callback}}
+\index{work\_callback@{work\_callback}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{work\_callback()}{work\_callback()}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::work\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+functionality for performing work 
+
+This describes what a node should do when it\textquotesingle{}s request for resources is approved and it can begin working. Behaviors should perform some action and then return the success of that action and tasks should propogate the message down and wait for the response (or perform some other action first in special cases). For an example of how to pass resources the d\+HTT plugins actions should suffice.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & pointer to the node class which owns the node type in order to give use of the public methods.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns the result part of the Activation action in order to function with the Node class. For behaviors this should contain the resources that need to be released. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610e91}{dhtt\+::\+Node\+Type}}.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a002adba9f472d4b3bdf329cd49824d98}\label{classdhtt__plugins_1_1ActionType_a002adba9f472d4b3bdf329cd49824d98}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!activation\_potential@{activation\_potential}}
+\index{activation\_potential@{activation\_potential}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{activation\_potential}{activation\_potential}}
+{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Action\+Type\+::activation\+\_\+potential\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a9b84d261334eb62f46f486d32d921619}\label{classdhtt__plugins_1_1ActionType_a9b84d261334eb62f46f486d32d921619}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!done@{done}}
+\index{done@{done}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{done}{done}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Action\+Type\+::done\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_accb37da08c81000f71808aff42ce434e}\label{classdhtt__plugins_1_1ActionType_accb37da08c81000f71808aff42ce434e}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!executor@{executor}}
+\index{executor@{executor}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{executor}{executor}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$rclcpp\+::executors\+::\+Single\+Threaded\+Executor$>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::executor\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_aa23c79790c31c709b956dd2f3a1f6990}\label{classdhtt__plugins_1_1ActionType_aa23c79790c31c709b956dd2f3a1f6990}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!necessary\_resources@{necessary\_resources}}
+\index{necessary\_resources@{necessary\_resources}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{necessary\_resources}{necessary\_resources}}
+{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::necessary\+\_\+resources\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a4ba037e1b5e2f516742154581775d237}\label{classdhtt__plugins_1_1ActionType_a4ba037e1b5e2f516742154581775d237}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!pub\_node\_ptr@{pub\_node\_ptr}}
+\index{pub\_node\_ptr@{pub\_node\_ptr}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{pub\_node\_ptr}{pub\_node\_ptr}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$rclcpp\+::\+Node$>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::pub\+\_\+node\+\_\+ptr\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt\+\_\+plugins/include/dhtt\+\_\+plugins/behaviors/\mbox{\hyperlink{action__type_8hpp}{action\+\_\+type.\+hpp}}\end{DoxyCompactItemize}

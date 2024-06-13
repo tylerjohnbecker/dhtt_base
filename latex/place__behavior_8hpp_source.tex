@@ -1,0 +1,38 @@
+\hypertarget{place__behavior_8hpp_source}{}\doxysection{place\+\_\+behavior.\+hpp}
+\label{place__behavior_8hpp_source}\index{dhtt\_plugins/include/dhtt\_plugins/behaviors/place\_behavior.hpp@{dhtt\_plugins/include/dhtt\_plugins/behaviors/place\_behavior.hpp}}
+\mbox{\hyperlink{place__behavior_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef PLACE\_BEHAVIOR\_HPP}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define PLACE\_BEHAVIOR\_HPP}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{action__type_8hpp}{dhtt\_plugins/behaviors/action\_type.hpp}}"{}}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include "{}std\_msgs/msg/string.hpp"{}}}
+\DoxyCodeLine{6 }
+\DoxyCodeLine{7 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedhtt__plugins}{dhtt\_plugins}}}
+\DoxyCodeLine{8 \{}
+\DoxyCodeLine{9 }
+\DoxyCodeLine{10     \textcolor{keyword}{class }\mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior}{PlaceBehavior}} : \textcolor{keyword}{public} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType}{ActionType}}}
+\DoxyCodeLine{11     \{}
+\DoxyCodeLine{12     \textcolor{keyword}{public}:}
+\DoxyCodeLine{13         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a29056fe823577f83368840e8fba2d4d5}{parse\_params}}(std::vector<std::string> \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) \textcolor{keyword}{override};}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a722634e89fd4b4d337abb8e380a0797d}{do\_work}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a979d6362a4ccbfb6f8940abe8dec3528}{get\_perceived\_efficiency}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{18 }
+\DoxyCodeLine{19         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a0f9901857b22b0e429ff737233e4ee10}{get\_retained\_resources}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
+\DoxyCodeLine{20         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a7a12629730d602b9ea3d424935993e7b}{get\_released\_resources}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override}; }
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_af4aa0c4c72810a6d3e1a140a5d596ad8}{done\_callback}}( std::shared\_ptr<std\_msgs::msg::String> data );}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{25         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a98d628174b31e159d4281a536d6d0cbd}{work\_done}};}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{27         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_abce5064471f06b255eab60cd7be84f7c}{activation\_potential}};}
+\DoxyCodeLine{28     \};}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 \}}
+\DoxyCodeLine{31 }
+\DoxyCodeLine{32 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// PLACE\_BEHAVIOR\_HPP}}
+
+\end{DoxyCode}

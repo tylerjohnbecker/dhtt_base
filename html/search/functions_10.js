@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['_7emainserver_0',['~MainServer',['../classdhtt_1_1MainServer.html#a4cb4032ccc5d22e5fc85d5846c4579a8',1,'dhtt::MainServer']]],
-  ['_7enode_1',['~Node',['../classdhtt_1_1Node.html#a36bce3e0e7d7593a5b63b637f39cfee1',1,'dhtt::Node']]]
+  ['work_5fcallback_0',['work_callback',['../classdhtt_1_1NodeType.html#a746c54085a57734a637a30a05c610e91',1,'dhtt::NodeType::work_callback()'],['../classdhtt__plugins_1_1ActionType.html#a56a3ef4023591aef5d034b6355a39715',1,'dhtt_plugins::ActionType::work_callback()'],['../classdhtt__plugins_1_1TestBehavior.html#afa00322a98999a964b482a8b35f9a57a',1,'dhtt_plugins::TestBehavior::work_callback()'],['../classdhtt__plugins_1_1AndBehavior.html#a9f76f12b4ceedc96bf82261f1a0da449',1,'dhtt_plugins::AndBehavior::work_callback()'],['../classdhtt__plugins_1_1OrBehavior.html#ada2499282514c8a53c52703419a5b6e1',1,'dhtt_plugins::OrBehavior::work_callback()'],['../classdhtt__plugins_1_1RootBehavior.html#a85c6d010658071484e6aa8c597fc85d3',1,'dhtt_plugins::RootBehavior::work_callback()'],['../classdhtt__plugins_1_1ThenBehavior.html#ab656aa2dc5076b61108d97d6871800ec',1,'dhtt_plugins::ThenBehavior::work_callback()']]]
 ];

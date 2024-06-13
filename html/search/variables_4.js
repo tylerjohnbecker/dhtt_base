@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['goal_5ftype_0',['goal_type',['../classdhtt_1_1NodeType.html#a38eb2cd34604afab4f82972fded433ab',1,'dhtt::NodeType']]]
+  ['fail_5fthread_0',['fail_thread',['../classdhtt_1_1Node.html#adf28761993492b849f1b7c9e12596038',1,'dhtt::Node']]],
+  ['fetch_5fserver_1',['fetch_server',['../classdhtt_1_1MainServer.html#a4774ab8f47ee4ecaa2652db2027ef1cc',1,'dhtt::MainServer']]]
 ];

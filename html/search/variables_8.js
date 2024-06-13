@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['modify_5fmut_0',['modify_mut',['../classdhtt_1_1MainServer.html#ad63cd9dd8e4454f874424025e06c64ed',1,'dhtt::MainServer']]],
-  ['modify_5fserver_1',['modify_server',['../classdhtt_1_1MainServer.html#aa1b02dde668cf184e3a01685335dedf6',1,'dhtt::MainServer']]]
+  ['logic_0',['logic',['../classdhtt_1_1Node.html#a0130f80212b348e627f0f481842579cc',1,'dhtt::Node']]],
+  ['logic_5fmut_1',['logic_mut',['../classdhtt_1_1Node.html#affbfc7bfc2c776c5a425cb5984029773',1,'dhtt::Node']]]
 ];

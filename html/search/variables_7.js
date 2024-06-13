@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['logic_0',['logic',['../classdhtt_1_1Node.html#a0130f80212b348e627f0f481842579cc',1,'dhtt::Node']]],
-  ['logic_5fmut_1',['logic_mut',['../classdhtt_1_1Node.html#affbfc7bfc2c776c5a425cb5984029773',1,'dhtt::Node']]]
+  ['internal_5fcontrol_5fclient_0',['internal_control_client',['../classdhtt_1_1MainServer.html#a97bd436d74aaebe3a4801c392ae8cdc2',1,'dhtt::MainServer']]],
+  ['interrupted_1',['interrupted',['../classdhtt__plugins_1_1RootBehavior.html#abf2f5c80e340a3b87613aacfae2073ee',1,'dhtt_plugins::RootBehavior']]]
 ];

@@ -1,0 +1,147 @@
+\hypertarget{classdhtt__plugins_1_1PickBehavior}{}\doxysection{dhtt\+\_\+plugins\+::Pick\+Behavior Class Reference}
+\label{classdhtt__plugins_1_1PickBehavior}\index{dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}}
+
+
+{\ttfamily \#include $<$pick\+\_\+behavior.\+hpp$>$}
+
+
+
+Inheritance diagram for dhtt\+\_\+plugins\+::Pick\+Behavior\+:
+% FIG 0
+
+
+Collaboration diagram for dhtt\+\_\+plugins\+::Pick\+Behavior\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a269c4453c62c41414eccfb703d054d3e}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
+\begin{DoxyCompactList}\small\item\em method to parse the input parameters for the Node\+Type \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a87cad3b5c19a0cf536c6f30e0a1d402c}{do\+\_\+work}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\item 
+double \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a76d1eb08379af8dd321b46c8c9aeb5e6}{get\+\_\+perceived\+\_\+efficiency}} () override
+\begin{DoxyCompactList}\small\item\em calculates the activation potential of the node locally \end{DoxyCompactList}\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_aef37bea635b234e661d71cd9deec8c5d}{get\+\_\+retained\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a639226ff83f42910100b6b2a810fddd2}{get\+\_\+released\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_ab607f5c52f558f409017702ccd02c762}{done\+\_\+callback}} (std\+::shared\+\_\+ptr$<$ std\+\_\+msgs\+::msg\+::\+String $>$ data)
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a7ae2f31d5595e61ed42b7f769f81615b}{work\+\_\+done}}
+\item 
+double \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a2b00b094369ac02e06ccd84972be34f3}{activation\+\_\+potential}}
+\item 
+std\+::string \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_ad07f8c3bff28048496b73faf9303980e}{object\+\_\+name}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1PickBehavior_a87cad3b5c19a0cf536c6f30e0a1d402c}\label{classdhtt__plugins_1_1PickBehavior_a87cad3b5c19a0cf536c6f30e0a1d402c}} 
+\index{dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}!do\_work@{do\_work}}
+\index{do\_work@{do\_work}!dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}}
+\doxysubsubsection{\texorpdfstring{do\_work()}{do\_work()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Pick\+Behavior\+::do\+\_\+work (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308d820d358e245a69e}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1PickBehavior_ab607f5c52f558f409017702ccd02c762}\label{classdhtt__plugins_1_1PickBehavior_ab607f5c52f558f409017702ccd02c762}} 
+\index{dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}!done\_callback@{done\_callback}}
+\index{done\_callback@{done\_callback}!dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}}
+\doxysubsubsection{\texorpdfstring{done\_callback()}{done\_callback()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Pick\+Behavior\+::done\+\_\+callback (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ std\+\_\+msgs\+::msg\+::\+String $>$}]{data }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1PickBehavior_a76d1eb08379af8dd321b46c8c9aeb5e6}\label{classdhtt__plugins_1_1PickBehavior_a76d1eb08379af8dd321b46c8c9aeb5e6}} 
+\index{dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
+\index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}}
+\doxysubsubsection{\texorpdfstring{get\_perceived\_efficiency()}{get\_perceived\_efficiency()}}
+{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Pick\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+calculates the activation potential of the node locally 
+
+This looks at the calculation that this node locally uses, meaning some function of the childrens\textquotesingle{} activation potential for task nodes and some function (like distance) for behavior nodes.
+
+\begin{DoxyReturn}{Returns}
+activation potential value (0 -\/\texorpdfstring{$>$}{>} 1 by convention) 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c845}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1PickBehavior_a639226ff83f42910100b6b2a810fddd2}\label{classdhtt__plugins_1_1PickBehavior_a639226ff83f42910100b6b2a810fddd2}} 
+\index{dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}!get\_released\_resources@{get\_released\_resources}}
+\index{get\_released\_resources@{get\_released\_resources}!dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}}
+\doxysubsubsection{\texorpdfstring{get\_released\_resources()}{get\_released\_resources()}}
+{\footnotesize\ttfamily std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Pick\+Behavior\+::get\+\_\+released\+\_\+resources (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1PickBehavior_aef37bea635b234e661d71cd9deec8c5d}\label{classdhtt__plugins_1_1PickBehavior_aef37bea635b234e661d71cd9deec8c5d}} 
+\index{dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}!get\_retained\_resources@{get\_retained\_resources}}
+\index{get\_retained\_resources@{get\_retained\_resources}!dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}}
+\doxysubsubsection{\texorpdfstring{get\_retained\_resources()}{get\_retained\_resources()}}
+{\footnotesize\ttfamily std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Pick\+Behavior\+::get\+\_\+retained\+\_\+resources (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468d32558133e56b6}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1PickBehavior_a269c4453c62c41414eccfb703d054d3e}\label{classdhtt__plugins_1_1PickBehavior_a269c4453c62c41414eccfb703d054d3e}} 
+\index{dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}!parse\_params@{parse\_params}}
+\index{parse\_params@{parse\_params}!dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}}
+\doxysubsubsection{\texorpdfstring{parse\_params()}{parse\_params()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Pick\+Behavior\+::parse\+\_\+params (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$}]{params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+method to parse the input parameters for the Node\+Type 
+
+generally should take the parameters from the description file and parse them in some way. This could include just setting flags, getting topic names for information retrieval, etc.
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & list of params taken from the description file (usually in key, value pairs by convention)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}{dhtt\+::\+Node\+Type}}.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1PickBehavior_a2b00b094369ac02e06ccd84972be34f3}\label{classdhtt__plugins_1_1PickBehavior_a2b00b094369ac02e06ccd84972be34f3}} 
+\index{dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}!activation\_potential@{activation\_potential}}
+\index{activation\_potential@{activation\_potential}!dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}}
+\doxysubsubsection{\texorpdfstring{activation\_potential}{activation\_potential}}
+{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Pick\+Behavior\+::activation\+\_\+potential\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1PickBehavior_ad07f8c3bff28048496b73faf9303980e}\label{classdhtt__plugins_1_1PickBehavior_ad07f8c3bff28048496b73faf9303980e}} 
+\index{dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}!object\_name@{object\_name}}
+\index{object\_name@{object\_name}!dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}}
+\doxysubsubsection{\texorpdfstring{object\_name}{object\_name}}
+{\footnotesize\ttfamily std\+::string dhtt\+\_\+plugins\+::\+Pick\+Behavior\+::object\+\_\+name\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1PickBehavior_a7ae2f31d5595e61ed42b7f769f81615b}\label{classdhtt__plugins_1_1PickBehavior_a7ae2f31d5595e61ed42b7f769f81615b}} 
+\index{dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}!work\_done@{work\_done}}
+\index{work\_done@{work\_done}!dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}}
+\doxysubsubsection{\texorpdfstring{work\_done}{work\_done}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Pick\+Behavior\+::work\+\_\+done\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt\+\_\+plugins/include/dhtt\+\_\+plugins/behaviors/\mbox{\hyperlink{pick__behavior_8hpp}{pick\+\_\+behavior.\+hpp}}\end{DoxyCompactItemize}

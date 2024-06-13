@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['history_0',['history',['../classdhtt_1_1MainServer.html#a09b7af60f180c4a2884834a5045030cf',1,'dhtt::MainServer']]],
-  ['history_5fserver_1',['history_server',['../classdhtt_1_1MainServer.html#a1adbe3100452f96c256ffcf8ee1e403f',1,'dhtt::MainServer']]]
+  ['goal_5ftype_0',['goal_type',['../classdhtt_1_1NodeType.html#a38eb2cd34604afab4f82972fded433ab',1,'dhtt::NodeType']]]
 ];

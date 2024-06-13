@@ -6,5 +6,5 @@ var searchData=
   ['change_5fparams_3',['change_params',['../classdhtt_1_1MainServer.html#ae40d57d6711240dd4e603d6aa4259d5d',1,'dhtt::MainServer']]],
   ['check_5fpreconditions_4',['check_preconditions',['../classdhtt_1_1Node.html#a424d19e6aa8d4ef7ec6b64921c75917e',1,'dhtt::Node']]],
   ['construct_5fsubtree_5ffrom_5fnode_5fiter_5',['construct_subtree_from_node_iter',['../classdhtt_1_1MainServer.html#aaca8d1df11ec698b7b5761c38639b8bd',1,'dhtt::MainServer']]],
-  ['control_5fcallback_6',['control_callback',['../classdhtt_1_1MainServer.html#a305d4682414cf86aa02193467007b23c',1,'dhtt::MainServer']]]
+  ['control_5fcallback_6',['control_callback',['../classdhtt_1_1MainServer.html#a305d4682414cf86aa02193467007b23c',1,'dhtt::MainServer::control_callback()'],['../classdhtt__plugins_1_1RootBehavior.html#ac2d9ef4e683d4380cf56f64432ced502',1,'dhtt_plugins::RootBehavior::control_callback()']]]
 ];

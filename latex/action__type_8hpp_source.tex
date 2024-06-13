@@ -1,0 +1,52 @@
+\hypertarget{action__type_8hpp_source}{}\doxysection{action\+\_\+type.\+hpp}
+\label{action__type_8hpp_source}\index{dhtt\_plugins/include/dhtt\_plugins/behaviors/action\_type.hpp@{dhtt\_plugins/include/dhtt\_plugins/behaviors/action\_type.hpp}}
+\mbox{\hyperlink{action__type_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef ACTION\_TYPE\_HPP}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define ACTION\_TYPE\_HPP}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include "{}dhtt\_plugins/visibility\_control.h"{}}}
+\DoxyCodeLine{5 }
+\DoxyCodeLine{6 \textcolor{preprocessor}{\#include "{}rclcpp/rclcpp.hpp"{}}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{node_8hpp}{dhtt/tree/node.hpp}}"{}}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{node__type_8hpp}{dhtt/tree/node\_type.hpp}}"{}}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <string>}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedhtt__plugins}{dhtt\_plugins}}}
+\DoxyCodeLine{15 \{}
+\DoxyCodeLine{16     \textcolor{keyword}{class }\mbox{\hyperlink{classdhtt__plugins_1_1ActionType}{ActionType}} : \textcolor{keyword}{public} \mbox{\hyperlink{classdhtt_1_1NodeType}{dhtt::NodeType}}}
+\DoxyCodeLine{17     \{}
+\DoxyCodeLine{18     \textcolor{keyword}{public}:}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a381962c71b85e6a8517845db1a737f79}{initialize}}(std::vector<std::string> \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) \textcolor{keyword}{override};}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22         std::shared\_ptr<dhtt\_msgs::action::Activation::Result> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a85e7c1065776a83857a0638b2ce8f9c4}{auction\_callback}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
+\DoxyCodeLine{23         std::shared\_ptr<dhtt\_msgs::action::Activation::Result> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a56a3ef4023591aef5d034b6355a39715}{work\_callback}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25         \textcolor{keyword}{virtual} \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308d820d358e245a69e}{do\_work}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) = 0;}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{27         \textcolor{keyword}{virtual} std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468d32558133e56b6}{get\_retained\_resources}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) = 0;}
+\DoxyCodeLine{28         \textcolor{keyword}{virtual} std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}{get\_released\_resources}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) = 0;}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a5dada7d97dfbd1bed5abfb9ccb295a62}{is\_done}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{31 }
+\DoxyCodeLine{32     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{33 }
+\DoxyCodeLine{34         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a9b84d261334eb62f46f486d32d921619}{done}};}
+\DoxyCodeLine{35 }
+\DoxyCodeLine{36         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a002adba9f472d4b3bdf329cd49824d98}{activation\_potential}};}
+\DoxyCodeLine{37         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_aa23c79790c31c709b956dd2f3a1f6990}{necessary\_resources}}; }
+\DoxyCodeLine{38 }
+\DoxyCodeLine{39         std::shared\_ptr<rclcpp::Node> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4ba037e1b5e2f516742154581775d237}{pub\_node\_ptr}};}
+\DoxyCodeLine{40         std::shared\_ptr<rclcpp::executors::SingleThreadedExecutor> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_accb37da08c81000f71808aff42ce434e}{executor}};}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{42     \textcolor{keyword}{private}:}
+\DoxyCodeLine{43     \};}
+\DoxyCodeLine{44 \}}
+\DoxyCodeLine{45 }
+\DoxyCodeLine{46 \textcolor{preprocessor}{\#endif }\textcolor{comment}{//ACTION\_TYPE\_HPP}}
+
+\end{DoxyCode}

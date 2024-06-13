@@ -1,0 +1,416 @@
+\hypertarget{classdhtt__plugins_1_1RootBehavior}{}\doxysection{dhtt\+\_\+plugins\+::Root\+Behavior Class Reference}
+\label{classdhtt__plugins_1_1RootBehavior}\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+
+
+implementation of the d\+HTT root node  
+
+
+
+
+{\ttfamily \#include $<$root\+\_\+behavior.\+hpp$>$}
+
+
+
+Inheritance diagram for dhtt\+\_\+plugins\+::Root\+Behavior\+:
+% FIG 0
+
+
+Collaboration diagram for dhtt\+\_\+plugins\+::Root\+Behavior\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_aae062c8fec3f8a4fa5e9126cea2c6b50}{initialize}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
+\begin{DoxyCompactList}\small\item\em initializes the major topics and a personal executor for the root node \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a015dfd866e959e263f2a8f61338dba0d}{auction\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em callback for auction behavior of a root node \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a85c6d010658071484e6aa8c597fc85d3}{work\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em empty callback \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a18cfc69c8758a765880aa2554093d54e}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
+\begin{DoxyCompactList}\small\item\em parses the params for the root node \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_ac53435698f66a9429b45a088418937a0}{get\+\_\+perceived\+\_\+efficiency}} () override
+\begin{DoxyCompactList}\small\item\em get activation potential for the root node \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_acbc1a286b6dd5fbe749de264234bba35}{is\+\_\+done}} () override
+\begin{DoxyCompactList}\small\item\em gets whether the root node is done \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a22a334cbb58b448e1cfe48fcd13d4e23}{load\+\_\+resources\+\_\+from\+\_\+yaml}} ()
+\begin{DoxyCompactList}\small\item\em loads the robot resources in the robot\+\_\+resources\+\_\+path \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a8fe00cf0bda7864a8126eb1767074559}{publish\+\_\+resources}} ()
+\begin{DoxyCompactList}\small\item\em publishes the current state of the resources to the rest of the d\+HTT \end{DoxyCompactList}\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_af5adbc68e69a70fbb5ab8a41bb8a486f}{give\+\_\+resources}} (std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ to\+\_\+give)
+\begin{DoxyCompactList}\small\item\em fullfills a request from the child \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a0552ac02fc554af61bf7cf34a0e0b901}{release\+\_\+resources}} (std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ to\+\_\+release)
+\begin{DoxyCompactList}\small\item\em releases resources that were in use \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a465dcfb060cdb8a0f75806ae0ac7fae1}{release\+\_\+all\+\_\+resources}} ()
+\begin{DoxyCompactList}\small\item\em releases all resources \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_ac2d9ef4e683d4380cf56f64432ced502}{control\+\_\+callback}} (const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Internal\+Control\+Request\+::\+Request $>$ request, std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Internal\+Control\+Request\+::\+Response $>$ response)
+\begin{DoxyCompactList}\small\item\em callback to handle stop requests from Main\+Server \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a5493e84e5d515fdfa5f11be6e51b3b17}{async\+\_\+spin}} ()
+\begin{DoxyCompactList}\small\item\em just a helpful spinning method \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_aa92a5987e9d0c11b50a4793f239a1ca4}{robot\+\_\+resources\+\_\+file\+\_\+path}}
+\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a33773fe6b3777d2f6aac9a3e76a329e4}{canonical\+\_\+resources\+\_\+list}}
+\item 
+std\+::string \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_aa309557b293a304e6c12345fb2154772}{robot\+\_\+name}}
+\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_ac2c5e1b20e25c4f9c84452a270ea7215}{children\+\_\+done}}
+\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_abf2f5c80e340a3b87613aacfae2073ee}{interrupted}}
+\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_ac5f7a18a0e1bf1a15e9729f330f5468a}{slow}}
+\item 
+std\+::shared\+\_\+ptr$<$ rclcpp\+::\+Node $>$ \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_adfc86c3cb69f2c04dc9ca21c8f2d8f7d}{pub\+\_\+node\+\_\+ptr}}
+\item 
+std\+::shared\+\_\+ptr$<$ rclcpp\+::executors\+::\+Single\+Threaded\+Executor $>$ \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a1e0d72985c9243adf77552f9610bb45c}{resource\+\_\+executor}}
+\item 
+rclcpp\+::\+Publisher$<$ dhtt\+\_\+msgs\+::msg\+::\+Resources $>$\+::\+Shared\+Ptr \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a473923369b794836ac944023f4657401}{status\+\_\+pub}}
+\item 
+rclcpp\+::\+Service$<$ dhtt\+\_\+msgs\+::srv\+::\+Internal\+Control\+Request $>$\+::\+Shared\+Ptr \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_adbc1899e9a7fca6fb746ce71537aa7af}{control\+\_\+server}}
+\item 
+std\+::shared\+\_\+ptr$<$ std\+::thread $>$ \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a7a6720c6a2ecd0e764ba8246953fe63b}{spin\+\_\+thread}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Detailed Description}
+implementation of the d\+HTT root node 
+
+The root node is always the root of a d\+HTT and cannot be placed elsewhere. It is a special node in the sense that it starts the auction and manages the state of the resources available for the behaviors. The root node also publishes the resource state to every node in the tree which is information they node to properly make requests. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_a5493e84e5d515fdfa5f11be6e51b3b17}\label{classdhtt__plugins_1_1RootBehavior_a5493e84e5d515fdfa5f11be6e51b3b17}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!async\_spin@{async\_spin}}
+\index{async\_spin@{async\_spin}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{async\_spin()}{async\_spin()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Root\+Behavior\+::async\+\_\+spin (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+just a helpful spinning method 
+
+This node needs the extra spinning thread to ensure that it can send out the messages for the status and that it can asynchronously receive a control request from Main\+Server
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_a015dfd866e959e263f2a8f61338dba0d}\label{classdhtt__plugins_1_1RootBehavior_a015dfd866e959e263f2a8f61338dba0d}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!auction\_callback@{auction\_callback}}
+\index{auction\_callback@{auction\_callback}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{auction\_callback()}{auction\_callback()}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ dhtt\+\_\+plugins\+::\+Root\+Behavior\+::auction\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+callback for auction behavior of a root node 
+
+All of the work that a root node does is contained in this callback. The root node starts by spreading activation and waiting for all responses, then it clears the request and spreads activation again. Then after getting another response it releases the appropriate resources and starts again. This process repeats until the direct child of the root node is done at which point the tree stops running and the root node returns out of the auction callback.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & see \mbox{\hyperlink{classdhtt_1_1NodeType}{dhtt\+::\+Node\+Type}}\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Activation\+Result to let the Main\+Server know the tree is done executing 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5e52}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_ac2d9ef4e683d4380cf56f64432ced502}\label{classdhtt__plugins_1_1RootBehavior_ac2d9ef4e683d4380cf56f64432ced502}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!control\_callback@{control\_callback}}
+\index{control\_callback@{control\_callback}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{control\_callback()}{control\_callback()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Root\+Behavior\+::control\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Internal\+Control\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Internal\+Control\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+callback to handle stop requests from Main\+Server 
+
+Currently only graceful stops can be handled but essentially when this service is called the next time a behavior finishes executing the auction will not continue until the Main\+Server does it explicitly.
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & an Internal\+Control\+Request \\
+\hline
+{\em response} & an Internal\+Control\+Response\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_ac53435698f66a9429b45a088418937a0}\label{classdhtt__plugins_1_1RootBehavior_ac53435698f66a9429b45a088418937a0}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
+\index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{get\_perceived\_efficiency()}{get\_perceived\_efficiency()}}
+{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Root\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+get activation potential for the root node 
+
+activation potential for the root node is meaningless since it cannot do work so this just returns a default value of 1.\+0
+
+\begin{DoxyReturn}{Returns}
+1.\+0 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c845}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_af5adbc68e69a70fbb5ab8a41bb8a486f}\label{classdhtt__plugins_1_1RootBehavior_af5adbc68e69a70fbb5ab8a41bb8a486f}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!give\_resources@{give\_resources}}
+\index{give\_resources@{give\_resources}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{give\_resources()}{give\_resources()}}
+{\footnotesize\ttfamily std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Root\+Behavior\+::give\+\_\+resources (\begin{DoxyParamCaption}\item[{std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$}]{to\+\_\+give }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+fullfills a request from the child 
+
+updates the status of the resources on the robot such that a given set of resources has been handed out. Resources are given on a first found basis so for example if there are two arms on the robot and the left is listed first in the yaml it will always be utilized before the right arm by default.
+
+
+\begin{DoxyParams}{Parameters}
+{\em to\+\_\+give} & list of resources which need their status updated (given with types)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+list of granted resources (given with canonical names) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_aae062c8fec3f8a4fa5e9126cea2c6b50}\label{classdhtt__plugins_1_1RootBehavior_aae062c8fec3f8a4fa5e9126cea2c6b50}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!initialize@{initialize}}
+\index{initialize@{initialize}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Root\+Behavior\+::initialize (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$}]{params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+initializes the major topics and a personal executor for the root node 
+
+starts a status publisher for itself, a control request server for communication with Main\+Server, an executor which is used to publish resources, and spins a separate thread for managing asynchronous callbacks from requests.
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & see parse\+\_\+params for what should go in here\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_acbc1a286b6dd5fbe749de264234bba35}\label{classdhtt__plugins_1_1RootBehavior_acbc1a286b6dd5fbe749de264234bba35}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!is\_done@{is\_done}}
+\index{is\_done@{is\_done}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{is\_done()}{is\_done()}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Root\+Behavior\+::is\+\_\+done (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+gets whether the root node is done 
+
+The root done is only done once all of the nodes in the tree are done or more simply when it\textquotesingle{}s immediate child is done.
+
+\begin{DoxyReturn}{Returns}
+True if the tree is finished executing, False otherwise 
+\end{DoxyReturn}
+
+
+Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_a22a334cbb58b448e1cfe48fcd13d4e23}\label{classdhtt__plugins_1_1RootBehavior_a22a334cbb58b448e1cfe48fcd13d4e23}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!load\_resources\_from\_yaml@{load\_resources\_from\_yaml}}
+\index{load\_resources\_from\_yaml@{load\_resources\_from\_yaml}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{load\_resources\_from\_yaml()}{load\_resources\_from\_yaml()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Root\+Behavior\+::load\+\_\+resources\+\_\+from\+\_\+yaml (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+loads the robot resources in the robot\+\_\+resources\+\_\+path 
+
+Loads the resources from the given file into the list of resources available to the behaviors. The resources file must be formatted similar to the one in dhtt/robots but most importantly each resource needs to have a name and a type. This function can throw an uncaught yaml exception if the file is incorrect which will stop the Main\+Server from starting.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_a18cfc69c8758a765880aa2554093d54e}\label{classdhtt__plugins_1_1RootBehavior_a18cfc69c8758a765880aa2554093d54e}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!parse\_params@{parse\_params}}
+\index{parse\_params@{parse\_params}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{parse\_params()}{parse\_params()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Root\+Behavior\+::parse\+\_\+params (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$}]{params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+parses the params for the root node 
+
+root node expects exactly one param in the format \char`\"{}key\+: val\char`\"{}. The key should be \char`\"{}path\char`\"{} and the value is the path to the robot resources file (e.\+g. in dhtt/robots). This file contains the list of all resources on the robot which can be used by behaviors as well as any specific rules that those resources might have.
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & see \mbox{\hyperlink{classdhtt_1_1NodeType}{dhtt\+::\+Node\+Type}}\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_a8fe00cf0bda7864a8126eb1767074559}\label{classdhtt__plugins_1_1RootBehavior_a8fe00cf0bda7864a8126eb1767074559}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!publish\_resources@{publish\_resources}}
+\index{publish\_resources@{publish\_resources}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{publish\_resources()}{publish\_resources()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Root\+Behavior\+::publish\+\_\+resources (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+publishes the current state of the resources to the rest of the d\+HTT 
+
+tasks the list of resources and puts it on the resource state topic so that the behavior nodes can accurately assess the possibility of their request
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_a465dcfb060cdb8a0f75806ae0ac7fae1}\label{classdhtt__plugins_1_1RootBehavior_a465dcfb060cdb8a0f75806ae0ac7fae1}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!release\_all\_resources@{release\_all\_resources}}
+\index{release\_all\_resources@{release\_all\_resources}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{release\_all\_resources()}{release\_all\_resources()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Root\+Behavior\+::release\+\_\+all\+\_\+resources (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+releases all resources 
+
+This method serves to clean up in case there are resources still in use after the tree has stopped running. Just goes resource by resource and releases them.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_a0552ac02fc554af61bf7cf34a0e0b901}\label{classdhtt__plugins_1_1RootBehavior_a0552ac02fc554af61bf7cf34a0e0b901}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!release\_resources@{release\_resources}}
+\index{release\_resources@{release\_resources}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{release\_resources()}{release\_resources()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Root\+Behavior\+::release\+\_\+resources (\begin{DoxyParamCaption}\item[{std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$}]{to\+\_\+release }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+releases resources that were in use 
+
+After behaviors are done running they generally release at least some resources so that the root node can hand them out again. This function searches the internal list for the resources by name and releases them. ~\newline
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em to\+\_\+release} & the list of resources to release\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_a85c6d010658071484e6aa8c597fc85d3}\label{classdhtt__plugins_1_1RootBehavior_a85c6d010658071484e6aa8c597fc85d3}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!work\_callback@{work\_callback}}
+\index{work\_callback@{work\_callback}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{work\_callback()}{work\_callback()}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ dhtt\+\_\+plugins\+::\+Root\+Behavior\+::work\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+empty callback 
+
+Work is not needed for the root node because it is already being done in the auction.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & see \mbox{\hyperlink{classdhtt_1_1NodeType}{dhtt\+::\+Node\+Type}}\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Activation\+Result which is empty because this callback is not used. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610e91}{dhtt\+::\+Node\+Type}}.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_a33773fe6b3777d2f6aac9a3e76a329e4}\label{classdhtt__plugins_1_1RootBehavior_a33773fe6b3777d2f6aac9a3e76a329e4}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!canonical\_resources\_list@{canonical\_resources\_list}}
+\index{canonical\_resources\_list@{canonical\_resources\_list}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{canonical\_resources\_list}{canonical\_resources\_list}}
+{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+\_\+plugins\+::\+Root\+Behavior\+::canonical\+\_\+resources\+\_\+list\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_ac2c5e1b20e25c4f9c84452a270ea7215}\label{classdhtt__plugins_1_1RootBehavior_ac2c5e1b20e25c4f9c84452a270ea7215}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!children\_done@{children\_done}}
+\index{children\_done@{children\_done}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{children\_done}{children\_done}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Root\+Behavior\+::children\+\_\+done\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_adbc1899e9a7fca6fb746ce71537aa7af}\label{classdhtt__plugins_1_1RootBehavior_adbc1899e9a7fca6fb746ce71537aa7af}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!control\_server@{control\_server}}
+\index{control\_server@{control\_server}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{control\_server}{control\_server}}
+{\footnotesize\ttfamily rclcpp\+::\+Service$<$dhtt\+\_\+msgs\+::srv\+::\+Internal\+Control\+Request$>$\+::\+Shared\+Ptr dhtt\+\_\+plugins\+::\+Root\+Behavior\+::control\+\_\+server\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_abf2f5c80e340a3b87613aacfae2073ee}\label{classdhtt__plugins_1_1RootBehavior_abf2f5c80e340a3b87613aacfae2073ee}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!interrupted@{interrupted}}
+\index{interrupted@{interrupted}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{interrupted}{interrupted}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Root\+Behavior\+::interrupted\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_adfc86c3cb69f2c04dc9ca21c8f2d8f7d}\label{classdhtt__plugins_1_1RootBehavior_adfc86c3cb69f2c04dc9ca21c8f2d8f7d}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!pub\_node\_ptr@{pub\_node\_ptr}}
+\index{pub\_node\_ptr@{pub\_node\_ptr}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{pub\_node\_ptr}{pub\_node\_ptr}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$rclcpp\+::\+Node$>$ dhtt\+\_\+plugins\+::\+Root\+Behavior\+::pub\+\_\+node\+\_\+ptr\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_a1e0d72985c9243adf77552f9610bb45c}\label{classdhtt__plugins_1_1RootBehavior_a1e0d72985c9243adf77552f9610bb45c}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!resource\_executor@{resource\_executor}}
+\index{resource\_executor@{resource\_executor}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{resource\_executor}{resource\_executor}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$rclcpp\+::executors\+::\+Single\+Threaded\+Executor$>$ dhtt\+\_\+plugins\+::\+Root\+Behavior\+::resource\+\_\+executor\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_aa309557b293a304e6c12345fb2154772}\label{classdhtt__plugins_1_1RootBehavior_aa309557b293a304e6c12345fb2154772}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!robot\_name@{robot\_name}}
+\index{robot\_name@{robot\_name}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{robot\_name}{robot\_name}}
+{\footnotesize\ttfamily std\+::string dhtt\+\_\+plugins\+::\+Root\+Behavior\+::robot\+\_\+name\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_aa92a5987e9d0c11b50a4793f239a1ca4}\label{classdhtt__plugins_1_1RootBehavior_aa92a5987e9d0c11b50a4793f239a1ca4}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!robot\_resources\_file\_path@{robot\_resources\_file\_path}}
+\index{robot\_resources\_file\_path@{robot\_resources\_file\_path}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{robot\_resources\_file\_path}{robot\_resources\_file\_path}}
+{\footnotesize\ttfamily std\+::string dhtt\+\_\+plugins\+::\+Root\+Behavior\+::robot\+\_\+resources\+\_\+file\+\_\+path\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_ac5f7a18a0e1bf1a15e9729f330f5468a}\label{classdhtt__plugins_1_1RootBehavior_ac5f7a18a0e1bf1a15e9729f330f5468a}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!slow@{slow}}
+\index{slow@{slow}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{slow}{slow}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Root\+Behavior\+::slow\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_a7a6720c6a2ecd0e764ba8246953fe63b}\label{classdhtt__plugins_1_1RootBehavior_a7a6720c6a2ecd0e764ba8246953fe63b}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!spin\_thread@{spin\_thread}}
+\index{spin\_thread@{spin\_thread}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{spin\_thread}{spin\_thread}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$std\+::thread$>$ dhtt\+\_\+plugins\+::\+Root\+Behavior\+::spin\+\_\+thread\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1RootBehavior_a473923369b794836ac944023f4657401}\label{classdhtt__plugins_1_1RootBehavior_a473923369b794836ac944023f4657401}} 
+\index{dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}!status\_pub@{status\_pub}}
+\index{status\_pub@{status\_pub}!dhtt\_plugins::RootBehavior@{dhtt\_plugins::RootBehavior}}
+\doxysubsubsection{\texorpdfstring{status\_pub}{status\_pub}}
+{\footnotesize\ttfamily rclcpp\+::\+Publisher$<$dhtt\+\_\+msgs\+::msg\+::\+Resources$>$\+::\+Shared\+Ptr dhtt\+\_\+plugins\+::\+Root\+Behavior\+::status\+\_\+pub\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt\+\_\+plugins/include/dhtt\+\_\+plugins/tasks/\mbox{\hyperlink{root__behavior_8hpp}{root\+\_\+behavior.\+hpp}}\end{DoxyCompactItemize}

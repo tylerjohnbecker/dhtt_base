@@ -7,4 +7,22 @@ digraph "dhtt/include/dhtt/tree/node.hpp"
   Node1 [label="dhtt/include/dhtt/tree\l/node.hpp",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
   Node1 -> Node2 [dir="back",color="steelblue1",style="solid"];
   Node2 [label="dhtt/include/dhtt/server\l/main_server.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$main__server_8hpp.html",tooltip=" "];
+  Node1 -> Node3 [dir="back",color="steelblue1",style="solid"];
+  Node3 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/action_type.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$action__type_8hpp.html",tooltip=" "];
+  Node3 -> Node4 [dir="back",color="steelblue1",style="solid"];
+  Node4 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/move_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$move__behavior_8hpp.html",tooltip=" "];
+  Node3 -> Node5 [dir="back",color="steelblue1",style="solid"];
+  Node5 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/pick_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$pick__behavior_8hpp.html",tooltip=" "];
+  Node3 -> Node6 [dir="back",color="steelblue1",style="solid"];
+  Node6 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/place_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$place__behavior_8hpp.html",tooltip=" "];
+  Node1 -> Node7 [dir="back",color="steelblue1",style="solid"];
+  Node7 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/test_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$test__behavior_8hpp.html",tooltip=" "];
+  Node1 -> Node8 [dir="back",color="steelblue1",style="solid"];
+  Node8 [label="dhtt_plugins/include\l/dhtt_plugins/tasks/and\l_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$and__behavior_8hpp.html",tooltip=" "];
+  Node1 -> Node9 [dir="back",color="steelblue1",style="solid"];
+  Node9 [label="dhtt_plugins/include\l/dhtt_plugins/tasks/or\l_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$or__behavior_8hpp.html",tooltip=" "];
+  Node1 -> Node10 [dir="back",color="steelblue1",style="solid"];
+  Node10 [label="dhtt_plugins/include\l/dhtt_plugins/tasks/root\l_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$root__behavior_8hpp.html",tooltip=" "];
+  Node1 -> Node11 [dir="back",color="steelblue1",style="solid"];
+  Node11 [label="dhtt_plugins/include\l/dhtt_plugins/tasks/then\l_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$then__behavior_8hpp.html",tooltip=" "];
 }

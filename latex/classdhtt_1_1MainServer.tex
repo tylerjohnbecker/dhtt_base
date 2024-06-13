@@ -12,3 +12,661 @@ main communication to manipulate and get information from the d\+HTT
 
 
 Inheritance diagram for dhtt\+::Main\+Server\+:
+% FIG 0
+
+
+Collaboration diagram for dhtt\+::Main\+Server\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classdhtt_1_1MainServer_a79c34c695e51e387b1afb1ce0dd84ae0}{Main\+Server}} (std\+::string node\+\_\+name, std\+::shared\+\_\+ptr$<$ rclcpp\+::executors\+::\+Multi\+Threaded\+Executor $>$ spinner)
+\begin{DoxyCompactList}\small\item\em constructor for the \mbox{\hyperlink{classdhtt_1_1MainServer}{Main\+Server}} Class \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classdhtt_1_1MainServer_a4cb4032ccc5d22e5fc85d5846c4579a8}{$\sim$\+Main\+Server}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classdhtt_1_1MainServer_a5baef94ba95d5800a20424cf6ae0ea18}{modify\+\_\+callback}} (const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Request $>$ request, std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$ response)
+\begin{DoxyCompactList}\small\item\em callback for handling Modify\+Requests. See Modify\+Request.\+msg for more information. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1MainServer_a305d4682414cf86aa02193467007b23c}{control\+\_\+callback}} (const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Control\+Request\+::\+Request $>$ request, std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Control\+Request\+::\+Response $>$ response)
+\begin{DoxyCompactList}\small\item\em callback for handling Control\+Request. See Control\+Request.\+msg for more information. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1MainServer_a61792024c9057d85558c9b129bcfad34}{fetch\+\_\+callback}} (const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Fetch\+Request\+::\+Request $>$ request, std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Fetch\+Request\+::\+Response $>$ response)
+\begin{DoxyCompactList}\small\item\em callback for handling Fetch\+Request. See Fetch\+Request.\+msg for more information. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1MainServer_a8f2558f1d98c5f2388a0935469eb6935}{history\+\_\+callback}} (const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+History\+Request\+::\+Request $>$ request, std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+History\+Request\+::\+Response $>$ response)
+\begin{DoxyCompactList}\small\item\em callback for handling History\+Request. See History\+Request.\+msg for more information. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1MainServer_a2dce91b70003524c39f9425c0ed7ecca}{add\+\_\+node}} (std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$ response, std\+::string parent\+\_\+name, dhtt\+\_\+msgs\+::msg\+::\+Node to\+\_\+add)
+\begin{DoxyCompactList}\small\item\em helper function for adding new nodes to the tree \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1MainServer_a9e728cbb985a54de271a01a1f0d2b3ce}{add\+\_\+nodes\+\_\+from\+\_\+file}} (std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$ response, std\+::string parent\+\_\+name, std\+::string file\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Adds a subtree described in a given .yaml file. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1MainServer_a7043583ea0451e54fdc3fa164adf4c40}{remove\+\_\+node}} (const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$ response, std\+::string to\+\_\+remove)
+\begin{DoxyCompactList}\small\item\em Removes a given node from the tree. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1MainServer_ae40d57d6711240dd4e603d6aa4259d5d}{change\+\_\+params}} (const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Request $>$ request)
+\begin{DoxyCompactList}\small\item\em Changes params of a given node name. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1MainServer_a669b9175b3a76523c73c2635d265de6d}{stop\+\_\+tree}} (bool interrupt)
+\begin{DoxyCompactList}\small\item\em Stops execution of the tree. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1MainServer_ad7cc8b0a9ea7eddd75f31e15489c04fe}{start\+\_\+tree}} ()
+\begin{DoxyCompactList}\small\item\em Signals the root node to start execution. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1MainServer_a2a72c0e39f43bb2ce066d7de9f2d12f5}{save\+\_\+tree}} ()
+\begin{DoxyCompactList}\small\item\em Saves the current tree and params of each node to a given file name. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1MainServer_a5ad2e6bea01a93bb8a7dd17cc2f82746}{reset\+\_\+tree}} ()
+\begin{DoxyCompactList}\small\item\em Deletes everything in the tree except for the root node. \end{DoxyCompactList}\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Subtree $>$ \mbox{\hyperlink{classdhtt_1_1MainServer_a0e3e7c6bcb4ab30a474c4111e2010c44}{fetch\+\_\+subtrees\+\_\+by\+\_\+common\+\_\+name}} (std\+::string name)
+\begin{DoxyCompactList}\small\item\em fetches all subtrees which contain the given string in their name \end{DoxyCompactList}\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Subtree $>$ \mbox{\hyperlink{classdhtt_1_1MainServer_a10af7fcbfd90e381c4403463af808469}{fetch\+\_\+subtrees\+\_\+by\+\_\+type}} (int type)
+\begin{DoxyCompactList}\small\item\em fetches all subtrees of a given type \end{DoxyCompactList}\item 
+dhtt\+\_\+msgs\+::msg\+::\+Subtree \mbox{\hyperlink{classdhtt_1_1MainServer_aa771d513effe038bc986e5a1728f28a1}{fetch\+\_\+subtree\+\_\+by\+\_\+name}} (std\+::string name)
+\begin{DoxyCompactList}\small\item\em fetches the subtree with exactly the given name \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1MainServer_a52c8c63c817455fa2493b257f3dc3c4b}{status\+\_\+callback}} (const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::msg\+::\+Node $>$ data)
+\begin{DoxyCompactList}\small\item\em subscription callback to maintain the internal status of each node \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1MainServer_aa6e75a9bfd55c282262d322ffa5934d3}{maintain\+\_\+local\+\_\+subtree}} ()
+\begin{DoxyCompactList}\small\item\em Fixes the internal tree representation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1MainServer_aa995061166ab0db237214be402a0740a}{fill\+\_\+subtree\+\_\+metrics}} (dhtt\+\_\+msgs\+::msg\+::\+Subtree \&to\+\_\+fill)
+\begin{DoxyCompactList}\small\item\em calculates and fills structural metrics of a given subtree \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1MainServer_aa801ca3cae4f4adcb5617e26a430186f}{run\+\_\+tree}} ()
+\begin{DoxyCompactList}\small\item\em subthread function to send the run goal to the d\+HTT \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1MainServer_ae06850b2b26f2d2e7dc8d71423665f39}{tree\+\_\+result\+\_\+callback}} (const rclcpp\+\_\+action\+::\+Client\+Goal\+Handle$<$ dhtt\+\_\+msgs\+::action\+::\+Activation $>$\+::\+Wrapped\+Result \&result)
+\begin{DoxyCompactList}\small\item\em callback for when the tree finishes execution \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1MainServer_a009a5881194ade8cf65fea8c1d4561ae}{publish\+\_\+root\+\_\+status}} ()
+\begin{DoxyCompactList}\small\item\em Function to specifically publish the current status of the root node. \end{DoxyCompactList}\item 
+dhtt\+\_\+msgs\+::msg\+::\+Node \mbox{\hyperlink{classdhtt_1_1MainServer_a465a54116a7482d34bd739129a32d05c}{get\+\_\+active\+\_\+behavior\+\_\+node}} ()
+\begin{DoxyCompactList}\small\item\em returns the internal representation of the cucrrent active behavior node \end{DoxyCompactList}\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Node $>$ \mbox{\hyperlink{classdhtt_1_1MainServer_ac389893f1ef1e0c6d05fa7b09673e0b3}{get\+\_\+active\+\_\+nodes}} ()
+\begin{DoxyCompactList}\small\item\em Returns a list of all nodes that have status ACTIVE. \end{DoxyCompactList}\item 
+dhtt\+\_\+msgs\+::msg\+::\+Subtree \mbox{\hyperlink{classdhtt_1_1MainServer_aaca8d1df11ec698b7b5761c38639b8bd}{construct\+\_\+subtree\+\_\+from\+\_\+node\+\_\+iter}} (std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Node $>$\+::iterator top\+\_\+node)
+\begin{DoxyCompactList}\small\item\em internal function which constructs a subtree message from a given node iter \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+rclcpp\+::\+Service$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request $>$\+::\+Shared\+Ptr \mbox{\hyperlink{classdhtt_1_1MainServer_aa1b02dde668cf184e3a01685335dedf6}{modify\+\_\+server}}
+\item 
+rclcpp\+::\+Service$<$ dhtt\+\_\+msgs\+::srv\+::\+Control\+Request $>$\+::\+Shared\+Ptr \mbox{\hyperlink{classdhtt_1_1MainServer_a3d47c114329b812188850b3024d758fd}{control\+\_\+server}}
+\item 
+rclcpp\+::\+Service$<$ dhtt\+\_\+msgs\+::srv\+::\+Fetch\+Request $>$\+::\+Shared\+Ptr \mbox{\hyperlink{classdhtt_1_1MainServer_a4774ab8f47ee4ecaa2652db2027ef1cc}{fetch\+\_\+server}}
+\item 
+rclcpp\+::\+Service$<$ dhtt\+\_\+msgs\+::srv\+::\+History\+Request $>$\+::\+Shared\+Ptr \mbox{\hyperlink{classdhtt_1_1MainServer_a1adbe3100452f96c256ffcf8ee1e403f}{history\+\_\+server}}
+\item 
+rclcpp\+::\+Publisher$<$ dhtt\+\_\+msgs\+::msg\+::\+Node\+Status $>$\+::\+Shared\+Ptr \mbox{\hyperlink{classdhtt_1_1MainServer_a3db453527ebe9fbb960649f529098cec}{root\+\_\+status\+\_\+pub}}
+\item 
+rclcpp\+::\+Subscription$<$ dhtt\+\_\+msgs\+::msg\+::\+Node $>$\+::\+Shared\+Ptr \mbox{\hyperlink{classdhtt_1_1MainServer_a8c4025076fe2b03cf2692e6ed3c26c05}{status\+\_\+sub}}
+\item 
+rclcpp\+\_\+action\+::\+Client$<$ dhtt\+\_\+msgs\+::action\+::\+Activation $>$\+::\+Shared\+Ptr \mbox{\hyperlink{classdhtt_1_1MainServer_ae55dbb2e55fd4f94237a91d4bc1b537d}{client\+\_\+ptr}}
+\item 
+rclcpp\+::\+Client$<$ dhtt\+\_\+msgs\+::srv\+::\+Internal\+Control\+Request $>$\+::\+Shared\+Ptr \mbox{\hyperlink{classdhtt_1_1MainServer_a97bd436d74aaebe3a4801c392ae8cdc2}{internal\+\_\+control\+\_\+client}}
+\item 
+boost\+::mutex \mbox{\hyperlink{classdhtt_1_1MainServer_ad63cd9dd8e4454f874424025e06c64ed}{modify\+\_\+mut}}
+\item 
+boost\+::mutex \mbox{\hyperlink{classdhtt_1_1MainServer_abbe7a0ea592dc0dbb7acd9da9e4c8b7d}{running\+\_\+mut}}
+\item 
+std\+::map$<$ std\+::string, std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $>$ $>$ \mbox{\hyperlink{classdhtt_1_1MainServer_a9d6a69f832b19159aed48d7b78c7afd4}{node\+\_\+map}}
+\item 
+dhtt\+\_\+msgs\+::msg\+::\+Subtree \mbox{\hyperlink{classdhtt_1_1MainServer_a0785b9f6450a5aa44ef3d1386179e6d1}{node\+\_\+list}}
+\item 
+std\+::shared\+\_\+ptr$<$ std\+::thread $>$ \mbox{\hyperlink{classdhtt_1_1MainServer_a32c91656658edf862ab4953bafbd5f01}{run\+\_\+tree\+\_\+thread}}
+\item 
+std\+::list$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1MainServer_a09b7af60f180c4a2884834a5045030cf}{history}}
+\item 
+std\+::shared\+\_\+ptr$<$ rclcpp\+::executors\+::\+Multi\+Threaded\+Executor $>$ \mbox{\hyperlink{classdhtt_1_1MainServer_a8597f5377a68158e6176af833ed49a3a}{spinner\+\_\+cp}}
+\item 
+int \mbox{\hyperlink{classdhtt_1_1MainServer_acbb04ecf855a277a08cb75f853a29ec0}{total\+\_\+nodes\+\_\+added}}
+\item 
+bool \mbox{\hyperlink{classdhtt_1_1MainServer_a760368e748f42ff110b41093dd644c2a}{verbose}}
+\item 
+bool \mbox{\hyperlink{classdhtt_1_1MainServer_a7dbbf6c6d913289a4ee63b82488cab13}{running}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+main communication to manipulate and get information from the d\+HTT 
+
+\mbox{\hyperlink{classdhtt_1_1MainServer}{Main\+Server}} contains the d\+HTT and facilitates any modification requests in four main categories\+:
+\begin{DoxyItemize}
+\item modification\+: requests that want to add/remove/etc. from the tree
+\item control\+: requests to start/stop/save the current tree
+\item fetch\+: requests to get specific information from the tree
+\item history\+: requests for runtime history information from the tree 
+\end{DoxyItemize}
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a79c34c695e51e387b1afb1ce0dd84ae0}\label{classdhtt_1_1MainServer_a79c34c695e51e387b1afb1ce0dd84ae0}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!MainServer@{MainServer}}
+\index{MainServer@{MainServer}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{MainServer()}{MainServer()}}
+{\footnotesize\ttfamily dhtt\+::\+Main\+Server\+::\+Main\+Server (\begin{DoxyParamCaption}\item[{std\+::string}]{node\+\_\+name,  }\item[{std\+::shared\+\_\+ptr$<$ rclcpp\+::executors\+::\+Multi\+Threaded\+Executor $>$}]{spinner }\end{DoxyParamCaption})}
+
+
+
+constructor for the \mbox{\hyperlink{classdhtt_1_1MainServer}{Main\+Server}} Class 
+
+
+\begin{DoxyParams}{Parameters}
+{\em node\+\_\+name} & name of the node created by this class \\
+\hline
+{\em spinner} & outside multithreaded executor which new nodes that are created in the d\+HTT will be added to \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a4cb4032ccc5d22e5fc85d5846c4579a8}\label{classdhtt_1_1MainServer_a4cb4032ccc5d22e5fc85d5846c4579a8}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!````~MainServer@{$\sim$MainServer}}
+\index{````~MainServer@{$\sim$MainServer}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{$\sim$MainServer()}{~MainServer()}}
+{\footnotesize\ttfamily dhtt\+::\+Main\+Server\+::$\sim$\+Main\+Server (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a2dce91b70003524c39f9425c0ed7ecca}\label{classdhtt_1_1MainServer_a2dce91b70003524c39f9425c0ed7ecca}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!add\_node@{add\_node}}
+\index{add\_node@{add\_node}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{add\_node()}{add\_node()}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Main\+Server\+::add\+\_\+node (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$}]{response,  }\item[{std\+::string}]{parent\+\_\+name,  }\item[{dhtt\+\_\+msgs\+::msg\+::\+Node}]{to\+\_\+add }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+helper function for adding new nodes to the tree 
+
+Takes a given node and a parent node\textquotesingle{}s name and adds the new node to the parent\textquotesingle{}s list of children. Will throw an exception if the parent doesn\textquotesingle{}t exist, if the parent cannot have a child, or if the child node is not correct. The given plugin for the node type must also exist and be valid.
+
+
+\begin{DoxyParams}{Parameters}
+{\em response} & shared\+\_\+ptr to the response which will be returned to the user. Modified with any successfully added node\textquotesingle{}s name. \\
+\hline
+{\em parent\+\_\+name} & name of the parent of the new node \\
+\hline
+{\em to\+\_\+add} & msg format of the new node. See Node.\+msg for more information.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string with exception information or empty string if successful 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a9e728cbb985a54de271a01a1f0d2b3ce}\label{classdhtt_1_1MainServer_a9e728cbb985a54de271a01a1f0d2b3ce}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!add\_nodes\_from\_file@{add\_nodes\_from\_file}}
+\index{add\_nodes\_from\_file@{add\_nodes\_from\_file}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{add\_nodes\_from\_file()}{add\_nodes\_from\_file()}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Main\+Server\+::add\+\_\+nodes\+\_\+from\+\_\+file (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$}]{response,  }\item[{std\+::string}]{parent\+\_\+name,  }\item[{std\+::string}]{file\+\_\+name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Adds a subtree described in a given .yaml file. 
+
+Takes a yaml file which describes the structure of the desired subtree to the d\+HTT at the desired parent node (see sample\+\_\+tasks/pick\+\_\+place.\+yaml for an example yaml description). Throws and returns an exception if the file does not exist, has the wrong structure, or if any of the nodes fail to add (see add\+\_\+node).
+
+
+\begin{DoxyParams}{Parameters}
+{\em response} & shared\+\_\+ptr to the response which will be returned to the user. Modified with any successfully added node\textquotesingle{}s name. \\
+\hline
+{\em parent\+\_\+name} & name of the parent of the new node \\
+\hline
+{\em file\+\_\+name} & full path of the yaml file which describes the subtree to add\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string with exception information or empty string if successful 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_ae40d57d6711240dd4e603d6aa4259d5d}\label{classdhtt_1_1MainServer_ae40d57d6711240dd4e603d6aa4259d5d}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!change\_params@{change\_params}}
+\index{change\_params@{change\_params}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{change\_params()}{change\_params()}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Main\+Server\+::change\+\_\+params (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Request $>$}]{request }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Changes params of a given node name. 
+
+NOT IMPLEMENTED YET
+
+\begin{DoxyReturn}{Returns}
+error message 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_aaca8d1df11ec698b7b5761c38639b8bd}\label{classdhtt_1_1MainServer_aaca8d1df11ec698b7b5761c38639b8bd}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!construct\_subtree\_from\_node\_iter@{construct\_subtree\_from\_node\_iter}}
+\index{construct\_subtree\_from\_node\_iter@{construct\_subtree\_from\_node\_iter}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{construct\_subtree\_from\_node\_iter()}{construct\_subtree\_from\_node\_iter()}}
+{\footnotesize\ttfamily dhtt\+\_\+msgs\+::msg\+::\+Subtree dhtt\+::\+Main\+Server\+::construct\+\_\+subtree\+\_\+from\+\_\+node\+\_\+iter (\begin{DoxyParamCaption}\item[{std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Node $>$\+::iterator}]{top\+\_\+node }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+internal function which constructs a subtree message from a given node iter 
+
+Helpful function which will create a subtree message which represents the subtree of a given node. Generally, this is used for fetch requests.
+
+
+\begin{DoxyParams}{Parameters}
+{\em top\+\_\+node} & iterator of the node to construct the subtree from\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Subtree message representing the given node. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a305d4682414cf86aa02193467007b23c}\label{classdhtt_1_1MainServer_a305d4682414cf86aa02193467007b23c}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!control\_callback@{control\_callback}}
+\index{control\_callback@{control\_callback}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{control\_callback()}{control\_callback()}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::control\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Control\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Control\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+callback for handling Control\+Request. See Control\+Request.\+msg for more information. 
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a61792024c9057d85558c9b129bcfad34}\label{classdhtt_1_1MainServer_a61792024c9057d85558c9b129bcfad34}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!fetch\_callback@{fetch\_callback}}
+\index{fetch\_callback@{fetch\_callback}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{fetch\_callback()}{fetch\_callback()}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::fetch\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Fetch\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Fetch\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+callback for handling Fetch\+Request. See Fetch\+Request.\+msg for more information. 
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_aa771d513effe038bc986e5a1728f28a1}\label{classdhtt_1_1MainServer_aa771d513effe038bc986e5a1728f28a1}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!fetch\_subtree\_by\_name@{fetch\_subtree\_by\_name}}
+\index{fetch\_subtree\_by\_name@{fetch\_subtree\_by\_name}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{fetch\_subtree\_by\_name()}{fetch\_subtree\_by\_name()}}
+{\footnotesize\ttfamily dhtt\+\_\+msgs\+::msg\+::\+Subtree dhtt\+::\+Main\+Server\+::fetch\+\_\+subtree\+\_\+by\+\_\+name (\begin{DoxyParamCaption}\item[{std\+::string}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+fetches the subtree with exactly the given name 
+
+Returns only the subtree of the node with the given name, otherwise returns an empty message with status -\/1 to indicate failure. To ensure the name is exact it should be found from an initial fetch request and then used afterwards as nodes will always be given a unique name upon creation.
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & exact name (case sensitive) of the node to search for in the tree\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+subtree with the given name 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a0e3e7c6bcb4ab30a474c4111e2010c44}\label{classdhtt_1_1MainServer_a0e3e7c6bcb4ab30a474c4111e2010c44}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!fetch\_subtrees\_by\_common\_name@{fetch\_subtrees\_by\_common\_name}}
+\index{fetch\_subtrees\_by\_common\_name@{fetch\_subtrees\_by\_common\_name}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{fetch\_subtrees\_by\_common\_name()}{fetch\_subtrees\_by\_common\_name()}}
+{\footnotesize\ttfamily std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Subtree $>$ dhtt\+::\+Main\+Server\+::fetch\+\_\+subtrees\+\_\+by\+\_\+common\+\_\+name (\begin{DoxyParamCaption}\item[{std\+::string}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+fetches all subtrees which contain the given string in their name 
+
+Returns a list of all Subtrees which match the given name (must contain the literal string in their name). These subtrees can also contain each other so the list may have duplicates. Subtrees are defined in Subtree.\+msg see that file for more information.
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & given string to search\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+vector of Subtrees which have the given name in common 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a10af7fcbfd90e381c4403463af808469}\label{classdhtt_1_1MainServer_a10af7fcbfd90e381c4403463af808469}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!fetch\_subtrees\_by\_type@{fetch\_subtrees\_by\_type}}
+\index{fetch\_subtrees\_by\_type@{fetch\_subtrees\_by\_type}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{fetch\_subtrees\_by\_type()}{fetch\_subtrees\_by\_type()}}
+{\footnotesize\ttfamily std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Subtree $>$ dhtt\+::\+Main\+Server\+::fetch\+\_\+subtrees\+\_\+by\+\_\+type (\begin{DoxyParamCaption}\item[{int}]{type }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+fetches all subtrees of a given type 
+
+Returns a list of all subtrees which are the given type (described in Node.\+msg). Subtrees can contain each other so there may be duplicates. Subtrees are defined in Subtree.\+msg see that file for more information.
+
+
+\begin{DoxyParams}{Parameters}
+{\em type} & integer value representing the requested type (must be described in Node.\+msg)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+vector of Subtrees which have the given type 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_aa995061166ab0db237214be402a0740a}\label{classdhtt_1_1MainServer_aa995061166ab0db237214be402a0740a}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!fill\_subtree\_metrics@{fill\_subtree\_metrics}}
+\index{fill\_subtree\_metrics@{fill\_subtree\_metrics}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{fill\_subtree\_metrics()}{fill\_subtree\_metrics()}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::fill\+\_\+subtree\+\_\+metrics (\begin{DoxyParamCaption}\item[{dhtt\+\_\+msgs\+::msg\+::\+Subtree \&}]{to\+\_\+fill }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+calculates and fills structural metrics of a given subtree 
+
+calculates the max width, depth, number of nodes, completion percentage, and current status of the tree and fills in those members of the given message.
+
+
+\begin{DoxyParams}{Parameters}
+{\em to\+\_\+fill} & Subtree message which we have to fill these metrics from\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a465a54116a7482d34bd739129a32d05c}\label{classdhtt_1_1MainServer_a465a54116a7482d34bd739129a32d05c}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!get\_active\_behavior\_node@{get\_active\_behavior\_node}}
+\index{get\_active\_behavior\_node@{get\_active\_behavior\_node}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{get\_active\_behavior\_node()}{get\_active\_behavior\_node()}}
+{\footnotesize\ttfamily dhtt\+\_\+msgs\+::msg\+::\+Node dhtt\+::\+Main\+Server\+::get\+\_\+active\+\_\+behavior\+\_\+node (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+returns the internal representation of the cucrrent active behavior node 
+
+This performs a linear search of the nodes in the tree and returns the first that is a BEHAVIOR type node and has an ACTIVE status. Returns a node with name \char`\"{}failed\char`\"{} if the tree if one is not found.
+
+\begin{DoxyReturn}{Returns}
+internal representation of the active node 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_ac389893f1ef1e0c6d05fa7b09673e0b3}\label{classdhtt_1_1MainServer_ac389893f1ef1e0c6d05fa7b09673e0b3}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!get\_active\_nodes@{get\_active\_nodes}}
+\index{get\_active\_nodes@{get\_active\_nodes}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{get\_active\_nodes()}{get\_active\_nodes()}}
+{\footnotesize\ttfamily std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Node $>$ dhtt\+::\+Main\+Server\+::get\+\_\+active\+\_\+nodes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Returns a list of all nodes that have status ACTIVE. 
+
+Generally returns the line of nodes from the root node to the active behavior.
+
+\begin{DoxyReturn}{Returns}
+vector of all active nodes in the tree 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a8f2558f1d98c5f2388a0935469eb6935}\label{classdhtt_1_1MainServer_a8f2558f1d98c5f2388a0935469eb6935}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!history\_callback@{history\_callback}}
+\index{history\_callback@{history\_callback}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{history\_callback()}{history\_callback()}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::history\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+History\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+History\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+callback for handling History\+Request. See History\+Request.\+msg for more information. 
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_aa6e75a9bfd55c282262d322ffa5934d3}\label{classdhtt_1_1MainServer_aa6e75a9bfd55c282262d322ffa5934d3}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!maintain\_local\_subtree@{maintain\_local\_subtree}}
+\index{maintain\_local\_subtree@{maintain\_local\_subtree}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{maintain\_local\_subtree()}{maintain\_local\_subtree()}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::maintain\+\_\+local\+\_\+subtree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Fixes the internal tree representation. 
+
+Makes necessary changes to the internal representation of the d\+HTT after a node is added or removed.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a5baef94ba95d5800a20424cf6ae0ea18}\label{classdhtt_1_1MainServer_a5baef94ba95d5800a20424cf6ae0ea18}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!modify\_callback@{modify\_callback}}
+\index{modify\_callback@{modify\_callback}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{modify\_callback()}{modify\_callback()}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::modify\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+callback for handling Modify\+Requests. See Modify\+Request.\+msg for more information. 
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a009a5881194ade8cf65fea8c1d4561ae}\label{classdhtt_1_1MainServer_a009a5881194ade8cf65fea8c1d4561ae}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!publish\_root\_status@{publish\_root\_status}}
+\index{publish\_root\_status@{publish\_root\_status}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{publish\_root\_status()}{publish\_root\_status()}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::publish\+\_\+root\+\_\+status (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Function to specifically publish the current status of the root node. 
+
+This function and the /root\+\_\+status topic are useful for identifying the current status of the tree as a whole. It just regurgitates the information from the status topic onto the /root\+\_\+status topic any time the root node publishes a status message.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a7043583ea0451e54fdc3fa164adf4c40}\label{classdhtt_1_1MainServer_a7043583ea0451e54fdc3fa164adf4c40}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!remove\_node@{remove\_node}}
+\index{remove\_node@{remove\_node}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{remove\_node()}{remove\_node()}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Main\+Server\+::remove\+\_\+node (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$}]{response,  }\item[{std\+::string}]{to\+\_\+remove }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Removes a given node from the tree. 
+
+Searches the internal list of nodes from the tree, and recursively deletes all children of that node before finally removing the given node. Returns in error if the node does not exist or if the given node is the root node.
+
+
+\begin{DoxyParams}{Parameters}
+{\em response} & shared\+\_\+ptr to the response which will be returned to the user. Modified with any successfully added node\textquotesingle{}s name. \\
+\hline
+{\em to\+\_\+remove} & exact name of node to remove from the tree\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string with exception information or empty string if successful 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a5ad2e6bea01a93bb8a7dd17cc2f82746}\label{classdhtt_1_1MainServer_a5ad2e6bea01a93bb8a7dd17cc2f82746}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!reset\_tree@{reset\_tree}}
+\index{reset\_tree@{reset\_tree}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{reset\_tree()}{reset\_tree()}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Main\+Server\+::reset\+\_\+tree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Deletes everything in the tree except for the root node. 
+
+Removes all children of the root node recursively. Throws an error if the tree is already running.
+
+\begin{DoxyReturn}{Returns}
+string with exception information or empty string if successful 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_aa801ca3cae4f4adcb5617e26a430186f}\label{classdhtt_1_1MainServer_aa801ca3cae4f4adcb5617e26a430186f}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!run\_tree@{run\_tree}}
+\index{run\_tree@{run\_tree}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{run\_tree()}{run\_tree()}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::run\+\_\+tree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+subthread function to send the run goal to the d\+HTT 
+
+This acquires a mutex to run the tree which is released after the tree finishes execution.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a2a72c0e39f43bb2ce066d7de9f2d12f5}\label{classdhtt_1_1MainServer_a2a72c0e39f43bb2ce066d7de9f2d12f5}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!save\_tree@{save\_tree}}
+\index{save\_tree@{save\_tree}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{save\_tree()}{save\_tree()}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Main\+Server\+::save\+\_\+tree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Saves the current tree and params of each node to a given file name. 
+
+NOT IMPLEMENTED YET
+
+\begin{DoxyReturn}{Returns}
+error message 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_ad7cc8b0a9ea7eddd75f31e15489c04fe}\label{classdhtt_1_1MainServer_ad7cc8b0a9ea7eddd75f31e15489c04fe}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!start\_tree@{start\_tree}}
+\index{start\_tree@{start\_tree}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{start\_tree()}{start\_tree()}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Main\+Server\+::start\+\_\+tree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Signals the root node to start execution. 
+
+Starts a new thread of execution which will facilitate the auction behavior described in the root node class. Throws an error if the tree is already running.
+
+\begin{DoxyReturn}{Returns}
+string with exception information or empty string if successful 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a52c8c63c817455fa2493b257f3dc3c4b}\label{classdhtt_1_1MainServer_a52c8c63c817455fa2493b257f3dc3c4b}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!status\_callback@{status\_callback}}
+\index{status\_callback@{status\_callback}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{status\_callback()}{status\_callback()}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::status\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::msg\+::\+Node $>$}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+subscription callback to maintain the internal status of each node 
+
+Internal subscription which the nodes in the d\+HTT publish their status to. The status is saved internally in the \mbox{\hyperlink{classdhtt_1_1MainServer}{Main\+Server}} and is given in fetch requests as the most up to date version. Also adds running nodes to the internal history, and specifically publishes the Root Status when a message is received
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & message in the callback\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a669b9175b3a76523c73c2635d265de6d}\label{classdhtt_1_1MainServer_a669b9175b3a76523c73c2635d265de6d}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!stop\_tree@{stop\_tree}}
+\index{stop\_tree@{stop\_tree}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{stop\_tree()}{stop\_tree()}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Main\+Server\+::stop\+\_\+tree (\begin{DoxyParamCaption}\item[{bool}]{interrupt }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Stops execution of the tree. 
+
+Currently this implementation is in the control callback but should be moved here
+
+
+\begin{DoxyParams}{Parameters}
+{\em interrupt} & True if the tree should stop immediately, False for graceful stop.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string with exception information or empty string if successful 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_ae06850b2b26f2d2e7dc8d71423665f39}\label{classdhtt_1_1MainServer_ae06850b2b26f2d2e7dc8d71423665f39}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!tree\_result\_callback@{tree\_result\_callback}}
+\index{tree\_result\_callback@{tree\_result\_callback}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{tree\_result\_callback()}{tree\_result\_callback()}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::tree\+\_\+result\+\_\+callback (\begin{DoxyParamCaption}\item[{const rclcpp\+\_\+action\+::\+Client\+Goal\+Handle$<$ dhtt\+\_\+msgs\+::action\+::\+Activation $>$\+::\+Wrapped\+Result \&}]{result }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+callback for when the tree finishes execution 
+
+Really simple just releases the runtime mutex and flips the running flag
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_ae55dbb2e55fd4f94237a91d4bc1b537d}\label{classdhtt_1_1MainServer_ae55dbb2e55fd4f94237a91d4bc1b537d}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!client\_ptr@{client\_ptr}}
+\index{client\_ptr@{client\_ptr}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{client\_ptr}{client\_ptr}}
+{\footnotesize\ttfamily rclcpp\+\_\+action\+::\+Client$<$dhtt\+\_\+msgs\+::action\+::\+Activation$>$\+::\+Shared\+Ptr dhtt\+::\+Main\+Server\+::client\+\_\+ptr\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a3d47c114329b812188850b3024d758fd}\label{classdhtt_1_1MainServer_a3d47c114329b812188850b3024d758fd}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!control\_server@{control\_server}}
+\index{control\_server@{control\_server}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{control\_server}{control\_server}}
+{\footnotesize\ttfamily rclcpp\+::\+Service$<$dhtt\+\_\+msgs\+::srv\+::\+Control\+Request$>$\+::\+Shared\+Ptr dhtt\+::\+Main\+Server\+::control\+\_\+server\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a4774ab8f47ee4ecaa2652db2027ef1cc}\label{classdhtt_1_1MainServer_a4774ab8f47ee4ecaa2652db2027ef1cc}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!fetch\_server@{fetch\_server}}
+\index{fetch\_server@{fetch\_server}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{fetch\_server}{fetch\_server}}
+{\footnotesize\ttfamily rclcpp\+::\+Service$<$dhtt\+\_\+msgs\+::srv\+::\+Fetch\+Request$>$\+::\+Shared\+Ptr dhtt\+::\+Main\+Server\+::fetch\+\_\+server\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a09b7af60f180c4a2884834a5045030cf}\label{classdhtt_1_1MainServer_a09b7af60f180c4a2884834a5045030cf}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!history@{history}}
+\index{history@{history}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{history}{history}}
+{\footnotesize\ttfamily std\+::list$<$std\+::string$>$ dhtt\+::\+Main\+Server\+::history\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a1adbe3100452f96c256ffcf8ee1e403f}\label{classdhtt_1_1MainServer_a1adbe3100452f96c256ffcf8ee1e403f}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!history\_server@{history\_server}}
+\index{history\_server@{history\_server}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{history\_server}{history\_server}}
+{\footnotesize\ttfamily rclcpp\+::\+Service$<$dhtt\+\_\+msgs\+::srv\+::\+History\+Request$>$\+::\+Shared\+Ptr dhtt\+::\+Main\+Server\+::history\+\_\+server\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a97bd436d74aaebe3a4801c392ae8cdc2}\label{classdhtt_1_1MainServer_a97bd436d74aaebe3a4801c392ae8cdc2}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!internal\_control\_client@{internal\_control\_client}}
+\index{internal\_control\_client@{internal\_control\_client}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{internal\_control\_client}{internal\_control\_client}}
+{\footnotesize\ttfamily rclcpp\+::\+Client$<$dhtt\+\_\+msgs\+::srv\+::\+Internal\+Control\+Request$>$\+::\+Shared\+Ptr dhtt\+::\+Main\+Server\+::internal\+\_\+control\+\_\+client\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_ad63cd9dd8e4454f874424025e06c64ed}\label{classdhtt_1_1MainServer_ad63cd9dd8e4454f874424025e06c64ed}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!modify\_mut@{modify\_mut}}
+\index{modify\_mut@{modify\_mut}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{modify\_mut}{modify\_mut}}
+{\footnotesize\ttfamily boost\+::mutex dhtt\+::\+Main\+Server\+::modify\+\_\+mut\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_aa1b02dde668cf184e3a01685335dedf6}\label{classdhtt_1_1MainServer_aa1b02dde668cf184e3a01685335dedf6}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!modify\_server@{modify\_server}}
+\index{modify\_server@{modify\_server}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{modify\_server}{modify\_server}}
+{\footnotesize\ttfamily rclcpp\+::\+Service$<$dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request$>$\+::\+Shared\+Ptr dhtt\+::\+Main\+Server\+::modify\+\_\+server\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a0785b9f6450a5aa44ef3d1386179e6d1}\label{classdhtt_1_1MainServer_a0785b9f6450a5aa44ef3d1386179e6d1}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!node\_list@{node\_list}}
+\index{node\_list@{node\_list}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{node\_list}{node\_list}}
+{\footnotesize\ttfamily dhtt\+\_\+msgs\+::msg\+::\+Subtree dhtt\+::\+Main\+Server\+::node\+\_\+list\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a9d6a69f832b19159aed48d7b78c7afd4}\label{classdhtt_1_1MainServer_a9d6a69f832b19159aed48d7b78c7afd4}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!node\_map@{node\_map}}
+\index{node\_map@{node\_map}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{node\_map}{node\_map}}
+{\footnotesize\ttfamily std\+::map$<$std\+::string, std\+::shared\+\_\+ptr$<$\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}}$>$ $>$ dhtt\+::\+Main\+Server\+::node\+\_\+map\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a3db453527ebe9fbb960649f529098cec}\label{classdhtt_1_1MainServer_a3db453527ebe9fbb960649f529098cec}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!root\_status\_pub@{root\_status\_pub}}
+\index{root\_status\_pub@{root\_status\_pub}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{root\_status\_pub}{root\_status\_pub}}
+{\footnotesize\ttfamily rclcpp\+::\+Publisher$<$dhtt\+\_\+msgs\+::msg\+::\+Node\+Status$>$\+::\+Shared\+Ptr dhtt\+::\+Main\+Server\+::root\+\_\+status\+\_\+pub\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a32c91656658edf862ab4953bafbd5f01}\label{classdhtt_1_1MainServer_a32c91656658edf862ab4953bafbd5f01}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!run\_tree\_thread@{run\_tree\_thread}}
+\index{run\_tree\_thread@{run\_tree\_thread}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{run\_tree\_thread}{run\_tree\_thread}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$std\+::thread$>$ dhtt\+::\+Main\+Server\+::run\+\_\+tree\+\_\+thread\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a7dbbf6c6d913289a4ee63b82488cab13}\label{classdhtt_1_1MainServer_a7dbbf6c6d913289a4ee63b82488cab13}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!running@{running}}
+\index{running@{running}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{running}{running}}
+{\footnotesize\ttfamily bool dhtt\+::\+Main\+Server\+::running\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_abbe7a0ea592dc0dbb7acd9da9e4c8b7d}\label{classdhtt_1_1MainServer_abbe7a0ea592dc0dbb7acd9da9e4c8b7d}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!running\_mut@{running\_mut}}
+\index{running\_mut@{running\_mut}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{running\_mut}{running\_mut}}
+{\footnotesize\ttfamily boost\+::mutex dhtt\+::\+Main\+Server\+::running\+\_\+mut\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a8597f5377a68158e6176af833ed49a3a}\label{classdhtt_1_1MainServer_a8597f5377a68158e6176af833ed49a3a}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!spinner\_cp@{spinner\_cp}}
+\index{spinner\_cp@{spinner\_cp}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{spinner\_cp}{spinner\_cp}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$rclcpp\+::executors\+::\+Multi\+Threaded\+Executor$>$ dhtt\+::\+Main\+Server\+::spinner\+\_\+cp\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a8c4025076fe2b03cf2692e6ed3c26c05}\label{classdhtt_1_1MainServer_a8c4025076fe2b03cf2692e6ed3c26c05}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!status\_sub@{status\_sub}}
+\index{status\_sub@{status\_sub}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{status\_sub}{status\_sub}}
+{\footnotesize\ttfamily rclcpp\+::\+Subscription$<$dhtt\+\_\+msgs\+::msg\+::\+Node$>$\+::\+Shared\+Ptr dhtt\+::\+Main\+Server\+::status\+\_\+sub\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_acbb04ecf855a277a08cb75f853a29ec0}\label{classdhtt_1_1MainServer_acbb04ecf855a277a08cb75f853a29ec0}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!total\_nodes\_added@{total\_nodes\_added}}
+\index{total\_nodes\_added@{total\_nodes\_added}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{total\_nodes\_added}{total\_nodes\_added}}
+{\footnotesize\ttfamily int dhtt\+::\+Main\+Server\+::total\+\_\+nodes\+\_\+added\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1MainServer_a760368e748f42ff110b41093dd644c2a}\label{classdhtt_1_1MainServer_a760368e748f42ff110b41093dd644c2a}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!verbose@{verbose}}
+\index{verbose@{verbose}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{verbose}{verbose}}
+{\footnotesize\ttfamily bool dhtt\+::\+Main\+Server\+::verbose\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt/include/dhtt/server/\mbox{\hyperlink{main__server_8hpp}{main\+\_\+server.\+hpp}}\end{DoxyCompactItemize}

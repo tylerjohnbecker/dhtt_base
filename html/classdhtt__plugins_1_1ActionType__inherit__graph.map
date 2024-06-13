@@ -1,0 +1,7 @@
+<map id="dhtt_plugins::ActionType" name="dhtt_plugins::ActionType">
+<area shape="rect" id="node1" title=" " alt="" coords="217,79,380,104"/>
+<area shape="rect" id="node3" href="$classdhtt__plugins_1_1MoveBehavior.html" title=" " alt="" coords="5,152,187,177"/>
+<area shape="rect" id="node4" href="$classdhtt__plugins_1_1PickBehavior.html" title=" " alt="" coords="211,152,386,177"/>
+<area shape="rect" id="node5" href="$classdhtt__plugins_1_1PlaceBehavior.html" title=" " alt="" coords="410,152,593,177"/>
+<area shape="rect" id="node2" href="$classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes." alt="" coords="244,5,353,31"/>
+</map>

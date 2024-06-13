@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['work_5fcallback_0',['work_callback',['../classdhtt_1_1NodeType.html#a746c54085a57734a637a30a05c610e91',1,'dhtt::NodeType']]],
-  ['work_5fthread_1',['work_thread',['../classdhtt_1_1Node.html#adacbb4c5cc6ab3a8207c3bbb323ef835',1,'dhtt::Node']]]
+  ['work_5fcallback_0',['work_callback',['../classdhtt_1_1NodeType.html#a746c54085a57734a637a30a05c610e91',1,'dhtt::NodeType::work_callback()'],['../classdhtt__plugins_1_1ActionType.html#a56a3ef4023591aef5d034b6355a39715',1,'dhtt_plugins::ActionType::work_callback()'],['../classdhtt__plugins_1_1TestBehavior.html#afa00322a98999a964b482a8b35f9a57a',1,'dhtt_plugins::TestBehavior::work_callback()'],['../classdhtt__plugins_1_1AndBehavior.html#a9f76f12b4ceedc96bf82261f1a0da449',1,'dhtt_plugins::AndBehavior::work_callback()'],['../classdhtt__plugins_1_1OrBehavior.html#ada2499282514c8a53c52703419a5b6e1',1,'dhtt_plugins::OrBehavior::work_callback()'],['../classdhtt__plugins_1_1RootBehavior.html#a85c6d010658071484e6aa8c597fc85d3',1,'dhtt_plugins::RootBehavior::work_callback()'],['../classdhtt__plugins_1_1ThenBehavior.html#ab656aa2dc5076b61108d97d6871800ec',1,'dhtt_plugins::ThenBehavior::work_callback()']]],
+  ['work_5fdone_1',['work_done',['../classdhtt__plugins_1_1MoveBehavior.html#aa64eaa2146270f0cf851b2d919630d77',1,'dhtt_plugins::MoveBehavior::work_done()'],['../classdhtt__plugins_1_1PickBehavior.html#a7ae2f31d5595e61ed42b7f769f81615b',1,'dhtt_plugins::PickBehavior::work_done()'],['../classdhtt__plugins_1_1PlaceBehavior.html#a98d628174b31e159d4281a536d6d0cbd',1,'dhtt_plugins::PlaceBehavior::work_done()']]],
+  ['work_5fthread_2',['work_thread',['../classdhtt_1_1Node.html#adacbb4c5cc6ab3a8207c3bbb323ef835',1,'dhtt::Node']]]
 ];

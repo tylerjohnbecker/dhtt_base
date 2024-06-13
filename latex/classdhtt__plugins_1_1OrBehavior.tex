@@ -1,0 +1,218 @@
+\hypertarget{classdhtt__plugins_1_1OrBehavior}{}\doxysection{dhtt\+\_\+plugins\+::Or\+Behavior Class Reference}
+\label{classdhtt__plugins_1_1OrBehavior}\index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}}
+
+
+{\ttfamily \#include $<$or\+\_\+behavior.\+hpp$>$}
+
+
+
+Inheritance diagram for dhtt\+\_\+plugins\+::Or\+Behavior\+:
+% FIG 0
+
+
+Collaboration diagram for dhtt\+\_\+plugins\+::Or\+Behavior\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a907a6b140ea345f4924d0bc770a73baa}{initialize}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
+\begin{DoxyCompactList}\small\item\em abstract initialize function for all Node\+Type classes \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a4d5bef6f08a3f8b41c08627c7e49529f}{auction\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em functionality for completing an auction \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_ada2499282514c8a53c52703419a5b6e1}{work\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em functionality for performing work \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a0da23d587157936fe57313a799545556}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
+\begin{DoxyCompactList}\small\item\em method to parse the input parameters for the Node\+Type \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a329f1af3a1e7653c9ba47ef1887eb678}{get\+\_\+perceived\+\_\+efficiency}} () override
+\begin{DoxyCompactList}\small\item\em calculates the activation potential of the node locally \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a92c4a1767ead32d681ac925f1422e4b7}{is\+\_\+done}} () override
+\begin{DoxyCompactList}\small\item\em check for if the node is finished running \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_aa07003eb60735f7db9e5cbe35988a861}{has\+\_\+chosen\+\_\+child}}
+\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a690d84f871a70a9a8cd5e7c7bc48e3fd}{child\+\_\+has\+\_\+run}}
+\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a517f5e52e7c48a44c45c9d6b52536ad6}{child\+\_\+done}}
+\item 
+double \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a2ace6315abbaa6e1fa0592741e1240a6}{activation\+\_\+potential}}
+\item 
+std\+::string \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a4aff8507c71ff92d829cd64805a01cdf}{activated\+\_\+child\+\_\+name}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_a4d5bef6f08a3f8b41c08627c7e49529f}\label{classdhtt__plugins_1_1OrBehavior_a4d5bef6f08a3f8b41c08627c7e49529f}} 
+\index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!auction\_callback@{auction\_callback}}
+\index{auction\_callback@{auction\_callback}!dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}}
+\doxysubsubsection{\texorpdfstring{auction\_callback()}{auction\_callback()}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ dhtt\+\_\+plugins\+::\+Or\+Behavior\+::auction\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+functionality for completing an auction 
+
+This describes what the node should consider when it is first activated (i.\+e. when it starts an auction). Behavior nodes should request any resources that they need to begin working, and task nodes should spread activation to their children and propogate their choice up afterwards
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & pointer to the node class which owns the node type in order to give use of the public methods.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns the result part of the Activation action in order to function with the Node class. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5e52}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_a329f1af3a1e7653c9ba47ef1887eb678}\label{classdhtt__plugins_1_1OrBehavior_a329f1af3a1e7653c9ba47ef1887eb678}} 
+\index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
+\index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}}
+\doxysubsubsection{\texorpdfstring{get\_perceived\_efficiency()}{get\_perceived\_efficiency()}}
+{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Or\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+calculates the activation potential of the node locally 
+
+This looks at the calculation that this node locally uses, meaning some function of the childrens\textquotesingle{} activation potential for task nodes and some function (like distance) for behavior nodes.
+
+\begin{DoxyReturn}{Returns}
+activation potential value (0 -\/\texorpdfstring{$>$}{>} 1 by convention) 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c845}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_a907a6b140ea345f4924d0bc770a73baa}\label{classdhtt__plugins_1_1OrBehavior_a907a6b140ea345f4924d0bc770a73baa}} 
+\index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!initialize@{initialize}}
+\index{initialize@{initialize}!dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Or\+Behavior\+::initialize (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$}]{params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+abstract initialize function for all Node\+Type classes 
+
+Node\+Types can only initialize with some params given in a vector. The params should be described in the description file as shown in the sample\+\_\+tasks in the dhtt package. the params should also in general be parsed in the parse\+\_\+params function which is also used when parameters are modified.
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & the params to initialize the Node\+Type with (taken from description file usually)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_a92c4a1767ead32d681ac925f1422e4b7}\label{classdhtt__plugins_1_1OrBehavior_a92c4a1767ead32d681ac925f1422e4b7}} 
+\index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!is\_done@{is\_done}}
+\index{is\_done@{is\_done}!dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}}
+\doxysubsubsection{\texorpdfstring{is\_done()}{is\_done()}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Or\+Behavior\+::is\+\_\+done (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+check for if the node is finished running 
+
+just uses the logic of the node to find out if it is done running already. For behaviors this returns true once the work is complete, and for tasks this is complete when the logic dictates (AND is done when all children are done, etc.).
+
+\begin{DoxyReturn}{Returns}
+true if the node is done. false otherwise. 
+\end{DoxyReturn}
+
+
+Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_a0da23d587157936fe57313a799545556}\label{classdhtt__plugins_1_1OrBehavior_a0da23d587157936fe57313a799545556}} 
+\index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!parse\_params@{parse\_params}}
+\index{parse\_params@{parse\_params}!dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}}
+\doxysubsubsection{\texorpdfstring{parse\_params()}{parse\_params()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Or\+Behavior\+::parse\+\_\+params (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$}]{params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+method to parse the input parameters for the Node\+Type 
+
+generally should take the parameters from the description file and parse them in some way. This could include just setting flags, getting topic names for information retrieval, etc.
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & list of params taken from the description file (usually in key, value pairs by convention)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_ada2499282514c8a53c52703419a5b6e1}\label{classdhtt__plugins_1_1OrBehavior_ada2499282514c8a53c52703419a5b6e1}} 
+\index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!work\_callback@{work\_callback}}
+\index{work\_callback@{work\_callback}!dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}}
+\doxysubsubsection{\texorpdfstring{work\_callback()}{work\_callback()}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ dhtt\+\_\+plugins\+::\+Or\+Behavior\+::work\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+functionality for performing work 
+
+This describes what a node should do when it\textquotesingle{}s request for resources is approved and it can begin working. Behaviors should perform some action and then return the success of that action and tasks should propogate the message down and wait for the response (or perform some other action first in special cases). For an example of how to pass resources the d\+HTT plugins actions should suffice.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & pointer to the node class which owns the node type in order to give use of the public methods.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns the result part of the Activation action in order to function with the Node class. For behaviors this should contain the resources that need to be released. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610e91}{dhtt\+::\+Node\+Type}}.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_a4aff8507c71ff92d829cd64805a01cdf}\label{classdhtt__plugins_1_1OrBehavior_a4aff8507c71ff92d829cd64805a01cdf}} 
+\index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!activated\_child\_name@{activated\_child\_name}}
+\index{activated\_child\_name@{activated\_child\_name}!dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}}
+\doxysubsubsection{\texorpdfstring{activated\_child\_name}{activated\_child\_name}}
+{\footnotesize\ttfamily std\+::string dhtt\+\_\+plugins\+::\+Or\+Behavior\+::activated\+\_\+child\+\_\+name\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_a2ace6315abbaa6e1fa0592741e1240a6}\label{classdhtt__plugins_1_1OrBehavior_a2ace6315abbaa6e1fa0592741e1240a6}} 
+\index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!activation\_potential@{activation\_potential}}
+\index{activation\_potential@{activation\_potential}!dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}}
+\doxysubsubsection{\texorpdfstring{activation\_potential}{activation\_potential}}
+{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Or\+Behavior\+::activation\+\_\+potential\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_a517f5e52e7c48a44c45c9d6b52536ad6}\label{classdhtt__plugins_1_1OrBehavior_a517f5e52e7c48a44c45c9d6b52536ad6}} 
+\index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!child\_done@{child\_done}}
+\index{child\_done@{child\_done}!dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}}
+\doxysubsubsection{\texorpdfstring{child\_done}{child\_done}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Or\+Behavior\+::child\+\_\+done\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_a690d84f871a70a9a8cd5e7c7bc48e3fd}\label{classdhtt__plugins_1_1OrBehavior_a690d84f871a70a9a8cd5e7c7bc48e3fd}} 
+\index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!child\_has\_run@{child\_has\_run}}
+\index{child\_has\_run@{child\_has\_run}!dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}}
+\doxysubsubsection{\texorpdfstring{child\_has\_run}{child\_has\_run}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Or\+Behavior\+::child\+\_\+has\+\_\+run\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_aa07003eb60735f7db9e5cbe35988a861}\label{classdhtt__plugins_1_1OrBehavior_aa07003eb60735f7db9e5cbe35988a861}} 
+\index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!has\_chosen\_child@{has\_chosen\_child}}
+\index{has\_chosen\_child@{has\_chosen\_child}!dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}}
+\doxysubsubsection{\texorpdfstring{has\_chosen\_child}{has\_chosen\_child}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Or\+Behavior\+::has\+\_\+chosen\+\_\+child\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt\+\_\+plugins/include/dhtt\+\_\+plugins/tasks/\mbox{\hyperlink{or__behavior_8hpp}{or\+\_\+behavior.\+hpp}}\end{DoxyCompactItemize}

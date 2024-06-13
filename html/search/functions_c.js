@@ -1,10 +1,13 @@
 var searchData=
 [
-  ['save_5ftree_0',['save_tree',['../classdhtt_1_1MainServer.html#a2a72c0e39f43bb2ce066d7de9f2d12f5',1,'dhtt::MainServer']]],
-  ['set_5fpassed_5fresources_1',['set_passed_resources',['../classdhtt_1_1Node.html#abea1f61420a615e9ee1eca5e9e0be309',1,'dhtt::Node']]],
-  ['set_5fresource_5fstatus_5fupdated_2',['set_resource_status_updated',['../classdhtt_1_1Node.html#a9108ed5afb76cb5455fa2a59ff57c1ca',1,'dhtt::Node']]],
-  ['start_5ftree_3',['start_tree',['../classdhtt_1_1MainServer.html#ad7cc8b0a9ea7eddd75f31e15489c04fe',1,'dhtt::MainServer']]],
-  ['status_5fcallback_4',['status_callback',['../classdhtt_1_1MainServer.html#a52c8c63c817455fa2493b257f3dc3c4b',1,'dhtt::MainServer']]],
-  ['stop_5ftree_5',['stop_tree',['../classdhtt_1_1MainServer.html#a669b9175b3a76523c73c2635d265de6d',1,'dhtt::MainServer']]],
-  ['store_5fresult_5fcallback_6',['store_result_callback',['../classdhtt_1_1Node.html#a5a8ca21dcee3cf3bb135e65025652089',1,'dhtt::Node']]]
+  ['register_5fchild_5fcallback_0',['register_child_callback',['../classdhtt_1_1Node.html#a897a837a45fc8244c894a6af4e90e3e6',1,'dhtt::Node']]],
+  ['register_5fservers_1',['register_servers',['../classdhtt_1_1Node.html#a81eec6c70d038bbafc18f01948e1accb',1,'dhtt::Node']]],
+  ['register_5fwith_5fparent_2',['register_with_parent',['../classdhtt_1_1Node.html#a08edd24fae1fac092d475d664518ad79',1,'dhtt::Node']]],
+  ['release_5fall_5fresources_3',['release_all_resources',['../classdhtt__plugins_1_1RootBehavior.html#a465dcfb060cdb8a0f75806ae0ac7fae1',1,'dhtt_plugins::RootBehavior']]],
+  ['release_5fresources_4',['release_resources',['../classdhtt__plugins_1_1RootBehavior.html#a0552ac02fc554af61bf7cf34a0e0b901',1,'dhtt_plugins::RootBehavior']]],
+  ['remove_5fchild_5',['remove_child',['../classdhtt_1_1Node.html#a4ab197eb83045145e50502a968ea217d',1,'dhtt::Node']]],
+  ['remove_5fnode_6',['remove_node',['../classdhtt_1_1MainServer.html#a7043583ea0451e54fdc3fa164adf4c40',1,'dhtt::MainServer']]],
+  ['reset_5ftree_7',['reset_tree',['../classdhtt_1_1MainServer.html#a5ad2e6bea01a93bb8a7dd17cc2f82746',1,'dhtt::MainServer']]],
+  ['resource_5favailability_5fcallback_8',['resource_availability_callback',['../classdhtt_1_1Node.html#a805bd21c787aa191ad0a3dd409e1a6e3',1,'dhtt::Node']]],
+  ['run_5ftree_9',['run_tree',['../classdhtt_1_1MainServer.html#aa801ca3cae4f4adcb5617e26a430186f',1,'dhtt::MainServer']]]
 ];

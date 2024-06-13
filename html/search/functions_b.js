@@ -1,11 +1,7 @@
 var searchData=
 [
-  ['register_5fchild_5fcallback_0',['register_child_callback',['../classdhtt_1_1Node.html#a897a837a45fc8244c894a6af4e90e3e6',1,'dhtt::Node']]],
-  ['register_5fservers_1',['register_servers',['../classdhtt_1_1Node.html#a81eec6c70d038bbafc18f01948e1accb',1,'dhtt::Node']]],
-  ['register_5fwith_5fparent_2',['register_with_parent',['../classdhtt_1_1Node.html#a08edd24fae1fac092d475d664518ad79',1,'dhtt::Node']]],
-  ['remove_5fchild_3',['remove_child',['../classdhtt_1_1Node.html#a4ab197eb83045145e50502a968ea217d',1,'dhtt::Node']]],
-  ['remove_5fnode_4',['remove_node',['../classdhtt_1_1MainServer.html#a7043583ea0451e54fdc3fa164adf4c40',1,'dhtt::MainServer']]],
-  ['reset_5ftree_5',['reset_tree',['../classdhtt_1_1MainServer.html#a5ad2e6bea01a93bb8a7dd17cc2f82746',1,'dhtt::MainServer']]],
-  ['resource_5favailability_5fcallback_6',['resource_availability_callback',['../classdhtt_1_1Node.html#a805bd21c787aa191ad0a3dd409e1a6e3',1,'dhtt::Node']]],
-  ['run_5ftree_7',['run_tree',['../classdhtt_1_1MainServer.html#aa801ca3cae4f4adcb5617e26a430186f',1,'dhtt::MainServer']]]
+  ['parse_5fparams_0',['parse_params',['../classdhtt_1_1NodeType.html#ab3299445c97c34ecf0b8e120cd59d412',1,'dhtt::NodeType::parse_params()'],['../classdhtt__plugins_1_1MoveBehavior.html#a46e21bf8e3f45d62435a98788ab76c29',1,'dhtt_plugins::MoveBehavior::parse_params()'],['../classdhtt__plugins_1_1PickBehavior.html#a269c4453c62c41414eccfb703d054d3e',1,'dhtt_plugins::PickBehavior::parse_params()'],['../classdhtt__plugins_1_1PlaceBehavior.html#a29056fe823577f83368840e8fba2d4d5',1,'dhtt_plugins::PlaceBehavior::parse_params()'],['../classdhtt__plugins_1_1TestBehavior.html#ad0b02769b0caebc9a9f3fb3d6ebb7f0d',1,'dhtt_plugins::TestBehavior::parse_params()'],['../classdhtt__plugins_1_1AndBehavior.html#a2fd6b86b0ec6b7ce3d3b175681693d0e',1,'dhtt_plugins::AndBehavior::parse_params()'],['../classdhtt__plugins_1_1OrBehavior.html#a0da23d587157936fe57313a799545556',1,'dhtt_plugins::OrBehavior::parse_params()'],['../classdhtt__plugins_1_1RootBehavior.html#a18cfc69c8758a765880aa2554093d54e',1,'dhtt_plugins::RootBehavior::parse_params()'],['../classdhtt__plugins_1_1ThenBehavior.html#a1dfa931dbde1fdba3eeb10e9a30a890e',1,'dhtt_plugins::ThenBehavior::parse_params()']]],
+  ['propogate_5ffailure_5fdown_1',['propogate_failure_down',['../classdhtt_1_1Node.html#afb92c70ed98b5c511d83714c8e6c6e8b',1,'dhtt::Node']]],
+  ['publish_5fresources_2',['publish_resources',['../classdhtt__plugins_1_1RootBehavior.html#a8fe00cf0bda7864a8126eb1767074559',1,'dhtt_plugins::RootBehavior']]],
+  ['publish_5froot_5fstatus_3',['publish_root_status',['../classdhtt_1_1MainServer.html#a009a5881194ade8cf65fea8c1d4561ae',1,'dhtt::MainServer']]]
 ];
