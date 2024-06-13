@@ -1,4 +1,0 @@
-<map id="dhtt::MainServer" name="dhtt::MainServer">
-<area shape="rect" id="node1" title="main communication to manipulate and get information from the dHTT" alt="" coords="5,80,136,107"/>
-<area shape="rect" id="node2" title=" " alt="" coords="43,5,99,32"/>
-</map>
