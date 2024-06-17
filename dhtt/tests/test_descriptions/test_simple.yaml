@@ -1,13 +1,13 @@
-NodeList: [
-            'ParentThen',
-            'FirstTask',
-            'MidParentAnd',
-            'SecondTask',
-            'ThirdTask',
-            'MidParentOr',
-            'FourthTask',
-            'FifthTask'
-          ]
+NodeList: 
+  - 'ParentThen'
+  - 'FirstTask'
+  - 'MidParentAnd'
+  - 'SecondTask'
+  - 'ThirdTask'
+  - 'MidParentOr'
+  - 'FourthTask'
+  - 'FifthTask'
+          
 
 # the params for each behavior should be filled in wherever there is a n/a
 Nodes:

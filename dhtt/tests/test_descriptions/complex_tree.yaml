@@ -1,29 +1,29 @@
 # this task tree is taken from fig 2 of Luke's paper for htts
-NodeList: [
-            'TopmostThen',
-            'PlacePlacemat',
-            'MidParentAnd',
-            'LowParentOr',
-            'PlaceWineGlass',
-            'PlaceCup',
-            'PlaceSodaCan',
-            'PlaceSpoon',
-            'PlaceFork',
-            'PlaceKnife',
-            'LowParentThen',
-            'PlacePlate',
-            'PlaceBowl'
-          ]
+NodeList: 
+  - 'TopmostThen'
+  - 'PlacePlacemat'
+  - 'MidParentAnd'
+  - 'LowParentOr'
+  - 'PlaceWineGlass'
+  - 'PlaceCup'
+  - 'PlaceSodaCan'
+  - 'PlaceSpoon'
+  - 'PlaceFork'
+  - 'PlaceKnife'
+  - 'LowParentThen'
+  - 'PlacePlate'
+  - 'PlaceBowl'
+          
 
-expected_order: [
-                  'PlacePlacemat',
-                  'PlaceFork',
-                  'PlaceCup',
-                  'PlaceSpoon',
-                  'PlacePlate',
-                  'PlaceKnife',
-                  'PlaceBowl'
-                ]
+expected_order: 
+  - 'PlacePlacemat'
+  - 'PlaceFork'
+  - 'PlaceCup'
+  - 'PlaceSpoon'
+  - 'PlacePlate'
+  - 'PlaceKnife'
+  - 'PlaceBowl'
+                
 
 # the params for each behavior should be filled in wherever there is a n/a
 Nodes:

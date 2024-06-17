@@ -201,17 +201,17 @@ namespace dhtt
 				RCLCPP_INFO(this->get_logger(), "Mutating node [%s] to type %s", (*iter).c_str(), request->mutate_type.c_str());
 
 				// construct internal modify Request
-				std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
-				std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
+				// std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
+				// std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
 
-				req->type = request->type;
-				req->to_modify.push_back(*iter);
-				req->mutate_type = request->mutate_type;
-				req->params = request->params;
+				// req->type = request->type;
+				// req->to_modify.push_back(*iter);
+				// req->mutate_type = request->mutate_type;
+				// req->params = request->params;
 
-				this->node_map[(*iter)]->modify(req, res);
+				this->node_map[(*iter)]->modify(request, response);
 
-				response->error_msg = res->error_msg;
+				// response->error_msg = res->error_msg;
 				response->success = not strcmp(response->error_msg.c_str(), "");
 
 				// exit early if modification fails
@@ -410,7 +410,7 @@ namespace dhtt
 			return "Parent " + parent_name + " not found in tree. Returning in error.";
 		}
 
-		if ( found_parent->type >= dhtt_msgs::msg::Node::BEHAVIOR )
+		if ( not node_map[parent_name]->logic->can_add_child() )
 		{
 			return "Parent cannot be a BEHAVIOR type node. Returning in error!";
 		}

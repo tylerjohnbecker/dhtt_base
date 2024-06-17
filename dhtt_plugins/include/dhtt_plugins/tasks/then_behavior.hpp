@@ -17,7 +17,6 @@ namespace dhtt_plugins
 	class ThenBehavior : public dhtt::NodeType
 	{
 	public:
-
 		void initialize(std::vector<std::string> params) override;
 
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> auction_callback( dhtt::Node* container ) override;

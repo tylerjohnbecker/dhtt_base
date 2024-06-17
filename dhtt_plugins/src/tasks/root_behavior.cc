@@ -84,10 +84,6 @@ namespace dhtt_plugins
 
 			RCLCPP_FATAL(container->get_logger(), "\tRequest accepted!\n");
 
-			// for ( auto resource: n_goal.granted_resources )
-			// 	RCLCPP_INFO(container->get_logger(), "\tGranting [%s]", resource.name.c_str());
-
-
 			// activate children
 			container->activate_all_children(n_goal);
 			// get responses
@@ -97,10 +93,6 @@ namespace dhtt_plugins
 
 			// update resources (release the ones in passed resources because if they make it to root then they have to be released anyway)
 			RCLCPP_FATAL(container->get_logger(), "\tRequest complete, releasing resources!\n\n --- --- ---");
-			// for ( auto resource:(*result.begin()).second->released_resources )
-			// 	RCLCPP_INFO(container->get_logger(), "\tReleasing [%s]", resource.name.c_str());
-			// for ( auto resource:(*result.begin()).second->passed_resources )
-			// 	RCLCPP_INFO(container->get_logger(), "\tReleasing [%s]", resource.name.c_str());
 
 			this->release_resources( (*result.begin()).second->released_resources );
 			this->release_resources( (*result.begin()).second->passed_resources );
@@ -108,7 +100,7 @@ namespace dhtt_plugins
 			this->children_done = (*result.begin()).second->done;
 
 			// if (this->slow)
-			rclcpp::sleep_for(std::chrono::milliseconds(1000));
+			rclcpp::sleep_for(std::chrono::milliseconds(100));
 		}
 		
 		this->release_all_resources();

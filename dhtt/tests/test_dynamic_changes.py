@@ -5,6 +5,7 @@ import rclpy
 import rclpy.node
 import pathlib
 import yaml
+import copy
 
 from threading import Lock
 
@@ -72,6 +73,8 @@ class TestDynamicChanges:
 		return fetch_rs
 
 	def reset_tree(self):
+
+		TestDynamicChanges.node.node_states = {}
 
 		fetch_rs = self.get_tree()
 
@@ -272,6 +275,11 @@ class TestDynamicChanges:
 			if node_name in i.node_name:
 				return i.node_name
 
+	def wait_for_type_change(self, node_name, original_type):
+		while TestDynamicChanges.node.node_states[node_name].plugin_name == original_type:
+			rclpy.spin_once(TestDynamicChanges.node)
+			assert rclpy.ok()
+
 	def test_interrupt(self):
 
 		with TestDynamicChanges.lock:
@@ -316,7 +324,13 @@ class TestDynamicChanges:
 
 			# mutate task node
 			to_mutate = self.get_node_from_partial_name("ParentAnd")
+			original_type = copy.copy(TestDynamicChanges.node.node_states["ParentAnd"].plugin_name)
+
 			self.mutate_node_to_type(to_mutate, "dhtt_plugins::ThenBehavior")
+
+			assert original_type == "dhtt_plugins::AndBehavior"
+
+			self.wait_for_type_change("ParentAnd", original_type)
 
 			# verify that it worked
 			assert TestDynamicChanges.node.node_states["ParentAnd"].plugin_name == "dhtt_plugins::ThenBehavior"
@@ -452,7 +466,13 @@ class TestDynamicChanges:
 
 			# mutate task node
 			to_mutate = self.get_node_from_partial_name("ParentAnd")
+			original_type = copy.copy(TestDynamicChanges.node.node_states["ParentAnd"].plugin_name)
+
+			assert original_type == "dhtt_plugins::AndBehavior"
+
 			self.mutate_node_to_type(to_mutate, "dhtt_plugins::OrBehavior")
+
+			self.wait_for_type_change("ParentAnd", original_type)
 
 			# verify that it worked
 			assert TestDynamicChanges.node.node_states["ParentAnd"].plugin_name == "dhtt_plugins::OrBehavior"
@@ -490,7 +510,13 @@ class TestDynamicChanges:
 
 			# mutate task node
 			to_mutate = self.get_node_from_partial_name("ParentThen")
+			original_type = copy.copy(TestDynamicChanges.node.node_states["ParentThen"].plugin_name)
+
+			assert original_type == "dhtt_plugins::ThenBehavior"
+
 			self.mutate_node_to_type(to_mutate, "dhtt_plugins::AndBehavior")
+
+			self.wait_for_type_change("ParentThen", original_type)
 
 			# verify that it worked
 			assert TestDynamicChanges.node.node_states["ParentThen"].plugin_name == "dhtt_plugins::AndBehavior"
@@ -528,7 +554,13 @@ class TestDynamicChanges:
 
 			# mutate task node
 			to_mutate = self.get_node_from_partial_name("ParentThen")
+			original_type = copy.copy(TestDynamicChanges.node.node_states["ParentThen"].plugin_name)
+
+			assert original_type == "dhtt_plugins::ThenBehavior"
+			
 			self.mutate_node_to_type(to_mutate, "dhtt_plugins::OrBehavior")
+
+			self.wait_for_type_change("ParentThen", original_type)
 
 			# verify that it worked
 			assert TestDynamicChanges.node.node_states["ParentThen"].plugin_name == "dhtt_plugins::OrBehavior"
@@ -566,7 +598,13 @@ class TestDynamicChanges:
 
 			# mutate task node
 			to_mutate = self.get_node_from_partial_name("ParentOr")
+			original_type = copy.copy(TestDynamicChanges.node.node_states["ParentOr"].plugin_name)
+
+			assert original_type == "dhtt_plugins::OrBehavior"
+			
 			self.mutate_node_to_type(to_mutate, "dhtt_plugins::AndBehavior")
+
+			self.wait_for_type_change("ParentOr", original_type)
 
 			# verify that it worked
 			assert TestDynamicChanges.node.node_states["ParentOr"].plugin_name == "dhtt_plugins::AndBehavior"
@@ -606,7 +644,13 @@ class TestDynamicChanges:
 
 			# mutate task node
 			to_mutate = self.get_node_from_partial_name("ParentOr")
+			original_type = copy.copy(TestDynamicChanges.node.node_states["ParentOr"].plugin_name)
+
+			assert original_type == "dhtt_plugins::OrBehavior"
+			
 			self.mutate_node_to_type(to_mutate, "dhtt_plugins::ThenBehavior")
+
+			self.wait_for_type_change("ParentOr", original_type)
 
 			# verify that it worked
 			assert TestDynamicChanges.node.node_states["ParentOr"].plugin_name == "dhtt_plugins::ThenBehavior"

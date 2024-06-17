@@ -1,16 +1,16 @@
-NodeList: [
-            'ParentAnd',
-            'FirstTask',
-            'MidParentThen',
-            'SecondTask',
-            'ThirdTask'
-          ]
+NodeList: 
+  -  'ParentAnd'
+  -  'FirstTask'
+  -  'MidParentThen'
+  -  'SecondTask'
+  -  'ThirdTask'
+          
 
-expected_order: [
-                  'SecondTask',
-                  'FirstTask',
-                  'ThirdTask'
-                ]
+expected_order: 
+  -  'SecondTask'
+  -  'FirstTask'
+  -  'ThirdTask'
+                
 
 # the params for each behavior should be filled in wherever there is a n/a
 Nodes:
