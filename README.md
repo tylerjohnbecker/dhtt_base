@@ -15,10 +15,7 @@ Maintainer: Tyler Becker, tbecker@unr.edu**
 This package has been tested under [ROS2] Foxy on Ubuntu 20.04.
 This is research code, expect that it changes often and any fitness for a particular purpose is disclaimed.
 
-[![Build Status](http://rsl-ci.ethz.ch/buildStatus/icon?job=ros_best_practices)](http://rsl-ci.ethz.ch/job/ros_best_practices/)
-
-
-![Example image](assets/figure_server_architecture.png)
+![Example image](assets/figure_server_architecture1.png)
 
 
 ### Publications
