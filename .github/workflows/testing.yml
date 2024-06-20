@@ -28,13 +28,14 @@ jobs:
             # OPTIONAL: Specify a platform version
             platform_version: 22.04
             # OPTIONAL: Specify a custom install location
-            boost_install_dir: /home/runner/some_directory
+            boost_install_dir: /home/runner/boost
             # OPTIONAL: Specify a toolset
             toolset: gcc
             # OPTIONAL: Specify an architecture
             arch: x86
       - name: Configure CMake
         run: |
+            cd /home/runner/boost/boost
             cmake . -DCMAKE_BUILD_TYPE=$BUILD_TYPE -B build\
             -DBoost_INCLUDE_DIR=${{steps.install-boost.outputs.BOOST_ROOT}}/include\
             -DBoost_LIBRARY_DIRS=${{steps.install-boost.outputs.BOOST_ROOT}}/lib
@@ -45,6 +46,7 @@ jobs:
       # this build step will fail
       - name: Setup Workspace
         run: |
+          cd ${{ github.workspace }}
           source /opt/ros/jazzy/setup.bash && ros2 run --help
           mkdir temp_ws && cd temp_ws
           mkdir src && cd src 
