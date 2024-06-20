@@ -17,22 +17,22 @@ jobs:
       #   uses: ros-tooling/setup-ros@v0.7
       #   with: 
       #     required-ros-distributions: jazzy
-      # - name: Install boost
-      #   uses: MarkusJx/install-boost@v2.4.5
-      #   id: install-boost
-      #   with:
-      #       # REQUIRED: Specify the required boost version
-      #       # A list of supported versions can be found here:
-      #       # https://github.com/MarkusJx/prebuilt-boost/blob/main/versions-manifest.json
-      #       boost_version: 1.78.0
-      #       # OPTIONAL: Specify a platform version
-      #       platform_version: 22.04
-      #       # OPTIONAL: Specify a custom install location
-      #       boost_install_dir: /home/runner/boost
-      #       # OPTIONAL: Specify a toolset
-      #       toolset: gcc
-      #       # OPTIONAL: Specify an architecture
-      #       arch: x86
+      - name: Install boost
+        uses: MarkusJx/install-boost@v2.4.5
+        id: install-boost
+        with:
+            # REQUIRED: Specify the required boost version
+            # A list of supported versions can be found here:
+            # https://github.com/MarkusJx/prebuilt-boost/blob/main/versions-manifest.json
+            boost_version: 1.78.0
+            # OPTIONAL: Specify a platform version
+            platform_version: 22.04
+            # OPTIONAL: Specify a custom install location
+            boost_install_dir: /home/runner/boost
+            # OPTIONAL: Specify a toolset
+            toolset: gcc
+            # OPTIONAL: Specify an architecture
+            arch: x86
       - name: Configure CMake
         run: |
             cd /home/runner/boost/boost/boost-1.78.0-ubuntu-22.04-gcc-static+shared-x86/build
