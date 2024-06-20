@@ -14,10 +14,10 @@ jobs:
       - name: Setup ROS
         uses: ros-tooling/setup-ros@v0.7
         with: 
-          required-ros-distributions: galactic
+          required-ros-distributions: jazzy
       - name: Setup Workspace
         run: |
-          source /opt/ros/galactic/setup.bash && ros2 run --help
+          source /opt/ros/jazzy/setup.bash && ros2 run --help
           mkdir temp_ws && cd temp_ws
           mkdir src && cd src 
           git clone https://github.com/tylerjohnbecker/dhtt_base.git
