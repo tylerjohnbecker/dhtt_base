@@ -23,7 +23,7 @@ jobs:
           mkdir temp_ws && cd temp_ws
           mkdir src && cd src 
           git clone https://github.com/tylerjohnbecker/dhtt_base.git
-          cd ../..
+          cd ..
           colcon build
           source install/setup.bash
       - name: Start Server
