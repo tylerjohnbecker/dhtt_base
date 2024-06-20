@@ -13,6 +13,9 @@
 
 namespace dhtt_plugins
 {
+	/**
+	 * \brief A behavior which is just utilized for testing the functionality of the tree
+	 */
 	class TestBehavior : public dhtt::NodeType
 	{
 	public:

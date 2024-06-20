@@ -43,7 +43,6 @@ namespace dhtt
 		 * 
 		 * Initializes all values simply. If the given plugin name cannot be loaded for some reason does not construct. Errors are flagged through successful_load and error messages are stored in error_msg.
 		 * 
-		 * 
 		 * \param name name of the node being created (should be unique)
 		 * \param type exact name of the plugin to load (ex. dhtt_plugins::AndBehavior) 
 		 * \param params parameter list for the given plugin (a list of string parameters)
