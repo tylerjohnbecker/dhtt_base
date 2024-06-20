@@ -26,6 +26,7 @@ jobs:
           cd ..
           colcon build
           source install/setup.bash
+        shell: bash
       - name: Start Server
         run: ros2 run dhtt start_server &
       - name: Run Tests
