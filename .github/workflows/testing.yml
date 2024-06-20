@@ -43,6 +43,7 @@ jobs:
           mkdir src && cd src 
           git clone https://github.com/tylerjohnbecker/dhtt_base.git
           cd ..
+          export Boost_INCLUDE_DIR=$BOOST_ROOT/include
           colcon build
           source install/setup.bash
         shell: bash
