@@ -1,5 +1,5 @@
 <map id="dhtt_plugins::PlaceBehavior" name="dhtt_plugins::PlaceBehavior">
-<area shape="rect" id="node1" title=" " alt="" coords="5,152,188,177"/>
-<area shape="rect" id="node2" href="$classdhtt__plugins_1_1ActionType.html" title=" " alt="" coords="15,79,178,104"/>
+<area shape="rect" id="node1" title="Place behavior implementation." alt="" coords="5,152,188,177"/>
+<area shape="rect" id="node2" href="$classdhtt__plugins_1_1ActionType.html" title="parent class of all behavior/action type nodes" alt="" coords="15,79,178,104"/>
 <area shape="rect" id="node3" href="$classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes." alt="" coords="42,5,151,31"/>
 </map>

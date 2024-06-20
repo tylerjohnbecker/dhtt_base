@@ -2,6 +2,11 @@
 \label{classdhtt__plugins_1_1PickBehavior}\index{dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}}
 
 
+Action behavior to pick up the first object detected in front of the robot at the current position.  
+
+
+
+
 {\ttfamily \#include $<$pick\+\_\+behavior.\+hpp$>$}
 
 
@@ -16,17 +21,17 @@ Collaboration diagram for dhtt\+\_\+plugins\+::Pick\+Behavior\+:
 \begin{DoxyCompactItemize}
 \item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a269c4453c62c41414eccfb703d054d3e}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
-\begin{DoxyCompactList}\small\item\em method to parse the input parameters for the Node\+Type \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em parses parameters for the \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior}{Pick\+Behavior}}\+: activation potential, and object label \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a87cad3b5c19a0cf536c6f30e0a1d402c}{do\+\_\+work}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
-\item 
+\begin{DoxyCompactList}\small\item\em Picks the object specified. \end{DoxyCompactList}\item 
 double \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a76d1eb08379af8dd321b46c8c9aeb5e6}{get\+\_\+perceived\+\_\+efficiency}} () override
-\begin{DoxyCompactList}\small\item\em calculates the activation potential of the node locally \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em gives the activation potential of this behavior \end{DoxyCompactList}\item 
 std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_aef37bea635b234e661d71cd9deec8c5d}{get\+\_\+retained\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
-\item 
+\begin{DoxyCompactList}\small\item\em returns a list with only the gripper resource granted to this behavior \end{DoxyCompactList}\item 
 std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a639226ff83f42910100b6b2a810fddd2}{get\+\_\+released\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
-\item 
+\begin{DoxyCompactList}\small\item\em releases all resources except the gripper \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_ab607f5c52f558f409017702ccd02c762}{done\+\_\+callback}} (std\+::shared\+\_\+ptr$<$ std\+\_\+msgs\+::msg\+::\+String $>$ data)
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em callback for receiving done from the ROS1 implementation of \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior}{Move\+Behavior}} \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -39,6 +44,9 @@ std\+::string \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_ad07f8c3bff280
 \doxysubsection*{Additional Inherited Members}
 
 
+\doxysubsection{Detailed Description}
+Action behavior to pick up the first object detected in front of the robot at the current position. 
+
 \doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classdhtt__plugins_1_1PickBehavior_a87cad3b5c19a0cf536c6f30e0a1d402c}\label{classdhtt__plugins_1_1PickBehavior_a87cad3b5c19a0cf536c6f30e0a1d402c}} 
 \index{dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}!do\_work@{do\_work}}
@@ -46,6 +54,20 @@ std\+::string \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_ad07f8c3bff280
 \doxysubsubsection{\texorpdfstring{do\_work()}{do\_work()}}
 {\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Pick\+Behavior\+::do\+\_\+work (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
+
+
+Picks the object specified. 
+
+For the purposes of this experiment the robot runs on ROS1, so this function passes a command message over ROS1 bridge to a server which picks the object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
 
 
 Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308d820d358e245a69e}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
@@ -56,6 +78,20 @@ Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308d8
 \doxysubsubsection{\texorpdfstring{done\_callback()}{done\_callback()}}
 {\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Pick\+Behavior\+::done\+\_\+callback (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ std\+\_\+msgs\+::msg\+::\+String $>$}]{data }\end{DoxyParamCaption})}
 
+
+
+callback for receiving done from the ROS1 implementation of \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior}{Move\+Behavior}} 
+
+For this experiment the actual robot specific implementation had to be done in ROS1 so this callback receives a notification that movement finished over ROS1 bridge.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & message received over the bridge\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
 \mbox{\Hypertarget{classdhtt__plugins_1_1PickBehavior_a76d1eb08379af8dd321b46c8c9aeb5e6}\label{classdhtt__plugins_1_1PickBehavior_a76d1eb08379af8dd321b46c8c9aeb5e6}} 
 \index{dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
 \index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt\_plugins::PickBehavior@{dhtt\_plugins::PickBehavior}}
@@ -64,12 +100,17 @@ Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308d8
 
 
 
-calculates the activation potential of the node locally 
+gives the activation potential of this behavior 
 
-This looks at the calculation that this node locally uses, meaning some function of the childrens\textquotesingle{} activation potential for task nodes and some function (like distance) for behavior nodes.
+The activation was set by a parameter for this experiment in order to ensure that the tasks would run in specific orders.
 
+
+\begin{DoxyParams}{Parameters}
+{\em container} & a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-activation potential value (0 -\/\texorpdfstring{$>$}{>} 1 by convention) 
+activation potential of the behavior 
 \end{DoxyReturn}
 
 
@@ -83,6 +124,20 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c
 
 
 
+releases all resources except the gripper 
+
+This behavior only guarantees that a object is now held and cannot be undone until the object is placed. Therefore all other resources than the gripper are free to be used by other behaviors.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a list with all resources but the gripper 
+\end{DoxyReturn}
+
+
 Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1PickBehavior_aef37bea635b234e661d71cd9deec8c5d}\label{classdhtt__plugins_1_1PickBehavior_aef37bea635b234e661d71cd9deec8c5d}} 
@@ -91,6 +146,20 @@ Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4d13f0427472ee4873
 \doxysubsubsection{\texorpdfstring{get\_retained\_resources()}{get\_retained\_resources()}}
 {\footnotesize\ttfamily std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Pick\+Behavior\+::get\+\_\+retained\+\_\+resources (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
+
+
+returns a list with only the gripper resource granted to this behavior 
+
+The postcondition of the pick behavior is that the robot is now holding an object which means that the gripper resource should be retained.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a list with the gripper resource holding the object which was picked 
+\end{DoxyReturn}
 
 
 Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468d32558133e56b6}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
@@ -103,13 +172,17 @@ Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468
 
 
 
-method to parse the input parameters for the Node\+Type 
+parses parameters for the \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior}{Pick\+Behavior}}\+: activation potential, and object label 
 
-generally should take the parameters from the description file and parse them in some way. This could include just setting flags, getting topic names for information retrieval, etc.
+The params for this behavior have the following meaning\+:
+\begin{DoxyItemize}
+\item activation\+\_\+potential\+: given activation potential value for the behavior. This is useful for getting consistent behavior orderings during testing.
+\item object\+: label of the object to pick up.
+\end{DoxyItemize}
 
 
 \begin{DoxyParams}{Parameters}
-{\em params} & list of params taken from the description file (usually in key, value pairs by convention)\\
+{\em params} & vector of string parameters from the yaml description\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}

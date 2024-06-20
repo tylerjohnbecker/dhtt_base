@@ -1,5 +1,5 @@
 <map id="dhtt_plugins::MoveBehavior" name="dhtt_plugins::MoveBehavior">
-<area shape="rect" id="node1" title=" " alt="" coords="5,152,187,177"/>
-<area shape="rect" id="node2" href="$classdhtt__plugins_1_1ActionType.html" title=" " alt="" coords="15,79,177,104"/>
+<area shape="rect" id="node1" title="Moves to a semantically specified location on a given map." alt="" coords="5,152,187,177"/>
+<area shape="rect" id="node2" href="$classdhtt__plugins_1_1ActionType.html" title="parent class of all behavior/action type nodes" alt="" coords="15,79,177,104"/>
 <area shape="rect" id="node3" href="$classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes." alt="" coords="41,5,151,31"/>
 </map>

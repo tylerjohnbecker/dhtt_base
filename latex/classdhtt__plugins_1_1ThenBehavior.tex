@@ -2,6 +2,11 @@
 \label{classdhtt__plugins_1_1ThenBehavior}\index{dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}}
 
 
+Implementation of the THEN node for d\+HTTs.  
+
+
+
+
 {\ttfamily \#include $<$then\+\_\+behavior.\+hpp$>$}
 
 
@@ -18,15 +23,15 @@ Collaboration diagram for dhtt\+\_\+plugins\+::Then\+Behavior\+:
 void \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a753bc54bd168f168e48ad390c4ec39fe}{initialize}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
 \begin{DoxyCompactList}\small\item\em abstract initialize function for all Node\+Type classes \end{DoxyCompactList}\item 
 std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a3563798f0425ee7d7b40bdac6e978bf7}{auction\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
-\begin{DoxyCompactList}\small\item\em functionality for completing an auction \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em auction behavior for the THEN subtask \end{DoxyCompactList}\item 
 std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_ab656aa2dc5076b61108d97d6871800ec}{work\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
-\begin{DoxyCompactList}\small\item\em functionality for performing work \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em work behavior of the THEN subtask \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a1dfa931dbde1fdba3eeb10e9a30a890e}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
-\begin{DoxyCompactList}\small\item\em method to parse the input parameters for the Node\+Type \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em this behavior takes no parameters \end{DoxyCompactList}\item 
 double \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a02598da3b388720f1c739263c00dd102}{get\+\_\+perceived\+\_\+efficiency}} () override
-\begin{DoxyCompactList}\small\item\em calculates the activation potential of the node locally \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em gives the activation potential of this subtask \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a01842ab0a7a2626eecb8ef90edf709a9}{is\+\_\+done}} () override
-\begin{DoxyCompactList}\small\item\em check for if the node is finished running \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em this behavior is done when all children are done. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -41,6 +46,11 @@ bool \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a215317ca94407e03e646c0
 \doxysubsection*{Additional Inherited Members}
 
 
+\doxysubsection{Detailed Description}
+Implementation of the THEN node for d\+HTTs. 
+
+A THEN node has to run all of it\textquotesingle{}s children in a specified order. The order is currently taken from the literal order that they are listed in the yaml description file. 
+
 \doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classdhtt__plugins_1_1ThenBehavior_a3563798f0425ee7d7b40bdac6e978bf7}\label{classdhtt__plugins_1_1ThenBehavior_a3563798f0425ee7d7b40bdac6e978bf7}} 
 \index{dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}!auction\_callback@{auction\_callback}}
@@ -50,17 +60,17 @@ bool \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a215317ca94407e03e646c0
 
 
 
-functionality for completing an auction 
+auction behavior for the THEN subtask 
 
-This describes what the node should consider when it is first activated (i.\+e. when it starts an auction). Behavior nodes should request any resources that they need to begin working, and task nodes should spread activation to their children and propogate their choice up afterwards
+The then node always activates all of the children which haven\textquotesingle{}t finished in order to calculate the activation potential, however, only the request of the next child in the queue is sent up the tree. Passed resources are given immediately to children for consideration when creating their request.
 
 
 \begin{DoxyParams}{Parameters}
-{\em container} & pointer to the node class which owns the node type in order to give use of the public methods.\\
+{\em container} & see \mbox{\hyperlink{classdhtt_1_1NodeType}{dhtt\+::\+Node\+Type}}\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-returns the result part of the Activation action in order to function with the Node class. 
+Activation\+Result for the Node class\textquotesingle{} activation action server 
 \end{DoxyReturn}
 
 
@@ -74,12 +84,12 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5
 
 
 
-calculates the activation potential of the node locally 
+gives the activation potential of this subtask 
 
-This looks at the calculation that this node locally uses, meaning some function of the childrens\textquotesingle{} activation potential for task nodes and some function (like distance) for behavior nodes.
+Activation Potential for an THEN node is calculated as the average of all children which have not finished execution.
 
 \begin{DoxyReturn}{Returns}
-activation potential value (0 -\/\texorpdfstring{$>$}{>} 1 by convention) 
+activation potential of this subtask 
 \end{DoxyReturn}
 
 
@@ -117,13 +127,8 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8
 
 
 
-check for if the node is finished running 
+this behavior is done when all children are done. 
 
-just uses the logic of the node to find out if it is done running already. For behaviors this returns true once the work is complete, and for tasks this is complete when the logic dictates (AND is done when all children are done, etc.).
-
-\begin{DoxyReturn}{Returns}
-true if the node is done. false otherwise. 
-\end{DoxyReturn}
 
 
 Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}{dhtt\+::\+Node\+Type}}.
@@ -136,18 +141,8 @@ Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4d
 
 
 
-method to parse the input parameters for the Node\+Type 
+this behavior takes no parameters 
 
-generally should take the parameters from the description file and parse them in some way. This could include just setting flags, getting topic names for information retrieval, etc.
-
-
-\begin{DoxyParams}{Parameters}
-{\em params} & list of params taken from the description file (usually in key, value pairs by convention)\\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-void 
-\end{DoxyReturn}
 
 
 Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}{dhtt\+::\+Node\+Type}}.
@@ -160,17 +155,17 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d
 
 
 
-functionality for performing work 
+work behavior of the THEN subtask 
 
-This describes what a node should do when it\textquotesingle{}s request for resources is approved and it can begin working. Behaviors should perform some action and then return the success of that action and tasks should propogate the message down and wait for the response (or perform some other action first in special cases). For an example of how to pass resources the d\+HTT plugins actions should suffice.
+The THEN simply passes the success down to the next child in the queue. This callback is also important as the passed resources after the child is done are saved to the container.
 
 
 \begin{DoxyParams}{Parameters}
-{\em container} & pointer to the node class which owns the node type in order to give use of the public methods.\\
+{\em container} & see \mbox{\hyperlink{classdhtt_1_1NodeType}{dhtt\+::\+Node\+Type}}\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-returns the result part of the Activation action in order to function with the Node class. For behaviors this should contain the resources that need to be released. 
+Activation\+Result for the Node class\textquotesingle{} activation action server 
 \end{DoxyReturn}
 
 

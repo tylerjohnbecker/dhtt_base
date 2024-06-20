@@ -1,4 +1,4 @@
 <map id="dhtt_plugins::OrBehavior" name="dhtt_plugins::OrBehavior">
-<area shape="rect" id="node1" title=" " alt="" coords="5,79,168,104"/>
+<area shape="rect" id="node1" title="Implementation of the OR node for dHTTs." alt="" coords="5,79,168,104"/>
 <area shape="rect" id="node2" href="$classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes." alt="" coords="32,5,141,31"/>
 </map>

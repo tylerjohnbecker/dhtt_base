@@ -1,12 +1,12 @@
 <map id="dhtt::NodeType" name="dhtt::NodeType">
 <area shape="rect" id="node1" title="Base class describing the logic of the nodes." alt="" coords="5,179,115,204"/>
-<area shape="rect" id="node2" href="$classdhtt__plugins_1_1ActionType.html" title=" " alt="" coords="171,55,333,80"/>
-<area shape="rect" id="node6" href="$classdhtt__plugins_1_1AndBehavior.html" title=" " alt="" coords="166,104,338,129"/>
-<area shape="rect" id="node7" href="$classdhtt__plugins_1_1OrBehavior.html" title=" " alt="" coords="171,153,333,179"/>
+<area shape="rect" id="node2" href="$classdhtt__plugins_1_1ActionType.html" title="parent class of all behavior/action type nodes" alt="" coords="171,55,333,80"/>
+<area shape="rect" id="node6" href="$classdhtt__plugins_1_1AndBehavior.html" title="Implementation of the AND node for dHTTs." alt="" coords="166,104,338,129"/>
+<area shape="rect" id="node7" href="$classdhtt__plugins_1_1OrBehavior.html" title="Implementation of the OR node for dHTTs." alt="" coords="171,153,333,179"/>
 <area shape="rect" id="node8" href="$classdhtt__plugins_1_1RootBehavior.html" title="implementation of the dHTT root node" alt="" coords="164,203,340,228"/>
-<area shape="rect" id="node9" href="$classdhtt__plugins_1_1TestBehavior.html" title=" " alt="" coords="165,252,339,277"/>
-<area shape="rect" id="node10" href="$classdhtt__plugins_1_1ThenBehavior.html" title=" " alt="" coords="163,301,341,327"/>
-<area shape="rect" id="node3" href="$classdhtt__plugins_1_1MoveBehavior.html" title=" " alt="" coords="390,5,571,31"/>
-<area shape="rect" id="node4" href="$classdhtt__plugins_1_1PickBehavior.html" title=" " alt="" coords="393,55,568,80"/>
-<area shape="rect" id="node5" href="$classdhtt__plugins_1_1PlaceBehavior.html" title=" " alt="" coords="389,104,572,129"/>
+<area shape="rect" id="node9" href="$classdhtt__plugins_1_1TestBehavior.html" title="A behavior which is just utilized for testing the functionality of the tree." alt="" coords="165,252,339,277"/>
+<area shape="rect" id="node10" href="$classdhtt__plugins_1_1ThenBehavior.html" title="Implementation of the THEN node for dHTTs." alt="" coords="163,301,341,327"/>
+<area shape="rect" id="node3" href="$classdhtt__plugins_1_1MoveBehavior.html" title="Moves to a semantically specified location on a given map." alt="" coords="390,5,571,31"/>
+<area shape="rect" id="node4" href="$classdhtt__plugins_1_1PickBehavior.html" title="Action behavior to pick up the first object detected in front of the robot at the current position." alt="" coords="393,55,568,80"/>
+<area shape="rect" id="node5" href="$classdhtt__plugins_1_1PlaceBehavior.html" title="Place behavior implementation." alt="" coords="389,104,572,129"/>
 </map>

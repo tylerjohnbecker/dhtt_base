@@ -2,6 +2,11 @@
 \label{classdhtt__plugins_1_1ActionType}\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
 
 
+parent class of all behavior/action type nodes  
+
+
+
+
 {\ttfamily \#include $<$action\+\_\+type.\+hpp$>$}
 
 
@@ -16,19 +21,19 @@ Collaboration diagram for dhtt\+\_\+plugins\+::Action\+Type\+:
 \begin{DoxyCompactItemize}
 \item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a381962c71b85e6a8517845db1a737f79}{initialize}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
-\begin{DoxyCompactList}\small\item\em abstract initialize function for all Node\+Type classes \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em initializer for all action type behaviors \end{DoxyCompactList}\item 
 std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a85e7c1065776a83857a0638b2ce8f9c4}{auction\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
-\begin{DoxyCompactList}\small\item\em functionality for completing an auction \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em auction callback implementation for all action type behaviors \end{DoxyCompactList}\item 
 std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a56a3ef4023591aef5d034b6355a39715}{work\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
-\begin{DoxyCompactList}\small\item\em functionality for performing work \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em work callback implementation for all action type behaviors \end{DoxyCompactList}\item 
 virtual void \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308d820d358e245a69e}{do\+\_\+work}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container)=0
-\item 
+\begin{DoxyCompactList}\small\item\em abstract function for actually sending instructions to the robot \end{DoxyCompactList}\item 
 virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468d32558133e56b6}{get\+\_\+retained\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container)=0
-\item 
+\begin{DoxyCompactList}\small\item\em returns a list of all resources that are meant to be retained \end{DoxyCompactList}\item 
 virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}{get\+\_\+released\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container)=0
-\item 
+\begin{DoxyCompactList}\small\item\em returns the list of resources to release \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a5dada7d97dfbd1bed5abfb9ccb295a62}{is\+\_\+done}} () override
-\begin{DoxyCompactList}\small\item\em check for if the node is finished running \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em getter for the internal done variable \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -45,6 +50,11 @@ std\+::shared\+\_\+ptr$<$ rclcpp\+::executors\+::\+Single\+Threaded\+Executor $>
 \doxysubsection*{Additional Inherited Members}
 
 
+\doxysubsection{Detailed Description}
+parent class of all behavior/action type nodes 
+
+This class is a useful abstraction that removes the necessity for behaviors to all have to generate their own requests for resources. Nodes that inherit from this class just define their necessary resources, what resources they keep/release, and what they do during the work\+\_\+callback rather than defining everything. 
+
 \doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a85e7c1065776a83857a0638b2ce8f9c4}\label{classdhtt__plugins_1_1ActionType_a85e7c1065776a83857a0638b2ce8f9c4}} 
 \index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!auction\_callback@{auction\_callback}}
@@ -54,17 +64,17 @@ std\+::shared\+\_\+ptr$<$ rclcpp\+::executors\+::\+Single\+Threaded\+Executor $>
 
 
 
-functionality for completing an auction 
+auction callback implementation for all action type behaviors 
 
-This describes what the node should consider when it is first activated (i.\+e. when it starts an auction). Behavior nodes should request any resources that they need to begin working, and task nodes should spread activation to their children and propogate their choice up afterwards
+Generates a request for resources based on the necessary\+\_\+resources member.
 
 
 \begin{DoxyParams}{Parameters}
-{\em container} & pointer to the node class which owns the node type in order to give use of the public methods.\\
+{\em container} & a pointer to the node which is running this logic.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-returns the result part of the Activation action in order to function with the Node class. 
+resulting request for the action server in \mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} 
 \end{DoxyReturn}
 
 
@@ -78,6 +88,20 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5
 
 
 
+abstract function for actually sending instructions to the robot 
+
+Every action type behavior performs some work (on the robot or otherwise) which should be implemented in this function. If any topics etc. need to be handled their is an executor that is initialized by default which can be used by inheritors to make those connections.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & similar to work\+\_\+callback this is a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
 Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a20c025ec89cb2678f2e08fd55da42bcc}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a87cad3b5c19a0cf536c6f30e0a1d402c}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a722634e89fd4b4d337abb8e380a0797d}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}.
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}\label{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}} 
@@ -86,6 +110,20 @@ Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a20c025ec89cb
 \doxysubsubsection{\texorpdfstring{get\_released\_resources()}{get\_released\_resources()}}
 {\footnotesize\ttfamily virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::get\+\_\+released\+\_\+resources (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
 
+
+
+returns the list of resources to release 
+
+Resources are always released by default, so this list should be owned\+\_\+resources -\/ retained\+\_\+resources.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & similar to work\+\_\+callback this is a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+list of all resources to release 
+\end{DoxyReturn}
 
 
 Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a337349f5a15c96ae5922fb1858a43a1a}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a639226ff83f42910100b6b2a810fddd2}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a7a12629730d602b9ea3d424935993e7b}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}.
@@ -98,6 +136,20 @@ Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a337349f5a15c
 
 
 
+returns a list of all resources that are meant to be retained 
+
+Retained resources should be kept based on the assumption that the next behavior (only under a THEN node where ordering is guaranteed) will need them. For example, if a robot moves to pick up an object and does not keep control of the base there is a chance that the object would not be picked up which could cause the tree to become uncompletable. Another example is keeping access to an arm after picking up an object so that the arm isn\textquotesingle{}t subsequently used for something else.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & similar to work\+\_\+callback this is a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+list of any retained resources of this behavior 
+\end{DoxyReturn}
+
+
 Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a080dcf3afc2376066296b00107860dd4}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_aef37bea635b234e661d71cd9deec8c5d}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a0f9901857b22b0e429ff737233e4ee10}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}.
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a381962c71b85e6a8517845db1a737f79}\label{classdhtt__plugins_1_1ActionType_a381962c71b85e6a8517845db1a737f79}} 
@@ -108,13 +160,13 @@ Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a080dcf3afc23
 
 
 
-abstract initialize function for all Node\+Type classes 
+initializer for all action type behaviors 
 
-Node\+Types can only initialize with some params given in a vector. The params should be described in the description file as shown in the sample\+\_\+tasks in the dhtt package. the params should also in general be parsed in the parse\+\_\+params function which is also used when parameters are modified.
+Iniatilizes all the relevant flags for a behavior on the tree. Also, initializes a rclcpp\+::\+Node and a rclcpp\+::executors\+::\+Single\+Threaded\+Executor which are meant to be used by the action type behavior to publish/subscribe relevant information and commands to the robot.
 
 
 \begin{DoxyParams}{Parameters}
-{\em params} & the params to initialize the Node\+Type with (taken from description file usually)\\
+{\em params} & list of behavior specific params parsed from the yaml description file\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -132,12 +184,12 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8
 
 
 
-check for if the node is finished running 
+getter for the internal done variable 
 
-just uses the logic of the node to find out if it is done running already. For behaviors this returns true once the work is complete, and for tasks this is complete when the logic dictates (AND is done when all children are done, etc.).
+The do\+\_\+work function should only flip the done flag if work is done, however, if the flag is never flipped this node will be re-\/run by the tree.
 
 \begin{DoxyReturn}{Returns}
-true if the node is done. false otherwise. 
+True if done, false otherwise 
 \end{DoxyReturn}
 
 
@@ -151,17 +203,17 @@ Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4d
 
 
 
-functionality for performing work 
+work callback implementation for all action type behaviors 
 
-This describes what a node should do when it\textquotesingle{}s request for resources is approved and it can begin working. Behaviors should perform some action and then return the success of that action and tasks should propogate the message down and wait for the response (or perform some other action first in special cases). For an example of how to pass resources the d\+HTT plugins actions should suffice.
+Calls the do\+\_\+work function for action specific work, then generates the result which contains the information about which resources to retain/release based on the defined logic in this class.
 
 
 \begin{DoxyParams}{Parameters}
-{\em container} & pointer to the node class which owns the node type in order to give use of the public methods.\\
+{\em container} & a pointer to the node which is running this logic.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-returns the result part of the Activation action in order to function with the Node class. For behaviors this should contain the resources that need to be released. 
+resulting request for the action server in \mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} 
 \end{DoxyReturn}
 
 

@@ -14,7 +14,7 @@ This graph shows which files directly or indirectly include this file\+:
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{classdhtt__plugins_1_1ActionType}{dhtt\+\_\+plugins\+::\+Action\+Type}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em parent class of all behavior/action type nodes \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Namespaces}
 \begin{DoxyCompactItemize}
 \item 

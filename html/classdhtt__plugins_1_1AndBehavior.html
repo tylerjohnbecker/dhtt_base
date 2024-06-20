@@ -81,13 +81,16 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Implementation of the AND node for dHTTs.  
+ <a href="classdhtt__plugins_1_1AndBehavior.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="and__behavior_8hpp_source.html">and_behavior.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for dhtt_plugins::AndBehavior:</div>
 <div class="dyncontent">
 <div class="center"><img src="classdhtt__plugins_1_1AndBehavior__inherit__graph.png" border="0" usemap="#adhtt__plugins_1_1AndBehavior_inherit__map" alt="Inheritance graph"/></div>
 <map name="adhtt__plugins_1_1AndBehavior_inherit__map" id="adhtt__plugins_1_1AndBehavior_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,79,177,104"/>
+<area shape="rect" title="Implementation of the AND node for dHTTs." alt="" coords="5,79,177,104"/>
 <area shape="rect" href="classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes." alt="" coords="37,5,146,31"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -96,7 +99,7 @@ Collaboration diagram for dhtt_plugins::AndBehavior:</div>
 <div class="dyncontent">
 <div class="center"><img src="classdhtt__plugins_1_1AndBehavior__coll__graph.png" border="0" usemap="#adhtt__plugins_1_1AndBehavior_coll__map" alt="Collaboration graph"/></div>
 <map name="adhtt__plugins_1_1AndBehavior_coll__map" id="adhtt__plugins_1_1AndBehavior_coll__map">
-<area shape="rect" title=" " alt="" coords="5,79,177,104"/>
+<area shape="rect" title="Implementation of the AND node for dHTTs." alt="" coords="5,79,177,104"/>
 <area shape="rect" href="classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes." alt="" coords="37,5,146,31"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -107,19 +110,19 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a30cad3c2a60361f4c466b48f73a0cedc"><td class="mdescLeft">&#160;</td><td class="mdescRight">abstract initialize function for all NodeType classes  <a href="classdhtt__plugins_1_1AndBehavior.html#a30cad3c2a60361f4c466b48f73a0cedc">More...</a><br /></td></tr>
 <tr class="separator:a30cad3c2a60361f4c466b48f73a0cedc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86b264bee7ad6c1e3b75dd317aebebcf"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; dhtt_msgs::action::Activation::Result &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1AndBehavior.html#a86b264bee7ad6c1e3b75dd317aebebcf">auction_callback</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container) override</td></tr>
-<tr class="memdesc:a86b264bee7ad6c1e3b75dd317aebebcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">functionality for completing an auction  <a href="classdhtt__plugins_1_1AndBehavior.html#a86b264bee7ad6c1e3b75dd317aebebcf">More...</a><br /></td></tr>
+<tr class="memdesc:a86b264bee7ad6c1e3b75dd317aebebcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">auction behavior for the AND node.  <a href="classdhtt__plugins_1_1AndBehavior.html#a86b264bee7ad6c1e3b75dd317aebebcf">More...</a><br /></td></tr>
 <tr class="separator:a86b264bee7ad6c1e3b75dd317aebebcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f76f12b4ceedc96bf82261f1a0da449"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; dhtt_msgs::action::Activation::Result &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1AndBehavior.html#a9f76f12b4ceedc96bf82261f1a0da449">work_callback</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container) override</td></tr>
-<tr class="memdesc:a9f76f12b4ceedc96bf82261f1a0da449"><td class="mdescLeft">&#160;</td><td class="mdescRight">functionality for performing work  <a href="classdhtt__plugins_1_1AndBehavior.html#a9f76f12b4ceedc96bf82261f1a0da449">More...</a><br /></td></tr>
+<tr class="memdesc:a9f76f12b4ceedc96bf82261f1a0da449"><td class="mdescLeft">&#160;</td><td class="mdescRight">work behavior for the AND node.  <a href="classdhtt__plugins_1_1AndBehavior.html#a9f76f12b4ceedc96bf82261f1a0da449">More...</a><br /></td></tr>
 <tr class="separator:a9f76f12b4ceedc96bf82261f1a0da449"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2fd6b86b0ec6b7ce3d3b175681693d0e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1AndBehavior.html#a2fd6b86b0ec6b7ce3d3b175681693d0e">parse_params</a> (std::vector&lt; std::string &gt; <a class="el" href="classdhtt_1_1NodeType.html#a2cf719d31abbbad3a06e6c0ecc4915cf">params</a>) override</td></tr>
-<tr class="memdesc:a2fd6b86b0ec6b7ce3d3b175681693d0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">method to parse the input parameters for the NodeType  <a href="classdhtt__plugins_1_1AndBehavior.html#a2fd6b86b0ec6b7ce3d3b175681693d0e">More...</a><br /></td></tr>
+<tr class="memdesc:a2fd6b86b0ec6b7ce3d3b175681693d0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">this behavior takes no parameters  <a href="classdhtt__plugins_1_1AndBehavior.html#a2fd6b86b0ec6b7ce3d3b175681693d0e">More...</a><br /></td></tr>
 <tr class="separator:a2fd6b86b0ec6b7ce3d3b175681693d0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e95d5ca715b6b7bef822c4344ea0c72"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1AndBehavior.html#a5e95d5ca715b6b7bef822c4344ea0c72">get_perceived_efficiency</a> () override</td></tr>
-<tr class="memdesc:a5e95d5ca715b6b7bef822c4344ea0c72"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculates the activation potential of the node locally  <a href="classdhtt__plugins_1_1AndBehavior.html#a5e95d5ca715b6b7bef822c4344ea0c72">More...</a><br /></td></tr>
+<tr class="memdesc:a5e95d5ca715b6b7bef822c4344ea0c72"><td class="mdescLeft">&#160;</td><td class="mdescRight">gives the activation potential of this subtask  <a href="classdhtt__plugins_1_1AndBehavior.html#a5e95d5ca715b6b7bef822c4344ea0c72">More...</a><br /></td></tr>
 <tr class="separator:a5e95d5ca715b6b7bef822c4344ea0c72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a157f515115c440e6e56b365aa335331d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1AndBehavior.html#a157f515115c440e6e56b365aa335331d">is_done</a> () override</td></tr>
-<tr class="memdesc:a157f515115c440e6e56b365aa335331d"><td class="mdescLeft">&#160;</td><td class="mdescRight">check for if the node is finished running  <a href="classdhtt__plugins_1_1AndBehavior.html#a157f515115c440e6e56b365aa335331d">More...</a><br /></td></tr>
+<tr class="memdesc:a157f515115c440e6e56b365aa335331d"><td class="mdescLeft">&#160;</td><td class="mdescRight">this behavior is done when all children are done  <a href="classdhtt__plugins_1_1AndBehavior.html#a157f515115c440e6e56b365aa335331d">More...</a><br /></td></tr>
 <tr class="separator:a157f515115c440e6e56b365aa335331d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classdhtt_1_1NodeType"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classdhtt_1_1NodeType')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classdhtt_1_1NodeType.html">dhtt::NodeType</a></td></tr>
 <tr class="memitem:a032e89c0ab0f0bab69d1816ccabc8242 inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a032e89c0ab0f0bab69d1816ccabc8242">initialize</a> (std::vector&lt; std::string &gt; <a class="el" href="classdhtt_1_1NodeType.html#a2cf719d31abbbad3a06e6c0ecc4915cf">params</a>)=0</td></tr>
@@ -166,7 +169,10 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:aeeef5c0db14ade9f9babe3f532195abe inherit pub_attribs_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#aeeef5c0db14ade9f9babe3f532195abe">preconditions</a></td></tr>
 <tr class="separator:aeeef5c0db14ade9f9babe3f532195abe inherit pub_attribs_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p >Implementation of the AND node for dHTTs. </p>
+<p >The AND node has no constraint on the ordering of the children and so it just runs all of them in decreasing order of activation potential. The AND node also has to run all of it's children. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a86b264bee7ad6c1e3b75dd317aebebcf" name="a86b264bee7ad6c1e3b75dd317aebebcf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a86b264bee7ad6c1e3b75dd317aebebcf">&#9670;&#160;</a></span>auction_callback()</h2>
 
@@ -191,15 +197,15 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>functionality for completing an auction </p>
-<p >This describes what the node should consider when it is first activated (i.e. when it starts an auction). Behavior nodes should request any resources that they need to begin working, and task nodes should spread activation to their children and propogate their choice up afterwards</p>
+<p>auction behavior for the AND node. </p>
+<p >An AND node runs all of it's children in an unspecified order. The auction activates all children and collects their requests. Then, the request with the highest activation potential is chosen and sent up the tree. All other children are returned to the WAITING state.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">container</td><td>pointer to the node class which owns the node type in order to give use of the public methods.</td></tr>
+    <tr><td class="paramname">container</td><td>see <a class="el" href="classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes.">dhtt::NodeType</a></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>returns the result part of the Activation action in order to function with the Node class. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>ActivationResult for the Node class' activation action server </dd></dl>
 
 <p>Implements <a class="el" href="classdhtt_1_1NodeType.html#ade96117263a722919bf770a1c74e5e52">dhtt::NodeType</a>.</p>
 
@@ -228,9 +234,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>calculates the activation potential of the node locally </p>
-<p >This looks at the calculation that this node locally uses, meaning some function of the childrens' activation potential for task nodes and some function (like distance) for behavior nodes.</p>
-<dl class="section return"><dt>Returns</dt><dd>activation potential value (0 -&gt; 1 by convention) </dd></dl>
+<p>gives the activation potential of this subtask </p>
+<p >Activation Potential for an AND node is calculated as the average of the activation potential of it's children.</p>
+<dl class="section return"><dt>Returns</dt><dd>activation potential of this subtask </dd></dl>
 
 <p>Implements <a class="el" href="classdhtt_1_1NodeType.html#abe0033b3654dba4ac7e00cc44b99c845">dhtt::NodeType</a>.</p>
 
@@ -297,9 +303,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>check for if the node is finished running </p>
-<p >just uses the logic of the node to find out if it is done running already. For behaviors this returns true once the work is complete, and for tasks this is complete when the logic dictates (AND is done when all children are done, etc.).</p>
-<dl class="section return"><dt>Returns</dt><dd>true if the node is done. false otherwise. </dd></dl>
+<p>this behavior is done when all children are done </p>
 
 <p>Reimplemented from <a class="el" href="classdhtt_1_1NodeType.html#ad6d899627452745cede4dc723ef57b70">dhtt::NodeType</a>.</p>
 
@@ -329,15 +333,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>method to parse the input parameters for the NodeType </p>
-<p >generally should take the parameters from the description file and parse them in some way. This could include just setting flags, getting topic names for information retrieval, etc.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">params</td><td>list of params taken from the description file (usually in key, value pairs by convention)</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+<p>this behavior takes no parameters </p>
 
 <p>Implements <a class="el" href="classdhtt_1_1NodeType.html#ab3299445c97c34ecf0b8e120cd59d412">dhtt::NodeType</a>.</p>
 
@@ -367,15 +363,8 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>functionality for performing work </p>
-<p >This describes what a node should do when it's request for resources is approved and it can begin working. Behaviors should perform some action and then return the success of that action and tasks should propogate the message down and wait for the response (or perform some other action first in special cases). For an example of how to pass resources the dHTT plugins actions should suffice.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">container</td><td>pointer to the node class which owns the node type in order to give use of the public methods.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>returns the result part of the Activation action in order to function with the Node class. For behaviors this should contain the resources that need to be released. </dd></dl>
+<p>work behavior for the AND node. </p>
+<p >The AND node </p>
 
 <p>Implements <a class="el" href="classdhtt_1_1NodeType.html#a746c54085a57734a637a30a05c610e91">dhtt::NodeType</a>.</p>
 

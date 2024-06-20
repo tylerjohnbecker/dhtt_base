@@ -2,6 +2,11 @@
 \label{classdhtt__plugins_1_1PlaceBehavior}\index{dhtt\_plugins::PlaceBehavior@{dhtt\_plugins::PlaceBehavior}}
 
 
+Place behavior implementation.  
+
+
+
+
 {\ttfamily \#include $<$place\+\_\+behavior.\+hpp$>$}
 
 
@@ -16,17 +21,17 @@ Collaboration diagram for dhtt\+\_\+plugins\+::Place\+Behavior\+:
 \begin{DoxyCompactItemize}
 \item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a29056fe823577f83368840e8fba2d4d5}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
-\begin{DoxyCompactList}\small\item\em method to parse the input parameters for the Node\+Type \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em parses parameters for the \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior}{Place\+Behavior}}\+: activation potential \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a722634e89fd4b4d337abb8e380a0797d}{do\+\_\+work}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
-\item 
+\begin{DoxyCompactList}\small\item\em Picks the object specified. \end{DoxyCompactList}\item 
 double \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a979d6362a4ccbfb6f8940abe8dec3528}{get\+\_\+perceived\+\_\+efficiency}} () override
-\begin{DoxyCompactList}\small\item\em calculates the activation potential of the node locally \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em gives the activation potential of this behavior \end{DoxyCompactList}\item 
 std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a0f9901857b22b0e429ff737233e4ee10}{get\+\_\+retained\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
-\item 
+\begin{DoxyCompactList}\small\item\em returns an empty list of resources \end{DoxyCompactList}\item 
 std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a7a12629730d602b9ea3d424935993e7b}{get\+\_\+released\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
-\item 
+\begin{DoxyCompactList}\small\item\em returns a list of all granted resources \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_af4aa0c4c72810a6d3e1a140a5d596ad8}{done\+\_\+callback}} (std\+::shared\+\_\+ptr$<$ std\+\_\+msgs\+::msg\+::\+String $>$ data)
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em callback for receiving done from the ROS1 implementation of \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior}{Move\+Behavior}} \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -37,6 +42,9 @@ double \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_abce5064471f06b255ea
 \doxysubsection*{Additional Inherited Members}
 
 
+\doxysubsection{Detailed Description}
+Place behavior implementation. 
+
 \doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classdhtt__plugins_1_1PlaceBehavior_a722634e89fd4b4d337abb8e380a0797d}\label{classdhtt__plugins_1_1PlaceBehavior_a722634e89fd4b4d337abb8e380a0797d}} 
 \index{dhtt\_plugins::PlaceBehavior@{dhtt\_plugins::PlaceBehavior}!do\_work@{do\_work}}
@@ -44,6 +52,20 @@ double \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_abce5064471f06b255ea
 \doxysubsubsection{\texorpdfstring{do\_work()}{do\_work()}}
 {\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Place\+Behavior\+::do\+\_\+work (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
+
+
+Picks the object specified. 
+
+For the purposes of this experiment the robot runs on ROS1, so this function passes a command message over ROS1 bridge to a server which places the object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
 
 
 Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308d820d358e245a69e}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
@@ -54,6 +76,20 @@ Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308d8
 \doxysubsubsection{\texorpdfstring{done\_callback()}{done\_callback()}}
 {\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Place\+Behavior\+::done\+\_\+callback (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ std\+\_\+msgs\+::msg\+::\+String $>$}]{data }\end{DoxyParamCaption})}
 
+
+
+callback for receiving done from the ROS1 implementation of \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior}{Move\+Behavior}} 
+
+For this experiment the actual robot specific implementation had to be done in ROS1 so this callback receives a notification that movement finished over ROS1 bridge.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & message received over the bridge\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
 \mbox{\Hypertarget{classdhtt__plugins_1_1PlaceBehavior_a979d6362a4ccbfb6f8940abe8dec3528}\label{classdhtt__plugins_1_1PlaceBehavior_a979d6362a4ccbfb6f8940abe8dec3528}} 
 \index{dhtt\_plugins::PlaceBehavior@{dhtt\_plugins::PlaceBehavior}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
 \index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt\_plugins::PlaceBehavior@{dhtt\_plugins::PlaceBehavior}}
@@ -62,12 +98,17 @@ Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308d8
 
 
 
-calculates the activation potential of the node locally 
+gives the activation potential of this behavior 
 
-This looks at the calculation that this node locally uses, meaning some function of the childrens\textquotesingle{} activation potential for task nodes and some function (like distance) for behavior nodes.
+The activation was set by a parameter for this experiment in order to ensure that the tasks would run in specific orders.
 
+
+\begin{DoxyParams}{Parameters}
+{\em container} & a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-activation potential value (0 -\/\texorpdfstring{$>$}{>} 1 by convention) 
+activation potential of the behavior 
 \end{DoxyReturn}
 
 
@@ -81,6 +122,20 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c
 
 
 
+returns a list of all granted resources 
+
+The place behavior ensures that nothing is in the gripper after placing the object so there is no need to retain any resources after this behavior runs.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a vector of all granted\+\_\+resources to this behavior 
+\end{DoxyReturn}
+
+
 Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1PlaceBehavior_a0f9901857b22b0e429ff737233e4ee10}\label{classdhtt__plugins_1_1PlaceBehavior_a0f9901857b22b0e429ff737233e4ee10}} 
@@ -89,6 +144,20 @@ Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4d13f0427472ee4873
 \doxysubsubsection{\texorpdfstring{get\_retained\_resources()}{get\_retained\_resources()}}
 {\footnotesize\ttfamily std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Place\+Behavior\+::get\+\_\+retained\+\_\+resources (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
+
+
+returns an empty list of resources 
+
+The place behavior ensures that nothing is in the gripper after placing the object so there is no need to retain any resources after this behavior runs.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+an empty vector of resources 
+\end{DoxyReturn}
 
 
 Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468d32558133e56b6}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
@@ -101,13 +170,16 @@ Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468
 
 
 
-method to parse the input parameters for the Node\+Type 
+parses parameters for the \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior}{Place\+Behavior}}\+: activation potential 
 
-generally should take the parameters from the description file and parse them in some way. This could include just setting flags, getting topic names for information retrieval, etc.
+The params for this behavior have the following meaning\+:
+\begin{DoxyItemize}
+\item activation\+\_\+potential\+: given activation potential value for the behavior. This is useful for getting consistent behavior orderings during testing.
+\end{DoxyItemize}
 
 
 \begin{DoxyParams}{Parameters}
-{\em params} & list of params taken from the description file (usually in key, value pairs by convention)\\
+{\em params} & vector of string parameters from the yaml description\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}

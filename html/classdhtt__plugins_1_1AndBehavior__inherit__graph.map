@@ -1,4 +1,4 @@
 <map id="dhtt_plugins::AndBehavior" name="dhtt_plugins::AndBehavior">
-<area shape="rect" id="node1" title=" " alt="" coords="5,79,177,104"/>
+<area shape="rect" id="node1" title="Implementation of the AND node for dHTTs." alt="" coords="5,79,177,104"/>
 <area shape="rect" id="node2" href="$classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes." alt="" coords="37,5,146,31"/>
 </map>

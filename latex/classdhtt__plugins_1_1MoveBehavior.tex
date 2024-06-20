@@ -2,6 +2,11 @@
 \label{classdhtt__plugins_1_1MoveBehavior}\index{dhtt\_plugins::MoveBehavior@{dhtt\_plugins::MoveBehavior}}
 
 
+Moves to a semantically specified location on a given map.  
+
+
+
+
 {\ttfamily \#include $<$move\+\_\+behavior.\+hpp$>$}
 
 
@@ -16,17 +21,17 @@ Collaboration diagram for dhtt\+\_\+plugins\+::Move\+Behavior\+:
 \begin{DoxyCompactItemize}
 \item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a46e21bf8e3f45d62435a98788ab76c29}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
-\begin{DoxyCompactList}\small\item\em method to parse the input parameters for the Node\+Type \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em parses activation\+\_\+potential and destination parameters for the move behavior \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a20c025ec89cb2678f2e08fd55da42bcc}{do\+\_\+work}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
-\item 
+\begin{DoxyCompactList}\small\item\em moves the robot to the destination \end{DoxyCompactList}\item 
 double \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a681ce76a8fa7e782b207528d42d70948}{get\+\_\+perceived\+\_\+efficiency}} () override
-\begin{DoxyCompactList}\small\item\em calculates the activation potential of the node locally \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em calculates activation potential for the move behavior \end{DoxyCompactList}\item 
 std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a080dcf3afc2376066296b00107860dd4}{get\+\_\+retained\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
-\item 
+\begin{DoxyCompactList}\small\item\em retains all resources \end{DoxyCompactList}\item 
 std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a337349f5a15c96ae5922fb1858a43a1a}{get\+\_\+released\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
-\item 
+\begin{DoxyCompactList}\small\item\em releases no resources \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a24ad9a3a50b844eaa5e9a5f11624a232}{done\+\_\+callback}} (const std\+::shared\+\_\+ptr$<$ std\+\_\+msgs\+::msg\+::\+String $>$ data)
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em callback for receiving done from the ROS1 implementation of \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior}{Move\+Behavior}} \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -39,6 +44,9 @@ std\+::string \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a96d58a74f1db9
 \doxysubsection*{Additional Inherited Members}
 
 
+\doxysubsection{Detailed Description}
+Moves to a semantically specified location on a given map. 
+
 \doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classdhtt__plugins_1_1MoveBehavior_a20c025ec89cb2678f2e08fd55da42bcc}\label{classdhtt__plugins_1_1MoveBehavior_a20c025ec89cb2678f2e08fd55da42bcc}} 
 \index{dhtt\_plugins::MoveBehavior@{dhtt\_plugins::MoveBehavior}!do\_work@{do\_work}}
@@ -46,6 +54,20 @@ std\+::string \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a96d58a74f1db9
 \doxysubsubsection{\texorpdfstring{do\_work()}{do\_work()}}
 {\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Move\+Behavior\+::do\+\_\+work (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
+
+
+moves the robot to the destination 
+
+For the experimental implementation of the d\+HTT paper this behavior sent a message over ROS1 bridge meaning just a string was sent to a different server.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
 
 
 Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308d820d358e245a69e}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
@@ -56,6 +78,20 @@ Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308d8
 \doxysubsubsection{\texorpdfstring{done\_callback()}{done\_callback()}}
 {\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Move\+Behavior\+::done\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ std\+\_\+msgs\+::msg\+::\+String $>$}]{data }\end{DoxyParamCaption})}
 
+
+
+callback for receiving done from the ROS1 implementation of \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior}{Move\+Behavior}} 
+
+For this experiment the actual robot specific implementation had to be done in ROS1 so this callback receives a notification that movement finished over ROS1 bridge.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & message received over the bridge\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
 \mbox{\Hypertarget{classdhtt__plugins_1_1MoveBehavior_a681ce76a8fa7e782b207528d42d70948}\label{classdhtt__plugins_1_1MoveBehavior_a681ce76a8fa7e782b207528d42d70948}} 
 \index{dhtt\_plugins::MoveBehavior@{dhtt\_plugins::MoveBehavior}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
 \index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt\_plugins::MoveBehavior@{dhtt\_plugins::MoveBehavior}}
@@ -64,12 +100,12 @@ Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308d8
 
 
 
-calculates the activation potential of the node locally 
+calculates activation potential for the move behavior 
 
-This looks at the calculation that this node locally uses, meaning some function of the childrens\textquotesingle{} activation potential for task nodes and some function (like distance) for behavior nodes.
+For the experimental implementation consistent behavior orderings were desired so this function returns the value specified in the yaml description.
 
 \begin{DoxyReturn}{Returns}
-activation potential value (0 -\/\texorpdfstring{$>$}{>} 1 by convention) 
+activation\+\_\+potential of the node 
 \end{DoxyReturn}
 
 
@@ -83,6 +119,20 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c
 
 
 
+releases no resources 
+
+As described in the retained\+\_\+resources function nothing should be released after moving to a destination to prevent the robot from getting distracted.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+an empty vector of resources 
+\end{DoxyReturn}
+
+
 Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1MoveBehavior_a080dcf3afc2376066296b00107860dd4}\label{classdhtt__plugins_1_1MoveBehavior_a080dcf3afc2376066296b00107860dd4}} 
@@ -91,6 +141,20 @@ Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4d13f0427472ee4873
 \doxysubsubsection{\texorpdfstring{get\_retained\_resources()}{get\_retained\_resources()}}
 {\footnotesize\ttfamily std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Move\+Behavior\+::get\+\_\+retained\+\_\+resources (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
+
+
+retains all resources 
+
+Move behaviors are expected to have some meaning therefore resources are kept. For example, if a move behavior is before some other behavior it is expected that there will be some task to perform at the destination and therefore the resources should be kept to prevent the robot from getting distracted.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the current list of all owned resources 
+\end{DoxyReturn}
 
 
 Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468d32558133e56b6}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
@@ -103,13 +167,19 @@ Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468
 
 
 
-method to parse the input parameters for the Node\+Type 
+parses activation\+\_\+potential and destination parameters for the move behavior 
 
-generally should take the parameters from the description file and parse them in some way. This could include just setting flags, getting topic names for information retrieval, etc.
+The meaning of each parameter is as follows\+:
+\begin{DoxyItemize}
+\item activation\+\_\+potential\+: a given activation potential for the behavior (for testing specific behavior orders)
+\begin{DoxyItemize}
+\item destination\+: a named position on the param server (will not complete work if this does not exist)
+\end{DoxyItemize}
+\end{DoxyItemize}
 
 
 \begin{DoxyParams}{Parameters}
-{\em params} & list of params taken from the description file (usually in key, value pairs by convention)\\
+{\em params} & a vector of string params parsed from the yaml description\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}

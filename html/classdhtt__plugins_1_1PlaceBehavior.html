@@ -81,14 +81,17 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Place behavior implementation.  
+ <a href="classdhtt__plugins_1_1PlaceBehavior.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="place__behavior_8hpp_source.html">place_behavior.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for dhtt_plugins::PlaceBehavior:</div>
 <div class="dyncontent">
 <div class="center"><img src="classdhtt__plugins_1_1PlaceBehavior__inherit__graph.png" border="0" usemap="#adhtt__plugins_1_1PlaceBehavior_inherit__map" alt="Inheritance graph"/></div>
 <map name="adhtt__plugins_1_1PlaceBehavior_inherit__map" id="adhtt__plugins_1_1PlaceBehavior_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,152,188,177"/>
-<area shape="rect" href="classdhtt__plugins_1_1ActionType.html" title=" " alt="" coords="15,79,178,104"/>
+<area shape="rect" title="Place behavior implementation." alt="" coords="5,152,188,177"/>
+<area shape="rect" href="classdhtt__plugins_1_1ActionType.html" title="parent class of all behavior/action type nodes" alt="" coords="15,79,178,104"/>
 <area shape="rect" href="classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes." alt="" coords="42,5,151,31"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -97,8 +100,8 @@ Collaboration diagram for dhtt_plugins::PlaceBehavior:</div>
 <div class="dyncontent">
 <div class="center"><img src="classdhtt__plugins_1_1PlaceBehavior__coll__graph.png" border="0" usemap="#adhtt__plugins_1_1PlaceBehavior_coll__map" alt="Collaboration graph"/></div>
 <map name="adhtt__plugins_1_1PlaceBehavior_coll__map" id="adhtt__plugins_1_1PlaceBehavior_coll__map">
-<area shape="rect" title=" " alt="" coords="5,152,188,177"/>
-<area shape="rect" href="classdhtt__plugins_1_1ActionType.html" title=" " alt="" coords="15,79,178,104"/>
+<area shape="rect" title="Place behavior implementation." alt="" coords="5,152,188,177"/>
+<area shape="rect" href="classdhtt__plugins_1_1ActionType.html" title="parent class of all behavior/action type nodes" alt="" coords="15,79,178,104"/>
 <area shape="rect" href="classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes." alt="" coords="42,5,151,31"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -106,37 +109,44 @@ Collaboration diagram for dhtt_plugins::PlaceBehavior:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a29056fe823577f83368840e8fba2d4d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1PlaceBehavior.html#a29056fe823577f83368840e8fba2d4d5">parse_params</a> (std::vector&lt; std::string &gt; <a class="el" href="classdhtt_1_1NodeType.html#a2cf719d31abbbad3a06e6c0ecc4915cf">params</a>) override</td></tr>
-<tr class="memdesc:a29056fe823577f83368840e8fba2d4d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">method to parse the input parameters for the NodeType  <a href="classdhtt__plugins_1_1PlaceBehavior.html#a29056fe823577f83368840e8fba2d4d5">More...</a><br /></td></tr>
+<tr class="memdesc:a29056fe823577f83368840e8fba2d4d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">parses parameters for the <a class="el" href="classdhtt__plugins_1_1PlaceBehavior.html" title="Place behavior implementation.">PlaceBehavior</a>: activation potential  <a href="classdhtt__plugins_1_1PlaceBehavior.html#a29056fe823577f83368840e8fba2d4d5">More...</a><br /></td></tr>
 <tr class="separator:a29056fe823577f83368840e8fba2d4d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a722634e89fd4b4d337abb8e380a0797d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1PlaceBehavior.html#a722634e89fd4b4d337abb8e380a0797d">do_work</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container) override</td></tr>
+<tr class="memdesc:a722634e89fd4b4d337abb8e380a0797d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Picks the object specified.  <a href="classdhtt__plugins_1_1PlaceBehavior.html#a722634e89fd4b4d337abb8e380a0797d">More...</a><br /></td></tr>
 <tr class="separator:a722634e89fd4b4d337abb8e380a0797d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a979d6362a4ccbfb6f8940abe8dec3528"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1PlaceBehavior.html#a979d6362a4ccbfb6f8940abe8dec3528">get_perceived_efficiency</a> () override</td></tr>
-<tr class="memdesc:a979d6362a4ccbfb6f8940abe8dec3528"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculates the activation potential of the node locally  <a href="classdhtt__plugins_1_1PlaceBehavior.html#a979d6362a4ccbfb6f8940abe8dec3528">More...</a><br /></td></tr>
+<tr class="memdesc:a979d6362a4ccbfb6f8940abe8dec3528"><td class="mdescLeft">&#160;</td><td class="mdescRight">gives the activation potential of this behavior  <a href="classdhtt__plugins_1_1PlaceBehavior.html#a979d6362a4ccbfb6f8940abe8dec3528">More...</a><br /></td></tr>
 <tr class="separator:a979d6362a4ccbfb6f8940abe8dec3528"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f9901857b22b0e429ff737233e4ee10"><td class="memItemLeft" align="right" valign="top">std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1PlaceBehavior.html#a0f9901857b22b0e429ff737233e4ee10">get_retained_resources</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container) override</td></tr>
+<tr class="memdesc:a0f9901857b22b0e429ff737233e4ee10"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns an empty list of resources  <a href="classdhtt__plugins_1_1PlaceBehavior.html#a0f9901857b22b0e429ff737233e4ee10">More...</a><br /></td></tr>
 <tr class="separator:a0f9901857b22b0e429ff737233e4ee10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a12629730d602b9ea3d424935993e7b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1PlaceBehavior.html#a7a12629730d602b9ea3d424935993e7b">get_released_resources</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container) override</td></tr>
+<tr class="memdesc:a7a12629730d602b9ea3d424935993e7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a list of all granted resources  <a href="classdhtt__plugins_1_1PlaceBehavior.html#a7a12629730d602b9ea3d424935993e7b">More...</a><br /></td></tr>
 <tr class="separator:a7a12629730d602b9ea3d424935993e7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4aa0c4c72810a6d3e1a140a5d596ad8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1PlaceBehavior.html#af4aa0c4c72810a6d3e1a140a5d596ad8">done_callback</a> (std::shared_ptr&lt; std_msgs::msg::String &gt; data)</td></tr>
+<tr class="memdesc:af4aa0c4c72810a6d3e1a140a5d596ad8"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback for receiving done from the ROS1 implementation of <a class="el" href="classdhtt__plugins_1_1MoveBehavior.html" title="Moves to a semantically specified location on a given map.">MoveBehavior</a>  <a href="classdhtt__plugins_1_1PlaceBehavior.html#af4aa0c4c72810a6d3e1a140a5d596ad8">More...</a><br /></td></tr>
 <tr class="separator:af4aa0c4c72810a6d3e1a140a5d596ad8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classdhtt__plugins_1_1ActionType"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classdhtt__plugins_1_1ActionType')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classdhtt__plugins_1_1ActionType.html">dhtt_plugins::ActionType</a></td></tr>
 <tr class="memitem:a381962c71b85e6a8517845db1a737f79 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1ActionType.html#a381962c71b85e6a8517845db1a737f79">initialize</a> (std::vector&lt; std::string &gt; <a class="el" href="classdhtt_1_1NodeType.html#a2cf719d31abbbad3a06e6c0ecc4915cf">params</a>) override</td></tr>
-<tr class="memdesc:a381962c71b85e6a8517845db1a737f79 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="mdescLeft">&#160;</td><td class="mdescRight">abstract initialize function for all NodeType classes  <a href="classdhtt__plugins_1_1ActionType.html#a381962c71b85e6a8517845db1a737f79">More...</a><br /></td></tr>
+<tr class="memdesc:a381962c71b85e6a8517845db1a737f79 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="mdescLeft">&#160;</td><td class="mdescRight">initializer for all action type behaviors  <a href="classdhtt__plugins_1_1ActionType.html#a381962c71b85e6a8517845db1a737f79">More...</a><br /></td></tr>
 <tr class="separator:a381962c71b85e6a8517845db1a737f79 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85e7c1065776a83857a0638b2ce8f9c4 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; dhtt_msgs::action::Activation::Result &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1ActionType.html#a85e7c1065776a83857a0638b2ce8f9c4">auction_callback</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container) override</td></tr>
-<tr class="memdesc:a85e7c1065776a83857a0638b2ce8f9c4 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="mdescLeft">&#160;</td><td class="mdescRight">functionality for completing an auction  <a href="classdhtt__plugins_1_1ActionType.html#a85e7c1065776a83857a0638b2ce8f9c4">More...</a><br /></td></tr>
+<tr class="memdesc:a85e7c1065776a83857a0638b2ce8f9c4 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="mdescLeft">&#160;</td><td class="mdescRight">auction callback implementation for all action type behaviors  <a href="classdhtt__plugins_1_1ActionType.html#a85e7c1065776a83857a0638b2ce8f9c4">More...</a><br /></td></tr>
 <tr class="separator:a85e7c1065776a83857a0638b2ce8f9c4 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56a3ef4023591aef5d034b6355a39715 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; dhtt_msgs::action::Activation::Result &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1ActionType.html#a56a3ef4023591aef5d034b6355a39715">work_callback</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container) override</td></tr>
-<tr class="memdesc:a56a3ef4023591aef5d034b6355a39715 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="mdescLeft">&#160;</td><td class="mdescRight">functionality for performing work  <a href="classdhtt__plugins_1_1ActionType.html#a56a3ef4023591aef5d034b6355a39715">More...</a><br /></td></tr>
+<tr class="memdesc:a56a3ef4023591aef5d034b6355a39715 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="mdescLeft">&#160;</td><td class="mdescRight">work callback implementation for all action type behaviors  <a href="classdhtt__plugins_1_1ActionType.html#a56a3ef4023591aef5d034b6355a39715">More...</a><br /></td></tr>
 <tr class="separator:a56a3ef4023591aef5d034b6355a39715 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21045341e10bb308d820d358e245a69e inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1ActionType.html#a21045341e10bb308d820d358e245a69e">do_work</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container)=0</td></tr>
+<tr class="memdesc:a21045341e10bb308d820d358e245a69e inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="mdescLeft">&#160;</td><td class="mdescRight">abstract function for actually sending instructions to the robot  <a href="classdhtt__plugins_1_1ActionType.html#a21045341e10bb308d820d358e245a69e">More...</a><br /></td></tr>
 <tr class="separator:a21045341e10bb308d820d358e245a69e inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3ad0f892ab63af468d32558133e56b6 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1ActionType.html#ae3ad0f892ab63af468d32558133e56b6">get_retained_resources</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container)=0</td></tr>
+<tr class="memdesc:ae3ad0f892ab63af468d32558133e56b6 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a list of all resources that are meant to be retained  <a href="classdhtt__plugins_1_1ActionType.html#ae3ad0f892ab63af468d32558133e56b6">More...</a><br /></td></tr>
 <tr class="separator:ae3ad0f892ab63af468d32558133e56b6 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d13f0427472ee48731da1003e23270a inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1ActionType.html#a4d13f0427472ee48731da1003e23270a">get_released_resources</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container)=0</td></tr>
+<tr class="memdesc:a4d13f0427472ee48731da1003e23270a inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the list of resources to release  <a href="classdhtt__plugins_1_1ActionType.html#a4d13f0427472ee48731da1003e23270a">More...</a><br /></td></tr>
 <tr class="separator:a4d13f0427472ee48731da1003e23270a inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5dada7d97dfbd1bed5abfb9ccb295a62 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1ActionType.html#a5dada7d97dfbd1bed5abfb9ccb295a62">is_done</a> () override</td></tr>
-<tr class="memdesc:a5dada7d97dfbd1bed5abfb9ccb295a62 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="mdescLeft">&#160;</td><td class="mdescRight">check for if the node is finished running  <a href="classdhtt__plugins_1_1ActionType.html#a5dada7d97dfbd1bed5abfb9ccb295a62">More...</a><br /></td></tr>
+<tr class="memdesc:a5dada7d97dfbd1bed5abfb9ccb295a62 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the internal done variable  <a href="classdhtt__plugins_1_1ActionType.html#a5dada7d97dfbd1bed5abfb9ccb295a62">More...</a><br /></td></tr>
 <tr class="separator:a5dada7d97dfbd1bed5abfb9ccb295a62 inherit pub_methods_classdhtt__plugins_1_1ActionType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classdhtt_1_1NodeType"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classdhtt_1_1NodeType')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classdhtt_1_1NodeType.html">dhtt::NodeType</a></td></tr>
 <tr class="memitem:a032e89c0ab0f0bab69d1816ccabc8242 inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a032e89c0ab0f0bab69d1816ccabc8242">initialize</a> (std::vector&lt; std::string &gt; <a class="el" href="classdhtt_1_1NodeType.html#a2cf719d31abbbad3a06e6c0ecc4915cf">params</a>)=0</td></tr>
@@ -194,7 +204,9 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:aeeef5c0db14ade9f9babe3f532195abe inherit pub_attribs_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#aeeef5c0db14ade9f9babe3f532195abe">preconditions</a></td></tr>
 <tr class="separator:aeeef5c0db14ade9f9babe3f532195abe inherit pub_attribs_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p >Place behavior implementation. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a722634e89fd4b4d337abb8e380a0797d" name="a722634e89fd4b4d337abb8e380a0797d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a722634e89fd4b4d337abb8e380a0797d">&#9670;&#160;</a></span>do_work()</h2>
 
@@ -219,6 +231,16 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Picks the object specified. </p>
+<p >For the purposes of this experiment the robot runs on ROS1, so this function passes a command message over ROS1 bridge to a server which places the object.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">container</td><td>a pointer to the node which is running this logic.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
 <p>Implements <a class="el" href="classdhtt__plugins_1_1ActionType.html#a21045341e10bb308d820d358e245a69e">dhtt_plugins::ActionType</a>.</p>
 
 </div>
@@ -238,6 +260,16 @@ Additional Inherited Members</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>callback for receiving done from the ROS1 implementation of <a class="el" href="classdhtt__plugins_1_1MoveBehavior.html" title="Moves to a semantically specified location on a given map.">MoveBehavior</a> </p>
+<p >For this experiment the actual robot specific implementation had to be done in ROS1 so this callback receives a notification that movement finished over ROS1 bridge.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>message received over the bridge</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
 </div>
 </div>
@@ -264,9 +296,15 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>calculates the activation potential of the node locally </p>
-<p >This looks at the calculation that this node locally uses, meaning some function of the childrens' activation potential for task nodes and some function (like distance) for behavior nodes.</p>
-<dl class="section return"><dt>Returns</dt><dd>activation potential value (0 -&gt; 1 by convention) </dd></dl>
+<p>gives the activation potential of this behavior </p>
+<p >The activation was set by a parameter for this experiment in order to ensure that the tasks would run in specific orders.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">container</td><td>a pointer to the node which is running this logic.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>activation potential of the behavior </dd></dl>
 
 <p>Implements <a class="el" href="classdhtt_1_1NodeType.html#abe0033b3654dba4ac7e00cc44b99c845">dhtt::NodeType</a>.</p>
 
@@ -296,6 +334,16 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>returns a list of all granted resources </p>
+<p >The place behavior ensures that nothing is in the gripper after placing the object so there is no need to retain any resources after this behavior runs.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">container</td><td>a pointer to the node which is running this logic.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of all granted_resources to this behavior </dd></dl>
+
 <p>Implements <a class="el" href="classdhtt__plugins_1_1ActionType.html#a4d13f0427472ee48731da1003e23270a">dhtt_plugins::ActionType</a>.</p>
 
 </div>
@@ -323,6 +371,16 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>returns an empty list of resources </p>
+<p >The place behavior ensures that nothing is in the gripper after placing the object so there is no need to retain any resources after this behavior runs.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">container</td><td>a pointer to the node which is running this logic.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>an empty vector of resources </dd></dl>
 
 <p>Implements <a class="el" href="classdhtt__plugins_1_1ActionType.html#ae3ad0f892ab63af468d32558133e56b6">dhtt_plugins::ActionType</a>.</p>
 
@@ -352,11 +410,13 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>method to parse the input parameters for the NodeType </p>
-<p >generally should take the parameters from the description file and parse them in some way. This could include just setting flags, getting topic names for information retrieval, etc.</p>
+<p>parses parameters for the <a class="el" href="classdhtt__plugins_1_1PlaceBehavior.html" title="Place behavior implementation.">PlaceBehavior</a>: activation potential </p>
+<p >The params for this behavior have the following meaning:</p><ul>
+<li>activation_potential: given activation potential value for the behavior. This is useful for getting consistent behavior orderings during testing.</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">params</td><td>list of params taken from the description file (usually in key, value pairs by convention)</td></tr>
+    <tr><td class="paramname">params</td><td>vector of string parameters from the yaml description</td></tr>
   </table>
   </dd>
 </dl>
