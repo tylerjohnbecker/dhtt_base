@@ -1,0 +1,31 @@
+
+name: Build and Test dhtt
+
+run-name: ${{ github.actor }}
+on: push
+jobs:
+  doxygen-action:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: read
+    steps:
+      # taken from example here: https://github.com/marketplace/actions/setup-ros-environment
+      - name: Setup ROS
+        uses: ros-tooling/setup-ros@v0.7
+        with: 
+          required-ros-distributions: galactic
+      - name: Setup Workspace
+        run: |
+          source /opt/ros/galactic/setup.bash && ros2 run --help
+          mkdir temp_ws && cd temp_ws
+          mkdir src && cd src 
+          git clone https://github.com/tylerjohnbecker/dhtt_base.git
+          cd ../..
+          colcon build
+          source install/setup.bash
+      - name: Start Server
+        run: ros2 run dhtt start_server &
+      - name: Run Tests
+        run: |
+          colcon test --packages-select dhtt --event-handlers console_cohesion+ --return-code-on-test-failure
