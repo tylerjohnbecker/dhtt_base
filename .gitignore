@@ -54,3 +54,7 @@ CATKIN_IGNORE
 html
 latex
 
+.vscode/
+install/
+log/
+**/__pycache__/
