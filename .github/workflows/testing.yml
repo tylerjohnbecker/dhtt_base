@@ -2,7 +2,10 @@
 name: Build and Test dhtt
 
 run-name: ${{ github.actor }}
-on: push
+on: 
+  push:
+    branches:
+      - 'main'
 jobs:
   testing-action:
     runs-on: ubuntu-latest
