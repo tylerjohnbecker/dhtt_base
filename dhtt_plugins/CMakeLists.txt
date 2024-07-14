@@ -21,6 +21,7 @@ find_package(ament_cmake_ros REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(dhtt REQUIRED)
 find_package(dhtt_msgs REQUIRED)
+find_package(knowledge_server REQUIRED)
 find_package(pluginlib REQUIRED)
 
 add_library(dhtt_plugins SHARED src/dhtt_plugins.cpp src/behaviors/test_behavior.cc src/behaviors/action_type.cc src/tasks/root_behavior.cc src/tasks/and_behavior.cc 

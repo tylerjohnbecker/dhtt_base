@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(dhtt_msgs)
+project(knowledge_server)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -17,35 +17,12 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
 
-rosidl_generate_interfaces(${PROJECT_NAME}
-  # message files
-  "msg/Node.msg"
-  "msg/Subtree.msg"
-  "msg/Resource.msg"
-  "msg/Resources.msg"
-  "msg/NodeStatus.msg"
-  "msg/Pair.msg"
-  "msg/UpdateInfo.msg"
+ament_python_install_package(${PROJECT_NAME})
 
-  # service files
-  "srv/ControlRequest.srv"
-  "srv/FetchRequest.srv"
-  "srv/ModifyRequest.srv"
-  "srv/HistoryRequest.srv"
-  "srv/InternalControlRequest.srv"
-  "srv/InternalModifyRequest.srv"
-  "srv/InternalServiceRegistration.srv"
-  "srv/FetchInfo.srv"
-
-  # action files
-  "action/Activation.action"
-
-  # dependecies for messages
-  DEPENDENCIES std_msgs
-  )
+install(PROGRAMS
+  scripts/knowledge_server.py
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

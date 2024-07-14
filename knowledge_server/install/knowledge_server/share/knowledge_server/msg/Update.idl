@@ -1,0 +1,13 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from knowledge_server/msg/Update.msg
+// generated code does not contain a copyright notice
+
+#include "knowledge_server/msg/Pair.idl"
+
+module knowledge_server {
+  module msg {
+    struct Update {
+      sequence<knowledge_server::msg::Pair> updated_pairs;
+    };
+  };
+};
