@@ -1,0 +1,14 @@
+int8 type
+
+string[] params
+
+int8 GENERAL=0
+int8 ADD=1
+int8 REMOVE=2
+int8 CHANGE_PARAMS=3
+---
+
+bool success
+string error_msg
+
+string[] responses

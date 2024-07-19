@@ -1,0 +1,58 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from dhtt_msgs/msg/Node.msg
+// generated code does not contain a copyright notice
+
+#include "dhtt_msgs/msg/NodeStatus.idl"
+#include "dhtt_msgs/msg/Resource.idl"
+#include "std_msgs/msg/Header.idl"
+
+module dhtt_msgs {
+  module msg {
+    module Node_Constants {
+      const int8 ROOT = 0;
+      const int8 AND = 1;
+      const int8 THEN = 2;
+      const int8 OR = 3;
+      const int8 BEHAVIOR = 4;
+    };
+    @verbatim (language="comment", text=
+      " header containing the timestamp of the msg")
+    struct Node {
+      std_msgs::msg::Header head;
+
+      @verbatim (language="comment", text=
+        " this is the topic name of the node in the tree")
+      string node_name;
+
+      @verbatim (language="comment", text=
+        " this is the index of the parent in the list from the dhtt_subtree message (-1 if this node is the root)")
+      int32 parent;
+
+      string parent_name;
+
+      @verbatim (language="comment", text=
+        " this is a list of the indices of this nodes children from the dhtt_subtree message (empty if this node is a leaf)")
+      sequence<int32> children;
+
+      sequence<string> child_name;
+
+      @verbatim (language="comment", text=
+        " this is the list of params for the behavior")
+      sequence<string> params;
+
+      @verbatim (language="comment", text=
+        " this is the type of each node")
+      int8 type;
+
+      string plugin_name;
+
+      @verbatim (language="comment", text=
+        " the resources that the node has been given access to")
+      sequence<dhtt_msgs::msg::Resource> owned_resources;
+
+      @verbatim (language="comment", text=
+        " this is an indicator of the status of the node")
+      dhtt_msgs::msg::NodeStatus node_status;
+    };
+  };
+};

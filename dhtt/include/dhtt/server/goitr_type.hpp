@@ -12,12 +12,14 @@
 
 // dhtt message includes
 #include "dhtt_msgs/msg/node.hpp"
-#include "dhtt_msgs/srv/fetch_request.hpp"
-#include "dhtt_msgs/srv/modify_request.hpp"
-#include "dhtt_msgs/srv/control_request.hpp"
 #include "dhtt_msgs/msg/pair.hpp"
 #include "dhtt_msgs/msg/update_info.hpp"
 #include "dhtt_msgs/srv/fetch_info.hpp"
+#include "dhtt_msgs/srv/fetch_request.hpp"
+#include "dhtt_msgs/srv/modify_request.hpp"
+#include "dhtt_msgs/srv/control_request.hpp"
+#include "dhtt_msgs/srv/goitr_request.hpp"
+
 
 namespace dhtt
 {
@@ -29,15 +31,15 @@ namespace dhtt
 	 * 	callbacks for receiving information from the knowledge base, getting initial activation from the tree, and whenever a child finishes execution.
 	 * 	The intent of these callbacks is to provide logic for how replanning should occur.
 	 */
-	class GoitrBase : public rclcpp::Node
+	class GoitrType
 	{
-	public:
+	protected:
 
 		/**
 		 * \brief abstract initializer for GOiTR which will be run after it is created
 		 * 
 		 * Implementations of this method should ensure that the GOiTR should be fully initialized after this is called. Any extra work (like building the
-		 * 	subtree) can be left to the first_activation_callback.
+		 * 	subtree) can be left to the first_activation_callback. Blank for testing in GoitrBase.
 		 * 
 		 * \param params a vector of params to initialize the node with 
 		 * 
@@ -46,10 +48,24 @@ namespace dhtt
 		virtual void init (std::vector<std::string> params) = 0;
 
 		/**
+		 * \brief service available to parent Goitr to receive information or request changes
+		 * 
+		 * This service is meant to give a way for the parent to propogate higher level planning choices to these lower level planner. For instance, if a tool is 
+		 * 	unavailable or can't be found a subtask which is planning to use it might need to replan so that it is no longer necessary (if possible). This has been
+		 * 	given basic functionality in the GoitrBase class for testing.
+		 * 
+		 * \param req Request from the parent
+		 * \param res ptr to give back to the server
+		 * 
+		 * \return void
+		 */
+		virtual void parent_service(std::shared_ptr<dhtt_msgs::srv::GoitrRequest::Request> req, std::shared_ptr<dhtt_msgs::srv::GoitrRequest::Response> res) = 0;
+
+		/**
 		 * \brief Callback which defines the logic for when knowledge updates are received
 		 * 
 		 * The purpose of this callback is to enable the GOiTR to continuously replan whenever knew information is received from the knowledge base. New knowledge
-		 * 	that requires could include the changing location of an object, the availability of a tool, etc.
+		 * 	that requires could include the changing location of an object, the availability of a tool, etc. Blank for testing in GoitrBase.
 		 * 
 		 * \param TBD
 		 * 
@@ -61,7 +77,7 @@ namespace dhtt
 		 * \brief Callback which define how the subtree should be built
 		 * 
 		 * On first activation by the tree the GOiTR should block and construct it's subtree. This will then happen recursively. The construction should also 
-		 * 	take into account the current state of the knowledge base.
+		 * 	take into account the current state of the knowledge base. Blank for testing in GoitrBase.
 		 * 
 		 * \param TBD
 		 * 
@@ -73,15 +89,13 @@ namespace dhtt
 		 * \brief Callback which defines how to act when a child that this node has direct access to has finished.0
 		 * 
 		 * When children finish successfully this callback may have changes to the tree. Specifically, if a child node fails this callback should assess the reason
-		 * 	that the node failed and replan the subtree accordingly.
+		 * 	that the node failed and replan the subtree accordingly. Blank for testing in GoitrBase.
 		 * 
 		 * \param TBD
 		 * 
 		 * \return void
 		 */
 		virtual void child_finished_callback(/*whatever message for this*/) = 0;
-
-	protected:
 
 		/**
 		 * \brief helper method to add a node to the tree
@@ -129,15 +143,17 @@ namespace dhtt
 
 		std::string main_server_topic, node_name; 
 		std::vector<std::string> child_node_names;
-		std::vector<std::string> child_goitr_names;
 	private:
-		void modify( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response );
-		void fetch( const std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response );
-		void control( const std::shared_ptr<dhtt_msgs::srv::ControlRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ControlRequest::Response> response );
+		bool modify( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response );
+		bool fetch( const std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response );
+		bool control( const std::shared_ptr<dhtt_msgs::srv::ControlRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ControlRequest::Response> response );
 
 		rclcpp::Client<dhtt_msgs::srv::ModifyRequest>::SharedPtr modify_client;
 		rclcpp::Client<dhtt_msgs::srv::FetchRequest>::SharedPtr fetch_client;
 		rclcpp::Client<dhtt_msgs::srv::ControlRequest>::SharedPtr control_client;
+
+		std::shared_ptr<rclcpp::Node> pub_node_ptr;
+		std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
 		
 	};
 }

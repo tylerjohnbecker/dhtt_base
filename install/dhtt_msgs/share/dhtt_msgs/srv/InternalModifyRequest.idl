@@ -1,0 +1,40 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from dhtt_msgs/srv/InternalModifyRequest.srv
+// generated code does not contain a copyright notice
+
+
+module dhtt_msgs {
+  module srv {
+    module InternalModifyRequest_Request_Constants {
+      const int8 ADD = 0;
+      const int8 REMOVE = 1;
+      const int8 PARAM_UPDATE = 2;
+      const int8 MUTATE = 3;
+    };
+    @verbatim (language="comment", text=
+      "## FOR USE BY MAIN SERVER ONLY" "\n"
+      " type of request (see constants below)")
+    struct InternalModifyRequest_Request {
+      int8 type;
+
+      @verbatim (language="comment", text=
+        " optional: node name to add or remove (added nodes are already constructed by the server)")
+      string node_name;
+
+      @verbatim (language="comment", text=
+        " optional: type of node to become")
+      string plugin_name;
+
+      @verbatim (language="comment", text=
+        " optional: params to change in the node this request was sent to")
+      sequence<string> params;
+    };
+    @verbatim (language="comment", text=
+      " whether the request was successfully processed, and any error messages")
+    struct InternalModifyRequest_Response {
+      boolean success;
+
+      string error_msg;
+    };
+  };
+};

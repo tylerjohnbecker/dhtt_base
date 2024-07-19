@@ -1,0 +1,11 @@
+int8 type
+
+string[] params
+
+int8 GENERAL=0
+---
+
+bool success
+string error_msgs
+
+string[] responses

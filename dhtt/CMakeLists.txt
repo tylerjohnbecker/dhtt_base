@@ -29,7 +29,7 @@ find_package(Boost REQUIRED COMPONENTS
   thread)
 
 # make nodes
-add_library(dhtt_lib SHARED src/tree/node.cc src/server/goitr_base.cc)
+add_library(dhtt_lib SHARED src/tree/node.cc src/server/goitr_type.cc)
 target_include_directories(dhtt_lib PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)

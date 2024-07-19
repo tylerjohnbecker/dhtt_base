@@ -39,6 +39,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/InternalModifyRequest.srv"
   "srv/InternalServiceRegistration.srv"
   "srv/FetchInfo.srv"
+  "srv/GoitrRequest.srv"
 
   # action files
   "action/Activation.action"

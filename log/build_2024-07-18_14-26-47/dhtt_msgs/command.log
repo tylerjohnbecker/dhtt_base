@@ -1,0 +1,2 @@
+Invoking command in '/home/tylerjbecker/ros2_ws/src/dhtt_base/build/dhtt_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/foxy /usr/bin/cmake /home/tylerjbecker/ros2_ws/src/dhtt_base/dhtt_msgs -DCMAKE_INSTALL_PREFIX=/home/tylerjbecker/ros2_ws/src/dhtt_base/install/dhtt_msgs
+Invoked command in '/home/tylerjbecker/ros2_ws/src/dhtt_base/build/dhtt_msgs' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/foxy /usr/bin/cmake /home/tylerjbecker/ros2_ws/src/dhtt_base/dhtt_msgs -DCMAKE_INSTALL_PREFIX=/home/tylerjbecker/ros2_ws/src/dhtt_base/install/dhtt_msgs

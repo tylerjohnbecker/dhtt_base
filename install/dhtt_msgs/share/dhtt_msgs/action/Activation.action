@@ -1,0 +1,38 @@
+### goal
+# first pass
+# resources that a THEN node will pass down onto the next behavior in line
+dhtt_msgs/Resource[] 		passed_resources
+
+# second pass
+# resources that have been assigned to the active behavior 
+dhtt_msgs/Resource[] 		granted_resources
+
+# success/failure of the request
+bool 						success
+
+---
+### result
+# first pass
+
+# this is always the name of the direct child of the current node
+string 						local_best_node
+
+# necessary resources for a behavior to run, and the resources that the behavior already has access to
+dhtt_msgs/Resource[] 		requested_resources
+dhtt_msgs/Resource[] 		owned_resources
+
+# whether or not the node is done or possible (used in first and second pass)
+bool 						done
+bool 						possible
+
+# filled in by node class
+float64 					activation_potential
+
+# second pass
+# released resources are no longer in use after hitting the root node, passed resources are sent up to the nearest THEN node and then given to their next child
+dhtt_msgs/Resource[] 		released_resources
+dhtt_msgs/Resource[] 		passed_resources
+
+---
+### feedback
+# wow such empty

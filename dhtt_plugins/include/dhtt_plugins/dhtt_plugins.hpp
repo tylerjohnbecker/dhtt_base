@@ -14,8 +14,11 @@
 #include "dhtt_plugins/tasks/then_behavior.hpp"
 #include "dhtt_plugins/tasks/or_behavior.hpp"
 
+#include "dhtt_plugins/goitrs/goitr_test.hpp"
+
 #include <pluginlib/class_list_macros.hpp>
 
+// NodeTypes
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::TestBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::MoveBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::PickBehavior, dhtt::NodeType)
@@ -24,5 +27,8 @@ PLUGINLIB_EXPORT_CLASS(dhtt_plugins::RootBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::ThenBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::AndBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::OrBehavior, dhtt::NodeType)
+
+// GoitrTypes
+PLUGINLIB_EXPORT_CLASS(dhtt_plugins::GoitrTest, dhtt::GoitrType)
 
 #endif  // DHTT_PLUGINS__HTT_PLUGINS_HPP_

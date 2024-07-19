@@ -1,0 +1,27 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from dhtt_msgs/srv/InternalControlRequest.srv
+// generated code does not contain a copyright notice
+
+
+module dhtt_msgs {
+  module srv {
+    module InternalControlRequest_Request_Constants {
+      const int8 START = 1;
+      const int8 GRACEFULSTOP = 2;
+      const int8 IMMEDIATESTOP = 3;
+    };
+    @verbatim (language="comment", text=
+      "## FOR USE BY MAIN SERVER ONLY" "\n"
+      " defines the activity to perform for this service (only works for the list of constants below)")
+    struct InternalControlRequest_Request {
+      int8 control_code;
+    };
+    @verbatim (language="comment", text=
+      " whether the request was successfully processed, and any error messages")
+    struct InternalControlRequest_Response {
+      boolean success;
+
+      string error_msg;
+    };
+  };
+};

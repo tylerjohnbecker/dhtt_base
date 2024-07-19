@@ -1,0 +1,16 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from dhtt_msgs/srv/FetchInfo.srv
+// generated code does not contain a copyright notice
+
+#include "dhtt_msgs/msg/Pair.idl"
+
+module dhtt_msgs {
+  module srv {
+    struct FetchInfo_Request {
+      sequence<string> keys;
+    };
+    struct FetchInfo_Response {
+      sequence<dhtt_msgs::msg::Pair> information_pairs;
+    };
+  };
+};

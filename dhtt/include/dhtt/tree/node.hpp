@@ -18,6 +18,7 @@
 #include "dhtt_msgs/action/activation.hpp"
 
 #include "dhtt/tree/node_type.hpp"
+#include "dhtt/server/goitr_type.hpp"
 
 #define TREE_PREFIX "/dhtt"
 #define REGISTER_CHILD_POSTFIX "/register_child"
