@@ -1,4 +1,0 @@
-### FOR USE BY MAIN SERVER AND TREE ONLY
-# node_name/control, and node_name/modify are respectively the only two internal services
-# for each node so we can simply pass through the node name which is always unique
-string node_name
