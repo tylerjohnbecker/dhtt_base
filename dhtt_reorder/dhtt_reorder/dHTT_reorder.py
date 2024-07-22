@@ -1,28 +1,124 @@
-from nutree import Tree, Node, IterMethod
-from sympy.utilities.iterables import multiset_permutations
+import rclpy
+import rclpy.logging
+import rclpy.node
+
+from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest, NutreeJsonRequest
+from dhtt_msgs.msg import Subtree as dHTTSubtree, Node as dHTTNode
+
+from dhtt_plot.build_nutree import dHTTHelpers
+
+from nutree import Tree as NutreeTree, Node as NutreeNode, IterMethod
+
+from io import StringIO
+
+
+class Reorderer(rclpy.node.Node):
+    def __init__(self):
+        super().__init__('dHTT_reorder')
+
+        # Service clients
+        self.modifyClient = self.create_client(
+            ModifyRequest, '/modify_service')
+        assert self.modifyClient.wait_for_service(
+            timeout_sec=1.0), "Did you forget?: ros2 run dhtt start_server"
+
+        self.fetchClient = self.create_client(FetchRequest, '/fetch_service')
+        assert self.fetchClient.wait_for_service(timeout_sec=1.0)
+
+        self.controlClient = self.create_client(
+            ControlRequest, '/control_service')
+        assert self.controlClient.wait_for_service(timeout_sec=1.0)
+
+        self.nutreeServerClient = self.create_client(
+            NutreeJsonRequest, '/nutree_json_service')
+        assert self.nutreeServerClient.wait_for_service(
+            timeout_sec=1.0), "Did you forget?: ros2 run dhtt_plot build_nutree_server"
+
+        self.get_logger().info("Started Reorderer")
 
 
 class HTT:
+    """Helper for managing internal HTT representation and mirroring changes on dHTT server
+
+    Instantiate with withdHTT=True to spin up the client node and make changes on the server.
+        Think of this as a dry run. Although members like setTreeFromHTT() will not work.
+    """
+
+    # legacy test support, used only when not running dHTT server
     TASKNODES = {"AND", "THEN", "OR"}
 
-    def __init__(self):
-        self.tree = Tree("testHTT")
+    def __init__(self, withdHTT=False):
+        self.tree = NutreeTree("testHTT")
+        self._usingdHTT = False
+
+        if withdHTT:
+            self.node = Reorderer()
+            self._usingdHTT = True
+        else:
+            self.node = None
+            print("Running without dHTT server")
+
+    def isTaskNode(self, node: NutreeNode) -> bool:
+        if self._usingdHTT:
+            return dHTTHelpers.isTaskNode(node)
+        else:
+            return node.name in HTT.TASKNODES
+
+    def isThenNode(self, node: NutreeNode) -> bool:
+        if self._usingdHTT:
+            return dHTTHelpers.isOrderedNode(node)
+        else:
+            return node.name == "THEN"
+
+    def isAndNode(self, node: NutreeNode) -> bool:
+        if self._usingdHTT:
+            return dHTTHelpers.isUnorderedNode(node)
+        else:
+            return node.name == "AND"
+
+    def setTreeFromdHTT(self) -> bool:
+        if self._usingdHTT:
+            rq = NutreeJsonRequest.Request()
+            future = self.node.nutreeServerClient.call_async(rq)
+            rclpy.spin_until_future_complete(
+                self.node, future, timeout_sec=1.0)
+
+            rs: NutreeJsonRequest.Response = future.result()
+            if rs:
+                self.tree = NutreeTree().load(StringIO(rs.json))
+
+                self.node.get_logger().info("Set tree from dhtt_plot")
+                self.node.get_logger().debug(self.tree.format)
+                return True
+            else:
+                self.node.get_logger().error("Did not get tree from dhtt_plot")
+                return False
+        else:
+            print("usingdHTT is False, cannot set tree from dHTT")
+            return False
 
     def createTree(self, children: set):
+        """Creates a tree for reordering operations, top level and and a set of children.
+
+        Takes a set of children, intended to be behavior nodes, and adds them to the Nutree and dHTT server"""
         self.tree.add("AND")
         for child in children:
             self.tree.first_child().add(child)
+
+        # TODO add nodes to tree server
 
     def resetTree(self):
         self.tree.clear()
         self.createTree()
 
-    def minimumInclusiveScope(self, nodes: "list[Node]") -> Node:
+        # TODO reset tree server
+
+    def minimumInclusiveScope(self, nodes: "list[NutreeNode]") -> NutreeNode:
         minNode = self.findShallowestNode(nodes)
 
         assert (minNode != None)
 
-        currentParent: Node = minNode.parent
+        currentParent: NutreeNode = minNode.parent
         foundCommonAncestor = False
         while currentParent != None and foundCommonAncestor == False:
             for x in nodes:
@@ -36,20 +132,20 @@ class HTT:
         assert currentParent != None
         return currentParent
 
-    def findShallowestNode(self, nodes: "list[Node]"):
-        minNode: Node = None
+    def findShallowestNode(self, nodes: "list[NutreeNode]"):
+        minNode: NutreeNode = None
         for x in nodes:
             assert (x.is_leaf)
             if minNode == None or x.depth() < minNode.depth():
                 minNode = x
         return minNode
 
-    def maximumExclusiveScope(self, include: "list[Node]", exclude: "list[Node]") -> "list[Node]":
+    def maximumExclusiveScope(self, include: "list[NutreeNode]", exclude: "list[NutreeNode]") -> "list[NutreeNode]":
         maxList = include
 
         minNode = self.findShallowestNode(include)
 
-        currentParent: Node = minNode.parent
+        currentParent: NutreeNode = minNode.parent
         while currentParent.parent != None:
             parentSet = self.setOfAllChildren(currentParent)
             includeSet = self.setOfAllChildren(include)
@@ -63,14 +159,14 @@ class HTT:
 
         return maxList
 
-    def setOfAllChildren(self, tree: Tree) -> set:
+    def setOfAllChildren(self, tree: NutreeTree) -> set:
         return set([x.name for x in tree])
 
-    def reorder(self, before: "list[Node]", after: "list[Node]", debug=False, autoPrune=True):
-        scope: Node = self.minimumInclusiveScope(before + after)
-        beforePrime: Tree = self.primeSelect(
+    def reorder(self, before: "list[NutreeNode]", after: "list[NutreeNode]", debug=False, autoPrune=True):
+        scope: NutreeNode = self.minimumInclusiveScope(before + after)
+        beforePrime: NutreeTree = self.primeSelect(
             include=before, exclude=after)
-        afterPrime: Tree = self.primeSelect(
+        afterPrime: NutreeTree = self.primeSelect(
             include=after, exclude=before)
 
         # we are deleting nodes, so if we want to refer to before/after again, we go by names
@@ -132,7 +228,7 @@ class HTT:
                 f'Tree after reorder {[x.name for x in before]} before {[x.name for x in after]}:')
             print(self.tree.format(), '\n')
 
-    def prune(self, node: "Node" = None, combine: bool = False):
+    def prune(self, node: "NutreeNode" = None, combine: bool = False):
         """
         parameter combine: should be false always unless pretty printing the tree. It is essential 
         that the user's ordering is not altered (ie. reorder(A,B) and reorder(B,C) is not the same 
@@ -149,7 +245,7 @@ class HTT:
             node = self.tree.first_child()
 
         if node.name in HTT.TASKNODES:
-            nextRecurse: list[Node] = node.children
+            nextRecurse: list[NutreeNode] = node.children
 
             if len(node.children) <= 1:
                 nextRecurse = [node.parent]
@@ -174,18 +270,18 @@ class HTT:
         else:
             return
 
-    def filteredHTT(self, nodes: "list[Node]") -> 'HTT':
+    def filteredHTT(self, nodes: "list[NutreeNode]") -> 'HTT':
         newHTT = HTT()
-        newHTT.tree = Tree.from_dict(self.tree.to_dict_list())
+        newHTT.tree = NutreeTree.from_dict(self.tree.to_dict_list())
         newHTT.tree.filter(lambda node: node.name in [
             x.name for x in nodes] or node.name in HTT.TASKNODES)
         newHTT.prune()
         return newHTT
 
-    def primeSelect(self, include: "list[Node]", exclude: "list[Node]") -> Tree:
+    def primeSelect(self, include: "list[NutreeNode]", exclude: "list[NutreeNode]") -> NutreeTree:
         primeTree = self.maximumExclusiveScope(
             include=include, exclude=exclude)
-        primeSet: list[Node] = []
+        primeSet: list[NutreeNode] = []
         for tree in primeTree:
             for node in tree.iterator(add_self=True):
                 if node.name not in HTT.TASKNODES:
@@ -195,44 +291,6 @@ class HTT:
 
         return self.filteredHTT(primeSet).tree
 
-    def checkOrder(self, before: 'list[Node]', after: 'list[Node]'):
-        ordered = self.checkOrderHelper(self.tree.first_child(), before, after)
-        latestBefore = max([ordered.index(node)
-                            for node in before if node in ordered], default=None)
-        earliestAfter = min([ordered.index(node)
-                            for node in after if node in ordered], default=None)
-
-        if latestBefore and earliestAfter:
-            if latestBefore < earliestAfter:
-                return True
-            else:
-                return False
-        else:
-            return True
-
-    def checkOrderHelper(self, tree: Node, before: 'list[Node]', after: 'list[Node]') -> 'list[Node]':
-        """
-        base case: node is leaf, return node
-        recurse: node is THEN, recurse on children in order, append results
-        recurse: node is AND, recurse on children in any order, append results
-        """
-        ordered: 'list[Node]' = []
-
-        if tree.has_children == False:
-            return [tree]
-        elif tree.name == 'THEN':
-            for childIndex in range(len(tree.children)):  # in order
-                ret = self.checkOrderHelper(
-                    tree.children[childIndex], before, after)
-                for node in ret:
-                    ordered.append(node)
-        elif tree.name == 'AND':
-            for child in tree.children:
-                ret = self.checkOrderHelper(child, before, after)
-                for node in ret:
-                    ordered.append(node)
-
-        return ordered
 
 def main():
     print('Hi from dhtt_reorder.')

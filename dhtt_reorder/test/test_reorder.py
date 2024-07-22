@@ -1,7 +1,7 @@
 import pytest
 import string
 from nutree import Tree, Node
-from testTree import HTT
+from dhtt_reorder.dHTT_reorder import HTT
 import re
 
 

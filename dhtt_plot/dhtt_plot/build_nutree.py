@@ -1,8 +1,6 @@
 import rclpy
 import rclpy.logging
 import rclpy.node
-import pathlib
-import yaml
 
 from dhtt_msgs.srv import ModifyRequest, FetchRequest, NutreeJsonRequest
 from dhtt_msgs.msg import Subtree as dHTTSubtree, Node as dHTTNode
@@ -24,10 +22,37 @@ reordering operations before sending commands to the dhtt server.
 class dHTTHelpers():
     ROOTNAME = 'ROOT_0'
     TASKNODES = {dHTTNode.AND, dHTTNode.OR, dHTTNode.THEN}
+    TASKNODEPLUGINS = {"dhtt_plugins::AndBehavior",
+                       "dhtt_plugins::OrBehavior", "dhtt_plugins::ThenBehavior"}
+    TASKNODESTOPLUGINS = {dHTTNode.AND: "dhtt_plugins::AndBehavior",
+                          dHTTNode.OR: "dhtt_plugins::OrBehavior", dHTTNode.THEN: "dhtt_plugins::ThenBehavior"}
 
-    def isTaskNode(self, node: dHTTNode):
-        # regex check
-        pass
+    def isTaskNode(node: dHTTNode | nutreeNode) -> bool:
+        nodeType: str = None
+        if isinstance(node, dHTTNode):
+            nodeType = node.plugin_name
+        elif isinstance(node, nutreeNode):
+            nodeType = node.get_meta(key="type")
+
+        return nodeType in dHTTHelpers.TASKNODEPLUGINS
+
+    def isUnorderedNode(node: dHTTNode | nutreeNode) -> bool:
+        nodeType: str = None
+        if isinstance(node, dHTTNode):
+            nodeType = node.plugin_name
+        elif isinstance(node, nutreeNode):
+            nodeType = node.get_meta(key="type")
+
+        return nodeType in {dHTTHelpers.TASKNODESTOPLUGINS[dHTTNode.AND]}
+    
+    def isOrderedNode(node: dHTTNode | nutreeNode) -> bool:
+        nodeType: str = None
+        if isinstance(node, dHTTNode):
+            nodeType = node.plugin_name
+        elif isinstance(node, nutreeNode):
+            nodeType = node.get_meta(key="type")
+
+        return nodeType in {dHTTHelpers.TASKNODESTOPLUGINS[dHTTNode.THEN]}
 
 
 class NutreeClient(rclpy.node.Node):

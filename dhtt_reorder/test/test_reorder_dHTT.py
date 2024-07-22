@@ -1,5 +1,6 @@
 import pytest
-from dhtt_plot.build_nutree import dHTTHelpers, NutreeClient, NutreeServer
+from dhtt_plot.build_nutree import dHTTHelpers
+from dhtt_reorder.dHTT_reorder import HTT
 
 import rclpy
 import rclpy.logging
@@ -13,31 +14,23 @@ from dhtt_msgs.msg import Subtree, Node, NodeStatus
 from nutree import Tree as nutreeTree, Node as nutreeNode, IterMethod
 from io import StringIO
 
-"""Tests for build_nutree.py: NutreeClient and NutreeServer
-
-Make sure you have the dhtt and dhtt_plot nodes running:
-    ros2 run dhtt start_server
-    ros2 run dhtt_plot build_nutree_server
-"""
-
-
 class ServerNode (rclpy.node.Node):
 
     def __init__(self):
         super().__init__('test_node')
         self.modifysrv = self.create_client(ModifyRequest, '/modify_service')
-        assert self.modifysrv.wait_for_service(timeout_sec=5.0)
+        assert self.modifysrv.wait_for_service(timeout_sec=1.0)
 
         self.fetchsrv = self.create_client(FetchRequest, '/fetch_service')
-        assert self.fetchsrv.wait_for_service(timeout_sec=5.0)
+        assert self.fetchsrv.wait_for_service(timeout_sec=1.0)
 
         self.controlsrv = self.create_client(
             ControlRequest, '/control_service')
-        assert self.controlsrv.wait_for_service(timeout_sec=5.0)
+        assert self.controlsrv.wait_for_service(timeout_sec=1.0)
 
         self.historysrv = self.create_client(
             HistoryRequest, '/history_service')
-        assert self.historysrv.wait_for_service(timeout_sec=5.0)
+        assert self.historysrv.wait_for_service(timeout_sec=1.0)
 
         self.root_status_sub = self.create_subscription(
             NodeStatus, '/root_status', self.root_status_listener, 10)
@@ -47,7 +40,7 @@ class ServerNode (rclpy.node.Node):
         self.nutreeServerClient = self.create_client(
             NutreeJsonRequest, '/nutree_json_service')
         assert self.nutreeServerClient.wait_for_service(
-            timeout_sec=5.0), "Did you forget?: ros2 run dhtt_plot build_nutree_server"
+            timeout_sec=1.0), "Did you forget?: ros2 run dhtt_plot build_nutree_server"
 
         self.root_state = 0
         self.node_states = {}
@@ -123,63 +116,12 @@ class TestBuildNutreeClient:
         assert modifyRS.success == True
 
     def test_exampleTree(self):
-        client = NutreeClient()
+        client = HTT(withdHTT=True)
+
         self.createExampleTree(
             f'{pathlib.Path(__file__).parent.resolve()}/yaml/exampleABCD.yaml')
 
-        rs = client.getTree()
-        assert rs and len(rs.found_subtrees) > 0
-
-        self.reset_tree()
-
-    def test_buildNutree(self):
-        client = NutreeClient()
-        self.createExampleTree(
-            f'{pathlib.Path(__file__).parent.resolve()}/yaml/exampleABCD.yaml')
-        tree = client.buildNutreeFromSubtrees(client.getTree().found_subtrees)
-        assert ','.join(
-            x.name for x in tree) == 'ROOT_0,TopAnd_1,A_2,B_3,C_4,D_5'
-
-        self.reset_tree()
-
-        self.createExampleTree(
-            f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
-        tree = client.buildNutreeFromSubtrees(client.getTree().found_subtrees)
-        assert ','.join(
-            x.name for x in tree) == 'ROOT_0,TopmostThen_1,PlacePlacemat_2,MidParentAnd_3,LowParentOr_4,PlaceWineGlass_5,PlaceCup_6,PlaceSodaCan_7,PlaceSpoon_8,PlaceFork_9,PlaceKnife_10,LowParentThen_11,PlacePlate_12,PlaceBowl_13'
-
-        self.reset_tree()
-
-    # Server features
-    def test_plots(self):
-        server = NutreeServer()
-        self.createExampleTree(
-            f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
-
-        server.saveNutreeMermaid(server.nutreeClient)
-        server.drawNutreeDot(server.nutreeClient)
-        assert True
-
-    def test_json(self):
-        server = NutreeServer()
-        self.createExampleTree(
-            f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
-
-        json = StringIO(server.nutreeJsonToString(server.nutreeClient))
-        assert nutreeTree().load(json)
-
-    def test_jsonServer(self):
-        self.createExampleTree(
-            f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
-
-        rq = NutreeJsonRequest.Request()
-        future = self.node.nutreeServerClient.call_async(rq)
-        rclpy.spin_until_future_complete(self.node, future)
-        rs = future.result()
+        rs = client.setTreeFromdHTT()
         assert rs
 
         self.reset_tree()
-
-class TestdHTTHelpers:
-    # TODO
-    pass

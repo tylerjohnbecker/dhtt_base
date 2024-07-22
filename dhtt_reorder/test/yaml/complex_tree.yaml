@@ -1,0 +1,107 @@
+# this task tree is taken from fig 2 of Luke's paper for htts
+NodeList: 
+  - 'TopmostThen'
+  - 'PlacePlacemat'
+  - 'MidParentAnd'
+  - 'LowParentOr'
+  - 'PlaceWineGlass'
+  - 'PlaceCup'
+  - 'PlaceSodaCan'
+  - 'PlaceSpoon'
+  - 'PlaceFork'
+  - 'PlaceKnife'
+  - 'LowParentThen'
+  - 'PlacePlate'
+  - 'PlaceBowl'
+          
+
+expected_order: 
+  - 'PlacePlacemat'
+  - 'PlaceFork'
+  - 'PlaceCup'
+  - 'PlaceSpoon'
+  - 'PlacePlate'
+  - 'PlaceKnife'
+  - 'PlaceBowl'
+                
+
+# the params for each behavior should be filled in wherever there is a n/a
+Nodes:
+  TopmostThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: []
+  PlacePlacemat:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'TopmostThen'
+    params: ["activation_potential: 4.0"]
+  MidParentAnd:
+    type: 1
+    behavior_type: 'dhtt_plugins::AndBehavior'
+    robot: 0
+    parent: 'TopmostThen'
+    params: []
+  LowParentOr:
+    type: 3
+    behavior_type: 'dhtt_plugins::OrBehavior'
+    robot: 0
+    parent: 'MidParentAnd'
+    params: []
+  PlaceWineGlass:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'LowParentOr'
+    params: ["activation_potential: 0.0"]
+  PlaceCup:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'LowParentOr'
+    params: ["activation_potential: 9.0"]
+  PlaceSodaCan:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'LowParentOr'
+    params: ["activation_potential: 0.0"]
+  PlaceSpoon:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'MidParentAnd'
+    params: ["activation_potential: 8.0"]
+  PlaceFork:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'MidParentAnd'
+    params: ["activation_potential: 10.0"]
+  PlaceKnife:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'MidParentAnd'
+    params: ["activation_potential: 6.0"]
+  LowParentThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'MidParentAnd'
+    params: []
+  PlacePlate:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'LowParentThen'
+    params: ["activation_potential: 9.0"]
+  PlaceBowl:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'LowParentThen'
+    params: ["activation_potential: 5.0"]
