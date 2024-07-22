@@ -656,6 +656,7 @@ namespace dhtt
 			std::string blank = this->remove_node( blank_rs, iter );
 
 		this->history.clear();
+		this->total_nodes_added = 1; // root is node 0
 
 		this->node_map["ROOT_0"]->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
