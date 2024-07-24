@@ -359,3 +359,30 @@ class TestReorderHTT:
         after = [htt.tree['d']]
         htt.reorder(before, after, debug=True)
         pass
+
+    def test_helpers(self):
+        htt = HTT()
+        htt.createTree({'a', 'b', 'c', 'd'})
+        before = [htt.tree['a']]
+        after = [htt.tree['b']]
+        htt.reorder(before, after)
+
+        before = [htt.tree['b']]
+        after = [htt.tree['c']]
+        htt.reorder(before, after)
+
+        before = [htt.tree['c']]
+        after = [htt.tree['a']]
+        htt.reorder(before, after)
+
+        assert htt.isTaskNode(htt.tree.find_first('AND'))
+        assert htt.isTaskNode(htt.tree.find_first('THEN'))
+        assert htt.isTaskNode(htt.tree.find_first('a')) == False
+
+        assert htt.isThenNode(htt.tree.find_first('THEN'))
+        assert htt.isThenNode(htt.tree.find_first('AND')) == False
+        assert htt.isThenNode(htt.tree.find_first('a')) == False
+
+        assert htt.isAndNode(htt.tree.find_first('AND'))
+        assert htt.isAndNode(htt.tree.find_first('THEN')) == False
+        assert htt.isAndNode(htt.tree.find_first('a')) == False

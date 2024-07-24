@@ -10,9 +10,11 @@ import yaml
 
 from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest, NutreeJsonRequest
 from dhtt_msgs.msg import Subtree, Node, NodeStatus
+from dhtt_msgs.msg import Subtree as dHTTSubtree, Node as dHTTNode
 
 from nutree import Tree as nutreeTree, Node as nutreeNode, IterMethod
 from io import StringIO
+
 
 class ServerNode (rclpy.node.Node):
 
@@ -54,7 +56,7 @@ class ServerNode (rclpy.node.Node):
         self.node_states[node_name] = data
 
 
-class TestBuildNutreeClient:
+class TestdHTTReorder:
     rclpy.init()
     node = ServerNode()
 
@@ -125,3 +127,31 @@ class TestBuildNutreeClient:
         assert rs
 
         self.reset_tree()
+
+        client = HTT(withdHTT=False)
+        rs = client.setTreeFromdHTT()
+        assert rs == False
+
+    def test_helpers(self):
+        htt = HTT(withdHTT=True)
+        self.createExampleTree(
+            f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
+        htt.setTreeFromdHTT()
+        self.reset_tree()
+
+        andNode = next(x for x in htt.tree if x.data.type == dHTTNode.AND)
+        thenNode = next(x for x in htt.tree if x.data.type == dHTTNode.THEN)
+        behaviorNode = next(
+            x for x in htt.tree if x.data.type == dHTTNode.BEHAVIOR)
+
+        assert htt.isTaskNode(andNode)
+        assert htt.isTaskNode(thenNode)
+        assert htt.isTaskNode(behaviorNode) == False
+
+        assert htt.isThenNode(andNode) == False
+        assert htt.isThenNode(thenNode)
+        assert htt.isThenNode(behaviorNode) == False
+
+        assert htt.isAndNode(andNode)
+        assert htt.isAndNode(thenNode) == False
+        assert htt.isAndNode(behaviorNode) == False

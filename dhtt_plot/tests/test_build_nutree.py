@@ -1,5 +1,5 @@
 import pytest
-from dhtt_plot.build_nutree import dHTTHelpers, NutreeClient, NutreeServer
+from dhtt_plot.build_nutree import dHTTHelpers, NutreeClient, NutreeServer, HashabledHTTNode
 
 import rclpy
 import rclpy.logging
@@ -12,6 +12,7 @@ from dhtt_msgs.msg import Subtree, Node, NodeStatus
 
 from nutree import Tree as nutreeTree, Node as nutreeNode, IterMethod
 from io import StringIO
+import jsonpickle
 
 """Tests for build_nutree.py: NutreeClient and NutreeServer
 
@@ -132,6 +133,24 @@ class TestBuildNutreeClient:
 
         self.reset_tree()
 
+    def test_HashabledHTTNode(self):
+        client = NutreeClient()
+        self.createExampleTree(
+            f'{pathlib.Path(__file__).parent.resolve()}/yaml/exampleABCD.yaml')
+
+        node = client.getTree().found_subtrees[0].tree_nodes[0]
+        hashableNode = HashabledHTTNode(node)
+        assert hash(hashableNode)
+        assert hashableNode.toJson()
+        assert str(hashableNode == hashableNode.toJson)
+        assert jsonpickle.decode(hashableNode.toJson()
+                                 ).__dict__ == hashableNode.__dict__
+
+        assert hashableNode.todHTTNode()
+        # TODO test this better
+
+        self.reset_tree()
+
     def test_buildNutree(self):
         client = NutreeClient()
         self.createExampleTree(
@@ -146,7 +165,12 @@ class TestBuildNutreeClient:
             f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
         tree = client.buildNutreeFromSubtrees(client.getTree().found_subtrees)
         assert ','.join(
-            x.name for x in tree) == 'ROOT_0,TopmostThen_1,PlacePlacemat_2,MidParentAnd_3,LowParentOr_4,PlaceWineGlass_5,PlaceCup_6,PlaceSodaCan_7,PlaceSpoon_8,PlaceFork_9,PlaceKnife_10,LowParentThen_11,PlacePlate_12,PlaceBowl_13'
+            x.data.node_name for x in tree) == 'ROOT_0,TopmostThen_1,PlacePlacemat_2,MidParentAnd_3,LowParentOr_4,PlaceWineGlass_5,PlaceCup_6,PlaceSodaCan_7,PlaceSpoon_8,PlaceFork_9,PlaceKnife_10,LowParentThen_11,PlacePlate_12,PlaceBowl_13'
+
+        assert tree['TopmostThen_1'].get_meta(
+            'type') in dHTTHelpers.TASKNODEPLUGINS
+        assert tree['TopmostThen_1'].get_meta(
+            'type') == 'dhtt_plugins::ThenBehavior'
 
         self.reset_tree()
 
@@ -160,13 +184,18 @@ class TestBuildNutreeClient:
         server.drawNutreeDot(server.nutreeClient)
         assert True
 
+        self.reset_tree()
+
     def test_json(self):
         server = NutreeServer()
         self.createExampleTree(
             f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
 
         json = StringIO(server.nutreeJsonToString(server.nutreeClient))
-        assert nutreeTree().load(json)
+        newTree = nutreeTree().load(json, mapper=dHTTHelpers.nutreeDeserializerMapper)
+        assert newTree
+
+        self.reset_tree()
 
     def test_jsonServer(self):
         self.createExampleTree(
@@ -178,7 +207,12 @@ class TestBuildNutreeClient:
         rs = future.result()
         assert rs
 
+        json = StringIO(rs.json)
+        newTree = nutreeTree().load(json, mapper=dHTTHelpers.nutreeDeserializerMapper)
+        assert newTree
+
         self.reset_tree()
+
 
 class TestdHTTHelpers:
     # TODO

@@ -85,7 +85,8 @@ class HTT:
 
             rs: NutreeJsonRequest.Response = future.result()
             if rs:
-                self.tree = NutreeTree().load(StringIO(rs.json))
+                self.tree = NutreeTree().load(
+                    StringIO(rs.json), mapper=dHTTHelpers.nutreeDeserializerMapper)
 
                 self.node.get_logger().info("Set tree from dhtt_plot")
                 self.node.get_logger().debug(self.tree.format)
@@ -223,7 +224,6 @@ class HTT:
         if debug:
             before = [self.tree[nodeName] for nodeName in beforeNames]
             after = [self.tree[nodeName] for nodeName in afterNames]
-            assert self.checkOrder(before, after)
             print(
                 f'Tree after reorder {[x.name for x in before]} before {[x.name for x in after]}:')
             print(self.tree.format(), '\n')

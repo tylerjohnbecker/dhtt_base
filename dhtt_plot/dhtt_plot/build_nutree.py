@@ -6,8 +6,12 @@ from dhtt_msgs.srv import ModifyRequest, FetchRequest, NutreeJsonRequest
 from dhtt_msgs.msg import Subtree as dHTTSubtree, Node as dHTTNode
 
 from nutree import Tree as nutreeTree, Node as nutreeNode, IterMethod
+# TODO capitalize nutreeTree...
 
 from io import StringIO
+import jsonpickle
+
+# TODO rosdep python packages https://docs.ros.org/en/foxy/Tutorials/Intermediate/Rosdep.html
 
 """Package for turning a dHTT into a Nutree.
 
@@ -19,6 +23,47 @@ reordering operations before sending commands to the dhtt server.
 """
 
 
+class HashabledHTTNode:
+    """Provides a struct with non-hashable dHTTNode fields stripped
+    """
+
+    def __init__(self, node: dHTTNode):
+        # head
+        self.node_name = node.node_name
+        self.plugin_name = node.plugin_name
+        self.parent = node.parent
+        self.parent_name = node.parent_name
+        self.children = tuple(node.children)
+        self.child_name = tuple(node.child_name)
+        self.params = tuple(node.params)
+        self.type = node.type
+        self.plugin_name = node.plugin_name
+        self.owned_resources = tuple(node.owned_resources)
+        # node_status
+
+    def __str__(self) -> str:
+        return self.toJson()
+
+    def toJson(self):
+        return jsonpickle.encode(self)
+
+    def todHTTNode(self) -> dHTTNode:
+        ret = dHTTNode()
+        # head
+        ret.node_name = self.node_name
+        ret.plugin_name = self.plugin_name
+        ret.parent = self.parent
+        ret.parent_name = self.parent_name
+        ret.children = list(self.children)
+        ret.child_name = list(self.child_name)
+        ret.params = list(self.params)
+        ret.type = self.type
+        ret.plugin_name = self.plugin_name
+        ret.owned_resources = list(self.owned_resources)
+        # node_status
+        return ret
+
+
 class dHTTHelpers():
     ROOTNAME = 'ROOT_0'
     TASKNODES = {dHTTNode.AND, dHTTNode.OR, dHTTNode.THEN}
@@ -27,32 +72,39 @@ class dHTTHelpers():
     TASKNODESTOPLUGINS = {dHTTNode.AND: "dhtt_plugins::AndBehavior",
                           dHTTNode.OR: "dhtt_plugins::OrBehavior", dHTTNode.THEN: "dhtt_plugins::ThenBehavior"}
 
-    def isTaskNode(node: dHTTNode | nutreeNode) -> bool:
+    def isTaskNode(node: 'dHTTNode|nutreeNode') -> bool:
         nodeType: str = None
         if isinstance(node, dHTTNode):
-            nodeType = node.plugin_name
+            nodeType = node.type
         elif isinstance(node, nutreeNode):
-            nodeType = node.get_meta(key="type")
+            nodeType = node.data.type
 
-        return nodeType in dHTTHelpers.TASKNODEPLUGINS
+        return nodeType in dHTTHelpers.TASKNODES
 
-    def isUnorderedNode(node: dHTTNode | nutreeNode) -> bool:
+    def isUnorderedNode(node: 'dHTTNode|nutreeNode') -> bool:
         nodeType: str = None
         if isinstance(node, dHTTNode):
-            nodeType = node.plugin_name
+            nodeType = node.type
         elif isinstance(node, nutreeNode):
-            nodeType = node.get_meta(key="type")
+            nodeType = node.data.type
 
-        return nodeType in {dHTTHelpers.TASKNODESTOPLUGINS[dHTTNode.AND]}
-    
-    def isOrderedNode(node: dHTTNode | nutreeNode) -> bool:
+        return nodeType in {dHTTNode.AND}
+
+    def isOrderedNode(node: 'dHTTNode|nutreeNode') -> bool:
         nodeType: str = None
         if isinstance(node, dHTTNode):
-            nodeType = node.plugin_name
+            nodeType = node.type
         elif isinstance(node, nutreeNode):
-            nodeType = node.get_meta(key="type")
+            nodeType = node.data.type
 
-        return nodeType in {dHTTHelpers.TASKNODESTOPLUGINS[dHTTNode.THEN]}
+        return nodeType in {dHTTNode.THEN}
+
+    def nutreeSerializeMapper(node: nutreeNode, data) -> dict:
+        # we are using a custom object, so data comes in empty
+        return {'str': str(node.data)}  # this should result in a jsonpickle
+
+    def nutreeDeserializerMapper(parentNode: nutreeNode, data: dict) -> HashabledHTTNode:
+        return jsonpickle.decode(data['str'])
 
 
 class NutreeClient(rclpy.node.Node):
@@ -94,12 +146,19 @@ class NutreeClient(rclpy.node.Node):
 
         Intended to follow from a FetchRequest.Response.found_subtrees
         """
-        tree = nutreeTree()
-        nodes: 'list[dHTTNode]' = []
-        addedNodes: 'list[dHTTNode]' = []
+
+        # type dHTTNode is not hashable we use a restricted type hashabledHTTNode instead
+        # all we care about is node name and node type in this case, we can add other fields
+        # if necessary
+        #
+        # see nutreeTree:calc_data_id(tree, data), where tree is a self, we don't
+        # need that here
+        tree = nutreeTree()  # expect all nodes to be type hashabledHTTNode
+        nodes: 'list[HashabledHTTNode]' = []
+        addedNodes: 'list[HashabledHTTNode]' = []
         for subtree in subtrees:
             for node in subtree.tree_nodes:
-                nodes.append(node)
+                nodes.append(HashabledHTTNode(node))
 
         rootIndex = [i for i in range(
             len(nodes)) if nodes[i].node_name == dHTTHelpers.ROOTNAME]
@@ -115,13 +174,14 @@ class NutreeClient(rclpy.node.Node):
 
                 if node.parent_name in [x.node_name for x in addedNodes]:
                     nodeToAdd = notAddedNodes.pop(notAddedNodes.index(node))
-                    tree[nodeToAdd.parent_name].add(nodeToAdd.node_name).set_meta(
-                        'type', nodeToAdd.plugin_name)
+                    nodeToAddParent = next(
+                        x for x in addedNodes if x.node_name == node.parent_name)
+                    tree[nodeToAddParent].add(nodeToAdd)
                     addedNodes.append(nodeToAdd)
+
                 elif node.node_name == dHTTHelpers.ROOTNAME:
                     nodeToAdd = notAddedNodes.pop(notAddedNodes.index(node))
-                    tree.add(nodeToAdd.node_name).set_meta(
-                        'type', nodeToAdd.plugin_name)
+                    tree.add(nodeToAdd)
                     addedNodes.append(nodeToAdd)
 
         self.get_logger().info("Built Nutree tree")
@@ -168,7 +228,7 @@ class NutreeServer(rclpy.node.Node):
         subtrees = client.getTree().found_subtrees
         tree = client.buildNutreeFromSubtrees(subtrees)
         f = StringIO()
-        tree.save(f)
+        tree.save(f, mapper=dHTTHelpers.nutreeSerializeMapper)
         self.get_logger().info("Produced Nutree json")
         self.get_logger().debug(str(f.getvalue()))
         return f.getvalue()
