@@ -124,9 +124,8 @@ class TestdHTTReorder:
             f'{pathlib.Path(__file__).parent.resolve()}/yaml/exampleABCD.yaml')
 
         rs = client.setTreeFromdHTT()
-        assert rs
-
         self.reset_tree()
+        assert rs
 
         client = HTT(withdHTT=False)
         rs = client.setTreeFromdHTT()
