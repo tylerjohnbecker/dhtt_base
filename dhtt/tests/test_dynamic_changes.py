@@ -679,3 +679,98 @@ class TestDynamicChanges:
 			# run experiment 3 and verify that it works
 
 		pass
+
+	def test_reparent(self):
+
+		with TestDynamicChanges.lock:
+			self.initialize()
+			self.reset_tree()
+			self.add_from_yaml("/test_descriptions/then_parent_and.yaml")
+			# self.start_tree()
+			# self.wait_for_node_in_state("ParentThen", NodeStatus.WORKING)
+			# self.interrupt_tree()
+			# self.wait_for_waiting()
+
+			# reparent
+			modify_rq = ModifyRequest.Request()
+			modify_rq.type = ModifyRequest.Request.REPARENT
+			modify_rq.to_modify = ["SecondTask_4"]  # was under MidParentAnd_3
+			modify_rq.new_parent = "ParentThen_1"
+
+			modify_future = TestDynamicChanges.node.modifysrv.call_async(modify_rq)
+			rclpy.spin_until_future_complete(TestDynamicChanges.node, modify_future)
+
+			modify_rs = modify_future.result()
+			assert modify_rs.success
+
+			assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('ParentThen_1', 'ROOT_0'),
+                                                                                                   ('FirstTask_2', 'ParentThen_1'), ('MidParentAnd_3', 'ParentThen_1'), ('SecondTask_4', 'ParentThen_1'), ('ThirdTask_5', 'MidParentAnd_3')]
+
+			self.start_tree()
+
+			# wait until execution finished
+			self.wait_for_finished_execution()
+
+			history = self.get_history()
+			expected = ["FirstTask", "NewNode", "SecondTask", "ThirdTask"]
+			# self.compare_history_to_expected(history, expected)
+
+			self.reset_tree()
+
+	def test_reparent_negatives(self):
+
+		with TestDynamicChanges.lock:
+			self.initialize()
+			self.reset_tree()
+			self.add_from_yaml("/test_descriptions/then_parent_and.yaml")
+			self.start_tree()
+			self.wait_for_node_in_state("ParentThen", NodeStatus.WORKING)
+			self.interrupt_tree()
+			self.wait_for_waiting()
+
+			# reparent root
+			modify_rq = ModifyRequest.Request()
+			modify_rq.type = ModifyRequest.Request.REPARENT
+			modify_rq.to_modify = ["ROOT_0"]
+			modify_rq.new_parent = "ParentThen_1"
+			modify_future = TestDynamicChanges.node.modifysrv.call_async(modify_rq)
+			rclpy.spin_until_future_complete(TestDynamicChanges.node, modify_future)
+			assert modify_future.result().success == False
+
+			# behavior node parent
+			modify_rq = ModifyRequest.Request()
+			modify_rq.type = ModifyRequest.Request.REPARENT
+			modify_rq.to_modify = ["SecondTask_4"]
+			modify_rq.new_parent = "ThirdTask_5"
+			modify_future = TestDynamicChanges.node.modifysrv.call_async(modify_rq)
+			rclpy.spin_until_future_complete(TestDynamicChanges.node, modify_future)
+			assert modify_future.result().success == False
+
+			# nonexistant to_modify
+			modify_rq = ModifyRequest.Request()
+			modify_rq.type = ModifyRequest.Request.REPARENT
+			modify_rq.to_modify = ["foobar"]
+			modify_rq.new_parent = "ParentThen_1"
+			modify_future = TestDynamicChanges.node.modifysrv.call_async(modify_rq)
+			rclpy.spin_until_future_complete(TestDynamicChanges.node, modify_future)
+			assert modify_future.result().success == False
+
+			# nonexistant new_parent
+			modify_rq = ModifyRequest.Request()
+			modify_rq.type = ModifyRequest.Request.REPARENT
+			modify_rq.to_modify = ["SecondTask_4"]
+			modify_rq.new_parent = "foobar"
+			modify_future = TestDynamicChanges.node.modifysrv.call_async(modify_rq)
+			rclpy.spin_until_future_complete(TestDynamicChanges.node, modify_future)
+			assert modify_future.result().success == False
+
+			# reparent to self
+			modify_rq = ModifyRequest.Request()
+			modify_rq.type = ModifyRequest.Request.REPARENT
+			modify_rq.to_modify = ["SecondTask_4"]
+			modify_rq.new_parent = "SecondTask_4"
+			modify_future = TestDynamicChanges.node.modifysrv.call_async(modify_rq)
+			rclpy.spin_until_future_complete(TestDynamicChanges.node, modify_future)
+			assert modify_future.result().success == False
+
+			self.reset_tree()

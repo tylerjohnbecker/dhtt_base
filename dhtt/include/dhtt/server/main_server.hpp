@@ -134,6 +134,19 @@ namespace dhtt
 		std::string remove_node( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string to_remove );
 
 		/**
+		 * \brief Reparents \p to_parent to \p new_parent
+		 *
+		 * Sets the parent field of \p to_parent and calls dhtt::Node::remove_child() on the parent
+		 *
+		 * \param response shared_ptr to the response which will be returned to the user. Modified with any successfully reparented node's name.
+		 * \param to_parent exact name of the node to reparent
+		 * \param new_parent exact name of the new parent \p to_parent should become a child of
+		 *
+		 * \return string with exception information or empty string if successful
+		 */
+		std::string reparent_node(const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string to_reparent, std::string new_parent);
+
+		/**
 		 * \brief Changes params of a given node name
 		 * 
 		 * NOT IMPLEMENTED YET

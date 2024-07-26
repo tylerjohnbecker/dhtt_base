@@ -226,6 +226,37 @@ namespace dhtt
 			return;
 		}
 
+		if (request->type == dhtt_msgs::srv::ModifyRequest::Request::REPARENT)
+		{
+			std::lock_guard<boost::mutex> guard(this->modify_mut);
+
+			if ((int)request->to_modify.size() == 0)
+			{
+				response->success = false;
+				response->error_msg = "Failed to reparent nodes because no nodes to remove were given.";
+
+				RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+
+				return;
+			}
+
+			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
+			{
+				response->error_msg = this->reparent_node(request, response, *iter, request->new_parent);
+				response->success = response->error_msg.empty();
+
+				// exit early if modification fails
+				if (not response->success)
+				{
+					RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+
+					return;
+				}
+			}
+
+			return;
+		}
+
 		// currently skipping other modification types
 		response->error_msg = "Unknown request type " + std::to_string(request->type) + " chosen. Returning in error.";
 		response->success = false;
@@ -606,8 +637,110 @@ namespace dhtt
 
 		return "";
 	}
-	
-	std::string MainServer::change_params( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request )
+
+	std::string MainServer::reparent_node(const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string to_reparent, std::string new_parent)
+	{
+		auto find_to_reparent = [&](dhtt_msgs::msg::Node check)
+		{ return to_reparent.compare(check.node_name) == 0; };
+		auto find_new_parent = [&](dhtt_msgs::msg::Node check)
+		{ return new_parent.compare(check.node_name) == 0; };
+
+		std::vector<dhtt_msgs::msg::Node>::iterator found_to_reparent = std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), find_to_reparent);
+		std::vector<dhtt_msgs::msg::Node>::iterator found_old_parent; // initialized after we check valid to_reparent
+		std::vector<dhtt_msgs::msg::Node>::iterator found_new_parent = std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), find_new_parent);
+
+		std::shared_ptr<dhtt::Node> toReparentdHTT;
+		std::shared_ptr<dhtt::Node> oldParentdHTT;
+		std::shared_ptr<dhtt::Node> newParentdHTT;
+
+		if (to_reparent == new_parent)
+		{
+			return "Cannot reparent to self";
+		}
+		if (found_to_reparent == this->node_list.tree_nodes.end())
+		{
+			return "Node " + to_reparent + " not found in tree. Returning in error.";
+		}
+		if (found_new_parent == this->node_list.tree_nodes.end())
+		{
+			return "Node " + new_parent + " not found in tree. Returning in error.";
+		}
+		if (not this->node_map[new_parent]->logic->can_add_child())
+		{
+			return "Parent cannot be a BEHAVIOR type node. Returning in error.";
+		}
+		if (found_to_reparent->node_name.compare(this->node_list.tree_nodes[0].node_name) == 0)
+		{
+			return "Cannot reparent root node. Returning in error.";
+		}
+
+		if (this->verbose)
+		{
+			RCLCPP_INFO(this->get_logger(), "\tReparenting node %s to the tree with new parent %s.", to_reparent.c_str(), found_new_parent->node_name.c_str());
+		}
+
+		// now that we've found to_reparent node successfully, initialize this
+		auto find_old_parent = [&](dhtt_msgs::msg::Node check)
+		{ return found_to_reparent->parent_name.compare(check.node_name) == 0; };
+		found_old_parent = std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), find_old_parent);
+
+		// indices in terms of node_list.tree_nodes
+		// maintain_local_subtree() doesn't actually check the dhtt:Nodes, just relies on its internal list, which we update here too
+		// remember that dhtt_msgs::msg::Node tracks both indices and names, so adjust both
+		// maintain_local_subtree() should rebuild indices by name, but we also set them here just in case.
+		int parent_index = found_to_reparent->parent;
+		int new_parent_index = std::distance(this->node_list.tree_nodes.begin(), found_new_parent);
+		int to_reparent_index = std::distance(this->node_list.tree_nodes.begin(), found_to_reparent);
+
+		toReparentdHTT = this->node_map.at(to_reparent);
+		oldParentdHTT = this->node_map.at(toReparentdHTT->parent_name);
+		newParentdHTT = this->node_map.at(new_parent);
+
+		// remove_child only makes the parent forget its child. Node is not deleted from server.
+		if (not oldParentdHTT->remove_child(to_reparent))
+		{
+			return "Could not remove_child";
+		}
+		std::remove(found_old_parent->children.begin(), found_old_parent->children.end(), to_reparent_index);
+		std::remove(found_old_parent->child_name.begin(), found_old_parent->child_name.end(), to_reparent);
+		found_old_parent->children.resize(found_old_parent->children.size() - 1);
+		found_old_parent->child_name.resize(found_old_parent->child_name.size() - 1);
+
+		// tell the node to change its parent and update status
+		toReparentdHTT->modify(request, response);
+		if (response->success == false)
+		{
+			return response->error_msg;
+		}
+		found_to_reparent->parent = new_parent_index;
+		found_to_reparent->parent_name = new_parent;
+
+		toReparentdHTT->register_with_parent();
+		if (toReparentdHTT->loaded_successfully() == false)
+		{
+			return toReparentdHTT->get_error_msg();
+		}
+		found_new_parent->children.push_back(to_reparent_index);
+		found_new_parent->child_name.push_back(to_reparent);
+
+		newParentdHTT->update_status(newParentdHTT->status.state);
+
+		RCLCPP_INFO(this->get_logger(), "toReparent->parent " + toReparentdHTT->parent_name);
+		for (const auto &element : oldParentdHTT->child_names)
+		{
+			RCLCPP_INFO(this->get_logger(), "oldParent->child " + element);
+		}
+		for (const auto &element : newParentdHTT->child_names)
+		{
+			RCLCPP_INFO(this->get_logger(), "newParent->child " + element);
+		}
+
+		this->maintain_local_subtree();
+
+		return ""; // success
+	}
+
+		std::string MainServer::change_params( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request )
 	{
 		(void) request;
 

@@ -530,6 +530,16 @@ namespace dhtt
 			return;
 		}
 
+		if (request->type == dhtt_msgs::srv::ModifyRequest::Request::REPARENT)
+		{
+			// TODO lock logic_mut?
+			this->parent_name = request->new_parent;
+			response->error_msg = "";
+			response->success = true;
+			// remove_child() on old parent and register_with_parent() on new parent is done by main server
+
+			this->update_status(this->status.state);
+		}
 	}
 
 	void Node::resource_availability_callback( const dhtt_msgs::msg::Resources::SharedPtr canonical_list )
