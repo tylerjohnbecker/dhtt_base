@@ -42,7 +42,7 @@ namespace dhtt
 		this->node_list.task_completion_percent = 0.0f;
 
 		// initialize physical Root Node. loaded a yaml file as a part of the constructor so we don't catch it and make the program fail to load if that happens
-		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>("ROOT_0", "dhtt_plugins::RootBehavior", root_node->params, "NONE");
+		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>("ROOT_0", "dhtt_plugins::RootBehavior", root_node->params, "NONE", "");
 		this->spinner_cp->add_node(this->node_map["ROOT_0"]);
 		this->node_map["ROOT_0"]->register_servers();
 		this->node_map["ROOT_0"]->set_resource_status_updated(true);
@@ -427,9 +427,15 @@ namespace dhtt
 		to_add.parent = std::distance(this->node_list.tree_nodes.begin(), found_parent);
 		to_add.node_status.state = dhtt_msgs::msg::NodeStatus::WAITING;
 		
+		// ensure that the goitr type is added if it exists
+		std::string goitr_type = "";
+
+		if ( strcmp(to_add.goitr_name.c_str(), ""))
+			goitr_type = to_add.goitr_name;
+
 		// create a physical node from the message and add to physical list
-		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(to_add.node_name, to_add.plugin_name, to_add.params, parent_name);
-		
+		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(to_add.node_name, to_add.plugin_name, to_add.params, parent_name, goitr_type);
+		  
 		if (this->node_map[to_add.node_name]->loaded_successfully() == false)
 		{
 			std::string err = this->node_map[to_add.node_name]->get_error_msg();
@@ -492,6 +498,16 @@ namespace dhtt
 
 				to_build.type = config["Nodes"][(*iter)]["type"].as<int>();
 				to_build.plugin_name = config["Nodes"][(*iter)]["behavior_type"].as<std::string>();
+
+				// check optional parameter "goitr_type"
+				try 
+				{
+					to_build.goitr_name = config["Nodes"][(*iter)]["goitr_type"].as<std::string>();
+				}
+				catch (const std::exception& e)
+				{
+					to_build.goitr_name = "";
+				}
 
 				if (to_build.type > dhtt_msgs::msg::Node::BEHAVIOR)
 					return "Node type for node " + to_build.node_name + " incorrect at value " + std::to_string(to_build.type) + ". Returning in error.";

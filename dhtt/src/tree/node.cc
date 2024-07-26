@@ -2,8 +2,8 @@
 
 namespace dhtt
 {
-	Node::Node(std::string name, std::string type, std::vector<std::string> params, std::string p_name) : rclcpp::Node( name ), node_type_loader("dhtt", "dhtt::NodeType"), 
-			name(name), parent_name(p_name), priority(1), resource_status_updated(false)
+	Node::Node(std::string name, std::string type, std::vector<std::string> params, std::string p_name, std::string goitr_type) : rclcpp::Node( name ), node_type_loader("dhtt", "dhtt::NodeType"), 
+			goitr_type_loader("dhtt", "dhtt::GoitrType"), name(name), parent_name(p_name), priority(1), resource_status_updated(false)
 	{
 		this->error_msg = "";
 		this->successful_load = true;
@@ -20,7 +20,30 @@ namespace dhtt
 			return;
 		}
 
+		if ( strcmp(goitr_type.c_str(), "") )
+		{
+			try
+			{
+				this->replanner = goitr_type_loader.createSharedInstance(goitr_type);
+			}
+			catch (pluginlib::PluginlibException& ex)
+			{
+				this->error_msg = "Error when loading plugin " + goitr_type + ": " + ex.what();
+				this->successful_load = false;
+
+				return;
+			}
+
+			this->replanner->initialize(this->name, params);	
+			this->has_goitr = true;
+		}
+		else
+		{
+			this->has_goitr = false;
+		}
+
 		this->plugin_name = type;
+		this->goitr_name = goitr_type;
 
 		this->logic->initialize(params);
 	}
@@ -276,6 +299,7 @@ namespace dhtt
 		full_status.params = this->logic->params;
 
 		full_status.plugin_name = this->plugin_name;
+		full_status.goitr_name = this->goitr_name;
 
 		full_status.owned_resources = this->owned_resources;
 

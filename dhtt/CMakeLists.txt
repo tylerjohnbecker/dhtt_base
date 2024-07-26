@@ -29,7 +29,7 @@ find_package(Boost REQUIRED COMPONENTS
   thread)
 
 # make nodes
-add_library(dhtt_lib SHARED src/tree/node.cc src/server/goitr_type.cc)
+add_library(dhtt_lib SHARED src/tree/node.cc src/planning/goitr_type.cc src/server/sub_server.cc)
 target_include_directories(dhtt_lib PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
@@ -70,6 +70,7 @@ if(BUILD_TESTING)
     tests/test_add_remove.py
     tests/test_behavior_order.py
     tests/test_dynamic_changes.py
+    tests/test_goitr_basic.py
     )
 
   foreach(_test_path ${_pytest_tests})

@@ -2,14 +2,8 @@
 
 namespace dhtt_plugins
 {
-	void GoitrTest::init (std::vector<std::string> params)
-	{
-		(void) params;
 
-		this->start_servers();
-	}
-
-	void GoitrTest::parent_service(std::shared_ptr<dhtt_msgs::srv::GoitrRequest::Request> req, std::shared_ptr<dhtt_msgs::srv::GoitrRequest::Response> res)
+	void GoitrTest::parent_service_callback(std::shared_ptr<dhtt_msgs::srv::GoitrRequest::Request> req, std::shared_ptr<dhtt_msgs::srv::GoitrRequest::Response> res)
 	{
 		std::string to_find;
 
@@ -20,8 +14,8 @@ namespace dhtt_plugins
 
 		if ( req->type == dhtt_msgs::srv::GoitrRequest::Request::ADD ) 
 		{
-			// we need at least 2 params to create the node (parent_name, node_name, type). The rest in the params list will become the params for the new node
-			if ( (int) req->params.size() < 3)
+			// we need at least 2 params to create the node (parent_name, node_name, type, goitr_type). The rest in the params list will become the params for the new node
+			if ( (int) req->params.size() < 4)
 			{
 				res->success = false;
 				res->error_msg = "Not enough parameters given to create node. Returning in error!";
@@ -46,12 +40,13 @@ namespace dhtt_plugins
 			to_add.parent_name = req->params[0];
 			to_add.node_name = req->params[1];
 			to_add.plugin_name = req->params[2];
+			to_add.goitr_name = req->params[3];
 
-			for ( auto iter = req->params.begin() + 3; iter < req->params.end(); iter++ )
+			for ( auto iter = req->params.begin() + 4; iter < req->params.end(); iter++ )
 				to_add.params.push_back(*iter);
 
 			// not sure I can do this in the callback (we'll find out)
-			res->success = this->add_node(req->params[0], to_add);
+			res->success = this->sub_srv_ptr->add_node(req->params[0], to_add);
 
 			if ( not res->success )
 				res->error_msg = "Failed to add node";
@@ -81,7 +76,7 @@ namespace dhtt_plugins
 			}
 
 			// not sure I can do this in the callback (we'll find out)
-			res->success = this->remove_node(req->params[0]);
+			res->success = this->sub_srv_ptr->remove_node(req->params[0]);
 
 			if ( not res->success )
 				res->error_msg = "Failed to remove node";
@@ -113,7 +108,7 @@ namespace dhtt_plugins
 				n_params.push_back(*iter); 
 
 			// not sure I can do this in the callback (we'll find out)
-			res->success = this->change_params(req->params[0], n_params);
+			res->success = this->sub_srv_ptr->change_params(req->params[0], n_params);
 
 			if ( not res->success )
 				res->error_msg = "Failed to change params of node";

@@ -18,6 +18,7 @@ string[]				params
 # this is the type of each node
 int8 					type
 string					plugin_name
+string					goitr_name
 
 # the resources that the node has been given access to
 dhtt_msgs/Resource[]		owned_resources

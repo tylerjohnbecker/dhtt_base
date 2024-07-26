@@ -5,7 +5,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "dhtt/server/goitr_type.hpp"
+#include "dhtt/planning/goitr_type.hpp"
 
 namespace dhtt_plugins 
 {
@@ -18,18 +18,7 @@ namespace dhtt_plugins
 	 */
 	class GoitrTest : public dhtt::GoitrType
 	{
-	protected:
-
-		/**
-		 * \brief init for GOiTRTest. Just starts services for mainserver
-		 * 
-		 * This will evolve with the tests, but for now we just want to check that the Goitr starts correctly, dies correctly, and connects with the main server.
-		 * 
-		 * \param params a vector of params to initialize the node with (blank for testing)
-		 * 
-		 * \return void
-		 */
-		virtual void init (std::vector<std::string> params) override;
+	public:
 
 		/**
 		 * \brief service available to tests to check functionality with calling MainServer
@@ -41,7 +30,7 @@ namespace dhtt_plugins
 		 * 
 		 * \return void
 		 */
-		virtual void parent_service(std::shared_ptr<dhtt_msgs::srv::GoitrRequest::Request> req, std::shared_ptr<dhtt_msgs::srv::GoitrRequest::Response> res) override;
+		virtual void parent_service_callback(std::shared_ptr<dhtt_msgs::srv::GoitrRequest::Request> req, std::shared_ptr<dhtt_msgs::srv::GoitrRequest::Response> res) override;
 
 		/**
 		 * \brief Callback which defines the logic for when knowledge updates are received

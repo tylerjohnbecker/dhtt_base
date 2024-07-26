@@ -18,7 +18,7 @@
 #include "dhtt_msgs/action/activation.hpp"
 
 #include "dhtt/tree/node_type.hpp"
-#include "dhtt/server/goitr_type.hpp"
+#include "dhtt/planning/goitr_type.hpp"
 
 #define TREE_PREFIX "/dhtt"
 #define REGISTER_CHILD_POSTFIX "/register_child"
@@ -51,7 +51,7 @@ namespace dhtt
 		 * 
 		 * \return void
 		 */
-		Node(std::string name, std::string type, std::vector<std::string> params, std::string parent_name);
+		Node(std::string name, std::string type, std::vector<std::string> params, std::string parent_name, std::string goitr_type="");
 		~Node();
 
 		friend class MainServer;
@@ -396,6 +396,9 @@ namespace dhtt
 		pluginlib::ClassLoader<NodeType> node_type_loader;
 		std::shared_ptr<NodeType> logic;
 
+		pluginlib::ClassLoader<GoitrType> goitr_type_loader;
+		std::shared_ptr<GoitrType> replanner;
+
 		dhtt_msgs::msg::NodeStatus status;
 		rclcpp::Publisher<dhtt_msgs::msg::Node>::SharedPtr status_pub;
 		rclcpp::Subscription<dhtt_msgs::msg::Resources>::SharedPtr resources_sub;
@@ -413,6 +416,7 @@ namespace dhtt
 		std::string name;
 		std::string parent_name;
 		std::string plugin_name;
+		std::string goitr_name;
 
 		std::string active_child_name;
 
@@ -426,6 +430,7 @@ namespace dhtt
 		int priority;
 
 		bool resource_status_updated;
+		bool has_goitr;
 
 		bool successful_load;
 		std::string error_msg;

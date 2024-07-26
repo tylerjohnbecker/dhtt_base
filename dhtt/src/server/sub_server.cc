@@ -1,9 +1,16 @@
-#include "dhtt/server/goitr_type.hpp"
+#include "dhtt/server/sub_server.hpp"
 
 namespace dhtt
 {
+	SubServer::SubServer(std::string node_name) : rclcpp::Node(node_name + "_sub_server")
+	{
 
-	bool GoitrType::add_node(std::string parent_name, dhtt_msgs::msg::Node to_add)
+		// this should also request information about it's subtree from main server
+
+		this->start_servers();
+	}
+
+	bool SubServer::add_node(std::string parent_name, dhtt_msgs::msg::Node to_add)
 	{
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
@@ -15,7 +22,7 @@ namespace dhtt
 		return this->modify(req, res);
 	}
 
-	bool GoitrType::remove_node(std::string to_remove)
+	bool SubServer::remove_node(std::string to_remove)
 	{
 
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
@@ -27,7 +34,7 @@ namespace dhtt
 		return this->modify(req, res);
 	}
 
-	bool GoitrType::change_params(std::string node_name, std::vector<std::string> new_params)
+	bool SubServer::change_params(std::string node_name, std::vector<std::string> new_params)
 	{
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
@@ -39,21 +46,10 @@ namespace dhtt
 		return this->modify(req, res);
 	}
 
-	bool GoitrType::start_servers()
+	bool SubServer::start_servers()
 	{
-
-		// just a random hopefully unique name
-		const void * address = static_cast<const void*>(this);
-		std::stringstream ss;
-		ss << "goitr_" << address;
-
-		// make a node and executor pair
-		this->pub_node_ptr = std::make_shared<rclcpp::Node>(ss.str().c_str());
-		this->executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
-		this->executor->add_node(this->pub_node_ptr);
-
 		// start each client once
-		this->modify_client = this->pub_node_ptr->create_client<dhtt_msgs::srv::ModifyRequest>("/modify_service");
+		this->modify_client = this->create_client<dhtt_msgs::srv::ModifyRequest>("/modify_service");
 
 		{
 			using namespace std::chrono_literals;
@@ -68,35 +64,42 @@ namespace dhtt
 			if (cur_time == time_to_wait)
 				return false;
 		}
+ 
+		// start topic subscribers
 
 		return true;
 	}
 
-	bool GoitrType::modify( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response )
+	void SubServer::build_subtree()
+	{
+		return;
+	}
+
+	bool SubServer::modify( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response )
 	{
 		(void) response;
 
 		auto result = this->modify_client->async_send_request(request);
 
-		if (rclcpp::spin_until_future_complete(this->pub_node_ptr->get_node_base_interface(), result) == rclcpp::executor::FutureReturnCode::SUCCESS)
+		if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) == rclcpp::executor::FutureReturnCode::SUCCESS)
 		{
 			// response = result.get();
 
 			return result.get()->success;
 		}
 
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "Could not contact MainServer when modifying node %s!", request->to_modify[0].c_str());
+		RCLCPP_ERROR(this->get_logger(), "Could not contact MainServer when modifying node %s!", request->to_modify[0].c_str());
 
 		return false;
 	}
 
-	bool GoitrType::fetch( const std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response )
+	bool SubServer::fetch( const std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response )
 	{
 		(void) response;
 
 		auto result = this->fetch_client->async_send_request(request);
 
-		if (rclcpp::spin_until_future_complete(this->pub_node_ptr->get_node_base_interface(), result) == rclcpp::executor::FutureReturnCode::SUCCESS)
+		if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) == rclcpp::executor::FutureReturnCode::SUCCESS)
 		{
 			// response = result.get();
 
@@ -108,13 +111,13 @@ namespace dhtt
 		return false;
 	}
 
-	bool GoitrType::control( const std::shared_ptr<dhtt_msgs::srv::ControlRequest::Request> request, const std::shared_ptr<dhtt_msgs::srv::ControlRequest::Response> response)
+	bool SubServer::control( const std::shared_ptr<dhtt_msgs::srv::ControlRequest::Request> request, const std::shared_ptr<dhtt_msgs::srv::ControlRequest::Response> response)
 	{
 		(void) response;
 
 		auto result = this->control_client->async_send_request(request);
 
-		if (rclcpp::spin_until_future_complete(this->pub_node_ptr->get_node_base_interface(), result) == rclcpp::executor::FutureReturnCode::SUCCESS)
+		if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) == rclcpp::executor::FutureReturnCode::SUCCESS)
 		{
 			// response = result.get();
 
@@ -125,5 +128,4 @@ namespace dhtt
 
 		return false;
 	}
-
 }

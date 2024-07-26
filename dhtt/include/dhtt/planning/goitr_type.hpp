@@ -10,6 +10,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 
+// dhtt includes
+#include "dhtt/server/sub_server.hpp"
+
 // dhtt message includes
 #include "dhtt_msgs/msg/node.hpp"
 #include "dhtt_msgs/msg/pair.hpp"
@@ -33,19 +36,32 @@ namespace dhtt
 	 */
 	class GoitrType
 	{
-	protected:
+	public:
 
 		/**
-		 * \brief abstract initializer for GOiTR which will be run after it is created
+		 * \brief base initializer for the GOiTR, runs init_derived as well
 		 * 
 		 * Implementations of this method should ensure that the GOiTR should be fully initialized after this is called. Any extra work (like building the
-		 * 	subtree) can be left to the first_activation_callback. Blank for testing in GoitrBase.
+		 * 	subtree) can be left to the first_activation_callback. The inheriting class should overload init_derived
 		 * 
 		 * \param params a vector of params to initialize the node with 
 		 * 
 		 * \return void
 		 */
-		virtual void init (std::vector<std::string> params) = 0;
+		void initialize (std::string node_name, std::vector<std::string> params);
+
+	protected:
+		/**
+		 * \brief derived initializer for inheriting classes to initializer their params
+		 * 
+		 * All GOiTRs will need the initializer function to be run, however, if any additional setup work should be done then it should be put in this function
+		 * 	which will also be run in the initialize function after creating the GOiTR
+		 * 
+		 * \param params a vector of params to initialize the node with 
+		 * 
+		 * \return void
+		 */
+		virtual void init_derived(std::string node_name, std::vector<std::string> params);
 
 		/**
 		 * \brief service available to parent Goitr to receive information or request changes
@@ -59,7 +75,7 @@ namespace dhtt
 		 * 
 		 * \return void
 		 */
-		virtual void parent_service(std::shared_ptr<dhtt_msgs::srv::GoitrRequest::Request> req, std::shared_ptr<dhtt_msgs::srv::GoitrRequest::Response> res) = 0;
+		virtual void parent_service_callback(std::shared_ptr<dhtt_msgs::srv::GoitrRequest::Request> req, std::shared_ptr<dhtt_msgs::srv::GoitrRequest::Response> res) = 0;
 
 		/**
 		 * \brief Callback which defines the logic for when knowledge updates are received
@@ -98,63 +114,22 @@ namespace dhtt
 		virtual void child_finished_callback(/*whatever message for this*/) = 0;
 
 		/**
-		 * \brief helper method to add a node to the tree
+		 * \brief starts services, publications, and subscriptions for this node
 		 * 
-		 * Communicates with the main server and blocks until a response is given. 
+		 * All subscriptions are made through the sub_server node and are handled in a SingleThreadedExecutor for now. If more threads are required in the future that
+		 * 	may change, however, for now it seems that there would be some mistake in the implementation if that becomes an issue.
 		 * 
-		 * \param parent_name name of the node to add the new node to
-		 * \param to_add a message description of the node to add to the tree.
-		 * 
-		 * \return True if adding the node was a success, false otherwise.
-		 */
-		bool add_node(std::string parent_name, dhtt_msgs::msg::Node to_add);
-
-		/**
-		 * \brief helper method to remove a node from the tree
-		 * 
-		 * Communicates with the main server and blocks until a response is given.
-		 * 
-		 * \param to_remove name of the node in the tree to remove 
-		 * 
-		 * \return True if the removal was a success, false otherwise.
-		 */
-		bool remove_node(std::string to_remove);
-
-		/**
-		 * \brief helper method to change parameters of a node in the tree
-		 * 
-		 * Communicates with the main server and blocks until a response is given. 
-		 * 
-		 * \param node_name node whose parameters will change
-		 * \param new_params new parameters to pass to the node
-		 * 
-		 * \return true if changing params is successful, false otherwise.
-		 */
-		bool change_params(std::string node_name, std::vector<std::string> new_params);
-
-		/**
-		 * \brief starts the servers for communication with MainServer, KnowledgeBase, and any attached nodes
-		 *  
-		 * This blocks until communication with all servers has been established.
-		 * 
-		 * \return True if server communication is established, false otherwise.
+		 * \return bool True if servers start correctly, false otherwise
 		 */
 		bool start_servers();
 
+		std::shared_ptr<SubServer> sub_srv_ptr;
+		std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
+
+		rclcpp::Service<dhtt_msgs::srv::GoitrRequest>::SharedPtr parent_service;
+
 		std::string main_server_topic, node_name; 
 		std::vector<std::string> child_node_names;
-	private:
-		bool modify( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response );
-		bool fetch( const std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response );
-		bool control( const std::shared_ptr<dhtt_msgs::srv::ControlRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ControlRequest::Response> response );
-
-		rclcpp::Client<dhtt_msgs::srv::ModifyRequest>::SharedPtr modify_client;
-		rclcpp::Client<dhtt_msgs::srv::FetchRequest>::SharedPtr fetch_client;
-		rclcpp::Client<dhtt_msgs::srv::ControlRequest>::SharedPtr control_client;
-
-		std::shared_ptr<rclcpp::Node> pub_node_ptr;
-		std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
-		
 	};
 }
 
