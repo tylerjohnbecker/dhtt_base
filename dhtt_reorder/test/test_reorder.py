@@ -386,3 +386,7 @@ class TestReorderHTT:
         assert htt.isAndNode(htt.tree.find_first('AND'))
         assert htt.isAndNode(htt.tree.find_first('THEN')) == False
         assert htt.isAndNode(htt.tree.find_first('a')) == False
+
+        assert htt.isBehaviorNode(htt.tree.find_first('AND')) == False
+        assert htt.isBehaviorNode(htt.tree.find_first('THEN')) == False
+        assert htt.isBehaviorNode(htt.tree.find_first('a'))

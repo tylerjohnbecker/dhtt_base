@@ -58,7 +58,6 @@ class HashabledHTTNode:
         ret.child_name = list(self.child_name)
         ret.params = list(self.params)
         ret.type = self.type
-        ret.plugin_name = self.plugin_name
         ret.owned_resources = list(self.owned_resources)
         # node_status
         return ret
@@ -78,7 +77,6 @@ class dHTTHelpers():
             nodeType = node.type
         elif isinstance(node, nutreeNode):
             nodeType = node.data.type
-
         return nodeType in dHTTHelpers.TASKNODES
 
     def isUnorderedNode(node: 'dHTTNode|nutreeNode') -> bool:
@@ -87,7 +85,6 @@ class dHTTHelpers():
             nodeType = node.type
         elif isinstance(node, nutreeNode):
             nodeType = node.data.type
-
         return nodeType in {dHTTNode.AND}
 
     def isOrderedNode(node: 'dHTTNode|nutreeNode') -> bool:
@@ -96,8 +93,15 @@ class dHTTHelpers():
             nodeType = node.type
         elif isinstance(node, nutreeNode):
             nodeType = node.data.type
-
         return nodeType in {dHTTNode.THEN}
+
+    def isBehaviorNode(node: 'dHTTNode|nutreeNode') -> bool:
+        nodeType: str = None
+        if isinstance(node, dHTTNode):
+            nodeType = node.type
+        elif isinstance(node, nutreeNode):
+            nodeType = node.data.type
+        return nodeType == dHTTNode.BEHAVIOR
 
     def nutreeSerializeMapper(node: nutreeNode, data) -> dict:
         # we are using a custom object, so data comes in empty
@@ -212,6 +216,7 @@ class NutreeServer(rclpy.node.Node):
         # tree.to_mermaid_flowchart("mermaid.png", format="png", add_root=False)
         self.get_logger().info("Saved mermaid.md")
 
+    # TODO handle node.data.node_name
     def drawNutreeDot(self, client: NutreeClient):
         subtrees = client.getTree().found_subtrees
         tree = client.buildNutreeFromSubtrees(subtrees)

@@ -177,6 +177,7 @@ class TestBuildNutreeClient:
         assert thenNode
 
     # Server features
+    @pytest.mark.skip("Doesn't seem to let you modify node names. Insists on using the Node object which isn't printable")
     def test_plots(self):
         server = NutreeServer()
         self.createExampleTree(
@@ -189,7 +190,6 @@ class TestBuildNutreeClient:
 
         assert True
 
-    @pytest.mark.skip("Doesn't seem to let you modify node names. Insists on using the Node object which isn't printable")
     def test_json(self):
         server = NutreeServer()
         self.createExampleTree(

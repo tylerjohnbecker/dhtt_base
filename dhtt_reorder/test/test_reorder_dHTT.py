@@ -7,6 +7,7 @@ import rclpy.logging
 import rclpy.node
 import pathlib
 import yaml
+import re
 
 from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest, NutreeJsonRequest
 from dhtt_msgs.msg import Subtree, Node, NodeStatus
@@ -154,3 +155,33 @@ class TestdHTTReorder:
         assert htt.isAndNode(andNode)
         assert htt.isAndNode(thenNode) == False
         assert htt.isAndNode(behaviorNode) == False
+
+        assert htt.isBehaviorNode(andNode) == False
+        assert htt.isBehaviorNode(thenNode) == False
+        assert htt.isBehaviorNode(behaviorNode)
+
+    def test_reorderABCD(self):
+        def findNode(targetName):
+            r = re.compile(f'^{targetName}_[0-9]+$')
+            return next(x for x in htt.tree if r.match(x.data.node_name))
+
+        # ab, bc, ca -> AND,d,THEN,c,THEN,a,b
+        htt = HTT(withdHTT=True)
+        self.createExampleTree(
+            f'{pathlib.Path(__file__).parent.resolve()}/yaml/exampleABCD.yaml')
+        htt.setTreeFromdHTT()
+
+        before = [findNode('A')]
+        after = [findNode('B')]
+        htt.reorder(before, after, debug=True)
+
+        before = [findNode('B')]
+        after = [findNode('C')]
+        htt.reorder(before, after, debug=True)
+
+        before = [findNode('C')]
+        after = [findNode('A')]
+        htt.reorder(before, after, debug=True)
+
+        self.reset_tree()
+        assert True

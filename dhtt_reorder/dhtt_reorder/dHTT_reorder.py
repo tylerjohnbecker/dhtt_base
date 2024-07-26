@@ -5,7 +5,7 @@ import rclpy.node
 from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest, NutreeJsonRequest
 from dhtt_msgs.msg import Subtree as dHTTSubtree, Node as dHTTNode
 
-from dhtt_plot.build_nutree import dHTTHelpers
+from dhtt_plot.build_nutree import dHTTHelpers, HashabledHTTNode
 
 from nutree import Tree as NutreeTree, Node as NutreeNode, IterMethod
 
@@ -76,6 +76,32 @@ class HTT:
         else:
             return node.name == "AND"
 
+    def isBehaviorNode(self, node: NutreeNode) -> bool:
+        if self._usingdHTT:
+            return dHTTHelpers.isBehaviorNode(node)
+        else:
+            return node.name not in HTT.TASKNODES
+
+    def constructThenNode(self):
+        """Construct a HashabledHTTNode THEN node with only the name and type fields set
+
+        Other fields remain defaults from dHTTNode constructor
+        """
+        if self._usingdHTT:
+            return HashabledHTTNode(dHTTNode(node_name="THEN_x", type=dHTTNode.THEN))
+        else:
+            return "THEN"
+
+    def constructAndNode(self):
+        """Construct a HashabledHTTNode AND node with only the name and type fields set
+
+        Other fields remain defaults from dHTTNode constructor
+        """
+        if self._usingdHTT:
+            return HashabledHTTNode(dHTTNode(node_name="AND_x", type=dHTTNode.AND))
+        else:
+            return "AND"
+
     def setTreeFromdHTT(self) -> bool:
         if self._usingdHTT:
             rq = NutreeJsonRequest.Request()
@@ -87,6 +113,10 @@ class HTT:
             if rs:
                 self.tree = NutreeTree().load(
                     StringIO(rs.json), mapper=dHTTHelpers.nutreeDeserializerMapper)
+
+                # remove the root node
+                assert self.tree.first_child().data.node_name == dHTTHelpers.ROOTNAME
+                self.tree.first_child().remove(keep_children=True)
 
                 self.node.get_logger().info("Set tree from dhtt_plot")
                 self.node.get_logger().debug(self.tree.format)
@@ -115,6 +145,7 @@ class HTT:
         # TODO reset tree server
 
     def minimumInclusiveScope(self, nodes: "list[NutreeNode]") -> NutreeNode:
+        # TODO needs to be AND node
         minNode = self.findShallowestNode(nodes)
 
         assert (minNode != None)
@@ -136,7 +167,7 @@ class HTT:
     def findShallowestNode(self, nodes: "list[NutreeNode]"):
         minNode: NutreeNode = None
         for x in nodes:
-            assert (x.is_leaf)
+            assert (x.is_leaf())
             if minNode == None or x.depth() < minNode.depth():
                 minNode = x
         return minNode
@@ -161,7 +192,10 @@ class HTT:
         return maxList
 
     def setOfAllChildren(self, tree: NutreeTree) -> set:
-        return set([x.name for x in tree])
+        if self._usingdHTT:
+            return set([x.data.node_name for x in tree])
+        else:
+            return set([x.name for x in tree])
 
     def reorder(self, before: "list[NutreeNode]", after: "list[NutreeNode]", debug=False, autoPrune=True):
         scope: NutreeNode = self.minimumInclusiveScope(before + after)
@@ -171,48 +205,55 @@ class HTT:
             include=after, exclude=before)
 
         # we are deleting nodes, so if we want to refer to before/after again, we go by names
-        beforeNames = [node.name for node in before]
-        afterNames = [node.name for node in after]
+        if self._usingdHTT:
+            beforeNames = [node.data.node_name for node in before]
+            afterNames = [node.data.node_name for node in after]
+        else:
+            beforeNames = [node.name for node in before]
+            afterNames = [node.name for node in after]
 
         beforePrimeBehaviors = [
-            node for node in beforePrime if node.name not in HTT.TASKNODES]
+            node for node in beforePrime if self.isBehaviorNode(node)]
+
         afterPrimeBehaviors = [
-            node for node in afterPrime if node.name not in HTT.TASKNODES]
+            node for node in afterPrime if self.isBehaviorNode(node)]
         # excludeBehaviors = beforePrimeBehaviors + afterPrimeBehaviors
         # includeBehaviors = [node for node in self.tree if node.name not in HTT.TASKNODES] - excludeBehaviors
         # subtractedTree = self.primeSelect(include=includeBehaviors, exclude=excludeBehaviors)
         # or just move/delete in place
 
         if debug:
+            representation = "{node.data.node_name}" if self._usingdHTT else "{node.name}"
             print(
                 "################################################################################")
             print(
-                f'Tree before reorder {[x.name for x in before]} before {[x.name for x in after]}:')
-            self.tree.print()
-            print("\nScope:\n", scope.format())
+                f'Tree before reorder {[x for x in beforeNames]} before {[x for x in afterNames]}:')
+            self.tree.print(repr=representation)
+            print("\nScope:\n", scope.format(repr=representation))
 
             print("\nbeforePrime:")
             for x in beforePrime:
-                print(x.format(), '\n')
+                print(x.format(repr=representation), '\n')
 
             print("afterPrime:")
             for x in afterPrime:
-                print(x.format(), '\n')
+                print(x.format(repr=representation), '\n')
 
-        if self.tree.first_child().name == "THEN":
-            topAND = self.tree.add("AND")
-            newTHEN = topAND.add("THEN")
+        if self.isThenNode(self.tree.first_child()):
+            topAND = self.tree.add(self.constructAndNode())
+            newTHEN = topAND.add(self.constructThenNode())
             self.tree.first_child().move_to(topAND)
         else:
-            newTHEN = self.tree.first_child().add("THEN")
-        newANDA = newTHEN.add("AND")
-        newANDB = newTHEN.add("AND")
+            newTHEN = self.tree.first_child().add(self.constructThenNode())
+        newANDA = newTHEN.add(self.constructAndNode())
+        newANDB = newTHEN.add(self.constructAndNode())
 
         # remove the old nodes. We have copies in before/afterPrime
         # ideally, we'd want to move these instead, but they are technically different trees so nutree isn't happy
         for x in [_ for _ in self.tree]:
-            if x.name in [y.name for y in beforePrimeBehaviors] + [y.name for y in afterPrimeBehaviors]:
-                assert x.name not in HTT.TASKNODES
+            # see another comment for questioning abuse of __dict__
+            if x.data.__dict__ in [y.data.__dict__ for y in beforePrimeBehaviors] + [y.data.__dict__ for y in afterPrimeBehaviors]:
+                assert self.isBehaviorNode(x)
                 x.remove()
 
         newANDA.add(beforePrime)
@@ -222,11 +263,9 @@ class HTT:
             self.prune()
 
         if debug:
-            before = [self.tree[nodeName] for nodeName in beforeNames]
-            after = [self.tree[nodeName] for nodeName in afterNames]
             print(
-                f'Tree after reorder {[x.name for x in before]} before {[x.name for x in after]}:')
-            print(self.tree.format(), '\n')
+                f'Tree after reorder {[x for x in beforeNames]} before {[x for x in afterNames]}:')
+            print(self.tree.format(repr=representation), '\n')
 
     def prune(self, node: "NutreeNode" = None, combine: bool = False):
         """
@@ -244,7 +283,7 @@ class HTT:
         if node == None:
             node = self.tree.first_child()
 
-        if node.name in HTT.TASKNODES:
+        if self.isTaskNode(node):
             nextRecurse: list[NutreeNode] = node.children
 
             if len(node.children) <= 1:
@@ -261,7 +300,7 @@ class HTT:
 
                 # combine like types
                 if (combine):
-                    for child in (x for x in node.children.copy() if x.name == node.name):
+                    for child in (x for x in node.children.copy() if x.data == node.data):
                         child.remove(keep_children=True)
                         nextRecurse = [node]
 
@@ -271,23 +310,56 @@ class HTT:
             return
 
     def filteredHTT(self, nodes: "list[NutreeNode]") -> 'HTT':
-        newHTT = HTT()
-        newHTT.tree = NutreeTree.from_dict(self.tree.to_dict_list())
-        newHTT.tree.filter(lambda node: node.name in [
-            x.name for x in nodes] or node.name in HTT.TASKNODES)
+        """Creates a new copy of a tree and filters on provided list of nodes and task nodes
+        """
+
+        # make a copy of the tree
+        if self._usingdHTT:
+            newHTT = HTT(withdHTT=True)
+            f = StringIO()
+            self.tree.save(f, mapper=dHTTHelpers.nutreeSerializeMapper)
+            # the separate StringIO object is important
+            fa = StringIO(f.getvalue())
+            newHTT.tree = NutreeTree().load(fa, mapper=dHTTHelpers.nutreeDeserializerMapper)
+        else:
+            newHTT = HTT()
+            newHTT.tree = NutreeTree.from_dict(self.tree.to_dict_list())
+            newHTT.tree.filter(lambda node: node.name in [
+                x.name for x in nodes] or node.name in HTT.TASKNODES)
+
+        # TODO is this is a better case for defining an __eq__ function?
+        def dHTTMatcher(node): return node.data.__dict__ in [
+            x.data.__dict__ for x in nodes]
+
+        def nondHTTMatcher(node): return node.data in [x.data for x in nodes]
+        matcher = dHTTMatcher if self._usingdHTT else nondHTTMatcher
+
+        # filter deletes anything that doesn't match this predicate.
+        # However, it keeps their entire parent tree up to the root.
+        # This means behaviors (leafs) and task nodes (internal nodes)
+        newHTT.tree.filter(lambda node: matcher(node))
         newHTT.prune()
         return newHTT
 
     def primeSelect(self, include: "list[NutreeNode]", exclude: "list[NutreeNode]") -> NutreeTree:
+        """From a set of nodes, selects the maximum exclusive scope then filters it
+
+        Remember that filteredHTT() returns a new tree.
+        """
         primeTree = self.maximumExclusiveScope(
             include=include, exclude=exclude)
         primeSet: list[NutreeNode] = []
         for tree in primeTree:
             for node in tree.iterator(add_self=True):
-                if node.name not in HTT.TASKNODES:
+                if self.isBehaviorNode(node):
                     primeSet.append(node)
-        assert len(set([node.name for node in primeSet]) &
-                   set([node.name for node in exclude])) == 0
+
+        if self._usingdHTT:
+            assert len(set([node.data.node_name for node in primeSet]) &
+                       set([node.data.node_name for node in exclude])) == 0
+        else:
+            assert len(set([node.name for node in primeSet]) &
+                       set([node.name for node in exclude])) == 0
 
         return self.filteredHTT(primeSet).tree
 
