@@ -725,14 +725,14 @@ namespace dhtt
 
 		newParentdHTT->update_status(newParentdHTT->status.state);
 
-		RCLCPP_INFO(this->get_logger(), "toReparent->parent " + toReparentdHTT->parent_name);
+		RCLCPP_DEBUG(this->get_logger(), "toReparent->parent " + toReparentdHTT->parent_name);
 		for (const auto &element : oldParentdHTT->child_names)
 		{
-			RCLCPP_INFO(this->get_logger(), "oldParent->child " + element);
+			RCLCPP_DEBUG(this->get_logger(), "oldParent->child " + element);
 		}
 		for (const auto &element : newParentdHTT->child_names)
 		{
-			RCLCPP_INFO(this->get_logger(), "newParent->child " + element);
+			RCLCPP_DEBUG(this->get_logger(), "newParent->child " + element);
 		}
 
 		this->maintain_local_subtree();

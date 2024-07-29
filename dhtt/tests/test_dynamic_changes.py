@@ -681,15 +681,10 @@ class TestDynamicChanges:
 		pass
 
 	def test_reparent(self):
-
 		with TestDynamicChanges.lock:
 			self.initialize()
 			self.reset_tree()
 			self.add_from_yaml("/test_descriptions/then_parent_and.yaml")
-			# self.start_tree()
-			# self.wait_for_node_in_state("ParentThen", NodeStatus.WORKING)
-			# self.interrupt_tree()
-			# self.wait_for_waiting()
 
 			# reparent
 			modify_rq = ModifyRequest.Request()
@@ -712,13 +707,123 @@ class TestDynamicChanges:
 			self.wait_for_finished_execution()
 
 			history = self.get_history()
-			expected = ["FirstTask", "NewNode", "SecondTask", "ThirdTask"]
-			# self.compare_history_to_expected(history, expected)
+			# tree turns into THEN(First, AND(Third), Second). With activation
+			# potential, it's actually the same order.
+			expected = ["FirstTask", "ThirdTask", "SecondTask"]
+			self.compare_history_to_expected(history, expected)
 
 			self.reset_tree()
 
-	def test_reparent_negatives(self):
+	def test_reparent_change_order(self):
+		with TestDynamicChanges.lock:
+			# check unchanged run
+			self.initialize()
+			self.reset_tree()
+			self.add_from_yaml("/test_descriptions/or_parent_then.yaml")
+			self.start_tree()
+			# wait until execution finished
+			self.wait_for_finished_execution()
+			history = self.get_history()
+			expected = ["SecondTask", "ThirdTask"]
+			self.compare_history_to_expected(history, expected)
+			self.reset_tree()
 
+			# reparented run
+			self.initialize()
+			self.reset_tree()
+			self.add_from_yaml("/test_descriptions/or_parent_then.yaml")
+
+			# reparent
+			modify_rq = ModifyRequest.Request()
+			modify_rq.type = ModifyRequest.Request.REPARENT
+			modify_rq.to_modify = ["SecondTask_4"]
+			modify_rq.new_parent = "ParentOr_1"
+
+			modify_future = TestDynamicChanges.node.modifysrv.call_async(modify_rq)
+			rclpy.spin_until_future_complete(TestDynamicChanges.node, modify_future)
+
+			modify_rs = modify_future.result()
+			assert modify_rs.success
+
+			assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('ParentOr_1', 'ROOT_0'),
+                                                                                                   ('FirstTask_2', 'ParentOr_1'), ('MidParentThen_3', 'ParentOr_1'), ('SecondTask_4', 'ParentOr_1'), ('ThirdTask_5', 'MidParentThen_3')]
+
+			self.start_tree()
+			# wait until execution finished
+			self.wait_for_finished_execution()
+			history = self.get_history()
+			expected = ["SecondTask"]
+			self.compare_history_to_expected(history, expected)
+			self.reset_tree()
+
+	def test_reparent_tasknode(self):
+		with TestDynamicChanges.lock:
+			self.initialize()
+			self.reset_tree()
+			self.add_from_yaml("/test_descriptions/complex_tree.yaml")
+
+			# reparent
+			modify_rq = ModifyRequest.Request()
+			modify_rq.type = ModifyRequest.Request.REPARENT
+			modify_rq.to_modify = ["LowParentOr_4"]
+			modify_rq.new_parent = "TopmostThen_1"
+
+			modify_future = TestDynamicChanges.node.modifysrv.call_async(modify_rq)
+			rclpy.spin_until_future_complete(TestDynamicChanges.node, modify_future)
+
+			modify_rs = modify_future.result()
+			assert modify_rs.success
+
+			assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('TopmostThen_1', 'ROOT_0'), ('PlacePlacemat_2', 'TopmostThen_1'), ('MidParentAnd_3', 'TopmostThen_1'), ('LowParentOr_4', 'TopmostThen_1'), ('PlaceWineGlass_5', 'LowParentOr_4'),
+                                                                                                   ('PlaceCup_6', 'LowParentOr_4'), ('PlaceSodaCan_7', 'LowParentOr_4'), ('PlaceSpoon_8', 'MidParentAnd_3'), ('PlaceFork_9', 'MidParentAnd_3'), ('PlaceKnife_10', 'MidParentAnd_3'), ('LowParentThen_11', 'MidParentAnd_3'), ('PlacePlate_12', 'LowParentThen_11'), ('PlaceBowl_13', 'LowParentThen_11')]
+
+			self.start_tree()
+			# wait until execution finished
+			self.wait_for_finished_execution()
+			history = self.get_history()
+			expected = ['PlacePlacemat', 'PlaceFork', 'PlaceSpoon',
+                            'PlacePlate', 'PlaceKnife', 'PlaceBowl', 'PlaceCup']
+			self.compare_history_to_expected(history, expected)
+			self.reset_tree()
+
+	def test_reparent_withtreerunning(self):
+		# might have timing issues with this one. Some children finish before the tree can interrupt
+		# this identified an issue where dhtt:Node::responses still held an activation response from
+		# the reparented child, which caused a segfault elsewhere
+		with TestDynamicChanges.lock:
+			self.initialize()
+			self.reset_tree()
+			self.add_from_yaml("/test_descriptions/complex_tree.yaml")
+			self.start_tree()
+			self.wait_for_node_in_state("TopmostThen", NodeStatus.WORKING)
+			self.interrupt_tree()
+			self.wait_for_waiting()
+
+			# reparent
+			modify_rq = ModifyRequest.Request()
+			modify_rq.type = ModifyRequest.Request.REPARENT
+			modify_rq.to_modify = ["LowParentOr_4"]
+			modify_rq.new_parent = "TopmostThen_1"
+
+			modify_future = TestDynamicChanges.node.modifysrv.call_async(modify_rq)
+			rclpy.spin_until_future_complete(TestDynamicChanges.node, modify_future)
+
+			modify_rs = modify_future.result()
+			assert modify_rs.success
+
+			assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('TopmostThen_1', 'ROOT_0'), ('PlacePlacemat_2', 'TopmostThen_1'), ('MidParentAnd_3', 'TopmostThen_1'), ('LowParentOr_4', 'TopmostThen_1'), ('PlaceWineGlass_5', 'LowParentOr_4'),
+                                                                                                   ('PlaceCup_6', 'LowParentOr_4'), ('PlaceSodaCan_7', 'LowParentOr_4'), ('PlaceSpoon_8', 'MidParentAnd_3'), ('PlaceFork_9', 'MidParentAnd_3'), ('PlaceKnife_10', 'MidParentAnd_3'), ('LowParentThen_11', 'MidParentAnd_3'), ('PlacePlate_12', 'LowParentThen_11'), ('PlaceBowl_13', 'LowParentThen_11')]
+
+			self.start_tree()
+			# wait until execution finished
+			self.wait_for_finished_execution()
+			history = self.get_history()
+			expected = ['PlacePlacemat', 'PlaceFork', 'PlaceSpoon',
+                            'PlacePlate', 'PlaceKnife', 'PlaceBowl', 'PlaceCup']
+			self.compare_history_to_expected(history, expected)
+			self.reset_tree()
+
+	def test_reparent_negatives(self):
 		with TestDynamicChanges.lock:
 			self.initialize()
 			self.reset_tree()
