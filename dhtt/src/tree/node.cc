@@ -236,6 +236,13 @@ namespace dhtt
 		this->child_names.erase(found_iter);
 		this->child_changed.erase(child_name);
 
+		// it is possible for the child to have sent an activation response right before we remove it
+		if (this->responses.find(child_name) != this->responses.end())
+		{
+			RCLCPP_DEBUG(this->get_logger(), "Removing activation response from child to be deleted");
+			this->responses.erase(this->responses.find(child_name));
+		}
+
 		return true;
 	}
 	
