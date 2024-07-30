@@ -124,6 +124,7 @@ class TestBuildNutreeClient:
         assert modifyRS.success == True
 
     def test_exampleTree(self):
+        self.reset_treeServer()
         client = NutreeClient()
         self.createExampleTree(
             f'{pathlib.Path(__file__).parent.resolve()}/yaml/exampleABCD.yaml')
@@ -135,6 +136,7 @@ class TestBuildNutreeClient:
         assert rs and len(rs.found_subtrees) > 0
 
     def test_HashabledHTTNode(self):
+        self.reset_treeServer()
         client = NutreeClient()
         self.createExampleTree(
             f'{pathlib.Path(__file__).parent.resolve()}/yaml/exampleABCD.yaml')
@@ -154,6 +156,7 @@ class TestBuildNutreeClient:
         # TODO test this better
 
     def test_buildNutree(self):
+        self.reset_treeServer()
         client = NutreeClient()
         self.createExampleTree(
             f'{pathlib.Path(__file__).parent.resolve()}/yaml/exampleABCD.yaml')
@@ -179,6 +182,7 @@ class TestBuildNutreeClient:
     # Server features
     @pytest.mark.skip("Doesn't seem to let you modify node names. Insists on using the Node object which isn't printable")
     def test_plots(self):
+        self.reset_treeServer()
         server = NutreeServer()
         self.createExampleTree(
             f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
@@ -191,6 +195,7 @@ class TestBuildNutreeClient:
         assert True
 
     def test_json(self):
+        self.reset_treeServer()
         server = NutreeServer()
         self.createExampleTree(
             f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
@@ -203,6 +208,7 @@ class TestBuildNutreeClient:
         assert newTree
 
     def test_jsonServer(self):
+        self.reset_treeServer()
         self.createExampleTree(
             f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
 

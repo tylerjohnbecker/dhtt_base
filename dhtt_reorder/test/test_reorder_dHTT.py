@@ -119,6 +119,7 @@ class TestdHTTReorder:
         assert modifyRS.success == True
 
     def test_exampleTree(self):
+        self.reset_tree()
         client = HTT(withdHTT=True)
 
         self.createExampleTree(
@@ -133,6 +134,7 @@ class TestdHTTReorder:
         assert rs == False
 
     def test_helpers(self):
+        self.reset_tree()
         htt = HTT(withdHTT=True)
         self.createExampleTree(
             f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
@@ -161,6 +163,8 @@ class TestdHTTReorder:
         assert htt.isBehaviorNode(behaviorNode)
 
     def test_reorderABCD(self):
+        self.reset_tree()
+
         def findNode(targetName):
             r = re.compile(f'^{targetName}_[0-9]+$')
             return next(x for x in htt.tree if r.match(x.data.node_name))
@@ -192,6 +196,7 @@ class TestdHTTReorder:
         assert True
 
     def test_add_multipletoroot(self):
+        self.reset_tree()
         modifyRQ = ModifyRequest.Request()
         modifyRQ.type = ModifyRequest.Request.ADD
 
@@ -213,3 +218,8 @@ class TestdHTTReorder:
         assert [x.data.node_name for x in htt.tree] == ['Node_1', 'Node_2']
 
         self.reset_tree()
+
+        # resets
+
+    def test_reorder_complexTree(self):
+        pass
