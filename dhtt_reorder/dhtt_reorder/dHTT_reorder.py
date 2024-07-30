@@ -10,6 +10,7 @@ from dhtt_plot.build_nutree import dHTTHelpers, HashabledHTTNode
 from nutree import Tree as NutreeTree, Node as NutreeNode, IterMethod
 
 from io import StringIO
+import re
 
 
 class Reorderer(rclpy.node.Node):
@@ -368,14 +369,15 @@ class HTT:
 
         return self.filteredHTT(primeSet).tree
 
-    def diffMergedHTT(self, targetTree: NutreeTree):
+    def diffMergedHTT(self, targetTree: NutreeTree, toRemove=None):
         """After reordering, update the dHTT tree to match the reordered Nutree tree
 
         There are smarter ways to do this, but the easiest is to make a new tree of subtasks,
         and move the behavior nodes over. Task nodes are newly created and old ones removed,
         behavior nodes are reparented.
         """
-        toRemove = targetTree.first_child().data.node_name
+        if toRemove == None:
+            toRemove = targetTree.first_child().data.node_name
         self._diffMergeHelper(targetTree.first_child(),
                               dHTTHelpers.ROOTNAME)  # assume the nutree is rooted at ROOT_0
 
@@ -437,6 +439,42 @@ class HTT:
         rclpy.spin_until_future_complete(self.node, future)
 
         return future.result()
+
+    def findNodeFromFriendlyName(self, friendlyName: str) -> NutreeNode:
+        if self._usingdHTT:
+            r = re.compile(f'^{friendlyName}_[0-9]+$')
+            return next(x for x in self.tree if r.match(x.data.node_name))
+        else:
+            return next(x for x in self.tree if x.name == friendlyName)
+
+    def findNodeExactName(self, friendlyName: str) -> str:
+        found = self.findNodeFromFriendlyName(friendlyName)
+        return found.data.node_name if isinstance(found.data, HashabledHTTNode) else found.name
+
+    def reorderOndHTT(self, before: "list[str]", after: "list[str]", debug=False):
+        beforeNodes: 'list[NutreeNode]' = []
+        afterNodes: 'list[NutreeNode]' = []
+        r = re.compile('^.+_[0-9]+$')
+
+        for name in before:
+            if r.match(name):
+                # assume it's already in exact form
+                beforeNodes.append(
+                    next(x for x in self.tree if x.data.node_name == name))
+            else:
+                beforeNodes.append(self.findNodeFromFriendlyName(name))
+
+        for name in after:
+            if r.match(name):
+                # assume it's already in exact form
+                afterNodes.append(
+                    next(x for x in self.tree if x.data.node_name == name))
+            else:
+                afterNodes.append(self.findNodeFromFriendlyName(name))
+
+        oldNodeToDelete = self.tree.first_child().data.node_name
+        self.reorder(beforeNodes, afterNodes, debug=debug)
+        self.diffMergedHTT(self.tree, toRemove=oldNodeToDelete)
 
 
 def main():

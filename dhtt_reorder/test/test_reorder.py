@@ -390,3 +390,10 @@ class TestReorderHTT:
         assert htt.isBehaviorNode(htt.tree.find_first('AND')) == False
         assert htt.isBehaviorNode(htt.tree.find_first('THEN')) == False
         assert htt.isBehaviorNode(htt.tree.find_first('a'))
+    
+    def test_findNodes(self):
+        htt = HTT()
+        htt.createTree({'a', 'b', 'c', 'd'})
+
+        assert htt.findNodeFromFriendlyName('a').name == 'a'
+        assert htt.findNodeExactName('a') == 'a'
