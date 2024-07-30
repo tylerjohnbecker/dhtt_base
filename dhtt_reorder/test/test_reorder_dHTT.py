@@ -183,5 +183,33 @@ class TestdHTTReorder:
         after = [findNode('A')]
         htt.reorder(before, after, debug=True)
 
+        htt.diffMergedHTT(htt.tree)
+
+        assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('TopAnd_1_6', 'ROOT_0'),
+                                                                                                        ('D_5', 'TopAnd_1_6'), ('THEN_7', 'TopAnd_1_6'), ('C_4', 'THEN_7'), ('THEN_8', 'THEN_7'), ('A_2', 'THEN_8'), ('B_3', 'THEN_8')]
+
         self.reset_tree()
         assert True
+
+    def test_add_multipletoroot(self):
+        modifyRQ = ModifyRequest.Request()
+        modifyRQ.type = ModifyRequest.Request.ADD
+
+        modifyRQ.to_modify.append('ROOT_0')
+
+        modifyRQ.add_node = Node()
+        modifyRQ.add_node.type = Node.BEHAVIOR
+        modifyRQ.add_node.node_name = 'Node'
+        modifyRQ.add_node.plugin_name = 'dhtt_plugins::TestBehavior'
+
+        future = self.node.modifysrv.call_async(modifyRQ)
+        rclpy.spin_until_future_complete(self.node, future)
+
+        future = self.node.modifysrv.call_async(modifyRQ)
+        rclpy.spin_until_future_complete(self.node, future)
+
+        htt = HTT(withdHTT=True)
+        htt.setTreeFromdHTT()
+        assert [x.data.node_name for x in htt.tree] == ['Node_1', 'Node_2']
+
+        self.reset_tree()

@@ -83,22 +83,22 @@ class HTT:
             return node.name not in HTT.TASKNODES
 
     def constructThenNode(self):
-        """Construct a HashabledHTTNode THEN node with only the name and type fields set
+        """Construct a HashabledHTTNode THEN node with only the name, type and plugin fields set
 
         Other fields remain defaults from dHTTNode constructor
         """
         if self._usingdHTT:
-            return HashabledHTTNode(dHTTNode(node_name="THEN_x", type=dHTTNode.THEN))
+            return HashabledHTTNode(dHTTNode(node_name="THEN", type=dHTTNode.THEN, plugin_name='dhtt_plugins::ThenBehavior'))
         else:
             return "THEN"
 
     def constructAndNode(self):
-        """Construct a HashabledHTTNode AND node with only the name and type fields set
+        """Construct a HashabledHTTNode AND node with only the name, type and plugin fields set
 
         Other fields remain defaults from dHTTNode constructor
         """
         if self._usingdHTT:
-            return HashabledHTTNode(dHTTNode(node_name="AND_x", type=dHTTNode.AND))
+            return HashabledHTTNode(dHTTNode(node_name="AND", type=dHTTNode.AND, plugin_name='dhtt_plugins::AndBehavior'))
         else:
             return "AND"
 
@@ -362,6 +362,76 @@ class HTT:
                        set([node.name for node in exclude])) == 0
 
         return self.filteredHTT(primeSet).tree
+
+    def diffMergedHTT(self, targetTree: NutreeTree):
+        """After reordering, update the dHTT tree to match the reordered Nutree tree
+
+        There are smarter ways to do this, but the easiest is to make a new tree of subtasks,
+        and move the behavior nodes over. Task nodes are newly created and old ones removed,
+        behavior nodes are reparented.
+        """
+        toRemove = targetTree.first_child().data.node_name
+        self._diffMergeHelper(targetTree.first_child(),
+                              dHTTHelpers.ROOTNAME)  # assume the nutree is rooted at ROOT_0
+
+        # delete the old subtree
+        rs: ModifyRequest.Response = self._deleteNode(toRemove)
+        assert rs.success
+
+    def _diffMergeHelper(self, target: NutreeNode, updatedParentName: dHTTNode.parent_name):
+        """Recursively add task nodes to the new subtree, or reparent behavior nodes"""
+        if self.isTaskNode(target):
+            rs: ModifyRequest.Response = self._addNodeTodHTT(
+                target.data, updatedParentName)
+            assert rs.success
+            newNodeName = rs.added_nodes[0]
+            target.data.node_name = newNodeName
+
+            # recurse
+            for child in target.children:
+                self._diffMergeHelper(child, newNodeName)
+
+        elif self.isBehaviorNode(target):
+            rs: ModifyRequest.Response = self._reparentNode(
+                target.data.node_name, updatedParentName)
+            assert rs.success
+
+        # return nodes to delete
+
+    def _addNodeTodHTT(self, targetNode: HashabledHTTNode, updatedParentName: dHTTNode.parent_name) -> ModifyRequest.Response:
+        modifyRQ = ModifyRequest.Request()
+        modifyRQ.type = ModifyRequest.Request.ADD
+        modifyRQ.to_modify.append(updatedParentName)
+        modifyRQ.add_node = dHTTNode()
+        modifyRQ.add_node.type = targetNode.type
+        modifyRQ.add_node.node_name = targetNode.node_name
+        modifyRQ.add_node.plugin_name = targetNode.plugin_name
+
+        future = self.node.modifyClient.call_async(modifyRQ)
+        rclpy.spin_until_future_complete(self.node, future)
+
+        return future.result()
+
+    def _reparentNode(self, targetName: str, parentName: str) -> ModifyRequest.Response:
+        modifyRQ = ModifyRequest.Request()
+        modifyRQ.type = ModifyRequest.Request.REPARENT
+        modifyRQ.to_modify = [targetName]
+        modifyRQ.new_parent = parentName
+
+        future = self.node.modifyClient.call_async(modifyRQ)
+        rclpy.spin_until_future_complete(self.node, future)
+
+        return future.result()
+
+    def _deleteNode(self, targetName: dHTTNode.node_name) -> ModifyRequest.Response:
+        modifyRQ = ModifyRequest.Request()
+        modifyRQ.type = ModifyRequest.Request.REMOVE
+        modifyRQ.to_modify.append(targetName)
+
+        future = self.node.modifyClient.call_async(modifyRQ)
+        rclpy.spin_until_future_complete(self.node, future)
+
+        return future.result()
 
 
 def main():
