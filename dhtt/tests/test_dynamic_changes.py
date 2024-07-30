@@ -12,6 +12,8 @@ from threading import Lock
 from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest
 from dhtt_msgs.msg import Subtree, Node, NodeStatus 
 
+from dhtt_reorder.dHTT_reorder import HTT as ReorderHTT
+
 class ServerNode (rclpy.node.Node):
 
 	def __init__(self):
@@ -56,6 +58,8 @@ class TestDynamicChanges:
 			TestDynamicChanges.first = False
 
 			TestDynamicChanges.node = ServerNode()
+
+			TestDynamicChanges.reorderHTT = ReorderHTT(withdHTT=True)
 
 		self.ok = False
 
@@ -878,4 +882,34 @@ class TestDynamicChanges:
 			rclpy.spin_until_future_complete(TestDynamicChanges.node, modify_future)
 			assert modify_future.result().success == False
 
+			self.reset_tree()
+
+	def test_reorder_withtreerunning(self):
+		with TestDynamicChanges.lock:
+			self.initialize()
+			self.reset_tree()
+			self.add_from_yaml("/test_descriptions/complex_tree.yaml")
+			self.start_tree()
+			self.wait_for_node_in_state("TopmostThen", NodeStatus.WORKING)
+			self.interrupt_tree()
+			self.wait_for_waiting()
+
+			TestDynamicChanges.reorderHTT.setTreeFromdHTT()
+			before = ['PlaceSpoon']
+			after = ['PlaceFork']
+			TestDynamicChanges.reorderHTT.reorderOndHTT(before, after, debug=True)
+
+			self.start_tree()
+			# wait until execution finished
+			self.wait_for_finished_execution()
+			history = self.get_history()
+
+			# note that the order in test_reparent_withtreerunning above had
+			# order "PlaceFork" then "PlaceSpoon". We reordered, and the path
+			# of execution reflects our change.
+			expected = ['PlacePlacemat', 'PlaceSpoon', 'PlaceFork',
+                            'PlaceCup', 'PlacePlate', 'PlaceKnife', 'PlaceBowl']
+			self.compare_history_to_expected(history, expected)
+			assert history.index(TestDynamicChanges.reorderHTT.findNodeExactName(
+				'PlaceSpoon')) < history.index(TestDynamicChanges.reorderHTT.findNodeExactName('PlaceFork'))
 			self.reset_tree()
