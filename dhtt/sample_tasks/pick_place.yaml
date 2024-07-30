@@ -1,5 +1,4 @@
 NodeList: [
-            'PickAndPlace',
             'MoveToObject',
             'PickObject',
             'MoveToDestination',
@@ -8,33 +7,27 @@ NodeList: [
 
 # the params for each behavior should be filled in wherever there is a n/a
 Nodes:
-  PickAndPlace:
-    type: 2
-    behavior_type: "dhtt_plugins::ThenBehavior"
-    robot: 0
-    parent: 'NONE'
-    params: []
   MoveToObject:
     type: 4
     behavior_type: "dhtt_plugins::MoveBehavior"
     robot: 0
-    parent: 'PickAndPlace'
-    params: ['activation_potential: 1.0', 'dest: home']
+    parent: 'NONE'
+    params: ['activation_potential: 1.0', 'dest: $location_1']
   PickObject:
     type: 4
     behavior_type: "dhtt_plugins::PickBehavior"
     robot: 0
-    parent: 'PickAndPlace'
-    params: ['activation_potential: 1.0', 'object: any']
+    parent: 'NONE'
+    params: ['activation_potential: 1.0', 'object: $target']
   MoveToDestination:
     type: 4
     behavior_type: "dhtt_plugins::MoveBehavior"
     robot: 0
-    parent: 'PickAndPlace'
-    params: ['activation_potential: 1.0', 'dest: depot_5']
+    parent: 'NONE'
+    params: ['activation_potential: 1.0', 'dest: $location_2']
   PlaceObject:
     type: 4
     behavior_type: "dhtt_plugins::PlaceBehavior"
     robot: 0
-    parent: 'PickAndPlace'
+    parent: 'NONE'
     params: ['activation_potential: 1.0']

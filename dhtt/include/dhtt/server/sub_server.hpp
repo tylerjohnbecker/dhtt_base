@@ -5,6 +5,7 @@
 #include <string.h>
 #include <vector>
 #include <memory>
+#include <experimental/filesystem>
 
 // ros2 includes
 #include "rclcpp/rclcpp.hpp"
@@ -14,6 +15,7 @@
 #include "dhtt_msgs/msg/node.hpp"
 #include "dhtt_msgs/msg/pair.hpp"
 #include "dhtt_msgs/msg/update_info.hpp"
+#include "dhtt_msgs/msg/result.hpp"
 #include "dhtt_msgs/srv/fetch_info.hpp"
 #include "dhtt_msgs/srv/fetch_request.hpp"
 #include "dhtt_msgs/srv/modify_request.hpp"
@@ -43,7 +45,7 @@ namespace dhtt
 		 * 
 		 * \return void
 		 */
-		SubServer( std::string node_name );
+		SubServer( std::string node_name , std::string subtree_filename, std::vector<std::string> file_args );
 
 		/**
 		 * \brief helper method to add a node to the tree
@@ -98,10 +100,14 @@ namespace dhtt
 		 * 
 		 * \return void 
 		 */
-		void build_subtree();
+		bool build_subtree();
 
 		std::string main_server_topic, node_name; 
 		std::vector<std::string> child_node_names;
+
+		std::map<std::string, std::shared_future<dhtt_msgs::srv::ModifyRequest::Response::SharedPtr>> futures_to_process;
+		std::map<std::string, bool> future_complete;
+
 	private:
 		bool modify( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response );
 		bool fetch( const std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response );
@@ -112,6 +118,15 @@ namespace dhtt
 		rclcpp::Client<dhtt_msgs::srv::ControlRequest>::SharedPtr control_client;
 
 		rclcpp::Service<dhtt_msgs::srv::GoitrRequest>::SharedPtr parent_service;
+
+		rclcpp::Publisher<dhtt_msgs::msg::Result>::SharedPtr result_pub;
+
+		std::shared_ptr<std::thread> service_thread;
+
+		std::string filename;
+		std::vector<std::string> args;
+
+		bool thread_running;
 
 	};
 

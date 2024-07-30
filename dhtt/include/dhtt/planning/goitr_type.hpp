@@ -50,6 +50,15 @@ namespace dhtt
 		 */
 		void initialize (std::string node_name, std::vector<std::string> params);
 
+		/**
+		 * \brief destructor for GOiTR, also runs destruct_derived
+		 * 
+		 * Implementations of this method should join any threads/clean up any memory problems that could be caused by this node
+		 * 
+		 * \return void
+		 */
+		void destruct ();
+
 	protected:
 		/**
 		 * \brief derived initializer for inheriting classes to initializer their params
@@ -62,6 +71,15 @@ namespace dhtt
 		 * \return void
 		 */
 		virtual void init_derived(std::string node_name, std::vector<std::string> params);
+
+		/**
+		 * \brief derived destructor for inheriting classes to clean up their memory
+		 * 
+		 * Just cleans up any memory issues in the derived class as well as joins any threads.
+		 * 
+		 * \return void
+		 */
+		virtual void destruct_derived();
 
 		/**
 		 * \brief service available to parent Goitr to receive information or request changes
@@ -124,12 +142,22 @@ namespace dhtt
 		bool start_servers();
 
 		std::shared_ptr<SubServer> sub_srv_ptr;
-		std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
+		std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> executor;
 
 		rclcpp::Service<dhtt_msgs::srv::GoitrRequest>::SharedPtr parent_service;
 
 		std::string main_server_topic, node_name; 
 		std::vector<std::string> child_node_names;
+
+		bool tree_built;
+
+	private:
+
+		void async_spin();
+
+		std::shared_ptr<std::thread> spin_thread;
+		bool keep_spinning;
+
 	};
 }
 

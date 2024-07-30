@@ -115,10 +115,11 @@ namespace dhtt
 		 * \param response shared_ptr to the response which will be returned to the user. Modified with any successfully added node's name.
 		 * \param parent_name name of the parent of the new node
 		 * \param file_name full path of the yaml file which describes the subtree to add
+		 * \param file_args vector of 'arg_name: val' arg pairs to fill blank arguments in the yaml file (in the yaml they should look like 'key: $arg_name')
 		 * 
 		 * \return string with exception information or empty string if successful
 		 */
-		std::string add_nodes_from_file( std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, std::string file_name );
+		std::string add_nodes_from_file( std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, std::string file_name, std::vector<std::string> file_args );
 
 		/**
 		 * \brief Removes a given node from the tree

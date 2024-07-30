@@ -9,6 +9,7 @@ dhtt_msgs/Node 		add_node
 
 # optional: file path and name of the subtree to add to the current tree
 string			 	to_add
+string[] 			file_args # arguments are parameters in the files which look like $arg_name, strings here should look like '$arg_name: val'
 
 # optional: string description of the parameters to change (strings are of the form "param: val")
 string[] 			params

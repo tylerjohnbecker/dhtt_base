@@ -29,6 +29,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/NodeStatus.msg"
   "msg/Pair.msg"
   "msg/UpdateInfo.msg"
+  "msg/Result.msg"
 
   # service files
   "srv/ControlRequest.srv"

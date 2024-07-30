@@ -1,0 +1,17 @@
+NodeList: 
+  - 'moveTo'
+  - 'look'
+          
+Nodes:
+  moveTo:
+    type: 4
+    behavior_type: 'dhtt_plugins::MoveBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: ['activation_potential: 3.0', 'dest: $initial_dest']
+  look:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: ['activation_potential: 3.0', 'object: $target']

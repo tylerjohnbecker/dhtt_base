@@ -164,8 +164,8 @@ namespace dhtt_plugins
 
 	void OrBehavior::parse_params( std::vector<std::string> params ) 
 	{
-		if ( (int) params.size() > 0 )
-			throw std::invalid_argument("Or Behaviors do not take parameters but " + ((int) params.size()) + std::string(" were given. Returning in error."));
+		// if ( (int) params.size() > 0 )
+		// 	throw std::invalid_argument("Or Behaviors do not take parameters but " + ((int) params.size()) + std::string(" were given. Returning in error."));
 	
 		(void) params;
 	}

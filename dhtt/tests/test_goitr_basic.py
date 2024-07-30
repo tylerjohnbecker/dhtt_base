@@ -7,10 +7,13 @@ import pathlib
 import yaml
 import copy
 
+from functools import partial
 from threading import Lock
 
+from std_msgs.msg import String
+
 from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest, GoitrRequest
-from dhtt_msgs.msg import Subtree, Node, NodeStatus 
+from dhtt_msgs.msg import Subtree, Node, NodeStatus, Result  
 
 class ServerNode (rclpy.node.Node):
 
@@ -30,6 +33,11 @@ class ServerNode (rclpy.node.Node):
 
 		self.root_status_sub = self.create_subscription(NodeStatus, '/root_status', self.root_status_listener, 10)
 		self.status_sub = self.create_subscription(Node, "/status", self.status_listener, 10)
+
+		self.debug_pub = self.create_publisher(String, "/debug_out", 10)
+
+		self.waiting = True
+		self.success = False
 
 		self.root_state = 0
 		self.node_states = {}
@@ -58,20 +66,24 @@ class ServerNode (rclpy.node.Node):
 		self.node_states[node_name] = data
 		self.updated_states[node_name] = True
 
-class TestGoitrSimple:
+	def simple_wait(self, data):
+		out = 'DING'
 
-	first = True
-	node = None
-	lock = Lock()
+		out_msg = String()
+		out_msg.data = out
+
+		self.debug_pub.publish( out_msg )
+
+		self.waiting = False
+		self.success = data.success
+
+@pytest.mark.serial
+class TestGoitrSimple:
+	
+	rclpy.init()
 	
 	def initialize(self):
-
-		if TestGoitrSimple.first:
-			rclpy.init()
-
-			TestGoitrSimple.first = False
-
-			TestGoitrSimple.node = ServerNode()
+		self.node = ServerNode()
 
 		self.ok = False
 
@@ -79,8 +91,8 @@ class TestGoitrSimple:
 		fetch_rq = FetchRequest.Request()
 		fetch_rq.return_full_subtree = True
 
-		fetch_future = TestGoitrSimple.node.fetchsrv.call_async(fetch_rq)
-		rclpy.spin_until_future_complete(TestGoitrSimple.node, fetch_future)
+		fetch_future = self.node.fetchsrv.call_async(fetch_rq)
+		rclpy.spin_until_future_complete(self.node, fetch_future)
 
 		fetch_rs = fetch_future.result()
 
@@ -90,7 +102,7 @@ class TestGoitrSimple:
 
 	def reset_tree(self):
 
-		TestGoitrSimple.node.node_states = {}
+		self.node.node_states = {}
 
 		fetch_rs = self.get_tree()
 
@@ -101,8 +113,8 @@ class TestGoitrSimple:
 			reset_rq = ControlRequest.Request()
 			reset_rq.type = ControlRequest.Request.RESET
 
-			reset_future = TestGoitrSimple.node.controlsrv.call_async(reset_rq)
-			rclpy.spin_until_future_complete(TestGoitrSimple.node, reset_future)
+			reset_future = self.node.controlsrv.call_async(reset_rq)
+			rclpy.spin_until_future_complete(self.node, reset_future)
 
 			reset_rs = reset_future.result()
 
@@ -128,8 +140,8 @@ class TestGoitrSimple:
 		modify_rq.to_modify.append(add_to)
 		modify_rq.to_add = f'{wd}{file_name}'
 
-		modify_future = TestGoitrSimple.node.modifysrv.call_async(modify_rq)
-		rclpy.spin_until_future_complete(TestGoitrSimple.node, modify_future)
+		modify_future = self.node.modifysrv.call_async(modify_rq)
+		rclpy.spin_until_future_complete(self.node, modify_future)
 
 		modify_rs = modify_future.result()
 
@@ -162,6 +174,8 @@ class TestGoitrSimple:
 			except:
 				continue
 
+		return modify_rs.added_nodes
+
 	def change_node_params(self, node_name, params):
 
 		modify_rq = ModifyRequest.Request()
@@ -170,8 +184,8 @@ class TestGoitrSimple:
 		modify_rq.to_modify = [ node_name ]
 		modify_rq.params = params
 
-		modify_future = TestGoitrSimple.node.modifysrv.call_async(modify_rq)
-		rclpy.spin_until_future_complete(TestGoitrSimple.node, modify_future)
+		modify_future = self.node.modifysrv.call_async(modify_rq)
+		rclpy.spin_until_future_complete(self.node, modify_future)
 
 		modify_rs = modify_future.result()
 
@@ -185,8 +199,8 @@ class TestGoitrSimple:
 		modify_rq.to_modify = [ parent ]
 		modify_rq.add_node = node
 
-		modify_future = TestGoitrSimple.node.modifysrv.call_async(modify_rq)
-		rclpy.spin_until_future_complete(TestGoitrSimple.node, modify_future)
+		modify_future = self.node.modifysrv.call_async(modify_rq)
+		rclpy.spin_until_future_complete(self.node, modify_future)
 
 		modify_rs = modify_future.result()
 
@@ -199,8 +213,8 @@ class TestGoitrSimple:
 		modify_rq.type = ModifyRequest.Request.REMOVE
 		modify_rq.to_modify = [ node_name ]
 
-		modify_future = TestGoitrSimple.node.modifysrv.call_async(modify_rq)
-		rclpy.spin_until_future_complete(TestGoitrSimple.node, modify_future)
+		modify_future = self.node.modifysrv.call_async(modify_rq)
+		rclpy.spin_until_future_complete(self.node, modify_future)
 
 		modify_rs = modify_future.result()
 
@@ -219,7 +233,7 @@ class TestGoitrSimple:
 			goitr_rq.params.append(i)
 
 		goitr_future = goitr_client.call_async(goitr_rq)
-		rclpy.spin_until_future_complete(TestGoitrSimple.node, goitr_future)
+		rclpy.spin_until_future_complete(self.node, goitr_future)
 
 		goitr_rs = goitr_future.result()
 
@@ -241,7 +255,7 @@ class TestGoitrSimple:
 			goitr_rq.params.append(i)
 
 		goitr_future = goitr_client.call_async(goitr_rq)
-		rclpy.spin_until_future_complete(TestGoitrSimple.node, goitr_future)
+		rclpy.spin_until_future_complete(self.node, goitr_future)
 
 		goitr_rs = goitr_future.result()
 
@@ -257,7 +271,20 @@ class TestGoitrSimple:
 		goitr_rq.params.append(node_name)
 
 		goitr_future = goitr_client.call_async(goitr_rq)
-		rclpy.spin_until_future_complete(TestGoitrSimple.node, goitr_future)
+		rclpy.spin_until_future_complete(self.node, goitr_future)
+
+		goitr_rs = goitr_future.result()
+
+		assert goitr_rs.success == True
+
+	def add_subtree_from_goitr(self, goitr_client):
+
+		goitr_rq = GoitrRequest.Request()
+
+		goitr_rq.type = GoitrRequest.Request.BUILD_TREE
+
+		goitr_future = goitr_client.call_async(goitr_rq)
+		rclpy.spin_until_future_complete(self.node, goitr_future)
 
 		goitr_rs = goitr_future.result()
 
@@ -271,15 +298,61 @@ class TestGoitrSimple:
 				return i.node_name
 
 	def wait_for_status_from(self, node_name):
-		TestGoitrSimple.node.updated_states[node_name] = False
+		self.node.updated_states[node_name] = False
 
-		while not TestGoitrSimple.node.updated_states[node_name]:
+		while not self.node.updated_states[node_name]:
 			pass
 
+	def send_build_subtree(self, node_name):
+		client = self.node.create_goitr_parent_client(node_name)
+
+		self.add_subtree_from_goitr(client)
+
 	def test_add_goitrs_from_yaml(self):
+		self.initialize()
+		self.reset_tree()
 
-		with TestGoitrSimple.lock:
-			self.initialize()
-			self.reset_tree()
+		self.add_from_yaml("/test_descriptions/test_simple_goitr.yaml")
 
-			self.add_from_yaml("/test_descriptions/test_simple_goitr.yaml")
+	def test_dynamically_add_subtrees(self):
+
+		self.initialize()
+		self.reset_tree()
+
+		added_goitrs = self.add_from_yaml("/test_descriptions/test_simple_goitr.yaml")
+
+		out = f'----------------- Initialized -----------------'
+
+		out_msg = String()
+		out_msg.data = out
+
+		self.node.debug_pub.publish( out_msg )
+
+		for i in added_goitrs[1:]:
+			self.node.waiting = True
+			self.node.success = False
+
+			subscriber = self.node.create_subscription(Result, "/" + i + "_sub_server/result", self.node.simple_wait, 10 )
+
+			out = f'added subscription for: {"/" + i + "_sub_server/result"} at {self.node.get_clock().now()}'
+
+			out_msg = String()
+			out_msg.data = out
+
+			self.node.debug_pub.publish( out_msg )
+
+			self.send_build_subtree(i)
+
+			while self.node.waiting:
+				rclpy.spin_once(self.node)
+
+			assert self.node.success
+
+		fetch_rs = self.get_tree()
+
+		ground_truth = ["ParentAnd", "GoitrAnd", "GoitrThen", "GoitrOr", "pickThingOne", "pickThingTwo", "moveTo", "look", "pickThingOne", "pickThingTwo"]
+
+		node_names_from_server = [ i.node_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:] ]
+
+		for index, val in enumerate(node_names_from_server):
+			assert ground_truth[index] in val

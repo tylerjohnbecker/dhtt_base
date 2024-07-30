@@ -156,16 +156,17 @@ namespace dhtt_plugins
 
 	void ThenBehavior::parse_params( std::vector<std::string> params )
 	{
-		if ( (int) params.size() > 0 )
-			throw std::invalid_argument("Then Behaviors do not take parameters but " + ((int) params.size()) + std::string(" were given. Returning in error."));
+		// if ( (int) params.size() > 0 )
+		// 	throw std::invalid_argument("Then Behaviors do not take parameters but " + ((int) params.size()) + std::string(" were given. Returning in error."));
 
-		if ( (int) params.size() == 0 )
-		{
-			this->activation_potential = 0;
+		// if ( (int) params.size() == 0 )
+		// {
+		// 	this->activation_potential = 0;
 
-			return;
-		}
+		// 	return;
+		// }
 
+		(void) params;
 	}
 
 	double ThenBehavior::get_perceived_efficiency()

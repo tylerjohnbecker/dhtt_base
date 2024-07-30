@@ -140,7 +140,7 @@ namespace dhtt_plugins
 
 	void TestBehavior::parse_params( std::vector<std::string> params )
 	{
-		if ( (int) params.size() > 1 )
+		if ( (int) params.size() > 2 )
 			throw std::invalid_argument("Too many parameters passed to node. Only activation potential required.");
 
 		if ( (int) params.size() == 0 )

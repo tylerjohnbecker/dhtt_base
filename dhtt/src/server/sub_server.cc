@@ -2,7 +2,8 @@
 
 namespace dhtt
 {
-	SubServer::SubServer(std::string node_name) : rclcpp::Node(node_name + "_sub_server")
+	SubServer::SubServer(std::string node_name, std::string subtree_filename, std::vector<std::string> file_args) : rclcpp::Node(node_name + "_sub_server"), 
+			node_name(node_name), service_thread(nullptr), filename(subtree_filename), args(file_args), thread_running(false)
 	{
 
 		// this should also request information about it's subtree from main server
@@ -67,30 +68,71 @@ namespace dhtt
  
 		// start topic subscribers
 
+		// start publishers
+		this->result_pub = this->create_publisher<dhtt_msgs::msg::Result>(this->node_name + std::string("_sub_server/result"), 10);
+
 		return true;
 	}
 
-	void SubServer::build_subtree()
+	bool SubServer::build_subtree()
 	{
-		return;
+		if ( this->thread_running )
+			return false; 
+
+		// get true path to file saved for subtree
+		std::experimental::filesystem::path dhtt_folder_path = __FILE__;
+
+		dhtt_folder_path = dhtt_folder_path.parent_path().parent_path().parent_path();
+
+		std::string true_filename = dhtt_folder_path.native() + "/sample_tasks/" + this->filename;
+
+		// build request for main server
+		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
+		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
+
+		req->type = dhtt_msgs::srv::ModifyRequest::Request::ADD_FROM_FILE;
+		req->to_modify.push_back(this->node_name);
+		req->to_add = true_filename;
+		req->file_args = this->args;
+
+		// bool success = this->modify("build_subtree", req, res);
+
+		// if ( success )
+		// 	for ( const auto& added_name : res->added_nodes )
+		// 		this->child_node_names.push_back(added_name);
+
+		this->service_thread = std::make_shared<std::thread>(&SubServer::modify, this, req, res);
+		this->service_thread->detach();
+
+		this->thread_running = true;
+ 
+		return true;
 	}
 
-	bool SubServer::modify( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response )
+	bool SubServer::modify(const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response )
 	{
 		(void) response;
 
-		auto result = this->modify_client->async_send_request(request);
+		rclcpp::sleep_for(std::chrono::milliseconds(100));
 
-		if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) == rclcpp::executor::FutureReturnCode::SUCCESS)
-		{
-			// response = result.get();
+		auto future = this->modify_client->async_send_request(request);
 
-			return result.get()->success;
-		}
+		while ( future.wait_for(std::chrono::milliseconds(2)) != std::future_status::ready and rclcpp::ok() );
+			
+		if (not rclcpp::ok())
+			return false;
 
-		RCLCPP_ERROR(this->get_logger(), "Could not contact MainServer when modifying node %s!", request->to_modify[0].c_str());
+		bool success = future.get()->success;
 
-		return false;
+		dhtt_msgs::msg::Result res;
+		res.success = success;
+		res.error_msg = future.get()->error_msg;
+
+		this->result_pub->publish(res); 
+
+		this->thread_running = false;
+
+		return success;
 	}
 
 	bool SubServer::fetch( const std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response )

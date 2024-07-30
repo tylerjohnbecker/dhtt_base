@@ -125,7 +125,7 @@ namespace dhtt
 				// currently this opens the yaml file n times where n is the number of placesthat we add the nodes
 				// in practice we should have negligible time loss from this but it should technically be done first before the loop
 				// and then the dictionary should be passed in
-				response->error_msg = this->add_nodes_from_file(response, *iter, request->to_add);
+				response->error_msg = this->add_nodes_from_file(response, *iter, request->to_add, request->file_args);
 				response->success = not strcmp(response->error_msg.c_str(), "");
 
 				// exit early if modification fails
@@ -474,7 +474,7 @@ namespace dhtt
 		return "";
 	}
 
-	std::string MainServer::add_nodes_from_file(std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, std::string file_name )
+	std::string MainServer::add_nodes_from_file(std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, std::string file_name, std::vector<std::string> file_args )
 	{
 		// first load all of the yaml nodes into the message format
 		std::vector<dhtt_msgs::msg::Node> nodes_to_add;
@@ -517,8 +517,42 @@ namespace dhtt
 				std::vector<std::string> params = config["Nodes"][(*iter)]["params"].as<std::vector<std::string>>();
 
 				for ( auto param_iter = params.begin(); param_iter != params.end(); param_iter++ )
-				{
-					to_build.params.push_back(*param_iter);
+				{	
+					size_t found_index = (*param_iter).find('$');
+
+					// allow for arguments to be passed with the $ character
+					if ( found_index != std::string::npos )
+					{
+						std::string param = (*param_iter).substr(0, found_index - 1);
+						std::string arg_to_find = (*param_iter).substr(found_index + 2, ( (*param_iter).length() - found_index ) + 1);
+
+						bool found = false;
+
+						for ( auto arg_iter = file_args.begin(); arg_iter != file_args.end(); arg_iter++ )
+						{
+							size_t found_index2 = (*arg_iter).find(arg_to_find);
+
+							if ( found_index2 != std::string::npos )
+							{
+								found = true;
+
+								found_index2 = (*arg_iter).find(':') + 1;
+
+								std::string param_val = (*arg_iter).substr(found_index2, ( (*param_iter).length() - found_index2 ) + 1);
+
+								to_build.params.push_back(param + param_val);
+
+								break;
+							}
+						}
+
+						if ( found == false )
+							return "Arg from yaml file not found. " + arg_to_find + " should be given a value in the file_args parameter.";
+					}
+					else
+					{
+						to_build.params.push_back(*param_iter);
+					}
 				}
 
 				nodes_to_add.push_back(to_build);
@@ -803,7 +837,7 @@ namespace dhtt
 				}
 			}
 
-			(*parent_iter).children[child_index] = std::distance(this->node_list.tree_nodes.rbegin(), node_iter) - 1;
+			(*parent_iter).children[child_index] = this->node_list.tree_nodes.size() - std::distance(this->node_list.tree_nodes.rbegin(), node_iter) - 1;
 		}
 
 		// finally erase and then maintain the overall tree metrics
@@ -948,8 +982,6 @@ namespace dhtt
 
 		// deep copy
 		auto iter = top_node;
-
-		for (dhtt_msgs::msg::Node n : this->node_list.tree_nodes)
 
 		// find all the parents and construct the subtree
 		while (iter != this->node_list.tree_nodes.end())

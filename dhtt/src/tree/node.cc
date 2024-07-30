@@ -51,6 +51,8 @@ namespace dhtt
 	Node::~Node()
 	{
 		// empty for now
+		if ( this->has_goitr )	
+			this->replanner->destruct();
 	}
 
 	bool Node::loaded_successfully()

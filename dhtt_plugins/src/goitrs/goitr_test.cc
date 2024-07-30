@@ -7,6 +7,8 @@ namespace dhtt_plugins
 	{
 		std::string to_find;
 
+		RCLCPP_INFO(this->sub_srv_ptr->get_logger(), "--- Goitr Request recieved!");
+
 		auto find_by_name = [&](std::string to_check)
 		{
 			return not strcmp(to_check.c_str(), to_find.c_str());
@@ -112,6 +114,23 @@ namespace dhtt_plugins
 
 			if ( not res->success )
 				res->error_msg = "Failed to change params of node";
+		}
+
+		else if ( req->type == dhtt_msgs::srv::GoitrRequest::Request::BUILD_TREE )
+		{
+			if ( this->tree_built )
+			{
+				res->success = false;
+				res->error_msg = "Failed to build tree because tree has already been built!";
+
+				return;
+			}
+
+			res->success = this->sub_srv_ptr->build_subtree();
+			this->tree_built = res->success;
+
+			if ( not res->success )
+				res->error_msg = "Tree failed to build. Returning in error...";
 		}
 
 		else
