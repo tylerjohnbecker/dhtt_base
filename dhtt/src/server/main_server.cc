@@ -1092,6 +1092,19 @@ namespace dhtt
 			RCLCPP_INFO(this->get_logger(), "\tReparenting node %s to the tree with new parent %s.", to_reparent.c_str(), found_new_parent->node_name.c_str());
 		}
 
+		// Other code (eg. construct_subtree_from_node_iter()) assumes children are listed after their parents
+		if (found_new_parent > found_to_reparent)
+		{
+			// move to_reparent to the end of the list
+			// std::iter_swap(found_to_reparent, found_new_parent);
+			// std::swap(found_to_reparent, found_new_parent);
+			std::rotate(found_to_reparent, found_to_reparent + 1, this->node_list.tree_nodes.end());
+			found_to_reparent = std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), find_to_reparent);
+			found_new_parent = std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), find_new_parent);
+
+			this->maintain_local_subtree();
+		}
+
 		// now that we've found to_reparent node successfully, initialize this
 		auto find_old_parent = [&](dhtt_msgs::msg::Node check)
 		{ return found_to_reparent->parent_name.compare(check.node_name) == 0; };
@@ -1101,7 +1114,7 @@ namespace dhtt
 		// maintain_local_subtree() doesn't actually check the dhtt:Nodes, just relies on its internal list, which we update here too
 		// remember that dhtt_msgs::msg::Node tracks both indices and names, so adjust both
 		// maintain_local_subtree() should rebuild indices by name, but we also set them here just in case.
-		int parent_index = found_to_reparent->parent;
+		int old_parent_index = found_to_reparent->parent;
 		int new_parent_index = std::distance(this->node_list.tree_nodes.begin(), found_new_parent);
 		int to_reparent_index = std::distance(this->node_list.tree_nodes.begin(), found_to_reparent);
 
