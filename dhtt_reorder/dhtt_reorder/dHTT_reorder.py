@@ -251,10 +251,15 @@ class HTT:
         # remove the old nodes. We have copies in before/afterPrime
         # ideally, we'd want to move these instead, but they are technically different trees so nutree isn't happy
         for x in [_ for _ in self.tree]:
-            # see another comment for questioning abuse of __dict__
-            if x.data.__dict__ in [y.data.__dict__ for y in beforePrimeBehaviors] + [y.data.__dict__ for y in afterPrimeBehaviors]:
-                assert self.isBehaviorNode(x)
-                x.remove()
+            if isinstance(x.data, str):
+                if x.name in [y.name for y in beforePrimeBehaviors] + [y.name for y in afterPrimeBehaviors]:
+                    assert x.name not in HTT.TASKNODES
+                    x.remove()
+            elif isinstance(x.data, HashabledHTTNode):
+                # see another comment for questioning abuse of __dict__
+                if x.data.__dict__ in [y.data.__dict__ for y in beforePrimeBehaviors] + [y.data.__dict__ for y in afterPrimeBehaviors]:
+                    assert self.isBehaviorNode(x)
+                    x.remove()
 
         newANDA.add(beforePrime)
         newANDB.add(afterPrime)
