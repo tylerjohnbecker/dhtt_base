@@ -26,7 +26,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'build_nutree_server = dhtt_plot.build_nutree:main'
+            'build_nutree_server = dhtt_plot.build_nutree:main',
+            'draw_mermaid = dhtt_plot.build_nutree:entryMermaid',
+            'draw_dot = dhtt_plot.build_nutree:entryDot'
         ],
     },
 )

@@ -208,18 +208,29 @@ class NutreeServer(rclpy.node.Node):
 
         self.get_logger().info("Started NutreeServer")
 
-    # service callbacks
-    def saveNutreeMermaid(self, client: NutreeClient):
+    def getPrintableTree(self, client: NutreeClient) -> nutreeTree:
+        """Get a pretty printable version of a tree of HashabledHTTNodes
+
+        The default string representation of a HashabledHTTNode is unreadable and the
+        graph plotters can't handle it. All we care about is the name, so replace
+        node.data with that
+        """
         subtrees = client.getTree().found_subtrees
         tree = client.buildNutreeFromSubtrees(subtrees)
+        for node in tree:
+            node.set_data(node.data.node_name)
+        return tree
+
+    # service callbacks
+    def saveNutreeMermaid(self, client: NutreeClient):
+        tree = self.getPrintableTree(client)
         tree.to_mermaid_flowchart("mermaid.md", add_root=False)
         # tree.to_mermaid_flowchart("mermaid.png", format="png", add_root=False)
         self.get_logger().info("Saved mermaid.md")
 
     # TODO handle node.data.node_name
     def drawNutreeDot(self, client: NutreeClient):
-        subtrees = client.getTree().found_subtrees
-        tree = client.buildNutreeFromSubtrees(subtrees)
+        tree = self.getPrintableTree(client)
         tree.to_dotfile("graph.gv", add_root=False)
         tree.to_dotfile("graph.png", format="png", add_root=False)
         self.get_logger().info("Saved graph.gv and graph.png")
@@ -249,6 +260,24 @@ def main(args=None):
     server = NutreeServer()
     rclpy.spin(server)
 
+    server.nutreeClient.destroy_node()
+    server.destroy_node()
+    rclpy.shutdown()
+
+
+def entryMermaid(args=None):
+    rclpy.init(args=args)
+    server = NutreeServer()
+    server.saveNutreeMermaid(server.nutreeClient)
+    server.nutreeClient.destroy_node()
+    server.destroy_node()
+    rclpy.shutdown()
+
+
+def entryDot(args=None):
+    rclpy.init(args=args)
+    server = NutreeServer()
+    server.drawNutreeDot(server.nutreeClient)
     server.nutreeClient.destroy_node()
     server.destroy_node()
     rclpy.shutdown()

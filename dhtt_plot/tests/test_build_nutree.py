@@ -180,7 +180,15 @@ class TestBuildNutreeClient:
         assert thenNode
 
     # Server features
-    @pytest.mark.skip("Doesn't seem to let you modify node names. Insists on using the Node object which isn't printable")
+    def test_getPrintableTree(self):
+        self.reset_treeServer()
+        server = NutreeServer()
+        self.createExampleTree(
+            f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
+
+        for node in server.getPrintableTree(server.nutreeClient):
+            assert isinstance(node.data, str)
+
     def test_plots(self):
         self.reset_treeServer()
         server = NutreeServer()
