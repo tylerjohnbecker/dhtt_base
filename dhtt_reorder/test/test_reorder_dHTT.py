@@ -267,3 +267,90 @@ class TestdHTTReorder:
         assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('AND_14', 'ROOT_0'), ('THEN_15', 'AND_14'), ('PlaceSpoon_8', 'THEN_15'), ('PlaceFork_9', 'THEN_15'), ('TopmostThen_1_16', 'AND_14'), ('PlacePlacemat_2', 'TopmostThen_1_16'), ('MidParentAnd_3_17', 'TopmostThen_1_16'),
                                                                                                         ('LowParentOr_4_18', 'MidParentAnd_3_17'), ('PlaceWineGlass_5', 'LowParentOr_4_18'), ('PlaceCup_6', 'LowParentOr_4_18'), ('PlaceSodaCan_7', 'LowParentOr_4_18'), ('PlaceKnife_10', 'MidParentAnd_3_17'), ('LowParentThen_11_19', 'MidParentAnd_3_17'), ('PlacePlate_12', 'LowParentThen_11_19'), ('PlaceBowl_13', 'LowParentThen_11_19')]
         self.reset_tree()
+
+    def test_reorder_complexTreeMultiple(self):
+        self.reset_tree()
+        htt = HTT(withdHTT=True)
+        self.createExampleTree(
+            f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
+        htt.setTreeFromdHTT()
+
+        before = ['PlacePlate']
+        after = ['PlaceFork', 'PlaceKnife']
+        htt.reorderOndHTT(before, after, debug=True)
+
+        assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('AND_14', 'ROOT_0'), ('THEN_15', 'AND_14'), ('LowParentThen_11_16', 'THEN_15'), ('PlacePlate_12', 'LowParentThen_11_16'), ('PlaceBowl_13', 'LowParentThen_11_16'), ('MidParentAnd_3_17', 'THEN_15'), ('PlaceFork_9', 'MidParentAnd_3_17'),
+                                                                                                        ('PlaceKnife_10', 'MidParentAnd_3_17'), ('TopmostThen_1_18', 'AND_14'), ('PlacePlacemat_2', 'TopmostThen_1_18'), ('MidParentAnd_3_19', 'TopmostThen_1_18'), ('LowParentOr_4_20', 'MidParentAnd_3_19'), ('PlaceWineGlass_5', 'LowParentOr_4_20'), ('PlaceCup_6', 'LowParentOr_4_20'), ('PlaceSodaCan_7', 'LowParentOr_4_20'), ('PlaceSpoon_8', 'MidParentAnd_3_19')]
+
+        # without resetting
+        before = ['PlaceSpoon']
+        after = ['PlaceFork']
+        htt.reorderOndHTT(before, after, debug=True)
+
+        assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('THEN_21', 'ROOT_0'), ('TopmostThen_1_18_22', 'THEN_21'), ('PlacePlacemat_2', 'TopmostThen_1_18_22'), ('MidParentAnd_3_19_23', 'TopmostThen_1_18_22'), ('LowParentOr_4_20_24', 'MidParentAnd_3_19_23'), ('PlaceWineGlass_5', 'LowParentOr_4_20_24'), ('PlaceCup_6',
+                                                                                                                                                                                                                                                                                                                                                                                   'LowParentOr_4_20_24'), ('PlaceSodaCan_7', 'LowParentOr_4_20_24'), ('PlaceSpoon_8', 'MidParentAnd_3_19_23'), ('THEN_15_25', 'THEN_21'), ('LowParentThen_11_16_26', 'THEN_15_25'), ('PlacePlate_12', 'LowParentThen_11_16_26'), ('PlaceBowl_13', 'LowParentThen_11_16_26'), ('MidParentAnd_3_17_27', 'THEN_15_25'), ('PlaceFork_9', 'MidParentAnd_3_17_27'), ('PlaceKnife_10', 'MidParentAnd_3_17_27')]
+
+        self.reset_tree()
+
+    def test_reorder_orNode(self):
+        self.reset_tree()
+        htt = HTT(withdHTT=True)
+        self.createExampleTree(
+            f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
+        htt.setTreeFromdHTT()
+
+        before = ['PlaceWineGlass']
+        after = ['PlaceFork']
+        htt.reorderOndHTT(before, after, debug=True)
+
+        assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('AND_14', 'ROOT_0'), ('THEN_15', 'AND_14'), ('LowParentOr_4_16', 'THEN_15'), ('PlaceWineGlass_5', 'LowParentOr_4_16'), ('PlaceCup_6', 'LowParentOr_4_16'), ('PlaceSodaCan_7', 'LowParentOr_4_16'), ('PlaceFork_9', 'THEN_15'),
+                                                                                                        ('TopmostThen_1_17', 'AND_14'), ('PlacePlacemat_2', 'TopmostThen_1_17'), ('MidParentAnd_3_18', 'TopmostThen_1_17'), ('PlaceSpoon_8', 'MidParentAnd_3_18'), ('PlaceKnife_10', 'MidParentAnd_3_18'), ('LowParentThen_11_19', 'MidParentAnd_3_18'), ('PlacePlate_12', 'LowParentThen_11_19'), ('PlaceBowl_13', 'LowParentThen_11_19')]
+
+    @pytest.mark.skip(reason="TODO")
+    def test_reorder_orNodeInside(self):
+        self.reset_tree()
+        htt = HTT(withdHTT=True)
+        self.createExampleTree(
+            f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
+        htt.setTreeFromdHTT()
+
+        before = ['PlaceWineGlass']
+        after = ['PlaceCup']
+        htt.reorderOndHTT(before, after, debug=True)
+
+    def test_setTreeFromdHTT_withSubtree(self):
+        self.reset_tree()
+        htt = HTT(withdHTT=True)
+        self.createExampleTree(
+            f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
+        htt.setTreeFromdHTT()
+
+        exactName = htt.findNodeExactName('MidParentAnd')
+        htt.setTreeFromdHTT(subtreeExactName=exactName)
+        assert htt.tree.first_child().data.node_name == exactName
+
+    def test_reorder_subtree(self):
+        self.reset_tree()
+        htt = HTT(withdHTT=True)
+        self.createExampleTree(
+            f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
+        htt.setTreeFromdHTT()
+
+        exactName = htt.findNodeExactName('MidParentAnd')
+        htt.setTreeFromdHTT(subtreeExactName=exactName)
+
+        # same operations as test_reorder_complexTree above
+        before = ['PlacePlate']
+        after = ['PlaceFork', 'PlaceKnife']
+        htt.reorderOndHTT(before, after, debug=True)
+
+        assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('TopmostThen_1', 'ROOT_0'), ('PlacePlacemat_2', 'TopmostThen_1'), ('MidParentAnd_3_14', 'TopmostThen_1'), ('LowParentOr_4_15', 'MidParentAnd_3_14'), ('PlaceWineGlass_5', 'LowParentOr_4_15'), ('PlaceCup_6', 'LowParentOr_4_15'),
+                                                                                                        ('PlaceSodaCan_7', 'LowParentOr_4_15'), ('PlaceSpoon_8', 'MidParentAnd_3_14'), ('THEN_16', 'MidParentAnd_3_14'), ('LowParentThen_11_17', 'THEN_16'), ('PlacePlate_12', 'LowParentThen_11_17'), ('PlaceBowl_13', 'LowParentThen_11_17'), ('MidParentAnd_3_18', 'THEN_16'), ('PlaceFork_9', 'MidParentAnd_3_18'), ('PlaceKnife_10', 'MidParentAnd_3_18')]
+
+        # without resetting
+        before = ['PlaceSpoon']
+        after = ['PlaceFork']
+        htt.reorderOndHTT(before, after, debug=True)
+
+        assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('TopmostThen_1', 'ROOT_0'), ('PlacePlacemat_2', 'TopmostThen_1'), ('MidParentAnd_3_14_19', 'TopmostThen_1'), ('LowParentOr_4_15_20', 'MidParentAnd_3_14_19'), ('PlaceWineGlass_5', 'LowParentOr_4_15_20'), ('PlaceCup_6', 'LowParentOr_4_15_20'), ('PlaceSodaCan_7',
+                                                                                                                                                                                                                                                                                                                                                                                'LowParentOr_4_15_20'), ('THEN_21', 'MidParentAnd_3_14_19'), ('PlaceSpoon_8', 'THEN_21'), ('THEN_16_22', 'THEN_21'), ('LowParentThen_11_17_23', 'THEN_16_22'), ('PlacePlate_12', 'LowParentThen_11_17_23'), ('PlaceBowl_13', 'LowParentThen_11_17_23'), ('MidParentAnd_3_18_24', 'THEN_16_22'), ('PlaceFork_9', 'MidParentAnd_3_18_24'), ('PlaceKnife_10', 'MidParentAnd_3_18_24')]

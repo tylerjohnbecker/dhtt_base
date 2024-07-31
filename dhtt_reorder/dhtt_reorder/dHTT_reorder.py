@@ -55,6 +55,7 @@ class HTT:
         if withdHTT:
             self.node = Reorderer()
             self._usingdHTT = True
+            self._masterParentName = dHTTHelpers.ROOTNAME
         else:
             self.node = None
             print("Running without dHTT server")
@@ -103,7 +104,7 @@ class HTT:
         else:
             return "AND"
 
-    def setTreeFromdHTT(self) -> bool:
+    def setTreeFromdHTT(self, subtreeExactName: str = None) -> bool:
         if self._usingdHTT:
             rq = NutreeJsonRequest.Request()
             future = self.node.nutreeServerClient.call_async(rq)
@@ -115,11 +116,19 @@ class HTT:
                 self.tree = NutreeTree().load(
                     StringIO(rs.json), mapper=dHTTHelpers.nutreeDeserializerMapper)
 
-                # remove the root node
-                assert self.tree.first_child().data.node_name == dHTTHelpers.ROOTNAME
-                self.tree.first_child().remove(keep_children=True)
+                if subtreeExactName:
+                    tempTree = NutreeTree()
+                    subtreeNode = next(
+                        x for x in self.tree if x.data.node_name == subtreeExactName)
+                    tempTree.add(subtreeNode, deep=True)
+                    self._masterParentName = subtreeNode.data.parent_name
+                    self.tree = tempTree
 
-                self.node.get_logger().info("Set tree from dhtt_plot")
+                if self.tree.first_child().data.node_name == dHTTHelpers.ROOTNAME:
+                    self.tree.first_child().remove(keep_children=True)
+
+                self.node.get_logger().info(
+                    f"Set tree from dhtt_plot, subtree={subtreeExactName}")
                 self.node.get_logger().debug(self.tree.format)
                 return True
             else:
@@ -378,8 +387,7 @@ class HTT:
         """
         if toRemove == None:
             toRemove = targetTree.first_child().data.node_name
-        self._diffMergeHelper(targetTree.first_child(),
-                              dHTTHelpers.ROOTNAME)  # assume the nutree is rooted at ROOT_0
+        self._diffMergeHelper(targetTree.first_child(), self._masterParentName)
 
         # delete the old subtree
         rs: ModifyRequest.Response = self._deleteNode(toRemove)
