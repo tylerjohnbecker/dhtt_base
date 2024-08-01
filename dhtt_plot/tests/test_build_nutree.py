@@ -186,8 +186,20 @@ class TestBuildNutreeClient:
         self.createExampleTree(
             f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
 
-        for node in server.getPrintableTree(server.nutreeClient):
+        tree, _ = server.getPrintableTree(server.nutreeClient)
+        for node in tree:
             assert isinstance(node.data, str)
+            assert node.data.find('_') == -1
+
+        tree, _ = server.getPrintableTree(
+            server.nutreeClient, printRoot=True, split=False)
+        for node in tree:
+            assert node.data.find('_') != -1
+        assert tree.first_child().name == dHTTHelpers.ROOTNAME
+
+        tree, _ = server.getPrintableTree(
+            server.nutreeClient, printRoot=False, split=False)
+        assert tree.first_child().name != dHTTHelpers.ROOTNAME
 
     def test_plots(self):
         self.reset_treeServer()
@@ -199,6 +211,14 @@ class TestBuildNutreeClient:
         server.drawNutreeDot(server.nutreeClient)
 
         self.reset_treeServer()
+
+        assert True
+
+        self.createExampleTree(
+            f'{pathlib.Path(__file__).parent.resolve()}/yaml/exampleABCD-Redundant.yaml')
+
+        server.drawNutreeDot(
+            server.nutreeClient, redundantThens=True, filename="testName")
 
         assert True
 

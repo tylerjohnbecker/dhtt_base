@@ -111,6 +111,16 @@ class dHTTHelpers():
         return jsonpickle.decode(data['str'])
 
 
+class Colors:
+    BLUE = "#648fff"
+    PURPLE = "#785ef0"
+    MAGENTA = "#dc267f"
+    ORANGE = "#fe6100"
+    YELLOW = "#ffb000"
+    BLACK = "#000000"
+    WHITE = "#ffffff"
+
+
 class NutreeClient(rclpy.node.Node):
     """ Handles dhtt->dhtt_plot client functions. Mostly getting the tree and building a Nutree.
     """
@@ -208,31 +218,68 @@ class NutreeServer(rclpy.node.Node):
 
         self.get_logger().info("Started NutreeServer")
 
-    def getPrintableTree(self, client: NutreeClient) -> nutreeTree:
+    def getPrintableTree(self, client: NutreeClient, printRoot=False, split=True) -> 'tuple[nutreeTree, nutreeTree]':
         """Get a pretty printable version of a tree of HashabledHTTNodes
+
+        Returns tuple (printableTree, unmodifiedTree)
 
         The default string representation of a HashabledHTTNode is unreadable and the
         graph plotters can't handle it. All we care about is the name, so replace
         node.data with that
         """
+        # note that this assumes node names do not have an underscore.
         subtrees = client.getTree().found_subtrees
+        referenceTree = client.buildNutreeFromSubtrees(subtrees)
         tree = client.buildNutreeFromSubtrees(subtrees)
+
+        if not printRoot and tree.first_child().data.node_name == dHTTHelpers.ROOTNAME:
+            tree.first_child().remove(keep_children=True)
+
         for node in tree:
-            node.set_data(node.data.node_name)
-        return tree
+            name = node.data.node_name.split(
+                '_')[0] if split else node.data.node_name
+            node.set_data(name)
+
+        return (tree, referenceTree)
 
     # service callbacks
     def saveNutreeMermaid(self, client: NutreeClient):
-        tree = self.getPrintableTree(client)
+        tree, _ = self.getPrintableTree(client)
         tree.to_mermaid_flowchart("mermaid.md", add_root=False)
         # tree.to_mermaid_flowchart("mermaid.png", format="png", add_root=False)
         self.get_logger().info("Saved mermaid.md")
 
     # TODO handle node.data.node_name
-    def drawNutreeDot(self, client: NutreeClient):
-        tree = self.getPrintableTree(client)
-        tree.to_dotfile("graph.gv", add_root=False)
-        tree.to_dotfile("graph.png", format="png", add_root=False)
+    def drawNutreeDot(self, client: NutreeClient, redundantThens=False, filename="graph"):
+        tree, referenceTree = self.getPrintableTree(client)
+
+        def node_mapper(node: nutreeNode, attr_def: dict):
+            # printable node has no type information, so find it in the reference tree
+            nodeActual = next(x for x in referenceTree if x.data.node_name.split(
+                '_')[0] == node.name.split('_')[0])  # split without _ just returns the string
+            if dHTTHelpers.isTaskNode(nodeActual):
+                attr_def["style"] = "solid,filled,rounded"  # rounded rectangle
+                attr_def["fontname"] = "liberation sans bold"
+            elif dHTTHelpers.isBehaviorNode(nodeActual):
+                attr_def["margin"] = "0.055"
+
+            if redundantThens and dHTTHelpers.isOrderedNode(nodeActual) and dHTTHelpers.isOrderedNode(nodeActual.parent):
+                # colors then nodes that are children of then nodes magenta and dashed
+                attr_def["style"] = "solid,dashed,rounded"
+                attr_def["color"] = Colors.MAGENTA
+
+        node_attrs = {"style": "solid,filled", "shape": "rectangle", "width": 0.5, "height": 0.5, "margin": "0.11",
+                      "fillcolor": Colors.WHITE, "color": Colors.PURPLE, "penwidth": 2.8, "fontname": "liberation sans"}
+
+        edge_attrs = {"dir": "none", "color": Colors.PURPLE}
+
+        tree.to_dotfile(filename + ".gv", add_root=False, node_attrs=node_attrs,
+                        edge_attrs=edge_attrs, node_mapper=node_mapper)
+        tree.to_dotfile(filename + ".png", format="png", add_root=False, node_attrs=node_attrs,
+                        edge_attrs=edge_attrs, node_mapper=node_mapper, graph_attrs={"dpi": 600})
+
+        # TODO svg
+
         self.get_logger().info("Saved graph.gv and graph.png")
 
     def messageNutreeDot(self, client: NutreeClient):
