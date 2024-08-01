@@ -354,3 +354,20 @@ class TestdHTTReorder:
 
         assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('TopmostThen_1', 'ROOT_0'), ('PlacePlacemat_2', 'TopmostThen_1'), ('MidParentAnd_3_14_19', 'TopmostThen_1'), ('LowParentOr_4_15_20', 'MidParentAnd_3_14_19'), ('PlaceWineGlass_5', 'LowParentOr_4_15_20'), ('PlaceCup_6', 'LowParentOr_4_15_20'), ('PlaceSodaCan_7',
                                                                                                                                                                                                                                                                                                                                                                                 'LowParentOr_4_15_20'), ('THEN_21', 'MidParentAnd_3_14_19'), ('PlaceSpoon_8', 'THEN_21'), ('THEN_16_22', 'THEN_21'), ('LowParentThen_11_17_23', 'THEN_16_22'), ('PlacePlate_12', 'LowParentThen_11_17_23'), ('PlaceBowl_13', 'LowParentThen_11_17_23'), ('MidParentAnd_3_18_24', 'THEN_16_22'), ('PlaceFork_9', 'MidParentAnd_3_18_24'), ('PlaceKnife_10', 'MidParentAnd_3_18_24')]
+        self.reset_tree()
+
+    def test_splitNames(self):
+        self.reset_tree()
+        htt = HTT(withdHTT=True, splitNames=True)
+        self.createExampleTree(
+            f'{pathlib.Path(__file__).parent.resolve()}/yaml/complex_tree.yaml')
+        htt.setTreeFromdHTT()
+
+        before = ['PlaceSpoon']
+        after = ['PlaceFork']
+        htt.reorderOndHTT(before, after, debug=True)
+
+        for nodeName in [x.node_name for x in self.get_tree().found_subtrees[0].tree_nodes]:
+            assert len(nodeName.split('_')) == 2
+
+        self.reset_tree()

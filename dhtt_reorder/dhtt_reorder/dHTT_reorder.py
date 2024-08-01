@@ -48,7 +48,7 @@ class HTT:
     # legacy test support, used only when not running dHTT server
     TASKNODES = {"AND", "THEN", "OR"}
 
-    def __init__(self, withdHTT=False):
+    def __init__(self, withdHTT=False, splitNames=False):
         self.tree = NutreeTree("testHTT")
         self._usingdHTT = False
 
@@ -59,6 +59,9 @@ class HTT:
         else:
             self.node = None
             print("Running without dHTT server")
+
+        if splitNames:
+            self._splitNames = True
 
     def isTaskNode(self, node: NutreeNode) -> bool:
         if self._usingdHTT:
@@ -419,7 +422,8 @@ class HTT:
         modifyRQ.to_modify.append(updatedParentName)
         modifyRQ.add_node = dHTTNode()
         modifyRQ.add_node.type = targetNode.type
-        modifyRQ.add_node.node_name = targetNode.node_name
+        modifyRQ.add_node.node_name = targetNode.node_name.split(
+            '_')[0] if self._splitNames else targetNode.node_name
         modifyRQ.add_node.plugin_name = targetNode.plugin_name
 
         future = self.node.modifyClient.call_async(modifyRQ)
