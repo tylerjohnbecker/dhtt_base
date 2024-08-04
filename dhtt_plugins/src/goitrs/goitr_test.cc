@@ -29,7 +29,11 @@ namespace dhtt_plugins
 
 			to_find = req->params[0];
 
-			if ( ( found = std::find_if(this->child_node_names.begin(), this->child_node_names.end(), find_by_name ) ) == this->child_node_names.end() )
+			if ( not strcmp( req->params[0].c_str(), "NONE" ) )
+			{
+				to_find = this->node_name;
+			}
+			else if ( ( found = std::find_if(this->child_node_names.begin(), this->child_node_names.end(), find_by_name ) ) == this->child_node_names.end() )
 			{
 				res->success = false;
 				res->error_msg = "Node " + req->params[0] + " not found! Returning in error.";
@@ -39,16 +43,17 @@ namespace dhtt_plugins
 
 			dhtt_msgs::msg::Node to_add;
 
-			to_add.parent_name = req->params[0];
+			to_add.parent_name = to_find;
 			to_add.node_name = req->params[1];
 			to_add.plugin_name = req->params[2];
 			to_add.goitr_name = req->params[3];
+			to_add.type = dhtt_msgs::msg::Node::BEHAVIOR; // only so the server is happy during testing
 
 			for ( auto iter = req->params.begin() + 4; iter < req->params.end(); iter++ )
 				to_add.params.push_back(*iter);
 
 			// not sure I can do this in the callback (we'll find out)
-			res->success = this->sub_srv_ptr->add_node(req->params[0], to_add);
+			res->success = this->sub_srv_ptr->add_node(to_find, to_add);
 
 			if ( not res->success )
 				res->error_msg = "Failed to add node";

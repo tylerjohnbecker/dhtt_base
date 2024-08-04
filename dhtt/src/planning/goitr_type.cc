@@ -43,6 +43,11 @@ namespace dhtt
 		return;
 	}
 
+	void GoitrType::first_activation_callback()
+	{
+		this->sub_srv_ptr->build_subtree();
+	}
+
 	bool GoitrType::start_servers()
 	{
 		// make a node and executor pair

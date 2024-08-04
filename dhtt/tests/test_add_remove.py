@@ -432,4 +432,4 @@ class TestServerAddRemove:
 
 		wd = pathlib.Path(__file__).parent.parent.resolve()
 
-		self.add_from_yaml(f'{wd}/sample_tasks/pick_place.yaml', add_to=modify_rs.added_nodes[0], file_args=[ 'target: object1', 'location_1: loc1', 'location_2: loc2' ], start_index=2)
+		self.add_from_yaml(f'{wd}/sample_tasks/pick_place.yaml', add_to=modify_rs.added_nodes[0], file_args=[ 'target: object1', 'pick_spot: loc1', 'place_spot: loc2' ], start_index=2)

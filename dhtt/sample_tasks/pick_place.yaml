@@ -12,7 +12,7 @@ Nodes:
     behavior_type: "dhtt_plugins::MoveBehavior"
     robot: 0
     parent: 'NONE'
-    params: ['activation_potential: 1.0', 'dest: $location_1']
+    params: ['activation_potential: 1.0', 'dest: $pick_spot']
   PickObject:
     type: 4
     behavior_type: "dhtt_plugins::PickBehavior"
@@ -24,7 +24,7 @@ Nodes:
     behavior_type: "dhtt_plugins::MoveBehavior"
     robot: 0
     parent: 'NONE'
-    params: ['activation_potential: 1.0', 'dest: $location_2']
+    params: ['activation_potential: 1.0', 'dest: $place_spot']
   PlaceObject:
     type: 4
     behavior_type: "dhtt_plugins::PlaceBehavior"

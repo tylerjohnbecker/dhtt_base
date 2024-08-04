@@ -108,18 +108,6 @@ namespace dhtt
 		virtual void knowledge_update_callback(/*whatever message for this*/) = 0;
 
 		/**
-		 * \brief Callback which define how the subtree should be built
-		 * 
-		 * On first activation by the tree the GOiTR should block and construct it's subtree. This will then happen recursively. The construction should also 
-		 * 	take into account the current state of the knowledge base. Blank for testing in GoitrBase.
-		 * 
-		 * \param TBD
-		 * 
-		 * \return void
-		 */
-		virtual void first_activation_callback(/*whatever message for this*/) = 0;
-
-		/**
 		 * \brief Callback which defines how to act when a child that this node has direct access to has finished.0
 		 * 
 		 * When children finish successfully this callback may have changes to the tree. Specifically, if a child node fails this callback should assess the reason
@@ -130,6 +118,18 @@ namespace dhtt
 		 * \return void
 		 */
 		virtual void child_finished_callback(/*whatever message for this*/) = 0;
+
+		/**
+		 * \brief Callback which define how the subtree should be built
+		 * 
+		 * On first activation by the tree the GOiTR should block and construct it's subtree. This will then happen recursively. The construction should also 
+		 * 	take into account the current state of the knowledge base. Blank for testing in GoitrBase.
+		 * 
+		 * \param TBD
+		 * 
+		 * \return void
+		 */
+		virtual void first_activation_callback(/*whatever message for this*/);
 
 		/**
 		 * \brief starts services, publications, and subscriptions for this node

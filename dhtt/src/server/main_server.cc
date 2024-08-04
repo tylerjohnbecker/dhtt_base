@@ -303,7 +303,8 @@ namespace dhtt
 
 		if ( request->return_full_subtree )
 		{
-			response->found_subtrees.push_back(this->construct_subtree_from_node_iter(this->node_list.tree_nodes.begin()));
+			// response->found_subtrees.push_back(this->construct_subtree_from_node_iter(this->node_list.tree_nodes.begin()));
+			response->found_subtrees.push_back(this->node_list);
 			response->success = true;
 
 			return;
@@ -524,7 +525,7 @@ namespace dhtt
 					if ( found_index != std::string::npos )
 					{
 						std::string param = (*param_iter).substr(0, found_index - 1);
-						std::string arg_to_find = (*param_iter).substr(found_index + 2, ( (*param_iter).length() - found_index ) + 1);
+						std::string arg_to_find = (*param_iter).substr(found_index + 1, ( (*param_iter).length() - found_index ) + 1);
 
 						bool found = false;
 

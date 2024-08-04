@@ -111,8 +111,7 @@ namespace dhtt
 	private:
 		bool modify( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response );
 		bool fetch( const std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response );
-		bool control( const std::shared_ptr<dhtt_msgs::srv::ControlRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ControlRequest::Response> response );
-
+		
 		rclcpp::Client<dhtt_msgs::srv::ModifyRequest>::SharedPtr modify_client;
 		rclcpp::Client<dhtt_msgs::srv::FetchRequest>::SharedPtr fetch_client;
 		rclcpp::Client<dhtt_msgs::srv::ControlRequest>::SharedPtr control_client;

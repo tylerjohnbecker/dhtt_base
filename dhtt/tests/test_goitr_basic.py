@@ -240,7 +240,7 @@ class TestGoitrSimple:
 		assert goitr_rs.success == True
 
 	# parent_name, node_name, type, goitr_type, params
-	def add_node_from_goitr(self, node, parent, goitr_client):
+	def add_node_from_goitr(self, node_name, node, parent, goitr_client):
 		
 		goitr_rq = GoitrRequest.Request()
 
@@ -254,12 +254,22 @@ class TestGoitrSimple:
 		for i in node.params:
 			goitr_rq.params.append(i)
 
+		subscriber = self.node.create_subscription(Result, "/" + node_name + "_sub_server/result", self.node.simple_wait, 10 )
+
+		self.node.waiting = True
+		self.node.success = False
+
 		goitr_future = goitr_client.call_async(goitr_rq)
 		rclpy.spin_until_future_complete(self.node, goitr_future)
 
 		goitr_rs = goitr_future.result()
 
 		assert goitr_rs.success == True
+
+		while self.node.waiting:
+			rclpy.spin_once(self.node)
+
+		assert self.node.success
 
 	# node_name
 	def remove_node_from_goitr(self, node_name, goitr_client):
@@ -270,6 +280,11 @@ class TestGoitrSimple:
 
 		goitr_rq.params.append(node_name)
 
+		subscriber = self.node.create_subscription(Result, "/" + node_name + "_sub_server/result", self.node.simple_wait, 10 )
+
+		self.node.waiting = True
+		self.node.success = False
+
 		goitr_future = goitr_client.call_async(goitr_rq)
 		rclpy.spin_until_future_complete(self.node, goitr_future)
 
@@ -277,18 +292,33 @@ class TestGoitrSimple:
 
 		assert goitr_rs.success == True
 
-	def add_subtree_from_goitr(self, goitr_client):
+		while self.node.waiting:
+			rclpy.spin_once(self.node)
+
+		assert self.node.success
+
+	def add_subtree_from_goitr(self, goitr_client, node_name):
 
 		goitr_rq = GoitrRequest.Request()
 
 		goitr_rq.type = GoitrRequest.Request.BUILD_TREE
 
+		subscriber = self.node.create_subscription(Result, "/" + node_name + "_sub_server/result", self.node.simple_wait, 10 )
+
+		self.node.waiting = True
+		self.node.success = False
+
 		goitr_future = goitr_client.call_async(goitr_rq)
 		rclpy.spin_until_future_complete(self.node, goitr_future)
 
 		goitr_rs = goitr_future.result()
 
 		assert goitr_rs.success == True
+
+		while self.node.waiting:
+			rclpy.spin_once(self.node)
+
+		assert self.node.success
 
 	def get_node_from_partial_name(self, node_name):
 		tree = self.get_tree()
@@ -303,16 +333,65 @@ class TestGoitrSimple:
 		while not self.node.updated_states[node_name]:
 			pass
 
+	def send_add_node(self, node_name, parent, node_to_add):
+		client = self.node.create_goitr_parent_client(node_name)
+
+		self.add_node_from_goitr(node_name, node_to_add, parent, client)
+
 	def send_build_subtree(self, node_name):
 		client = self.node.create_goitr_parent_client(node_name)
 
-		self.add_subtree_from_goitr(client)
+		self.add_subtree_from_goitr(client, node_name)
 
 	def test_add_goitrs_from_yaml(self):
 		self.initialize()
 		self.reset_tree()
 
 		self.add_from_yaml("/test_descriptions/test_simple_goitr.yaml")
+
+	def test_modify_from_goitr(self):
+		
+		self.initialize()
+		self.reset_tree()
+
+		added_goitrs = self.add_from_yaml("/test_descriptions/test_simple_goitr.yaml")
+
+		self.send_build_subtree(added_goitrs[1])
+
+		### ADDING TEST ### 
+
+		node_to_add = Node()
+
+		node_to_add.node_name = 'TestNode'
+		node_to_add.plugin_name = 'dhtt_plugins::TestBehavior'
+		node_to_add.params = ['activation_potential: 0.0']
+
+		self.send_add_node(added_goitrs[1], 'NONE', node_to_add)
+
+		fetch_rs = self.get_tree()
+
+		# check if the child was added to the parent first
+		node_added = False
+
+		for i in fetch_rs.found_subtrees[0].tree_nodes:
+
+			if i.node_name == added_goitrs[1]:
+
+				child_added = False
+
+				for j in i.child_name:
+
+					if node_to_add.node_name in j:
+
+						child_added = True
+						break
+
+				assert child_added
+
+			elif node_to_add.node_name in i.node_name:
+				node_added = True
+
+		assert node_added
 
 	def test_dynamically_add_subtrees(self):
 
@@ -329,24 +408,7 @@ class TestGoitrSimple:
 		self.node.debug_pub.publish( out_msg )
 
 		for i in added_goitrs[1:]:
-			self.node.waiting = True
-			self.node.success = False
-
-			subscriber = self.node.create_subscription(Result, "/" + i + "_sub_server/result", self.node.simple_wait, 10 )
-
-			out = f'added subscription for: {"/" + i + "_sub_server/result"} at {self.node.get_clock().now()}'
-
-			out_msg = String()
-			out_msg.data = out
-
-			self.node.debug_pub.publish( out_msg )
-
 			self.send_build_subtree(i)
-
-			while self.node.waiting:
-				rclpy.spin_once(self.node)
-
-			assert self.node.success
 
 		fetch_rs = self.get_tree()
 
@@ -356,3 +418,30 @@ class TestGoitrSimple:
 
 		for index, val in enumerate(node_names_from_server):
 			assert ground_truth[index] in val
+
+		for i in node_names_from_server:
+			if "pickThing" in i:
+				self.send_build_subtree(i)
+
+		fetch_rs = self.get_tree()
+
+		ground_truth = ["ParentAnd", "GoitrAnd", "GoitrThen", "GoitrOr", "pickThingOne", "pickThingTwo", "moveTo", "look", "pickThingOne", "pickThingTwo", 
+						"MoveToObject", "PickObject", "MoveToDestination", "PlaceObject", 
+						"MoveToObject", "PickObject", "MoveToDestination", "PlaceObject", 
+						"MoveToObject", "PickObject", "MoveToDestination", "PlaceObject", 
+						"MoveToObject", "PickObject", "MoveToDestination", "PlaceObject"]
+
+		node_names_from_server = [ i.node_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:] ]
+
+		for index, val in enumerate(node_names_from_server):
+			assert ground_truth[index] in val
+
+
+	def test_modify_outside_subtree(self):
+		pass
+
+	def test_fetch_from_goitr(self):
+		pass
+
+	def test_control_from_goitr(self):
+		pass

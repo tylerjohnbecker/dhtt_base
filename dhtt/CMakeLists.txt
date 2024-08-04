@@ -67,9 +67,9 @@ install(PROGRAMS
 if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
   set(_pytest_tests
-    # tests/test_add_remove.py
-    # tests/test_behavior_order.py
-    # tests/test_dynamic_changes.py
+    tests/test_add_remove.py
+    tests/test_behavior_order.py
+    tests/test_dynamic_changes.py
     tests/test_goitr_basic.py
     )
 
