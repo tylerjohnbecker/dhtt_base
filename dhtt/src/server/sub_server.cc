@@ -11,10 +11,18 @@ namespace dhtt
 		this->start_servers();
 	}
 
+	SubServer::~SubServer()
+	{
+		// if ( this->service_thread != nullptr )
+		// 	this->service_thread->join();
+	}
+
 	bool SubServer::add_node(std::string parent_name, dhtt_msgs::msg::Node to_add)
 	{
 		if ( this->thread_running )
 			return false; 
+		// else if ( this->service_thread != nullptr )
+		// 	this->service_thread->join();
 
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
@@ -35,6 +43,8 @@ namespace dhtt
 	{
 		if ( this->thread_running )
 			return false; 
+		// else if ( this->service_thread != nullptr )
+		// 	this->service_thread->join();
 
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
@@ -54,7 +64,9 @@ namespace dhtt
 	{
 		if ( this->thread_running )
 			return false; 
-		
+		// else if ( this->service_thread != nullptr )
+		// 	this->service_thread->join();
+
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
 
@@ -101,6 +113,8 @@ namespace dhtt
 	{
 		if ( this->thread_running )
 			return false; 
+		// else if ( this->service_thread != nullptr )
+		// 	this->service_thread->join();
 
 		// get true path to file saved for subtree
 		std::experimental::filesystem::path dhtt_folder_path = __FILE__;
@@ -130,7 +144,7 @@ namespace dhtt
 	{
 		(void) response;
 
-		rclcpp::sleep_for(std::chrono::milliseconds(100));
+		// rclcpp::sleep_for(std::chrono::milliseconds(10));
 
 		auto future = this->modify_client->async_send_request(request);
 
@@ -139,17 +153,20 @@ namespace dhtt
 		if (not rclcpp::ok())
 			return false;
 
-		bool success = future.get()->success;
+		response = future.get();
 
 		dhtt_msgs::msg::Result res;
-		res.success = success;
-		res.error_msg = future.get()->error_msg;
+		res.success = response->success;
+		res.error_msg = response->error_msg;
+
+		if ( res.success )
+			this->update_to_fit_request(request, response);
 
 		this->result_pub->publish(res); 
 
 		this->thread_running = false;
 
-		return success;
+		return response->success;
 	}
 
 	bool SubServer::fetch( const std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response )
@@ -168,5 +185,27 @@ namespace dhtt
 		// RCLCPP_ERROR(this->get_logger(), "Could not contact MainServer when changing params of node %s!", request->to_modify[0].c_str());
 
 		return false;
+	}
+
+	void SubServer::update_to_fit_request( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response )
+	{
+		switch( request->type )
+		{
+		case dhtt_msgs::srv::ModifyRequest::Request::ADD:
+			this->child_node_names.push_back(response->added_nodes[0]);
+			break;
+		case dhtt_msgs::srv::ModifyRequest::Request::REMOVE:
+			for ( const auto& removed: response->removed_nodes )
+			{
+				auto same_name = [&](std::string check) { return not strcmp(check.c_str(), removed.c_str()); };
+
+				std::remove_if(this->child_node_names.begin(), this->child_node_names.end(), same_name);
+			}
+			break;
+		case dhtt_msgs::srv::ModifyRequest::Request::ADD_FROM_FILE:
+			for ( auto const& added : response->added_nodes )
+				this->child_node_names.push_back(added);
+			break;
+		}
 	}
 }

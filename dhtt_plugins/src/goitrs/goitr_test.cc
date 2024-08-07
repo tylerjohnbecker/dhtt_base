@@ -33,8 +33,11 @@ namespace dhtt_plugins
 			{
 				to_find = this->node_name;
 			}
-			else if ( ( found = std::find_if(this->child_node_names.begin(), this->child_node_names.end(), find_by_name ) ) == this->child_node_names.end() )
+			else if ( ( found = std::find_if(this->sub_srv_ptr->child_node_names.begin(), this->sub_srv_ptr->child_node_names.end(), find_by_name ) ) == this->sub_srv_ptr->child_node_names.end() )
 			{
+				// for ( const auto& iter : this->sub_srv_ptr->child_node_names )
+				// 	RCLCPP_ERROR(this->sub_srv_ptr->get_logger(), "I have abandoned my child! %s", iter.c_str());
+
 				res->success = false;
 				res->error_msg = "Node " + req->params[0] + " not found! Returning in error.";
 
@@ -74,8 +77,11 @@ namespace dhtt_plugins
 
 			to_find = req->params[0];
 
-			if ( ( found = std::find_if(this->child_node_names.begin(), this->child_node_names.end(), find_by_name ) ) == this->child_node_names.end() )
+			if ( ( found = std::find_if(this->sub_srv_ptr->child_node_names.begin(), this->sub_srv_ptr->child_node_names.end(), find_by_name ) ) == this->sub_srv_ptr->child_node_names.end() )
 			{
+				// for ( const auto& iter : this->sub_srv_ptr->child_node_names )
+				// 	RCLCPP_ERROR(this->sub_srv_ptr->get_logger(), "I have abandoned my child! %s", iter.c_str());
+
 				res->success = false;
 				res->error_msg = "Node " + req->params[0] + " not found! Returning in error.";
 
@@ -101,7 +107,7 @@ namespace dhtt_plugins
 
 			to_find = req->params[0];
 
-			if ( ( found = std::find_if(this->child_node_names.begin(), this->child_node_names.end(), find_by_name ) ) == this->child_node_names.end() )
+			if ( ( found = std::find_if(this->sub_srv_ptr->child_node_names.begin(), this->sub_srv_ptr->child_node_names.end(), find_by_name ) ) == this->sub_srv_ptr->child_node_names.end() )
 			{
 				res->success = false;
 				res->error_msg = "Node " + req->params[0] + " not found! Returning in error.";

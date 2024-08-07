@@ -3,7 +3,7 @@
 namespace dhtt
 {
 	Node::Node(std::string name, std::string type, std::vector<std::string> params, std::string p_name, std::string goitr_type) : rclcpp::Node( name ), node_type_loader("dhtt", "dhtt::NodeType"), 
-			goitr_type_loader("dhtt", "dhtt::GoitrType"), name(name), parent_name(p_name), priority(1), resource_status_updated(false)
+			goitr_type_loader("dhtt", "dhtt::GoitrType"), name(name), parent_name(p_name), priority(1), resource_status_updated(false), first_activation(true)
 	{
 		this->error_msg = "";
 		this->successful_load = true;
@@ -407,6 +407,12 @@ namespace dhtt
 		this->owned_resources.clear();
 
 		RCLCPP_INFO(this->get_logger(), "Activation received from parent...");
+
+		if ( this->has_goitr and this->first_activation )
+		{
+			RCLCPP_INFO(this->get_logger(), "This is first activation so building subtree...");
+			this->replanner->first_activation_callback();
+		}
 
 		if ( this->status.state == dhtt_msgs::msg::NodeStatus::ACTIVE )
 		{

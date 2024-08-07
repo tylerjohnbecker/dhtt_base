@@ -431,6 +431,7 @@ namespace dhtt
 
 		bool resource_status_updated;
 		bool has_goitr;
+		bool first_activation;
 
 		bool successful_load;
 		std::string error_msg;

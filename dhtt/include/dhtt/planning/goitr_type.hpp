@@ -38,6 +38,8 @@ namespace dhtt
 	{
 	public:
 
+		friend class Node;
+
 		/**
 		 * \brief base initializer for the GOiTR, runs init_derived as well
 		 * 

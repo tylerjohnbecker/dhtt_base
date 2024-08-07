@@ -36,6 +36,9 @@ namespace dhtt
 	class SubServer : public rclcpp::Node
 	{
 	public:
+
+		friend class GoitrType;
+
 		/**
 		 * \brief base constructor for the SubServer class.
 		 * 
@@ -46,6 +49,8 @@ namespace dhtt
 		 * \return void
 		 */
 		SubServer( std::string node_name , std::string subtree_filename, std::vector<std::string> file_args );
+
+		~SubServer();
 
 		/**
 		 * \brief helper method to add a node to the tree
@@ -111,7 +116,9 @@ namespace dhtt
 	private:
 		bool modify( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response );
 		bool fetch( const std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response );
-		
+
+		void update_to_fit_request(const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response);
+
 		rclcpp::Client<dhtt_msgs::srv::ModifyRequest>::SharedPtr modify_client;
 		rclcpp::Client<dhtt_msgs::srv::FetchRequest>::SharedPtr fetch_client;
 		rclcpp::Client<dhtt_msgs::srv::ControlRequest>::SharedPtr control_client;

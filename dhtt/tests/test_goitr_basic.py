@@ -6,6 +6,10 @@ import rclpy.node
 import pathlib
 import yaml
 import copy
+import contextlib
+import os
+
+import filelock
 
 from functools import partial
 from threading import Lock
@@ -14,6 +18,20 @@ from std_msgs.msg import String
 
 from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest, GoitrRequest
 from dhtt_msgs.msg import Subtree, Node, NodeStatus, Result  
+
+@pytest.fixture(scope='session')
+def lock(tmp_path_factory):
+    base_temp = tmp_path_factory.getbasetemp()
+    lock_file = base_temp.parent / 'serial.lock'
+    yield filelock.FileLock(lock_file=str(lock_file))
+    with contextlib.suppress(OSError):
+        os.remove(path=lock_file)
+
+
+@pytest.fixture()
+def serial(lock):
+    with lock.acquire(poll_intervall=0.1):
+        yield
 
 class ServerNode (rclpy.node.Node):
 
@@ -77,7 +95,6 @@ class ServerNode (rclpy.node.Node):
 		self.waiting = False
 		self.success = data.success
 
-@pytest.mark.serial
 class TestGoitrSimple:
 	
 	rclpy.init()
@@ -232,12 +249,26 @@ class TestGoitrSimple:
 		for i in params:
 			goitr_rq.params.append(i)
 
+		subscriber = self.node.create_subscription(Result, "/" + node_name + "_sub_server/result", self.node.simple_wait, 10 )
+
+		self.node.waiting = True
+		self.node.success = False
+
 		goitr_future = goitr_client.call_async(goitr_rq)
 		rclpy.spin_until_future_complete(self.node, goitr_future)
 
 		goitr_rs = goitr_future.result()
 
 		assert goitr_rs.success == True
+
+		while self.node.waiting:
+			rclpy.spin_once(self.node)
+
+		assert self.node.success
+
+		key = node_name.split('_')[0]
+
+		assert self.node.node_states[key].params == params 
 
 	# parent_name, node_name, type, goitr_type, params
 	def add_node_from_goitr(self, node_name, node, parent, goitr_client):
@@ -297,6 +328,11 @@ class TestGoitrSimple:
 
 		assert self.node.success
 
+		fetch_rs = self.get_tree()
+
+		for i in fetch_rs.found_subtrees[0].tree_nodes:
+			assert not node_name == i.node_name 
+
 	def add_subtree_from_goitr(self, goitr_client, node_name):
 
 		goitr_rq = GoitrRequest.Request()
@@ -338,18 +374,28 @@ class TestGoitrSimple:
 
 		self.add_node_from_goitr(node_name, node_to_add, parent, client)
 
+	def send_change_node_params(self, node_name, node_to_change, n_params):
+		client = self.node.create_goitr_parent_client(node_name)
+
+		self.change_node_params_from_goitr(node_to_change, n_params, client)
+
+	def send_remove_node(self, goitr_node_name, to_remove):
+		client = self.node.create_goitr_parent_client(goitr_node_name)
+
+		self.remove_node_from_goitr(to_remove, client)
+
 	def send_build_subtree(self, node_name):
 		client = self.node.create_goitr_parent_client(node_name)
 
 		self.add_subtree_from_goitr(client, node_name)
 
-	def test_add_goitrs_from_yaml(self):
+	def test_add_goitrs_from_yaml(self, serial):
 		self.initialize()
 		self.reset_tree()
 
 		self.add_from_yaml("/test_descriptions/test_simple_goitr.yaml")
 
-	def test_modify_from_goitr(self):
+	def test_modify_from_goitr(self, serial):
 		
 		self.initialize()
 		self.reset_tree()
@@ -372,6 +418,7 @@ class TestGoitrSimple:
 
 		# check if the child was added to the parent first
 		node_added = False
+		node_name = ""
 
 		for i in fetch_rs.found_subtrees[0].tree_nodes:
 
@@ -389,11 +436,15 @@ class TestGoitrSimple:
 				assert child_added
 
 			elif node_to_add.node_name in i.node_name:
+				node_name = i.node_name
 				node_added = True
 
 		assert node_added
 
-	def test_dynamically_add_subtrees(self):
+		self.send_change_node_params(added_goitrs[1], node_name, ['activation_potential: .5'])
+		self.send_remove_node(added_goitrs[1], node_name)
+
+	def test_dynamically_add_subtrees(self, serial):
 
 		self.initialize()
 		self.reset_tree()
@@ -436,12 +487,11 @@ class TestGoitrSimple:
 		for index, val in enumerate(node_names_from_server):
 			assert ground_truth[index] in val
 
-
-	def test_modify_outside_subtree(self):
-		pass
-
 	def test_fetch_from_goitr(self):
 		pass
 
 	def test_control_from_goitr(self):
+		pass
+
+	def test_run_simple_goitr(self):
 		pass

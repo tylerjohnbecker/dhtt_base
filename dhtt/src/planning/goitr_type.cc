@@ -46,6 +46,8 @@ namespace dhtt
 	void GoitrType::first_activation_callback()
 	{
 		this->sub_srv_ptr->build_subtree();
+
+		while ( this->sub_srv_ptr->thread_running );
 	}
 
 	bool GoitrType::start_servers()
