@@ -51,6 +51,7 @@ class HTT:
     def __init__(self, withdHTT=False, splitNames=False):
         self.tree = NutreeTree("testHTT")
         self._usingdHTT = False
+        self._splitNames = False
 
         if withdHTT:
             self.node = Reorderer()
@@ -252,12 +253,13 @@ class HTT:
             for x in afterPrime:
                 print(x.format(repr=representation), '\n')
 
-        if self.isThenNode(self.tree.first_child()):
-            topAND = self.tree.add(self.constructAndNode())
+        newTHEN: NutreeNode
+        if self.isThenNode(scope):
+            topAND = scope.add(self.constructAndNode())
             newTHEN = topAND.add(self.constructThenNode())
-            self.tree.first_child().move_to(topAND)
+
         else:
-            newTHEN = self.tree.first_child().add(self.constructThenNode())
+            newTHEN = scope.add(self.constructThenNode())
         newANDA = newTHEN.add(self.constructAndNode())
         newANDB = newTHEN.add(self.constructAndNode())
 

@@ -264,8 +264,8 @@ class TestdHTTReorder:
         after = ['PlaceFork']
         htt.reorderOndHTT(before, after, debug=True)
 
-        assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('AND_14', 'ROOT_0'), ('THEN_15', 'AND_14'), ('PlaceSpoon_8', 'THEN_15'), ('PlaceFork_9', 'THEN_15'), ('TopmostThen_1_16', 'AND_14'), ('PlacePlacemat_2', 'TopmostThen_1_16'), ('MidParentAnd_3_17', 'TopmostThen_1_16'),
-                                                                                                        ('LowParentOr_4_18', 'MidParentAnd_3_17'), ('PlaceWineGlass_5', 'LowParentOr_4_18'), ('PlaceCup_6', 'LowParentOr_4_18'), ('PlaceSodaCan_7', 'LowParentOr_4_18'), ('PlaceKnife_10', 'MidParentAnd_3_17'), ('LowParentThen_11_19', 'MidParentAnd_3_17'), ('PlacePlate_12', 'LowParentThen_11_19'), ('PlaceBowl_13', 'LowParentThen_11_19')]
+        assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('TopmostThen_1_14', 'ROOT_0'), ('PlacePlacemat_2', 'TopmostThen_1_14'), ('MidParentAnd_3_15', 'TopmostThen_1_14'), ('LowParentOr_4_16', 'MidParentAnd_3_15'), ('PlaceWineGlass_5', 'LowParentOr_4_16'), ('PlaceCup_6',
+                                                                                                                                                                                                                                                                                                                                      'LowParentOr_4_16'), ('PlaceSodaCan_7', 'LowParentOr_4_16'), ('PlaceKnife_10', 'MidParentAnd_3_15'), ('LowParentThen_11_17', 'MidParentAnd_3_15'), ('PlacePlate_12', 'LowParentThen_11_17'), ('PlaceBowl_13', 'LowParentThen_11_17'), ('THEN_18', 'MidParentAnd_3_15'), ('PlaceSpoon_8', 'THEN_18'), ('PlaceFork_9', 'THEN_18')]
         self.reset_tree()
 
     def test_reorder_complexTreeMultiple(self):
@@ -279,16 +279,16 @@ class TestdHTTReorder:
         after = ['PlaceFork', 'PlaceKnife']
         htt.reorderOndHTT(before, after, debug=True)
 
-        assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('AND_14', 'ROOT_0'), ('THEN_15', 'AND_14'), ('LowParentThen_11_16', 'THEN_15'), ('PlacePlate_12', 'LowParentThen_11_16'), ('PlaceBowl_13', 'LowParentThen_11_16'), ('MidParentAnd_3_17', 'THEN_15'), ('PlaceFork_9', 'MidParentAnd_3_17'),
-                                                                                                        ('PlaceKnife_10', 'MidParentAnd_3_17'), ('TopmostThen_1_18', 'AND_14'), ('PlacePlacemat_2', 'TopmostThen_1_18'), ('MidParentAnd_3_19', 'TopmostThen_1_18'), ('LowParentOr_4_20', 'MidParentAnd_3_19'), ('PlaceWineGlass_5', 'LowParentOr_4_20'), ('PlaceCup_6', 'LowParentOr_4_20'), ('PlaceSodaCan_7', 'LowParentOr_4_20'), ('PlaceSpoon_8', 'MidParentAnd_3_19')]
+        assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('TopmostThen_1_14', 'ROOT_0'), ('PlacePlacemat_2', 'TopmostThen_1_14'), ('MidParentAnd_3_15', 'TopmostThen_1_14'), ('LowParentOr_4_16', 'MidParentAnd_3_15'), ('PlaceWineGlass_5', 'LowParentOr_4_16'), ('PlaceCup_6', 'LowParentOr_4_16'),
+                                                                                                        ('PlaceSodaCan_7', 'LowParentOr_4_16'), ('PlaceSpoon_8', 'MidParentAnd_3_15'), ('THEN_17', 'MidParentAnd_3_15'), ('LowParentThen_11_18', 'THEN_17'), ('PlacePlate_12', 'LowParentThen_11_18'), ('PlaceBowl_13', 'LowParentThen_11_18'), ('MidParentAnd_3_19', 'THEN_17'), ('PlaceFork_9', 'MidParentAnd_3_19'), ('PlaceKnife_10', 'MidParentAnd_3_19')]
 
         # without resetting
         before = ['PlaceSpoon']
         after = ['PlaceFork']
         htt.reorderOndHTT(before, after, debug=True)
 
-        assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('THEN_21', 'ROOT_0'), ('TopmostThen_1_18_22', 'THEN_21'), ('PlacePlacemat_2', 'TopmostThen_1_18_22'), ('MidParentAnd_3_19_23', 'TopmostThen_1_18_22'), ('LowParentOr_4_20_24', 'MidParentAnd_3_19_23'), ('PlaceWineGlass_5', 'LowParentOr_4_20_24'), ('PlaceCup_6',
-                                                                                                                                                                                                                                                                                                                                                                                   'LowParentOr_4_20_24'), ('PlaceSodaCan_7', 'LowParentOr_4_20_24'), ('PlaceSpoon_8', 'MidParentAnd_3_19_23'), ('THEN_15_25', 'THEN_21'), ('LowParentThen_11_16_26', 'THEN_15_25'), ('PlacePlate_12', 'LowParentThen_11_16_26'), ('PlaceBowl_13', 'LowParentThen_11_16_26'), ('MidParentAnd_3_17_27', 'THEN_15_25'), ('PlaceFork_9', 'MidParentAnd_3_17_27'), ('PlaceKnife_10', 'MidParentAnd_3_17_27')]
+        assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('TopmostThen_1_14_20', 'ROOT_0'), ('PlacePlacemat_2', 'TopmostThen_1_14_20'), ('MidParentAnd_3_15_21', 'TopmostThen_1_14_20'), ('LowParentOr_4_16_22', 'MidParentAnd_3_15_21'), ('PlaceWineGlass_5', 'LowParentOr_4_16_22'), ('PlaceCup_6', 'LowParentOr_4_16_22'),
+                                                                                                        ('PlaceSodaCan_7', 'LowParentOr_4_16_22'), ('THEN_23', 'MidParentAnd_3_15_21'), ('PlaceSpoon_8', 'THEN_23'), ('THEN_17_24', 'THEN_23'), ('LowParentThen_11_18_25', 'THEN_17_24'), ('PlacePlate_12', 'LowParentThen_11_18_25'), ('PlaceBowl_13', 'LowParentThen_11_18_25'), ('MidParentAnd_3_19_26', 'THEN_17_24'), ('PlaceFork_9', 'MidParentAnd_3_19_26'), ('PlaceKnife_10', 'MidParentAnd_3_19_26')]
 
         self.reset_tree()
 
@@ -303,8 +303,8 @@ class TestdHTTReorder:
         after = ['PlaceFork']
         htt.reorderOndHTT(before, after, debug=True)
 
-        assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('AND_14', 'ROOT_0'), ('THEN_15', 'AND_14'), ('LowParentOr_4_16', 'THEN_15'), ('PlaceWineGlass_5', 'LowParentOr_4_16'), ('PlaceCup_6', 'LowParentOr_4_16'), ('PlaceSodaCan_7', 'LowParentOr_4_16'), ('PlaceFork_9', 'THEN_15'),
-                                                                                                        ('TopmostThen_1_17', 'AND_14'), ('PlacePlacemat_2', 'TopmostThen_1_17'), ('MidParentAnd_3_18', 'TopmostThen_1_17'), ('PlaceSpoon_8', 'MidParentAnd_3_18'), ('PlaceKnife_10', 'MidParentAnd_3_18'), ('LowParentThen_11_19', 'MidParentAnd_3_18'), ('PlacePlate_12', 'LowParentThen_11_19'), ('PlaceBowl_13', 'LowParentThen_11_19')]
+        assert [(x.node_name, x.parent_name) for x in self.get_tree().found_subtrees[0].tree_nodes] == [('ROOT_0', 'NONE'), ('TopmostThen_1_14', 'ROOT_0'), ('PlacePlacemat_2', 'TopmostThen_1_14'), ('MidParentAnd_3_15', 'TopmostThen_1_14'), ('PlaceSpoon_8', 'MidParentAnd_3_15'), ('PlaceKnife_10', 'MidParentAnd_3_15'), ('LowParentThen_11_16',
+                                                                                                                                                                                                                                                                                                                                'MidParentAnd_3_15'), ('PlacePlate_12', 'LowParentThen_11_16'), ('PlaceBowl_13', 'LowParentThen_11_16'), ('THEN_17', 'MidParentAnd_3_15'), ('LowParentOr_4_18', 'THEN_17'), ('PlaceWineGlass_5', 'LowParentOr_4_18'), ('PlaceCup_6', 'LowParentOr_4_18'), ('PlaceSodaCan_7', 'LowParentOr_4_18'), ('PlaceFork_9', 'THEN_17')]
 
     @pytest.mark.skip(reason="TODO")
     def test_reorder_orNodeInside(self):

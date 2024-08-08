@@ -105,6 +105,24 @@ class TestReorderHTT:
 
         assert ','.join(x.name for x in htt.tree) in {
             'AND,d,THEN,c,THEN,a,b'}
+        
+    def test_reorder_alt(self):
+        htt = HTT()
+        htt.createTree({'a', 'b', 'c', 'd'})
+        before = [htt.tree['a']]
+        after = [htt.tree['b']]
+        htt.reorder(before, after, debug=True)
+
+        before = [htt.tree['b']]
+        after = [htt.tree['c']]
+        htt.reorder(before, after, debug=True)
+
+        before = [htt.tree['b'], htt.tree['c']]
+        after = [htt.tree['a']]
+        htt.reorder(before, after, debug=True)
+
+        assert ','.join(x.name for x in htt.tree) in {
+            'AND,d,THEN,THEN,b,c,a'}
 
     def test_prune(self):
         htt = HTT()
