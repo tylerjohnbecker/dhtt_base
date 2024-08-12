@@ -7,6 +7,8 @@
 #include "pluginlib/class_loader.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 
+#include "std_msgs/msg/string.hpp"
+
 #include "dhtt_msgs/msg/node.hpp"
 #include "dhtt_msgs/msg/resource.hpp"
 #include "dhtt_msgs/msg/resources.hpp"
@@ -231,6 +233,16 @@ namespace dhtt
 		void update_status( int8_t n_state );
 
 		/**
+		 * \brief notifies any knowledge sensitive nodes that there have been changes to the param server
+		 * 
+		 * For some nodes new knowledge can change how they should behave (for instance a find action will change destination to the correct one if the object is found when looking for something else).
+		 * 	This publishes an empty message on the /updated_knowledge topic that will then utilize the callbacks in GOiTRs to have them update their own state.
+		 * 
+		 * \return void
+		 */
+		void fire_knowledge_updated();
+
+		/**
 		 * \brief setter for internal resource_status_updated flag
 		 * 
 		 * This flag is important to check if a request is possible properly (i.e. wait until the available_resources are updated first)
@@ -401,6 +413,9 @@ namespace dhtt
 
 		dhtt_msgs::msg::NodeStatus status;
 		rclcpp::Publisher<dhtt_msgs::msg::Node>::SharedPtr status_pub;
+
+		rclcpp::Publisher<std_msgs::msg::String>::SharedPtr knowledge_pub;
+
 		rclcpp::Subscription<dhtt_msgs::msg::Resources>::SharedPtr resources_sub;
 
 		std::shared_ptr<std::thread> work_thread;

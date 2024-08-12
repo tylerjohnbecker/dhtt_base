@@ -15,6 +15,7 @@
 #include "dhtt_plugins/tasks/or_behavior.hpp"
 
 #include "dhtt_plugins/goitrs/goitr_test.hpp"
+#include "dhtt_plugins/goitrs/find_goitr.hpp"
 
 #include <pluginlib/class_list_macros.hpp>
 
@@ -30,5 +31,6 @@ PLUGINLIB_EXPORT_CLASS(dhtt_plugins::OrBehavior, dhtt::NodeType)
 
 // GoitrTypes
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::GoitrTest, dhtt::GoitrType)
+PLUGINLIB_EXPORT_CLASS(dhtt_plugins::FindGoitr, dhtt::GoitrType)
 
 #endif  // DHTT_PLUGINS__HTT_PLUGINS_HPP_

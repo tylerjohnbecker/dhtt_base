@@ -121,7 +121,6 @@ namespace dhtt
 
 		rclcpp::Client<dhtt_msgs::srv::ModifyRequest>::SharedPtr modify_client;
 		rclcpp::Client<dhtt_msgs::srv::FetchRequest>::SharedPtr fetch_client;
-		rclcpp::Client<dhtt_msgs::srv::ControlRequest>::SharedPtr control_client;
 
 		rclcpp::Service<dhtt_msgs::srv::GoitrRequest>::SharedPtr parent_service;
 

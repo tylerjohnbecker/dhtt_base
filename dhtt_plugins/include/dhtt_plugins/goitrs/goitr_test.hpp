@@ -41,7 +41,7 @@ namespace dhtt_plugins
 		 * 
 		 * \return void
 		 */
-		virtual void knowledge_update_callback(/*whatever message for this*/) override;
+		virtual void knowledge_update_callback(std::shared_ptr<std_msgs::msg::String> updated_knowledge) override;
 
 		/**
 		 * \brief Callback which define how the subtree should be built
@@ -63,7 +63,7 @@ namespace dhtt_plugins
 		 * 
 		 * \return void
 		 */
-		virtual void child_finished_callback(/*whatever message for this*/) override;
+		virtual void child_finished_callback(std::string finished_child, bool success) override;
 
 
 	private:

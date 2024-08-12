@@ -9,6 +9,7 @@
 // ros2 includes
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+#include "std_msgs/msg/string.hpp"
 
 // dhtt includes
 #include "dhtt/server/sub_server.hpp"
@@ -107,7 +108,7 @@ namespace dhtt
 		 * 
 		 * \return void
 		 */
-		virtual void knowledge_update_callback(/*whatever message for this*/) = 0;
+		virtual void knowledge_update_callback(std::shared_ptr<std_msgs::msg::String> updated_knowledge) = 0;
 
 		/**
 		 * \brief Callback which defines how to act when a child that this node has direct access to has finished.0
@@ -119,7 +120,7 @@ namespace dhtt
 		 * 
 		 * \return void
 		 */
-		virtual void child_finished_callback(/*whatever message for this*/) = 0;
+		virtual void child_finished_callback(std::string finished_child, bool success) = 0;
 
 		/**
 		 * \brief Callback which define how the subtree should be built
@@ -147,6 +148,8 @@ namespace dhtt
 		std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> executor;
 
 		rclcpp::Service<dhtt_msgs::srv::GoitrRequest>::SharedPtr parent_service;
+
+		rclcpp::Subscription<std_msgs::msg::String>::SharedPtr knowledge_server_subscriber;
 
 		std::string main_server_topic, node_name; 
 		std::vector<std::string> child_node_names;

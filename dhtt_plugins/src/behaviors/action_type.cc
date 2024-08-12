@@ -79,6 +79,9 @@ namespace dhtt_plugins
 		to_ret->released_resources = this->get_released_resources(container);
 		to_ret->passed_resources = this->get_retained_resources(container);
 
+		to_ret->last_behavior = container->get_node_name();
+		to_ret->success = this->is_done();
+
 		return to_ret;
 	}
 

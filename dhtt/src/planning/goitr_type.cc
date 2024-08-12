@@ -58,9 +58,11 @@ namespace dhtt
 
 		// start parent_service
 		this->parent_service = this->sub_srv_ptr->create_service<dhtt_msgs::srv::GoitrRequest>(this->node_name + "/goitr_parent_interface",
-									 std::bind(&GoitrType::parent_service_callback, this, std::placeholders::_1, std::placeholders::_2));
+									std::bind(&GoitrType::parent_service_callback, this, std::placeholders::_1, std::placeholders::_2));
  
 		// start topic subscribers
+		this->knowledge_server_subscriber = this->sub_srv_ptr->create_subscription<std_msgs::msg::String>("/updated_knowledge", 10,  
+									std::bind(&GoitrType::knowledge_update_callback, this, std::placeholders::_1));
 
 		return true;
 	}

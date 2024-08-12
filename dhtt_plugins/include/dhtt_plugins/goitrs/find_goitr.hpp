@@ -44,7 +44,7 @@ namespace dhtt_plugins
 		/**
 		 * \brief if the location of the target object is found changes the move destination
 		 */
-		virtual void knowledge_update_callback(/*whatever message for this*/) override;
+		virtual void knowledge_update_callback(std::shared_ptr<std_msgs::msg::String> updated_knowledge) override;
 
 		/**
 		 * \brief main callback of this node
@@ -53,11 +53,18 @@ namespace dhtt_plugins
 		 * 	for behavior finishes if it succeeds then we are done as the object is found, and if it fails we should reset the THEN node that the find goitr is 
 		 * 	attached to and change the destination of the move behavior. Also the move behavior should have it's status modified to waiting once again.
 		 */
-		virtual void child_finished_callback(/*whatever message for this*/) override;
+		virtual void child_finished_callback(std::string finished_child, bool success) override;
 
 	private:
 
-	}
+		void change_attached_queue_index(int new_index);
+		void change_destination(std::string new_destination);
+		void change_target_object(std::string new_object);
+
+		std::string move_behavior_name, look_behavior_name, object_target, current_destination;
+		std::vector<std::string> destinations_list;
+		std::vector<bool> destinations_checked;
+	};
 
 }
 

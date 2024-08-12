@@ -490,8 +490,5 @@ class TestGoitrSimple:
 	def test_fetch_from_goitr(self):
 		pass
 
-	def test_control_from_goitr(self):
-		pass
-
 	def test_run_simple_goitr(self):
 		pass

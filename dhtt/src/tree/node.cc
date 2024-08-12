@@ -144,6 +144,7 @@ namespace dhtt
 		this->register_server = this->create_service<dhtt_msgs::srv::InternalServiceRegistration>(my_register_topic, std::bind(&Node::register_child_callback, this, std::placeholders::_1, std::placeholders::_2));
 
 		this->status_pub = this->create_publisher<dhtt_msgs::msg::Node>("/status", 10);
+		this->knowledge_pub = this->create_publisher<std_msgs::msg::String>("/updated_knowledge", 10);
 
 		this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1));
 
@@ -310,6 +311,13 @@ namespace dhtt
 		this->status_pub->publish(full_status);
 	}
 
+	void Node::fire_knowledge_updated()
+	{
+		std_msgs::msg::String n_msg;
+
+		this->knowledge_pub->publish(n_msg);
+	}
+
 	void Node::set_resource_status_updated(bool to_set)
 	{
 		this->resource_status_updated = to_set;
@@ -453,6 +461,13 @@ namespace dhtt
 				this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
 			else
 				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
+
+			if ( strcmp("", to_ret->last_behavior.c_str() ) and this->has_goitr )
+			{
+				this->replanner->child_finished_callback(to_ret->last_behavior, to_ret->success);
+
+				to_ret->last_behavior = "";
+			}
 		}
 		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::DONE )
 		{

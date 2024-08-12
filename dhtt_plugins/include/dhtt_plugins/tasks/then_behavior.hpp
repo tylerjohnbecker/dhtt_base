@@ -74,6 +74,7 @@ namespace dhtt_plugins
 		int child_queue_index;
 		int child_queue_size;
 		bool started_activation;
+		bool created;
 	private:
 	};
 }

@@ -157,7 +157,9 @@ namespace dhtt_plugins
 		// change hands of resources and pass up
 		to_ret->passed_resources = result->passed_resources;
 		to_ret->released_resources = result->released_resources;
+		to_ret->last_behavior = result->last_behavior;
 		to_ret->done = this->is_done();
+		to_ret->success = result->success;
 
 		return to_ret;
 	}

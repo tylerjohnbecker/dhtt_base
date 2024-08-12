@@ -182,8 +182,6 @@ namespace dhtt
 			return result.get()->success;
 		}
 
-		// RCLCPP_ERROR(this->get_logger(), "Could not contact MainServer when changing params of node %s!", request->to_modify[0].c_str());
-
 		return false;
 	}
 

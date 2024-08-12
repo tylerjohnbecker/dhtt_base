@@ -151,7 +151,7 @@ namespace dhtt_plugins
 		}
 	}
 
-	void GoitrTest::knowledge_update_callback(/*whatever message for this*/)
+	void GoitrTest::knowledge_update_callback(std::shared_ptr<std_msgs::msg::String> updated_knowledge)
 	{
 		// wow such empty
 	}
@@ -161,8 +161,8 @@ namespace dhtt_plugins
 		// wow such empty
 	}
 
-	void GoitrTest::child_finished_callback(/*whatever message for this*/)
+	void GoitrTest::child_finished_callback(std::string finished_child, bool success)
 	{
-		// wow such empty
+		(void) finished_child;
 	}
 }

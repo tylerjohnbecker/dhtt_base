@@ -18,7 +18,11 @@ namespace dhtt_plugins
 
 		this->activation_potential = 0;
 
+		this->created = false;
+
 		this->parse_params(params);
+
+		this->created = true;
 	}
 
 	std::shared_ptr<dhtt_msgs::action::Activation::Result> ThenBehavior::auction_callback( dhtt::Node* container )
@@ -149,7 +153,9 @@ namespace dhtt_plugins
 		// RCLCPP_INFO(container->get_logger(), "Queue index %d and Queue size %d and is done %d", this->child_queue_index, this->child_queue_size, this->is_done());
 
 		to_ret->released_resources = result->released_resources;
+		to_ret->last_behavior = result->last_behavior;
 		to_ret->done = this->is_done();
+		to_ret->success = result->success;
 
 		return to_ret;
 	}
@@ -166,7 +172,24 @@ namespace dhtt_plugins
 		// 	return;
 		// }
 
+		// parse reorderings after created
+
 		(void) params;
+
+		if (this->created)
+		{
+			if ( (int) params.size() == 0 )
+				throw std::invalid_argument("Need at least one parameter to change, but no params were given...");
+
+			auto colon_index = params[0].find(':');
+			std::string key = params[0].substr(0, colon_index);
+			std::string val = params[0].substr(colon_index + 2, params[0].size() - colon_index);
+
+			if ( strcmp(key.c_str(), "child_queue_index") )
+				throw std::invalid_argument("Invalid parameter passed: " + key + " expected \"child_queue_index: int\"");
+
+			this->child_queue_index = atoi(val.c_str());
+		}
 	}
 
 	double ThenBehavior::get_perceived_efficiency()

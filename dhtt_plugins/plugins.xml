@@ -26,4 +26,7 @@
 	<class type="dhtt_plugins::GoitrTest" base_class_type="dhtt::GoitrType">
 		<description>GOiTR meant just for testing the functionality of the communication with the mainserver etc.</description>
 	</class>
+	<class type="dhtt_plugins::FindGoitr" base_class_type="dhtt::GoitrType">
+		<description>GOiTR meant for controlling a subtree that finds objects in a list of known locations in the environment.</description>
+	</class>
 </library>
