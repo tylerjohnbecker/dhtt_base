@@ -103,9 +103,21 @@ namespace dhtt
 		 * 	point the goitr should construct its own subtree and then activation should continue. For now this will be constant and the subtree will just be loaded
 		 *  in from a file, however, it might be better to consider this more dynamically and already have done some planning here.
 		 * 
-		 * \return void 
+		 * \return True if server communication is established, false otherwise.
 		 */
 		bool build_subtree();
+
+		/**
+		 * \brief fetches the current subtree rooted at the attached node
+		 * 
+		 * Each GOiTR needs full knowledge of it's subtree down until the next GOiTR.
+		 * 
+		 * \param response. Pointer to the response struct to put the result from the server in. After using this function the caller should block for the thread to finish, and then look
+		 * 	at this pointer for the result similar to futures.
+		 * 
+		 * \return True if server communication is established, false otherwise.
+		 */
+		bool fetch_subtree(std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response);
 
 		std::string main_server_topic, node_name; 
 		std::vector<std::string> child_node_names;
@@ -126,12 +138,14 @@ namespace dhtt
 
 		rclcpp::Publisher<dhtt_msgs::msg::Result>::SharedPtr result_pub;
 
-		std::shared_ptr<std::thread> service_thread;
-
 		std::string filename;
 		std::vector<std::string> args;
 
-		bool thread_running;
+		std::shared_ptr<std::thread> service_thread;
+		std::mutex thread_mut;
+
+
+		int threads_running;
 
 	};
 

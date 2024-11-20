@@ -69,6 +69,8 @@ namespace dhtt_plugins
 		bool is_done() override;
 
 	protected:
+		std::mutex queue_index_mut;
+
 		double activation_potential;
 
 		int child_queue_index;

@@ -1,8 +1,8 @@
-#include "dhtt_plugins/behaviors/move_behavior.hpp"
+#include "dhtt_plugins/behaviors/test/mock_move_behavior.hpp"
 
 namespace dhtt_plugins
 {
-	void MoveBehavior::parse_params(std::vector<std::string> params) 
+	void MockMoveBehavior::parse_params(std::vector<std::string> params) 
 	{
 		if ( (int) params.size() > 2 )
 			throw std::invalid_argument("Too many parameters passed to node. Only activation potential, and destination required.");
@@ -37,60 +37,60 @@ namespace dhtt_plugins
 			throw std::invalid_argument("Parameters are expected in the format \"key: value\" but received in the form " + params[1] + ". Returning in error.");
 
 		key = params[1].substr(0, separator_pos);
-		value = params[1].substr(separator_pos + 2, params[0].size() - separator_pos); 
+		value = params[1].substr(separator_pos + 2, params[1].size() - separator_pos); 
 
 		if ( strcmp(key.c_str(), "dest") )
 			throw std::invalid_argument("Expected parameter dest, but received " + key + ". Returning in error.");
 
 		this->destination = value;
 		this->params = params;
+
+		this->done = false;
 	}
 
-	void MoveBehavior::do_work( dhtt::Node* container ) 
+	void MockMoveBehavior::do_work( dhtt::Node* container ) 
 	{
-		auto sub_ptr = this->pub_node_ptr->create_subscription<std_msgs::msg::String>("/dhtt/result", 10, std::bind(&MoveBehavior::done_callback, this, std::placeholders::_1));
-
 		(void) container;
 
-		// for ( int i = 0; i < 10 ; i++ )
+		// change the robot's position in the param server
+		std::shared_ptr<rclcpp::Node> param_node_ptr = std::make_shared<rclcpp::Node>(container->get_node_name() + "_param_getter");
+
+		auto params_client_ptr = std::make_shared<rclcpp::SyncParametersClient>(param_node_ptr, "/param_node");
 		{
-			auto pub_ptr = this->pub_node_ptr->create_publisher<std_msgs::msg::String>("/dhtt/move_base", 10);
+			using namespace std::chrono_literals;
 
-			std_msgs::msg::String go;
+			while ( not params_client_ptr->wait_for_service(1s) and rclcpp::ok() ); 
+		};
 
-			go.data = this->destination + "|false";
+		std::string robot_loc = params_client_ptr->get_parameter<std::string>("world.robot.location");
 
-			pub_ptr->publish(go);
-		}
+		RCLCPP_FATAL(container->get_logger(), "\t\t\tInitial robot location [%s]", robot_loc.c_str());
 
-		this->work_done = false;
+		params_client_ptr->set_parameters({rclcpp::Parameter("world.robot.location", this->destination)});
 
-		while ( not this->work_done )
-			this->executor->spin_once();
+		robot_loc = params_client_ptr->get_parameter<std::string>("world.robot.location");
+
+		RCLCPP_FATAL(container->get_logger(), "\t\t\t after update robot location [%s]", robot_loc.c_str());
+
+		// fire a knowledge update message
+		this->send_state_updated();
 
 		this->done = true;
-
-		return;
-
 	}
 
-	double MoveBehavior::get_perceived_efficiency() 
-	{
-		return this->activation_potential;
-	}
-
-	std::vector<dhtt_msgs::msg::Resource> MoveBehavior::get_retained_resources( dhtt::Node* container ) 
+	std::vector<dhtt_msgs::msg::Resource> MockMoveBehavior::get_retained_resources( dhtt::Node* container ) 
 	{
 		return container->get_owned_resources();
 	}
-	std::vector<dhtt_msgs::msg::Resource> MoveBehavior::get_released_resources( dhtt::Node* container ) 
+
+	std::vector<dhtt_msgs::msg::Resource> MockMoveBehavior::get_released_resources( dhtt::Node* container ) 
 	{
 		(void) container;
 
 		return std::vector<dhtt_msgs::msg::Resource>();
 	}
 
-	std::vector<dhtt_msgs::msg::Resource> MoveBehavior::get_necessary_resources()
+	std::vector<dhtt_msgs::msg::Resource> MockMoveBehavior::get_necessary_resources() 
 	{
 		std::vector<dhtt_msgs::msg::Resource> to_ret;
 
@@ -102,12 +102,8 @@ namespace dhtt_plugins
 		return to_ret;
 	}
 
-	void MoveBehavior::done_callback( std::shared_ptr<std_msgs::msg::String> data )
+	double MockMoveBehavior::get_perceived_efficiency() 
 	{
-		(void) data;
-
-		std::cout << "RECEIVED DONE" << std::endl;
-
-		this->work_done = true;
+		return this->activation_potential;
 	}
 }

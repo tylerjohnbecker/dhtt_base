@@ -9,11 +9,11 @@ Nodes:
     goitr_type: 'dhtt_plugins::GoitrTest'
     robot: 0
     parent: 'NONE'
-    params: ['pick_place.yaml', 'target: $target_1', 'pick_spot: $location_1', 'place_spot: $location_2']
+    params: ['pick_place_test.yaml', 'target: $target_1', 'pick_spot: $location_1', 'place_spot: $location_2']
   pickThingTwo:
     type: 4
     behavior_type: 'dhtt_plugins::ThenBehavior'
     goitr_type: 'dhtt_plugins::GoitrTest'
     robot: 0
     parent: 'NONE'
-    params: ['pick_place.yaml', 'target: $target_2', 'pick_spot: $location_3', 'place_spot: $location_4']
+    params: ['pick_place_test.yaml', 'target: $target_2', 'pick_spot: $location_3', 'place_spot: $location_4']

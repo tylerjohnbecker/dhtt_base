@@ -312,6 +312,27 @@ namespace dhtt
 		 */
 		dhtt_msgs::msg::Subtree construct_subtree_from_node_iter( std::vector<dhtt_msgs::msg::Node>::iterator top_node );
 
+		/**
+		 * \brief internal check for if the given node can be modified
+		 * 
+		 * Nodes can always be modified simultaneously unless on is in the subtree of another. This function ensures that they are not.
+		 * 
+		 * \param to_modify node to check for whether it can be modified
+		 * 
+		 * \return True if the node can be modified, false otherwise
+		 */ 
+		bool can_modify(std::string to_modify);
+
+		/**
+		 * \brief checks if two subtrees rooted at the inputted node names are disjoint
+		 * 
+		 * \param to_modify name of the incoming node to modify
+		 * \param to_check name of the other node to check
+		 * 
+		 * \return True if trees are disjoint, false otherwise
+		 */
+		bool subtrees_are_disjoint(std::string to_modify, std::string to_check);
+
 		// *** PRIVATE MEMBERS ***
 		// external services
 		rclcpp::Service<dhtt_msgs::srv::ModifyRequest>::SharedPtr modify_server;
@@ -339,6 +360,7 @@ namespace dhtt
 		std::shared_ptr<std::thread> run_tree_thread;
 
 		std::list<std::string> history;
+		std::vector<std::string> being_modified;
 
 		// this is passed in from main through the constructor so that any inner nodes can be spun as well
 		std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner_cp;

@@ -71,6 +71,8 @@ namespace dhtt_plugins
 		while ( not this->work_done )
 			this->executor->spin_once();
 
+		this->done = true;
+
 		return;
 	}
 
@@ -111,6 +113,22 @@ namespace dhtt_plugins
 				first = false;
 			}
 		}
+
+		return to_ret;
+	}
+
+	std::vector<dhtt_msgs::msg::Resource> PickBehavior::get_necessary_resources()
+	{
+		std::vector<dhtt_msgs::msg::Resource> to_ret;
+
+		dhtt_msgs::msg::Resource base;
+		base.type = dhtt_msgs::msg::Resource::BASE;
+
+		dhtt_msgs::msg::Resource gripper;
+		base.type = dhtt_msgs::msg::Resource::GRIPPER;
+
+		to_ret.push_back(base);
+		to_ret.push_back(gripper);
 
 		return to_ret;
 	}

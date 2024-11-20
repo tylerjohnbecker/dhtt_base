@@ -2,8 +2,8 @@
 
 namespace dhtt
 {
-	SubServer::SubServer(std::string node_name, std::string subtree_filename, std::vector<std::string> file_args) : rclcpp::Node(node_name + "_sub_server"), 
-			node_name(node_name), service_thread(nullptr), filename(subtree_filename), args(file_args), thread_running(false)
+	SubServer::SubServer(std::string node_name, std::string subtree_filename, std::vector<std::string> file_args) : rclcpp::Node(node_name + "_sub_server", rclcpp::NodeOptions().allow_undeclared_parameters(true).automatically_declare_parameters_from_overrides(true)), 
+			node_name(node_name), filename(subtree_filename), args(file_args), service_thread(nullptr), threads_running(0)
 	{
 
 		// this should also request information about it's subtree from main server
@@ -19,10 +19,7 @@ namespace dhtt
 
 	bool SubServer::add_node(std::string parent_name, dhtt_msgs::msg::Node to_add)
 	{
-		if ( this->thread_running )
-			return false; 
-		// else if ( this->service_thread != nullptr )
-		// 	this->service_thread->join();
+		std::lock_guard<std::mutex> guard(this->thread_mut);
 
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
@@ -34,17 +31,14 @@ namespace dhtt
 		this->service_thread = std::make_shared<std::thread>(&SubServer::modify, this, req, res);
 		this->service_thread->detach();
 
-		this->thread_running = true;
+		this->threads_running += 1;
 
 		return true;
 	}
 
 	bool SubServer::remove_node(std::string to_remove)
 	{
-		if ( this->thread_running )
-			return false; 
-		// else if ( this->service_thread != nullptr )
-		// 	this->service_thread->join();
+		std::lock_guard<std::mutex> guard(this->thread_mut);
 
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
@@ -55,17 +49,14 @@ namespace dhtt
 		this->service_thread = std::make_shared<std::thread>(&SubServer::modify, this, req, res);
 		this->service_thread->detach();
 
-		this->thread_running = true;
+		this->threads_running += 1;
 
 		return true;
 	}
 
 	bool SubServer::change_params(std::string node_name, std::vector<std::string> new_params)
 	{
-		if ( this->thread_running )
-			return false; 
-		// else if ( this->service_thread != nullptr )
-		// 	this->service_thread->join();
+		std::lock_guard<std::mutex> guard(this->thread_mut);
 
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
@@ -75,9 +66,10 @@ namespace dhtt
 		req->params = new_params;
 
 		this->service_thread = std::make_shared<std::thread>(&SubServer::modify, this, req, res);
-		this->service_thread->detach();
 
-		this->thread_running = true;
+		this->threads_running += 1;
+
+		this->service_thread->detach();
 
 		return true;
 	}
@@ -86,6 +78,7 @@ namespace dhtt
 	{
 		// start each client once
 		this->modify_client = this->create_client<dhtt_msgs::srv::ModifyRequest>("/modify_service");
+		this->fetch_client = this->create_client<dhtt_msgs::srv::FetchRequest>("/fetch_service");
 
 		{
 			using namespace std::chrono_literals;
@@ -111,10 +104,7 @@ namespace dhtt
 
 	bool SubServer::build_subtree()
 	{
-		if ( this->thread_running )
-			return false; 
-		// else if ( this->service_thread != nullptr )
-		// 	this->service_thread->join();
+		std::lock_guard<std::mutex> guard(this->thread_mut);
 
 		// get true path to file saved for subtree
 		std::experimental::filesystem::path dhtt_folder_path = __FILE__;
@@ -133,10 +123,29 @@ namespace dhtt
 		req->file_args = this->args;
 
 		this->service_thread = std::make_shared<std::thread>(&SubServer::modify, this, req, res);
+
+		this->threads_running += 1;
+
+		this->service_thread->detach();
+ 
+		return true;
+	}
+
+	bool SubServer::fetch_subtree(std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response)
+	{
+		std::lock_guard<std::mutex> guard(this->thread_mut);
+
+		std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> req = std::make_shared<dhtt_msgs::srv::FetchRequest::Request>();
+
+		req->return_full_subtree = false;
+		req->node_name = this->node_name;
+
+		this->service_thread = std::make_shared<std::thread>(&SubServer::fetch, this, req, response);
+
+		this->threads_running += 1;
+
 		this->service_thread->detach();
 
-		this->thread_running = true;
- 
 		return true;
 	}
 
@@ -144,12 +153,14 @@ namespace dhtt
 	{
 		(void) response;
 
-		// rclcpp::sleep_for(std::chrono::milliseconds(10));
+		RCLCPP_DEBUG(this->get_logger(), "Starting modify thread...");
 
 		auto future = this->modify_client->async_send_request(request);
 
-		while ( future.wait_for(std::chrono::milliseconds(2)) != std::future_status::ready and rclcpp::ok() );
-			
+		std::future_status status;
+
+		while ( ( status = future.wait_for(std::chrono::milliseconds(2)) ) != std::future_status::ready and rclcpp::ok() );
+
 		if (not rclcpp::ok())
 			return false;
 
@@ -159,30 +170,36 @@ namespace dhtt
 		res.success = response->success;
 		res.error_msg = response->error_msg;
 
+		std::lock_guard<std::mutex> guard(this->thread_mut);
+
 		if ( res.success )
 			this->update_to_fit_request(request, response);
 
 		this->result_pub->publish(res); 
 
-		this->thread_running = false;
+		this->threads_running -= 1;
+
+		RCLCPP_DEBUG(this->get_logger(), "Cleaning up thread resources...");
 
 		return response->success;
 	}
 
 	bool SubServer::fetch( const std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response )
 	{
-		(void) response;
+		auto future = this->fetch_client->async_send_request(request);
 
-		auto result = this->fetch_client->async_send_request(request);
+		while ( future.wait_for(std::chrono::milliseconds(2)) != std::future_status::ready and rclcpp::ok() );
 
-		if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) == rclcpp::executor::FutureReturnCode::SUCCESS)
-		{
-			// response = result.get();
+		if (not rclcpp::ok())
+			return false;
 
-			return result.get()->success;
-		}
+		std::lock_guard<std::mutex> guard(this->thread_mut);
 
-		return false;
+		*response = *(future.get());
+
+		this->threads_running -= 1;
+
+		return response->success;
 	}
 
 	void SubServer::update_to_fit_request( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response )

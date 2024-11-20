@@ -3,7 +3,7 @@
 namespace dhtt
 {
 	Node::Node(std::string name, std::string type, std::vector<std::string> params, std::string p_name, std::string goitr_type) : rclcpp::Node( name ), node_type_loader("dhtt", "dhtt::NodeType"), 
-			goitr_type_loader("dhtt", "dhtt::GoitrType"), name(name), parent_name(p_name), priority(1), resource_status_updated(false), first_activation(true)
+			goitr_type_loader("dhtt", "dhtt::GoitrType"), name(name), parent_name(p_name), priority(1), resource_status_updated(false), first_activation(true), active(false)
 	{
 		this->error_msg = "";
 		this->successful_load = true;
@@ -369,7 +369,7 @@ namespace dhtt
 			}
 			else
 			{
-				RCLCPP_DEBUG(this->get_logger(), "Request not successful returning to state WAITING");
+				RCLCPP_INFO(this->get_logger(), "Request not successful returning to state WAITING");
 
 				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
@@ -377,7 +377,7 @@ namespace dhtt
 				
 				dhtt_msgs::action::Activation::Result::SharedPtr blank_result = std::make_shared<dhtt_msgs::action::Activation::Result>();
 
-				if ( (int) this->child_names.size() > 0 )
+				if ( (int) this->child_names.size() > 0 and this->active )
 				{
 					this->fail_thread.reset();
 
@@ -386,6 +386,7 @@ namespace dhtt
 				}
 
 				goal_handle->succeed(blank_result);
+				this->active = false;
 			}
 		}
 		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::DONE )
@@ -408,76 +409,93 @@ namespace dhtt
 	void Node::activate(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Activation>> goal_handle)
 	{
 		// collect result from children or self
-		dhtt_msgs::action::Activation::Result::SharedPtr to_ret;
-
-		std::lock_guard<std::mutex> guard(this->logic_mut);
+		dhtt_msgs::action::Activation::Result::SharedPtr to_ret = std::make_shared<dhtt_msgs::action::Activation::Result>();
 
 		this->owned_resources.clear();
 
 		RCLCPP_INFO(this->get_logger(), "Activation received from parent...");
 
+		if ( this->has_goitr )
+			this->replanner->block_for_thread();
+
 		if ( this->has_goitr and this->first_activation )
 		{
-			RCLCPP_INFO(this->get_logger(), "This is first activation so building subtree...");
+			RCLCPP_DEBUG(this->get_logger(), "This is first activation so building subtree...");
 			this->replanner->first_activation_callback();
+
+			to_ret->done = false;
+			to_ret->possible = false;
+			
+			// this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
+			this->first_activation = false;
 		}
-
-		if ( this->status.state == dhtt_msgs::msg::NodeStatus::ACTIVE )
+		else
 		{
-			// wait real quick for the status to be updated
-			while (not this->resource_status_updated);
+			std::lock_guard<std::mutex> guard(this->logic_mut);
 
-			RCLCPP_DEBUG(this->get_logger(), "Resource status updated activating callback");
-
-			// deal with any passed resources
-			for ( dhtt_msgs::msg::Resource passed_resource : goal_handle->get_goal()->passed_resources )
-				this->owned_resources.push_back( passed_resource );
-
-			// then start auction work
-			to_ret = this->logic->auction_callback(this);
-
-			this->active_child_name = to_ret->local_best_node;
-
-			if (this->logic->is_done())
-				this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
-		}
-		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::WORKING )
-		{
-			RCLCPP_WARN(this->get_logger(), "Starting work!");
-
-			// add granted resources to the owned resources for the logic
-			for ( dhtt_msgs::msg::Resource granted_resource : goal_handle->get_goal()->granted_resources )
+			if ( this->status.state == dhtt_msgs::msg::NodeStatus::ACTIVE )
 			{
-				// RCLCPP_WARN(this->get_logger(), "[%s]", granted_resource.name.c_str());
-				this->owned_resources.push_back( granted_resource );
+				// wait real quick for the status to be updated
+				while (not this->resource_status_updated);
+
+				RCLCPP_DEBUG(this->get_logger(), "Resource status updated activating callback");
+
+				// deal with any passed resources
+				for ( dhtt_msgs::msg::Resource passed_resource : goal_handle->get_goal()->passed_resources )
+					this->owned_resources.push_back( passed_resource );
+
+				// then start auction work
+				to_ret = this->logic->auction_callback(this);
+
+				this->active_child_name = to_ret->local_best_node;
+
+				if ( to_ret->possible )
+					this->active = true;
+
+				if (this->logic->is_done())
+					this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
 			}
-
-			// start work 
-			to_ret = this->logic->work_callback(this);
-				
-			this->resource_status_updated = false;
-
-			if (this->logic->is_done())
-				this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
-			else
-				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
-
-			if ( strcmp("", to_ret->last_behavior.c_str() ) and this->has_goitr )
+			else if ( this->status.state == dhtt_msgs::msg::NodeStatus::WORKING )
 			{
-				this->replanner->child_finished_callback(to_ret->last_behavior, to_ret->success);
+				RCLCPP_WARN(this->get_logger(), "Starting work!");
 
-				to_ret->last_behavior = "";
+				// add granted resources to the owned resources for the logic
+				for ( dhtt_msgs::msg::Resource granted_resource : goal_handle->get_goal()->granted_resources )
+				{
+					// RCLCPP_WARN(this->get_logger(), "[%s]", granted_resource.name.c_str());
+					this->owned_resources.push_back( granted_resource );
+				}
+
+				// start work 
+				to_ret = this->logic->work_callback(this);
+					
+				this->resource_status_updated = false;
+
+				if (this->logic->is_done())
+					this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
+				else
+					this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
+
+				if ( strcmp("", to_ret->last_behavior.c_str() ) and this->has_goitr )
+				{
+					RCLCPP_DEBUG(this->get_logger(), "Child finished, running fault recovery callback"); 
+
+					this->replanner->child_finished_callback(to_ret->last_behavior, to_ret->done);
+
+					to_ret->last_behavior = "";
+				}
 			}
-		}
-		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::DONE )
-		{
-			to_ret->done = true;
+			else if ( this->status.state == dhtt_msgs::msg::NodeStatus::DONE )
+			{
+				to_ret->done = true;
+			}
 		}
 
 		to_ret->activation_potential = this->logic->get_perceived_efficiency();
 		// this->calculate_activation_potential();
 
 		// then send result back to parent
+		RCLCPP_INFO(this->get_logger(), "Sending request back up the tree...");
 		goal_handle->succeed(to_ret);
 	}
 
@@ -566,13 +584,22 @@ namespace dhtt
 				response->error_msg = std::string("Error parsing new params: ") + ex.what();
 				response->success = false;
 
+				RCLCPP_ERROR(this->get_logger(), "Error parsing new params: %s", ex.what());
+
+				throw ex; 
+
 				return;
 			}
 
 			response->error_msg = "";
 			response->success = true;
 
-			this->update_status(this->status.state);
+			int8_t state = dhtt_msgs::msg::NodeStatus::WAITING;
+
+			// if ( state == dhtt_msgs::msg::NodeStatus::DONE )
+				
+
+			this->update_status(state);
 
 			return;
 		}

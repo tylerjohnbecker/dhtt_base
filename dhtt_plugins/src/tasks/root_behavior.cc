@@ -73,9 +73,10 @@ namespace dhtt_plugins
 
 			if ( not (*result.begin()).second->possible )
 			{
+				RCLCPP_FATAL(container->get_logger(), "Children not possible, trying again...");
 				container->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
-				break;
+				continue;
 			}
 
 			// update resources

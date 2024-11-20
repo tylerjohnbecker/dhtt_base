@@ -237,6 +237,19 @@ class TestGoitrSimple:
 
 		assert modify_rs.success == True
 
+	def start_tree(self):
+		control_rq = ControlRequest.Request()
+		control_rq.type = ControlRequest.Request.START
+
+		control_future = self.node.controlsrv.call_async(control_rq)
+		rclpy.spin_until_future_complete(self.node, control_future)
+
+		control_rs = control_future.result()
+
+		assert control_rs.success == True
+
+		return control_rs
+
 	# node_name, params
 	def change_node_params_from_goitr(self, node_name, params, goitr_client):
 		
@@ -389,6 +402,12 @@ class TestGoitrSimple:
 
 		self.add_subtree_from_goitr(client, node_name)
 
+	def verify_history(self):
+		pass
+
+	def verify_found_locations(self):
+		pass
+
 	def test_add_goitrs_from_yaml(self, serial):
 		self.initialize()
 		self.reset_tree()
@@ -492,3 +511,19 @@ class TestGoitrSimple:
 
 	def test_run_simple_goitr(self):
 		pass
+
+	def test_find_3_objects(self):
+
+		self.initialize()
+		self.reset_tree()
+
+		self.add_from_yaml("/test_descriptions/find_3_objects.yaml")
+
+		# correct_history, object_location_pairs = self.get_gt_from_yaml("/test_descriptions/find_3_objects.yaml")
+
+		self.start_tree() 
+
+		# self.verify_history()
+		# self.verify_found_locations()
+
+		# verify correct history for the tree

@@ -7,6 +7,8 @@
 
 #include "dhtt/planning/goitr_type.hpp"
 
+#define OBJECT_PROB_THRESHOLD .5
+
 namespace dhtt_plugins
 {
 
@@ -54,6 +56,8 @@ namespace dhtt_plugins
 		 * 	attached to and change the destination of the move behavior. Also the move behavior should have it's status modified to waiting once again.
 		 */
 		virtual void child_finished_callback(std::string finished_child, bool success) override;
+
+		virtual void first_activation_callback() override;
 
 	private:
 

@@ -18,18 +18,18 @@ Nodes:
     goitr_type: 'dhtt_plugins::GoitrTest'
     robot: 0
     parent: 'ParentAnd'
-    params: ["pick_two_things.yaml", "target_1: object1", "location_1: loc1", "location_2: loc2", "target_2: object2", "location_3: loc3", "location_4: loc4"]
+    params: ["pick_two_things_test.yaml", "target_1: object1", "location_1: loc1", "location_2: loc2", "target_2: object2", "location_3: loc3", "location_4: loc4"]
   GoitrThen:
     type: 4
     behavior_type: 'dhtt_plugins::ThenBehavior'
     goitr_type: 'dhtt_plugins::GoitrTest'
     robot: 0
     parent: 'ParentAnd'
-    params: ["find.yaml", "initial_dest: loc1", "target: object1"]
+    params: ["find_test.yaml", "ap: 1.0", "initial_dest: loc1", "target: object1"]
   GoitrOr:
     type: 4
     behavior_type: 'dhtt_plugins::OrBehavior'
     goitr_type: 'dhtt_plugins::GoitrTest'
     robot: 0
     parent: 'ParentAnd'
-    params: ["pick_two_things.yaml", "target_1: object1", "location_1: loc1", "location_2: loc2", "target_2: object2", "location_3: loc3", "location_4: loc4"]
+    params: ["pick_two_things_test.yaml", "target_1: object1", "location_1: loc1", "location_2: loc2", "target_2: object2", "location_3: loc3", "location_4: loc4"]

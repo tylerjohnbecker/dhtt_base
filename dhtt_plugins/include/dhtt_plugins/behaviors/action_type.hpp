@@ -96,6 +96,15 @@ namespace dhtt_plugins
 		virtual std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container ) = 0;
 
 		/**
+		 * \brief this is where inheriting classes define the resources they need
+		 * 
+		 * The resources on the robot which an action type behavior needs to run should be defined here by overriding this method.
+		 * 
+		 * \return the list of resources required to run the behavior
+		 */
+		virtual std::vector<dhtt_msgs::msg::Resource> get_necessary_resources() = 0;
+
+		/**
 		 * \brief getter for the internal done variable
 		 * 
 		 * The do_work function should only flip the done flag if work is done, however, if the flag is never flipped this node will be re-run by the tree.
@@ -106,6 +115,8 @@ namespace dhtt_plugins
 
 	protected:
 
+		void send_state_updated();
+
 		bool done;
 
 		double activation_potential;
@@ -113,6 +124,7 @@ namespace dhtt_plugins
 
 		std::shared_ptr<rclcpp::Node> pub_node_ptr;
 		std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
+		rclcpp::Publisher<std_msgs::msg::String>::SharedPtr knowledge_pub;
 
 	private:
 	};

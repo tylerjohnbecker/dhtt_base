@@ -72,6 +72,11 @@ namespace dhtt_plugins
 		std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container ) override; 
 
 		/**
+		 * \brief this behavior needs the move base of the robot and an arm to grab the object
+		 */
+		virtual std::vector<dhtt_msgs::msg::Resource> get_necessary_resources() override;
+
+		/**
 		 * \brief callback for receiving done from the ROS1 implementation of MoveBehavior
 		 * 
 		 * For this experiment the actual robot specific implementation had to be done in ROS1 so this callback receives a notification that movement finished over ROS1 bridge.

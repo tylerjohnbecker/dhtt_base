@@ -32,7 +32,7 @@ namespace dhtt_plugins
 	class RootBehavior : public dhtt::NodeType
 	{
 	public:
-
+		
 		/**
 		 * \brief initializes the major topics and a personal executor for the root node
 		 * 

@@ -2,8 +2,12 @@
 
 namespace dhtt
 {
-	MainServer::MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner) : rclcpp::Node(node_name), spinner_cp(spinner), total_nodes_added(1), verbose(true), running(false)
+	MainServer::MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner) : 
+									rclcpp::Node(node_name, rclcpp::NodeOptions().allow_undeclared_parameters(true).automatically_declare_parameters_from_overrides(true)), 
+									spinner_cp(spinner), total_nodes_added(1), verbose(true), running(false)
 	{
+		// create a callback group for parallel ones ( not helpful )
+
 		/// initialize subscribers
 		this->status_sub = this->create_subscription<dhtt_msgs::msg::Node>("/status", MAX_NODE_NUM, std::bind(&MainServer::status_callback, this, std::placeholders::_1));
 
@@ -74,20 +78,41 @@ namespace dhtt
 		RCLCPP_INFO(this->get_logger(), "--- Modify request received!");
 		this->publish_root_status();
 
-		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::ADD)
-		{
-			// docs aren't great, but search scoped locks here: https://www.boost.org/doc/libs/1_65_0/doc/html/thread/synchronization.html
-			std::lock_guard<boost::mutex> guard(this->modify_mut);
+		std::string to_remove;
 
-			if ( (int) request->to_modify.size() == 0 )
+		auto same_name = [&](std::string to_check) { return not strcmp(to_remove.c_str(), to_check.c_str()); };
+
+		if ( (int) request->to_modify.size() == 0 )
+		{
+			response->success = false;
+			response->error_msg = "Failed to modify node because no node was given."; 
+
+			RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+
+			return;
+		}
+
+		for ( auto iter : request->to_modify )
+		{
+			if ( not this->can_modify(iter) )
 			{
 				response->success = false;
-				response->error_msg = "Failed to add node because no parent node was given."; 
+				response->error_msg = "Node " + iter + " is currently being modified... returning in error!";
 
 				RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
 
 				return;
 			}
+		}
+
+
+		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::ADD)
+		{
+			// docs aren't great, but search scoped locks here: https://www.boost.org/doc/libs/1_65_0/doc/html/thread/synchronization.html
+			std::lock_guard<boost::mutex> guard(this->modify_mut);
+
+			for ( auto iter : request->to_modify )
+				this->being_modified.push_back(iter);
 
 			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
 			{
@@ -103,22 +128,22 @@ namespace dhtt
 				}
 			}
 
+			for ( auto iter : request->to_modify )
+			{
+				to_remove = iter;
+
+				this->being_modified.erase(std::remove_if(this->being_modified.begin(), this->being_modified.end(), same_name), this->being_modified.end());
+			}
+
 			return;
 		}
 
 		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::ADD_FROM_FILE)
 		{
 			std::lock_guard<boost::mutex> guard(this->modify_mut);
-			
-			if ( (int) request->to_modify.size() == 0 )
-			{
-				response->success = false;
-				response->error_msg = "Failed to add nodes from file because no parent node was given."; 
 
-				RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
-
-				return;
-			}
+			for ( auto iter : request->to_modify )
+				this->being_modified.push_back(iter);
 
 			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
 			{
@@ -137,6 +162,13 @@ namespace dhtt
 				}
 			}
 
+			for ( auto iter : request->to_modify )
+			{
+				to_remove = iter;
+
+				this->being_modified.erase(std::remove_if(this->being_modified.begin(), this->being_modified.end(), same_name), this->being_modified.end());
+			}
+
 			return;
 		}
 
@@ -144,15 +176,8 @@ namespace dhtt
 		{
 			std::lock_guard<boost::mutex> guard(this->modify_mut);
 
-			if ( (int) request->to_modify.size() == 0 )
-			{
-				response->success = false;
-				response->error_msg = "Failed to remove nodes because no nodes to remove were given.";
-				
-				RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
-
-				return;
-			}
+			for ( auto iter : request->to_modify )
+				this->being_modified.push_back(iter);
 
 			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
 			{
@@ -168,22 +193,22 @@ namespace dhtt
 				}
 			}
 
+			for ( auto iter : request->to_modify )
+			{
+				to_remove = iter;
+
+				this->being_modified.erase(std::remove_if(this->being_modified.begin(), this->being_modified.end(), same_name), this->being_modified.end());
+			}
+
 			return;
 		}
 
 		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::MUTATE or request->type == dhtt_msgs::srv::ModifyRequest::Request::PARAM_UPDATE )
 		{
 			std::lock_guard<boost::mutex> guard(this->modify_mut);
-			
-			if ( (int) request->to_modify.size() == 0 )
-			{
-				response->success = false;
-				response->error_msg = "Failed to remove nodes because no nodes to remove were given.";
-				
-				RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
 
-				return;
-			}
+			for ( auto iter : request->to_modify )
+				this->being_modified.push_back(iter);
 
 			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
 			{
@@ -198,7 +223,10 @@ namespace dhtt
 					return;
 				}
 
-				RCLCPP_INFO(this->get_logger(), "Mutating node [%s] to type %s", (*iter).c_str(), request->mutate_type.c_str());
+				if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::MUTATE )
+					RCLCPP_INFO(this->get_logger(), "Mutating node [%s] to type %s", (*iter).c_str(), request->mutate_type.c_str());
+				else 
+					RCLCPP_INFO(this->get_logger(), "Changing params of node [%s]", (*iter).c_str());
 
 				// construct internal modify Request
 				// std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
@@ -214,6 +242,8 @@ namespace dhtt
 				// response->error_msg = res->error_msg;
 				response->success = not strcmp(response->error_msg.c_str(), "");
 
+				RCLCPP_FATAL(this->get_logger(), "Done modifying [%s]", (*iter).c_str());
+
 				// exit early if modification fails
 				if ( not response->success )
 				{
@@ -222,6 +252,16 @@ namespace dhtt
 					return;
 				}
 			}
+
+			for ( auto iter : request->to_modify )
+			{
+				to_remove = iter;
+
+				this->being_modified.erase(std::remove_if(this->being_modified.begin(), this->being_modified.end(), same_name), this->being_modified.end());
+			}
+
+			// for ( auto iter : this->being_modified )
+			// 	RCLCPP_FATAL(this->get_logger(), "Still modifying [%s]", iter.c_str());
 
 			return;
 		}
@@ -434,6 +474,9 @@ namespace dhtt
 		if ( strcmp(to_add.goitr_name.c_str(), ""))
 			goitr_type = to_add.goitr_name;
 
+		// for ( auto iter : to_add.params )
+		// 	RCLCPP_FATAL(this->get_logger(), "%s", iter.c_str());
+
 		// create a physical node from the message and add to physical list
 		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(to_add.node_name, to_add.plugin_name, to_add.params, parent_name, goitr_type);
 		  
@@ -539,7 +582,8 @@ namespace dhtt
 
 								found_index2 = (*arg_iter).find(':') + 1;
 
-								std::string param_val = (*arg_iter).substr(found_index2, ( (*param_iter).length() - found_index2 ) + 1);
+								std::string param_val = (*arg_iter).substr(found_index2, ( (*arg_iter).length() - found_index2 ) + 1);
+								RCLCPP_FATAL(this->get_logger(), "\t\t%s%s", param.c_str(), param_val.c_str());
 
 								to_build.params.push_back(param + param_val);
 
@@ -987,7 +1031,6 @@ namespace dhtt
 		// find all the parents and construct the subtree
 		while (iter != this->node_list.tree_nodes.end())
 		{
-
 			nodes.push_back(*iter);
 			
 			// clear all prior subtree information from node
@@ -1022,5 +1065,33 @@ namespace dhtt
 		this->fill_subtree_metrics(to_ret);
 
 		return to_ret;
+	}
+
+	bool MainServer::can_modify(std::string to_modify)
+	{
+		// in order to modify a node we should make sure it is mutually disjoint from all nodes being modified
+		for ( auto being_modified_iter : this->being_modified )
+			if ( not this->subtrees_are_disjoint(to_modify, being_modified_iter) )
+				return false;
+
+		return true;
+	}
+
+	bool MainServer::subtrees_are_disjoint(std::string to_modify, std::string to_check)
+	{
+		dhtt_msgs::msg::Subtree to_modify_sub = this->fetch_subtree_by_name(to_modify);
+		dhtt_msgs::msg::Subtree to_check_sub = this->fetch_subtree_by_name(to_check);
+
+		// if to_modify is in to_check or to_check is in to_modify_sub return false
+		for ( auto to_modify_iter : to_modify_sub.tree_nodes )
+			if ( not strcmp( to_check.c_str(), to_modify_iter.node_name.c_str() ) )
+				return false;
+
+		for ( auto to_check_iter : to_check_sub.tree_nodes )
+			if ( not strcmp( to_modify.c_str(), to_check_iter.node_name.c_str() ) )
+				return false;
+
+		// otherwise return true
+		return true;
 	}
 }

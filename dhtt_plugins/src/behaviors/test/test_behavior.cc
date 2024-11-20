@@ -1,4 +1,4 @@
-#include "dhtt_plugins/behaviors/test_behavior.hpp"
+#include "dhtt_plugins/behaviors/test/test_behavior.hpp"
 
 
 namespace dhtt_plugins

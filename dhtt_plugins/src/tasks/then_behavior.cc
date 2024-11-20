@@ -39,7 +39,9 @@ namespace dhtt_plugins
 			this->started_activation = true;
 		}
 
-		if ( (int) children.size() == 0)
+		this->child_queue_size = (int) children.size();
+
+		if ( (int) children.size() == 0 or this->child_queue_index >= this->child_queue_size ) 
 		{
 			to_ret->done = true;
 
@@ -47,8 +49,6 @@ namespace dhtt_plugins
 
 			return to_ret;
 		}
-		
-		this->child_queue_size = (int) children.size();
 
 		dhtt_msgs::action::Activation::Goal n_goal;
 
@@ -60,13 +60,13 @@ namespace dhtt_plugins
 
 		container->block_for_responses_from_children();
 
-		RCLCPP_DEBUG(container->get_logger(), "Responses received...");
+		RCLCPP_INFO(container->get_logger(), "Responses received...");
 
 		auto results = container->get_activation_results();
 
 		std::string first_child_in_queue = children[this->child_queue_index];
 
-		while ( results[first_child_in_queue]->done and this->child_queue_index < this->child_queue_size - 1)
+		while ( results[first_child_in_queue]->done and this->child_queue_index < this->child_queue_size - 1 )
 		{
 			this->child_queue_index++;
 			first_child_in_queue = children[this->child_queue_index];
@@ -95,6 +95,10 @@ namespace dhtt_plugins
 
 		int next = this->child_queue_index + 1;
 
+		// make sure to send back failure to all if nothing is possible
+		if ( not to_ret->possible )
+			next -= 1;
+
 		for (std::vector<std::string>::iterator name_iter = children.begin() + next ; name_iter != children.end() ; name_iter++)
 			container->async_activate_child(*name_iter, n_goal);
 
@@ -107,6 +111,8 @@ namespace dhtt_plugins
 	std::shared_ptr<dhtt_msgs::action::Activation::Result> ThenBehavior::work_callback( dhtt::Node* container )
 	{
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> to_ret = std::make_shared<dhtt_msgs::action::Activation::Result>();
+
+		std::lock_guard<std::mutex> guard(this->queue_index_mut);
 
 		// send success to winning child		
 		dhtt_msgs::action::Activation::Goal n_goal;
@@ -178,6 +184,8 @@ namespace dhtt_plugins
 
 		if (this->created)
 		{
+			std::lock_guard<std::mutex> guard(this->queue_index_mut);
+		
 			if ( (int) params.size() == 0 )
 				throw std::invalid_argument("Need at least one parameter to change, but no params were given...");
 
@@ -189,6 +197,11 @@ namespace dhtt_plugins
 				throw std::invalid_argument("Invalid parameter passed: " + key + " expected \"child_queue_index: int\"");
 
 			this->child_queue_index = atoi(val.c_str());
+
+			if ( this->child_queue_index < 0 or this->child_queue_index > this->child_queue_size )
+				throw std::invalid_argument("Invalid queue index passed " + std::to_string(this->child_queue_index) + "... Returning in error!");
+
+			// throw std::invalid_argument(std::to_string(this->child_queue_index));
 		}
 	}
 

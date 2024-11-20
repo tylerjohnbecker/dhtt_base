@@ -154,6 +154,7 @@ namespace dhtt_plugins
 	void GoitrTest::knowledge_update_callback(std::shared_ptr<std_msgs::msg::String> updated_knowledge)
 	{
 		// wow such empty
+		(void) updated_knowledge;
 	}
 
 	void GoitrTest::first_activation_callback(/*whatever message for this*/)
@@ -164,5 +165,6 @@ namespace dhtt_plugins
 	void GoitrTest::child_finished_callback(std::string finished_child, bool success)
 	{
 		(void) finished_child;
+		(void) success;
 	}
 }

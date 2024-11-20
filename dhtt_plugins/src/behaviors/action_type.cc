@@ -25,6 +25,10 @@ namespace dhtt_plugins
 		this->executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 		this->executor->add_node(this->pub_node_ptr);
 
+		this->necessary_resources = this->get_necessary_resources();
+
+		this->knowledge_pub = this->pub_node_ptr->create_publisher<std_msgs::msg::String>("/updated_knowledge", 10);
+
 		return;
 	}
 
@@ -55,7 +59,7 @@ namespace dhtt_plugins
 				necessary_resources_cp.erase(found);
 		}
 
-		to_ret->requested_resources = necessary_resources;
+		to_ret->requested_resources = necessary_resources_cp;
 		to_ret->owned_resources = container->get_owned_resources();
 		to_ret->done = this->is_done();
 		to_ret->possible = container->is_request_possible(to_ret->requested_resources);
@@ -73,8 +77,6 @@ namespace dhtt_plugins
 
 		this->do_work(container);
 
-		this->done = true;
-
 		to_ret->done = this->is_done();
 		to_ret->released_resources = this->get_released_resources(container);
 		to_ret->passed_resources = this->get_retained_resources(container);
@@ -88,5 +90,12 @@ namespace dhtt_plugins
 	bool ActionType::is_done()
 	{
 		return this->done;
+	}
+
+	void ActionType::send_state_updated()
+	{
+		std_msgs::msg::String n_msg;
+
+		this->knowledge_pub->publish(n_msg);
 	}
 }

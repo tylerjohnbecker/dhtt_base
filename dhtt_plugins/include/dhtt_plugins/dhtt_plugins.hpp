@@ -4,7 +4,9 @@
 #include "dhtt_plugins/visibility_control.h"
 
 // list of plugin files to include here
-#include "dhtt_plugins/behaviors/test_behavior.hpp"
+#include "dhtt_plugins/behaviors/test/test_behavior.hpp"
+#include "dhtt_plugins/behaviors/test/mock_move_behavior.hpp"
+#include "dhtt_plugins/behaviors/test/mock_look_behavior.hpp"
 #include "dhtt_plugins/behaviors/action_type.hpp"
 #include "dhtt_plugins/behaviors/move_behavior.hpp"
 #include "dhtt_plugins/behaviors/pick_behavior.hpp"
@@ -21,9 +23,13 @@
 
 // NodeTypes
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::TestBehavior, dhtt::NodeType)
+PLUGINLIB_EXPORT_CLASS(dhtt_plugins::MockMoveBehavior, dhtt::NodeType)
+PLUGINLIB_EXPORT_CLASS(dhtt_plugins::MockLookBehavior, dhtt::NodeType)
+
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::MoveBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::PickBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::PlaceBehavior, dhtt::NodeType)
+
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::RootBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::ThenBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::AndBehavior, dhtt::NodeType)

@@ -13,6 +13,8 @@ namespace dhtt
 		else
 			this->sub_srv_ptr = std::make_shared<SubServer>(node_name, "", std::vector<std::string>());
 
+		this->param_node_ptr = std::make_shared<rclcpp::Node>(node_name + "_params", rclcpp::NodeOptions().allow_undeclared_parameters(true).automatically_declare_parameters_from_overrides(true));
+
 		this->start_servers();
 
 		this->init_derived(node_name, params);
@@ -47,7 +49,7 @@ namespace dhtt
 	{
 		this->sub_srv_ptr->build_subtree();
 
-		while ( this->sub_srv_ptr->thread_running );
+		this->block_for_thread();
 	}
 
 	bool GoitrType::start_servers()
@@ -64,13 +66,33 @@ namespace dhtt
 		this->knowledge_server_subscriber = this->sub_srv_ptr->create_subscription<std_msgs::msg::String>("/updated_knowledge", 10,  
 									std::bind(&GoitrType::knowledge_update_callback, this, std::placeholders::_1));
 
+		// start sync params client
+		this->params_client_ptr = std::make_shared<rclcpp::SyncParametersClient>(this->param_node_ptr, "/param_node");
+
+		{
+			using namespace std::chrono_literals;
+
+			while ( not this->params_client_ptr->wait_for_service(1s) and rclcpp::ok() ); 
+		};
+
+		// this->params_executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
+		// this->executor->add_node(param_node_ptr);
+
 		return true;
+	}
+
+	void GoitrType::block_for_thread()
+	{
+		while ( rclcpp::ok() and this->sub_srv_ptr->threads_running > 0 );
 	}
 
 	void GoitrType::async_spin()
 	{
 		while ( rclcpp::ok() and this->keep_spinning )
+		{
 			this->executor->spin_once(std::chrono::milliseconds(4));
+			// this->params_executor->spin_node_once(this->param_node_ptr, std::chrono::milliseconds(4));
+		}
 	}
 
 }

@@ -29,7 +29,7 @@ find_package(Boost REQUIRED COMPONENTS
   thread)
 
 # make nodes
-add_library(dhtt_lib SHARED src/tree/node.cc src/planning/goitr_type.cc src/server/sub_server.cc)
+add_library(dhtt_lib SHARED src/tree/node.cc src/server/main_server.cc src/planning/goitr_type.cc src/server/sub_server.cc)
 target_include_directories(dhtt_lib PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
@@ -44,15 +44,17 @@ install(
   RUNTIME DESTINATION bin
 )
 
-
-add_executable(start_server src/main.cpp src/server/main_server.cc)
+add_executable(start_server src/main.cpp )
 ament_target_dependencies(start_server rclcpp rclcpp_action rcl_yaml_param_parser dhtt_msgs yaml-cpp pluginlib)
 target_include_directories(start_server PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(start_server dhtt_lib ${YAML_CPP_LIBRARIES} ${Boost_LIBRARIES})
 
-install(TARGETS start_server 
+add_executable(param_node src/param_node.cpp)
+ament_target_dependencies(param_node rclcpp)
+
+install(TARGETS start_server param_node
   DESTINATION lib/${PROJECT_NAME})
 
 ament_python_install_package(${PROJECT_NAME})
@@ -63,6 +65,11 @@ install(PROGRAMS
   scripts/experiment_3.py
   scripts/visualize_results.py
   DESTINATION lib/${PROJECT_NAME})
+
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
 
 if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)

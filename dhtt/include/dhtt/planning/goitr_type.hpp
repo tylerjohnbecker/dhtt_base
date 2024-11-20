@@ -144,12 +144,25 @@ namespace dhtt
 		 */
 		bool start_servers();
 
+		/**
+		 * \brief blocks for the communication thread to finish sending and receiving the message
+		 * 
+		 * The communication with the main server happens through the sub server through a helper thread. This method just waits for that Thread to signal that it is finished.
+		 * 
+		 * \return void
+		 */
+		void block_for_thread();
+
 		std::shared_ptr<SubServer> sub_srv_ptr;
 		std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> executor;
 
 		rclcpp::Service<dhtt_msgs::srv::GoitrRequest>::SharedPtr parent_service;
 
 		rclcpp::Subscription<std_msgs::msg::String>::SharedPtr knowledge_server_subscriber;
+
+		std::shared_ptr<rclcpp::Node> param_node_ptr;
+		std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> params_executor;
+		std::shared_ptr<rclcpp::SyncParametersClient> params_client_ptr;
 
 		std::string main_server_topic, node_name; 
 		std::vector<std::string> child_node_names;

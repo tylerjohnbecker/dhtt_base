@@ -77,7 +77,6 @@ namespace dhtt_plugins
 			if (strcmp(active_children_iter.c_str(), local_best_child.c_str()))
 				container->async_activate_child(active_children_iter, n_goal);
 	
-
 		container->block_for_responses_from_children();
 
 		// return winner
@@ -120,7 +119,7 @@ namespace dhtt_plugins
 		if (result->done)
 			this->num_active_children--;
 
-		RCLCPP_DEBUG(container->get_logger(), "Child finished running, %d active children left.", this->num_active_children);
+		RCLCPP_INFO(container->get_logger(), "Child finished running, %d active children left.", this->num_active_children);
 
 		// copy and return message with this node as the local node
 		to_ret->released_resources = result->released_resources;
