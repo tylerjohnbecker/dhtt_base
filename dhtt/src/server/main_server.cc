@@ -24,7 +24,8 @@ namespace dhtt
 		root_node->child_name = std::vector<std::string>();
 
 		// pretty sure I'll switch this to a passed in parameter, but for now this should work
-		std::experimental::filesystem::path dhtt_folder_path = __FILE__;
+        // was std::experimental until c++17
+		std::filesystem::path dhtt_folder_path = __FILE__;
 
 		dhtt_folder_path = dhtt_folder_path.parent_path().parent_path().parent_path();
 
@@ -738,14 +739,14 @@ namespace dhtt
 
 		newParentdHTT->update_status(newParentdHTT->status.state);
 
-		RCLCPP_DEBUG(this->get_logger(), "toReparent->parent " + toReparentdHTT->parent_name);
+		RCLCPP_DEBUG(this->get_logger(), ("toReparent->parent " + toReparentdHTT->parent_name).c_str());
 		for (const auto &element : oldParentdHTT->child_names)
 		{
-			RCLCPP_DEBUG(this->get_logger(), "oldParent->child " + element);
+			RCLCPP_DEBUG(this->get_logger(), ("oldParent->child " + element).c_str());
 		}
 		for (const auto &element : newParentdHTT->child_names)
 		{
-			RCLCPP_DEBUG(this->get_logger(), "newParent->child " + element);
+			RCLCPP_DEBUG(this->get_logger(), ("newParent->child " + element).c_str());
 		}
 
 		this->maintain_local_subtree();

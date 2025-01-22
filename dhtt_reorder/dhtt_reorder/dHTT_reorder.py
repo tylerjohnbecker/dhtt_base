@@ -255,7 +255,8 @@ class HTT:
 
         newTHEN: NutreeNode
         if self.isThenNode(scope):
-            topAND = scope.add(self.constructAndNode())
+            topAND = scope.parent.add(self.constructAndNode(
+            )) if scope.parent else self.tree.add(self.constructAndNode())
             newTHEN = topAND.add(self.constructThenNode())
 
         else:

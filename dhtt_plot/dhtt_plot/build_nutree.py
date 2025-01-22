@@ -235,6 +235,7 @@ class NutreeServer(rclpy.node.Node):
         if not printRoot and tree.first_child().data.node_name == dHTTHelpers.ROOTNAME:
             tree.first_child().remove(keep_children=True)
 
+        # TODO fix this for otherwise ambiguous names
         for node in tree:
             name = node.data.node_name.split(
                 '_')[0] if split else node.data.node_name
@@ -245,7 +246,7 @@ class NutreeServer(rclpy.node.Node):
     # service callbacks
     def saveNutreeMermaid(self, client: NutreeClient):
         tree, _ = self.getPrintableTree(client)
-        tree.to_mermaid_flowchart("mermaid.md", add_root=False)
+        tree.to_mermaid_flowchart("mermaid.md", add_root=False, unique_nodes=False)
         # tree.to_mermaid_flowchart("mermaid.png", format="png", add_root=False)
         self.get_logger().info("Saved mermaid.md")
 
@@ -274,9 +275,9 @@ class NutreeServer(rclpy.node.Node):
         edge_attrs = {"dir": "none", "color": Colors.PURPLE}
 
         tree.to_dotfile(filename + ".gv", add_root=False, node_attrs=node_attrs,
-                        edge_attrs=edge_attrs, node_mapper=node_mapper)
+                        edge_attrs=edge_attrs, node_mapper=node_mapper, unique_nodes=False)
         tree.to_dotfile(filename + ".png", format="png", add_root=False, node_attrs=node_attrs,
-                        edge_attrs=edge_attrs, node_mapper=node_mapper, graph_attrs={"dpi": 600})
+                        edge_attrs=edge_attrs, node_mapper=node_mapper, unique_nodes=False, graph_attrs={"dpi": 600})
 
         # TODO svg
 
