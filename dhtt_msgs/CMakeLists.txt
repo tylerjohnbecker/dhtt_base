@@ -37,6 +37,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/InternalModifyRequest.srv"
   "srv/InternalServiceRegistration.srv"
   "srv/NutreeJsonRequest.srv"
+  "srv/ExperimentCommand.srv"
 
   # action files
   "action/Activation.action"

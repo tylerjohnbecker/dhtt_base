@@ -1,0 +1,5 @@
+<library path="dhtt_reorder">
+	<class type="dhtt_reorder::PickBehavior" base_class_type="dhtt::NodeType">
+		<description>Pick Behavior</description>
+	</class>
+</library>

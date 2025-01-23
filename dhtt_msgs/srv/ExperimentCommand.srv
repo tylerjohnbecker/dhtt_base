@@ -1,0 +1,16 @@
+string cmd
+string PICKPLACE = "PickPlace"
+string SCANBLOCKS = "ScanBlocks"
+string MOVEHOME = "MoveToHome"
+string OPENGRIPPER = "OpenGripper"
+string CLOSEGRIPPER = "CloseGripper"
+
+string arg
+# PICKPLACE: block name to pick and place
+# SCANBLOCKS: none
+# MOVEHOME: none
+# OPENGRIPPER: none
+# CLOSEGRIPPER: none
+
+---
+bool success
