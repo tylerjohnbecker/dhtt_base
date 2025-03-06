@@ -71,6 +71,12 @@ class CookingNode(rclpy.node.Node):
 
                 if response.error_msg == "":
                     self.actions_taken.append(request.action)
+        elif request.super_action == CookingRequest.Request.OBSERVE:
+            self.get_logger().info('Got observe request')
+            obs = self._prepare_observation_msg()
+            self.cooking_observation_publisher.publish(obs)
+            self.get_logger().info('Published observation')
+            self.get_logger().debug(f'Published observation, header: {obs.head}')
         else:
             to_ret = "No valid super_action"
 
@@ -264,8 +270,9 @@ class CookingEnvironment:
             raise ValueError("Input must contain exactly two comma-separated values.")
 
         try:
-            num1 = int(parts[0].strip())
-            num2 = int(parts[1].strip())
+            # ROS may send messages like '1.000000, 1.000000' which don't cast to an int, but do to a float
+            num1 = int(float(parts[0].strip()))
+            num2 = int(float(parts[1].strip()))
         except ValueError as e:
             raise ValueError("Both parts must be valid numbers.") from e
 
