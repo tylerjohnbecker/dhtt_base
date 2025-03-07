@@ -39,6 +39,11 @@ class CookingBehavior : public ActionType
 								 const geometry_msgs::msg::Point &point2);
 	double agent_point_distance(const geometry_msgs::msg::Point &point) const;
 	void observation_callback(std::shared_ptr<dhtt_msgs::msg::CookingObservation> msg);
+
+	/**
+	 * Perform some CookingBehavior-specific initialization (Client and Subscriber creation). Due to
+	 * API quirks, this is called in parse_params()
+	 */
 	void initialize_();
 
 	/**

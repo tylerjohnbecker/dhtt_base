@@ -67,6 +67,15 @@ void CookingMoveBehavior::do_work(dhtt::Node *container)
 	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending move_to request");
 	this->executor->spin_until_future_complete(res);
 	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "move_to request completed");
+
+	bool suc = res.future.get()->success;
+	if (not suc)
+	{
+		RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "move_to request did not succeed: %s",
+					 res.future.get()->error_msg.c_str());
+	}
+
+	this->done = suc;
 }
 
 std::vector<dhtt_msgs::msg::Resource>
@@ -80,6 +89,16 @@ CookingMoveBehavior::get_released_resources(dhtt::Node *container)
 {
 	(void)container; // unused
 	return {};
+}
+std::vector<dhtt_msgs::msg::Resource> CookingMoveBehavior::get_necessary_resources()
+{
+	std::vector<dhtt_msgs::msg::Resource> to_ret;
+
+	dhtt_msgs::msg::Resource base;
+	base.type = dhtt_msgs::msg::Resource::BASE;
+
+	to_ret.push_back(base);
+	return to_ret;
 }
 
 } // namespace dhtt_plugins

@@ -63,7 +63,7 @@ namespace dhtt_plugins
 		 * \brief abstract function for actually sending instructions to the robot
 		 * 
 		 * Every action type behavior performs some work (on the robot or otherwise) which should be implemented in this function. If any topics etc. need to be handled their is an executor
-		 * 	that is initialized by default which can be used by inheritors to make those connections.
+		 * 	that is initialized by default which can be used by inheritors to make those connections. Should flip ActionType.done when work is done.
 		 * 
 		 * \param container similar to work_callback this is a pointer to the node which is running this logic.
 		 * 
