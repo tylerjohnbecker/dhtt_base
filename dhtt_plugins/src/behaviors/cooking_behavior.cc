@@ -112,6 +112,49 @@ void CookingBehavior::parse_params(std::vector<std::string> params)
 	this->params = params;
 }
 
+double CookingBehavior::get_perceived_efficiency()
+{
+	// Make sure we're up to date with observations
+	this->executor->spin_all(std::chrono::nanoseconds(0));
+
+	if (not this->last_obs)
+	{
+		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+					 "No observation yet. This node probably won't behave as intended. Setting "
+					 "activation_potential to 0");
+		return 0;
+	}
+
+	if (this->destination_point.x == 0 and this->destination_point.y == 0)
+	{
+		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
+					"Destination location is (0,0), are you sure this is correct?");
+	}
+
+	if (this->last_obs->agents.empty())
+	{
+		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+					 "No agents in observation yet. Setting activation_potential to 0");
+		return 0;
+	}
+
+	if (not this->destination_is_good)
+	{
+		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
+					"Don't have a good destination (is the object in the right state?). Setting "
+					"activation_potential to 0.");
+		return 0;
+	}
+
+	return 1; // return something other than 0
+
+	// At this point, we've checked that there is a valid observation, and
+	// set_destination_to_closest_object() should have been called in observation_callback(), so
+	// agent_loc and destination_point should be good to go.
+
+	// return your measure here
+}
+
 double CookingBehavior::point_distance(const geometry_msgs::msg::Point &point1,
 									   const geometry_msgs::msg::Point &point2)
 {

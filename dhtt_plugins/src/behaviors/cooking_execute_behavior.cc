@@ -4,48 +4,19 @@ namespace dhtt_plugins
 {
 double CookingExecuteBehavior::get_perceived_efficiency()
 {
-	// Make sure we're up to date with observations
-	this->executor->spin_all(std::chrono::nanoseconds(0));
+	double activation_check = CookingBehavior::get_perceived_efficiency();
 
-	if (not this->last_obs)
+	if (activation_check != 0)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
-					 "No observation yet. This node probably won't behave as intended. Setting "
-					 "activation_potential to 0");
-		return 0;
+		// High activation if we're right next to the object. No activation otherwise.
+		double to_ret = this->agent_point_distance(this->destination_point) == 1.0 ? 1.0 : 0.0;
+		RCLCPP_INFO(this->pub_node_ptr->get_logger(), "I report %f efficiency", to_ret);
+
+		this->activation_potential = to_ret; // TODO is this necessary?
+		return to_ret;
 	}
 
-	if (this->destination_point.x == 0 and this->destination_point.y == 0)
-	{
-		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
-					"Destination location is (0,0), are you sure this is correct?");
-	}
-
-	if (this->last_obs->agents.empty())
-	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
-					 "No agents in observation yet. Setting activation_potential to 0");
-		return 0;
-	}
-
-	if (not this->destination_is_good)
-	{
-		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
-					"Don't have a good destination (is the object in the right state?). Setting "
-					"activation_potential to 0.");
-		return 0;
-	}
-
-	// At this point, we've checked that there is a valid observation, and
-	// set_destination_to_closest_object() should have been called in observation_callback(), so
-	// agent_loc and destination_point should be good to go.
-
-	// High activation if we're right next to the object. No activation otherwise.
-	double to_ret = this->agent_point_distance(this->destination_point) == 1.0 ? 1.0 : 0.0;
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "I report %f efficiency", to_ret);
-
-	this->activation_potential = to_ret; // TODO is this necessary?
-	return to_ret;
+	return 0;
 }
 
 void CookingExecuteBehavior::do_work(dhtt::Node *container)

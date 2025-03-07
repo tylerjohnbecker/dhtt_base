@@ -28,6 +28,13 @@ class CookingBehavior : public ActionType
 	 */
 	void parse_params(std::vector<std::string> params) override;
 
+	/**
+	 * Some handy checks common to CookingBehavior-types. Individual behaviors need to implement
+	 * their own metric.
+	 * @return 0 if the checks failed, 1 otherwise.
+	 */
+	virtual double get_perceived_efficiency() override;
+
   protected:
 	std::string destination_type;  // key: coordinate or closest object
 	std::string destination_value; // value: of destination_type, i.e. either '1,1' or 'Toaster'
