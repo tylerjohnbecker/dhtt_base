@@ -3,15 +3,17 @@
 
 // cpp includes
 #include <string.h>
+#include <sys/stat.h>
 #include <iostream>
+#include <mutex>
+#include <condition_variable>
 #include <experimental/filesystem>
+#include <queue>
+#include <fstream>
 
 // yaml-cpp includes
 #include "yaml-cpp/yaml.h"
 #include "yaml-cpp/exceptions.h"
-
-// boost includes
-#include "boost/thread/mutex.hpp"
 
 // ros2 includes
 #include "rclcpp/rclcpp.hpp"
@@ -43,6 +45,7 @@
 #define FAILED "failed"
 #define ROOT_PARENT -1
 #define ROOT_PARENT_NAME "NONE"
+#define DEFAULT_SAVE_LOCATION "/sample_tasks/"
 
 namespace dhtt
 {
@@ -101,10 +104,12 @@ namespace dhtt
 		 * \param response shared_ptr to the response which will be returned to the user. Modified with any successfully added node's name.
 		 * \param parent_name name of the parent of the new node
 		 * \param to_add msg format of the new node. See Node.msg for more information.
+		 * \param force switch to check pre/postcondition relationships after change
+		 * \param index to insert the new node add in the parent's child list
 		 * 
 		 * \return string with exception information or empty string if successful
 		 */
-		std::string add_node( std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, dhtt_msgs::msg::Node to_add );
+		std::string add_node( std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, dhtt_msgs::msg::Node to_add, bool force=true, int index=-1);
 
 		/**
 		 * \brief Adds a subtree described in a given .yaml file
@@ -116,10 +121,11 @@ namespace dhtt
 		 * \param parent_name name of the parent of the new node
 		 * \param file_name full path of the yaml file which describes the subtree to add
 		 * \param file_args vector of 'arg_name: val' arg pairs to fill blank arguments in the yaml file (in the yaml they should look like 'key: $arg_name')
+		 * \param force switch to check pre/postcondition relationships after change
 		 * 
 		 * \return string with exception information or empty string if successful
 		 */
-		std::string add_nodes_from_file( std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, std::string file_name, std::vector<std::string> file_args );
+		std::string add_nodes_from_file( std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, std::string file_name, std::vector<std::string> file_args, bool force=true );
 
 		/**
 		 * \brief Removes a given node from the tree
@@ -129,6 +135,8 @@ namespace dhtt
 		 * 
 		 * \param response shared_ptr to the response which will be returned to the user. Modified with any successfully added node's name.
 		 * \param to_remove exact name of node to remove from the tree
+		 * \param force switch to check pre/postcondition relationships after change
+		 * \param force switch to check pre/postcondition relationships after change
 		 * 
 		 * \return string with exception information or empty string if successful
 		 */
@@ -142,6 +150,71 @@ namespace dhtt
 		 * \return error message
 		 */
 		std::string change_params( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request );
+
+		/**
+		 * \brief Get the terminal postconditions for a given subtree
+		 * 
+		 * Terminal postconditions are the sum total postconditions of a given subtree. 
+		 * 
+		 * \param subtree_index index of the subtree node in the internal nodelist
+		 * 
+		 * \return list of [ key, val ] postconditions given after running a subtree
+		 */
+		dhtt_utils::PredicateConjunction get_postconditions(int subtree_index);
+
+		/**
+		 * \brief Get the preconditions of an entire subtree
+		 * 
+		 * Every behavior that can run when a subtree is activated will be requested for preconditions and the result will be return as a single wholistic list
+		 * 
+		 * \param subtree_index index of the subtree node in the internal nodelist
+		 * 
+		 * \return list of [ key, val ] preconditions required for running a subtree
+		 */
+		dhtt_utils::PredicateConjunction get_preconditions(int subtree_index);
+
+		/**
+		 * \brief returns the list of subtrees which temporally will occur after the given index
+		 * 
+		 * Subtrees will only happen temporally after the given index if they share an ancestor which enforces temporal constraints (and will run after). This function gathers each topmost 
+		 * 	subtree which fits this description. This is most important when considering if a given subtree can be removed
+		 * 
+		 * \param parent_name immediate parent to the proposed node
+		 * \param child_index index where the child will be inserted
+		 * 
+		 * \return list of indices of the subsequent subtrees in the internal node_list
+		 */
+		std::vector<int> get_next_behaviors(std::string parent_name, int child_index);
+
+		/**
+		 * \brief modify helper to check if removing a node will violate any preconditions
+		 * 
+		 * \param node_name name of candidate node to remove
+		 * 
+		 * \return True if removing node_name won't violate any subsequent preconditions, false otherwise
+		 */
+		bool can_remove(std::string node_name);
+
+		/**
+		 * \brief modify helper to check if adding the given node will violate preconditions of another
+		 * 
+		 * \param to_add message representation of the node to be added
+		 * \param index order of node in the parent's child list
+		 * 
+		 * \return True if adding the given node does not violate any preconditions of subsequent behaviors, false otherwise
+		 */
+		bool can_add(dhtt_msgs::msg::Node to_add, int index);
+
+		/**
+		 * \brief modify helper to check if mutating the given node will violate a precondition of another as well as the preconditions of it's children 
+		 * 
+		 * \param node_name candidate node for mutation
+		 * \param o_type type of behavior before mutation
+		 * \param n_type new type of the node after mutation
+		 * 
+		 * \return True if given operation doesn't violate preconditions, false otherwise
+		 */
+		bool can_mutate(std::string node_name, std::string o_type, std::string n_type);
 
 		// control helpers
 
@@ -172,7 +245,7 @@ namespace dhtt
 		 * 
 		 * \return error message
 		 */
-		std::string save_tree();
+		std::string save_tree(std::string file_name, std::string file_path);
 
 		/**
 		 * \brief Deletes everything in the tree except for the root node
@@ -220,6 +293,47 @@ namespace dhtt
 		 * \return subtree with the given name
 		 */
 		dhtt_msgs::msg::Subtree fetch_subtree_by_name( std::string name );
+
+		// Predicate Maintenance Pipeline
+		/**
+		 * \brief main thread function for the maintenance pipeline
+		 * 
+		 * The maintenance pipeline maintains a queue of node names to maintain with given id's. When a node name is taken off of the queue the node in question's maintenance server is pinged
+		 * 	with a request and the thread stalls to wait for the response. Once a response is received this thread notifies any waiting threads with the id corresponding to the response. Then
+		 * 	the thread continues in an infinite loop.
+		 * 
+		 * \param queue_size max number of maintenance requests in the queue.
+		 * 
+		 * \return void
+		 */
+		void maintainer_thread_cb();
+
+		/**
+		 * \brief adds a node name to the maintain queue and returns the id associated with the name
+		 * 
+		 * If a node_name is already in the queue then just the id number is returned.
+		 * 
+		 * \param node_name to request maintenance for
+		 * 
+		 * \return int referring to the id associated with the request
+		 */
+		int start_maintain(std::string node_name);
+
+		/**
+		 * \brief blocks until the given id of the request is completed in the main thread
+		 * 
+		 * \param id of request to wait for
+		 * 
+		 * \return void
+		 */
+		void wait_for_maintain(int id);
+
+		/**
+		 * \brief waits for the maintenance queue to be empty
+		 * 
+		 * \return void
+		 */
+		void wait_for_maintain_all();
 
 		// subscriber callbacks
 		/**
@@ -313,6 +427,16 @@ namespace dhtt
 		dhtt_msgs::msg::Subtree construct_subtree_from_node_iter( std::vector<dhtt_msgs::msg::Node>::iterator top_node );
 
 		/**
+		 * \brief constructs a Subtree message from a yaml description of a tree
+		 * 
+		 * \param to_construct reference to the message which is constructed as a side effect
+		 * \param file_name name and path of file to load yaml from
+		 * 
+		 * \return empty string if successfully loaded, otherwise contains an error message
+		 */
+		std::string construct_subtree_from_yaml( dhtt_msgs::msg::Subtree& to_construct, std::string file_name, std::vector<std::string> file_args );
+
+		/**
 		 * \brief internal check for if the given node can be modified
 		 * 
 		 * Nodes can always be modified simultaneously unless on is in the subtree of another. This function ensures that they are not.
@@ -334,6 +458,11 @@ namespace dhtt
 		bool subtrees_are_disjoint(std::string to_modify, std::string to_check);
 
 		// *** PRIVATE MEMBERS ***
+		// callback group
+		rclcpp::CallbackGroup::SharedPtr conc_group;
+		rclcpp::SubscriptionOptions sub_opts;
+		rclcpp::PublisherOptions pub_opts;
+
 		// external services
 		rclcpp::Service<dhtt_msgs::srv::ModifyRequest>::SharedPtr modify_server;
 		rclcpp::Service<dhtt_msgs::srv::ControlRequest>::SharedPtr control_server;
@@ -349,21 +478,43 @@ namespace dhtt
 		rclcpp_action::Client<dhtt_msgs::action::Activation>::SharedPtr client_ptr;
 		rclcpp::Client<dhtt_msgs::srv::InternalControlRequest>::SharedPtr internal_control_client;
 
+		std::unordered_map<std::string, rclcpp_action::Client<dhtt_msgs::action::Condition>::SharedPtr> maintenance_client_ptrs;
+
 		// mutexes
-		boost::mutex modify_mut;
-		boost::mutex running_mut;
+		std::mutex modify_mut;
+		std::mutex running_mut;
+		std::mutex maintenance_mut;
+		std::mutex wait_mut;
+
+		// condition variables
+		std::condition_variable maintenance_queue_condition;
+		std::condition_variable finished_maintenance_id_condition;
+
+		// maintainer members
+		std::queue<std::string> maintenance_queue;
+		std::unordered_map<std::string, int> maintenance_dict;
+
+		dhtt_msgs::action::Condition::Result::SharedPtr maintenance_result;
+
+		bool waiting_for_maintenance;
+		bool end;
+		int last_finished_id;
+		int used_id;
 
 		// members
-		std::map<std::string, std::shared_ptr<dhtt::Node>> node_map; 
+		std::unordered_map<std::string, std::shared_ptr<dhtt::Node>> node_map; 
 		dhtt_msgs::msg::Subtree node_list; 
 
 		std::shared_ptr<std::thread> run_tree_thread;
+		std::shared_ptr<std::thread> maintenance_thread;
 
 		std::list<std::string> history;
 		std::vector<std::string> being_modified;
 
 		// this is passed in from main through the constructor so that any inner nodes can be spun as well
 		std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner_cp;
+
+		std::experimental::filesystem::path dhtt_folder_path;
 
 		int total_nodes_added;
 		bool verbose;

@@ -7,6 +7,9 @@ namespace dhtt_plugins
 		this->num_active_children = 0;
 		this->activation_potential = 0;
 
+		this->preconditions.logical_operator = dhtt_utils::LOGICAL_AND;
+		this->postconditions.logical_operator = dhtt_utils::LOGICAL_AND;
+
 		this->parse_params(params);
 
 		this->children_allowed = true;
@@ -129,6 +132,47 @@ namespace dhtt_plugins
 		to_ret->success = result->success;
 
 		return to_ret;
+	}
+
+	void AndBehavior::maintain_conditions( dhtt::Node* container )
+	{
+		// this one is pretty simple 
+		auto response_cp = container->get_condition_results();
+
+		// append all of the predicates
+		this->preconditions.predicates.clear();
+		this->preconditions.conjunctions.clear();
+		this->postconditions.predicates.clear();
+		this->postconditions.conjunctions.clear();
+
+		for ( auto const& child_response : response_cp )
+		{
+			auto precon_struct = dhtt_utils::convert_to_struct(child_response.second->preconditions);
+			auto postcon_struct = dhtt_utils::convert_to_struct(child_response.second->postconditions);
+
+			// first grab the preconditions
+			if ( precon_struct.logical_operator == dhtt_utils::LOGICAL_AND or precon_struct.logical_operator == dhtt_utils::LOGICAL_OTHER )
+			{
+				dhtt_utils::append_predicate_conjunction(this->preconditions, precon_struct);
+				dhtt_utils::append_predicate_conjunction(this->postconditions, postcon_struct);
+			}
+			else
+			{
+				// here just append it as a conjunction since the alternative is to use the distributive property
+				this->preconditions.conjunctions.push_back( dhtt_utils::conjunction_copy( precon_struct ) );
+				this->postconditions.conjunctions.push_back( dhtt_utils::conjunction_copy( postcon_struct ) );
+			}
+		}
+
+		// finally remove any repeated predicates from the predicate lists in pre and postconditions
+		dhtt_utils::remove_predicate_partial_duplicates(this->preconditions);
+		dhtt_utils::remove_predicate_partial_duplicates(this->postconditions);
+		
+		dhtt_utils::flatten_predicates(this->preconditions);
+		dhtt_utils::flatten_predicates(this->postconditions);
+
+		// RCLCPP_ERROR(container->get_logger(), "%s", dhtt_utils::to_string(this->preconditions).c_str());
+		// RCLCPP_ERROR(container->get_logger(), "%s", dhtt_utils::to_string(this->postconditions).c_str());
 	}
 
 	void AndBehavior::parse_params( std::vector<std::string> params ) 

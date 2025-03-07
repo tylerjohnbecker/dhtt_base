@@ -2,9 +2,14 @@
 
 namespace dhtt
 {
-	Node::Node(std::string name, std::string type, std::vector<std::string> params, std::string p_name, std::string goitr_type) : rclcpp::Node( name ), node_type_loader("dhtt", "dhtt::NodeType"), 
-			goitr_type_loader("dhtt", "dhtt::GoitrType"), name(name), parent_name(p_name), priority(1), resource_status_updated(false), first_activation(true), active(false)
+	Node::Node(std::string name, std::string type, std::vector<std::string> params, std::string p_name, std::string goitr_type) : rclcpp::Node( name ), conc_group(nullptr), 
+			node_type_loader("dhtt", "dhtt::NodeType"), goitr_type_loader("dhtt", "dhtt::GoitrType"), name(name), parent_name(p_name), priority(1), resource_status_updated(false), first_activation(true), active(false)
 	{
+		// create a callback group for parallel ones
+		this->conc_group = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+		this->sub_opts.callback_group = this->conc_group;
+		this->pub_opts.callback_group = this->conc_group;
+
 		this->error_msg = "";
 		this->successful_load = true;
 
@@ -88,13 +93,14 @@ namespace dhtt
 		this->passed_resources = set_to;
 	}
 
-	void Node::register_with_parent()
+	void Node::register_with_parent(int index)
 	{
 		// should only evaluate to false in the case of ROOT
 		if ( strcmp(this->parent_name.c_str(), "NONE") )
 		{
 			std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Request> req = std::make_shared<dhtt_msgs::srv::InternalServiceRegistration::Request>();
 			req->node_name = this->name;
+			req->index = index;
 
 			std::string parent_register_topic = std::string(TREE_PREFIX) + "/" + this->parent_name + REGISTER_CHILD_POSTFIX;
 
@@ -139,19 +145,29 @@ namespace dhtt
 		// set up services and action servers
 		std::string my_register_topic = std::string(TREE_PREFIX) + "/" + name + REGISTER_CHILD_POSTFIX;
 		std::string my_activation_topic = std::string(TREE_PREFIX) + "/" + name + ACTIVATION_POSTFIX;
+		std::string my_condition_topic = std::string(TREE_PREFIX) + "/" + name + CONDITION_POSTFIX;
 		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
 
-		this->register_server = this->create_service<dhtt_msgs::srv::InternalServiceRegistration>(my_register_topic, std::bind(&Node::register_child_callback, this, std::placeholders::_1, std::placeholders::_2));
+		this->status_pub = this->create_publisher<dhtt_msgs::msg::Node>("/status", 10, this->pub_opts);
+		// this->knowledge_pub = this->create_publisher<std_msgs::msg::String>("/updated_knowledge", 10);
 
-		this->status_pub = this->create_publisher<dhtt_msgs::msg::Node>("/status", 10);
-		this->knowledge_pub = this->create_publisher<std_msgs::msg::String>("/updated_knowledge", 10);
+		this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1), this->sub_opts);
 
-		this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1));
+		this->register_server = this->create_service<dhtt_msgs::srv::InternalServiceRegistration>(my_register_topic, std::bind(&Node::register_child_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->conc_group);
 
+		// set up activation server
 		this->activation_server = rclcpp_action::create_server<dhtt_msgs::action::Activation>(this, my_activation_topic,
 			std::bind(&Node::goal_activation_callback, this, std::placeholders::_1, std::placeholders::_2),
 			std::bind(&Node::cancel_activation_callback, this, std::placeholders::_1),
 			std::bind(&Node::activation_accepted_callback, this, std::placeholders::_1));
+			//rcl_action_server_get_default_options(), this->conc_group);
+
+		// set up condition maintenance server
+		this->condition_server = rclcpp_action::create_server<dhtt_msgs::action::Condition>(this, my_condition_topic,
+			std::bind(&Node::condition_goal_activation_callback, this, std::placeholders::_1, std::placeholders::_2),
+			std::bind(&Node::condition_cancel_activation_callback, this, std::placeholders::_1),
+			std::bind(&Node::condition_activation_accepted_callback, this, std::placeholders::_1));
+			//rcl_action_server_get_default_options(), this->conc_group);
 
 		this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
@@ -199,10 +215,45 @@ namespace dhtt
 		(*client_iter)->async_send_goal(activation_goal, send_goal_options);
 	}
 
+	void Node::async_request_conditions(std::string child_name, dhtt_msgs::action::Condition::Goal condition_goal)
+	{
+		auto found_name = [&]( std::string to_check ) { return not strcmp(to_check.c_str(), child_name.c_str()); };
+
+		auto found_iter = std::find_if(this->child_names.begin(), this->child_names.end(), found_name);
+		int found_index = std::distance(this->child_names.begin(), found_iter);
+
+		auto client_iter = std::next(this->conditions_clients.begin(), found_index);
+
+		if ( not (*client_iter)->wait_for_action_server() )
+		{
+			this->error_msg = "Cannot reach action server of requested child, are you sure it started up?";
+			return;
+		}
+
+		this->expected_conditions++;
+
+		auto send_goal_options = rclcpp_action::Client<dhtt_msgs::action::Condition>::SendGoalOptions();
+
+		send_goal_options.result_callback = std::bind(&Node::store_condition_callback, this, std::placeholders::_1, child_name);
+
+		(*client_iter)->async_send_goal(condition_goal, send_goal_options);
+	}
+
 	void Node::activate_all_children(dhtt_msgs::action::Activation::Goal activation_goal)
 	{
 		for (std::string iter : this->child_names)
 			this->async_activate_child(iter, activation_goal);
+	}
+	
+	void Node::request_conditions_from_children()
+	{
+		dhtt_msgs::action::Condition::Goal n_goal;
+		n_goal.type = dhtt_msgs::action::Condition::Goal::MAINTAIN;
+		this->stored_conditions = 0;
+		this->expected_conditions = 0;
+
+		for (std::string iter : this->child_names)
+			this->async_request_conditions(iter, n_goal);
 	}
 
 	bool Node::block_for_responses_from_children()
@@ -212,6 +263,13 @@ namespace dhtt
 		while (this->stored_responses < this->expected_responses);
 
 		// RCLCPP_INFO(this->get_logger(), "Responses received!");
+
+		return true;
+	}
+	
+	bool Node::block_for_conditions_from_children()
+	{
+		while (this->stored_conditions < this->expected_conditions);
 
 		return true;
 	}
@@ -230,6 +288,22 @@ namespace dhtt
 			to_ret[x.first] = x.second;
 
 		this->responses.clear();
+
+		return to_ret;
+	}
+
+	std::map<std::string, dhtt_msgs::action::Condition::Result::SharedPtr> Node::get_condition_results()
+	{
+		// reset values
+		this->stored_conditions = 0;
+		this->expected_conditions = 0;
+
+		std::map<std::string, dhtt_msgs::action::Condition::Result::SharedPtr> to_ret;
+
+		for ( auto const& x : this->child_conditions )
+			to_ret[x.first] = x.second;
+
+		this->child_conditions.clear();
 
 		return to_ret;
 	}
@@ -307,6 +381,15 @@ namespace dhtt
 		full_status.owned_resources = this->owned_resources;
 
 		full_status.node_status = this->status;
+
+		std::shared_ptr<dhtt_utils::PredicateConjunction> tmp1 = std::make_shared<dhtt_utils::PredicateConjunction>(); 
+		std::shared_ptr<dhtt_utils::PredicateConjunction> tmp2 = std::make_shared<dhtt_utils::PredicateConjunction>();
+
+		*tmp1 = this->logic->get_preconditions();
+		*tmp2 = this->logic->get_postconditions();
+
+		full_status.preconditions = dhtt_utils::to_string(tmp1);
+		full_status.postconditions = dhtt_utils::to_string(tmp2);
 
 		this->status_pub->publish(full_status);
 	}
@@ -398,11 +481,112 @@ namespace dhtt
 		}
 	}
 
+	rclcpp_action::GoalResponse Node::condition_goal_activation_callback(const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const dhtt_msgs::action::Condition::Goal> goal)
+	{
+		RCLCPP_DEBUG(this->get_logger(), "Received condition request.");
+		(void) uuid;
+		(void) goal;
+
+		return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+	}
+
+	rclcpp_action::CancelResponse Node::condition_cancel_activation_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Condition>> goal_handle)
+	{
+
+		RCLCPP_DEBUG(this->get_logger(), "Received request to cancel condition request.");
+		(void) goal_handle;
+
+		return rclcpp_action::CancelResponse::ACCEPT;
+	}
+
+	void Node::condition_activation_accepted_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Condition>> goal_handle)
+	{
+		auto type = goal_handle->get_goal()->type;
+
+		if ( type == dhtt_msgs::action::Condition::Goal::MAINTAIN )
+		{
+			this->condition_thread = std::make_shared<std::thread>(&Node::combine_child_conditions, this, goal_handle);
+			this->condition_thread->detach();
+		}
+		else if ( type == dhtt_msgs::action::Condition::Goal::GET )
+		{
+			dhtt_msgs::action::Condition::Result::SharedPtr to_ret = std::make_shared<dhtt_msgs::action::Condition::Result>();
+
+			to_ret->success = true;
+
+			std::shared_ptr<dhtt_utils::PredicateConjunction> tmp1 = std::make_shared<dhtt_utils::PredicateConjunction>();
+			std::shared_ptr<dhtt_utils::PredicateConjunction> tmp2 = std::make_shared<dhtt_utils::PredicateConjunction>();
+
+			*tmp1 = this->logic->get_preconditions();
+			*tmp2 = this->logic->get_postconditions(); 
+
+			to_ret->preconditions = dhtt_utils::to_string(tmp1);
+			to_ret->postconditions = dhtt_utils::to_string(tmp2);
+
+			goal_handle->succeed(to_ret);
+		}
+		else
+		{
+			dhtt_msgs::action::Condition::Result::SharedPtr to_ret = std::make_shared<dhtt_msgs::action::Condition::Result>();
+
+			to_ret->success = false;
+			to_ret->error_msg = "Unknown action " + std::to_string(type) + " requested... returning in error.";
+
+			goal_handle->succeed(to_ret);
+		}
+	}
+
+	void Node::combine_child_conditions(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Condition>> goal_handle)
+	{
+		// RCLCPP_WARN(this->get_logger(), "Requesting conditions from children and combining!");
+
+		(void) goal_handle->get_goal();
+
+		if ( (int) this->child_names.size() > 0 )
+		{
+			this->request_conditions_from_children();
+
+			this->block_for_conditions_from_children();
+		}
+
+		this->logic->maintain_conditions(this);
+
+		dhtt_msgs::action::Condition::Result::SharedPtr to_ret = std::make_shared<dhtt_msgs::action::Condition::Result>();
+
+		to_ret->success = true;
+		
+		std::shared_ptr<dhtt_utils::PredicateConjunction> tmp1 = std::make_shared<dhtt_utils::PredicateConjunction>();
+		std::shared_ptr<dhtt_utils::PredicateConjunction> tmp2 = std::make_shared<dhtt_utils::PredicateConjunction>();
+
+		*tmp1 = this->logic->get_preconditions();
+		*tmp2 = this->logic->get_postconditions(); 
+
+		to_ret->preconditions = dhtt_utils::to_string(tmp1);
+		to_ret->postconditions = dhtt_utils::to_string(tmp2);
+
+		// clear the responses just to be sure
+		(void) this->get_condition_results();
+
+		this->update_status(this->status.state);
+
+		goal_handle->succeed(to_ret);
+
+		// RCLCPP_INFO(this->get_logger(), "%s", this->name.c_str());
+	}
+
 	void Node::store_result_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name )
 	{
 		this->responses[node_name] = result.result;
 	
 		this->stored_responses++;
+	}
+
+	void Node::store_condition_callback ( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Condition>::WrappedResult & result, std::string node_name )
+	{
+		// RCLCPP_ERROR(this->get_logger(), "Got condition result from child %s [%d]", node_name.c_str(), this->stored_conditions);
+		this->child_conditions[node_name] = result.result;
+
+		this->stored_conditions++;
 	}
 
 	// simpler than it could be especially with some work in interruption handling
@@ -449,6 +633,9 @@ namespace dhtt
 
 				this->active_child_name = to_ret->local_best_node;
 
+				// check preconditions before moving request up
+				to_ret->possible = to_ret->possible and this->check_preconditions();
+
 				if ( to_ret->possible )
 					this->active = true;
 
@@ -461,14 +648,18 @@ namespace dhtt
 
 				// add granted resources to the owned resources for the logic
 				for ( dhtt_msgs::msg::Resource granted_resource : goal_handle->get_goal()->granted_resources )
-				{
-					// RCLCPP_WARN(this->get_logger(), "[%s]", granted_resource.name.c_str());
 					this->owned_resources.push_back( granted_resource );
-				}
 
-				// start work 
-				to_ret = this->logic->work_callback(this);
-					
+				// start work as long as preconditions are met
+				if ( this->check_preconditions() )
+				{
+					to_ret = this->logic->work_callback(this);
+
+					this->apply_postconditions();
+				}
+				else
+					RCLCPP_ERROR(this->get_logger(), "Preconditions not met, restarting auction!");
+
 				this->resource_status_updated = false;
 
 				if (this->logic->is_done())
@@ -511,10 +702,16 @@ namespace dhtt
 		}
 
 		// make a client and push back
-		rclcpp_action::Client<dhtt_msgs::action::Activation>::SharedPtr n_client = rclcpp_action::create_client<dhtt_msgs::action::Activation>(this, std::string(TREE_PREFIX) + "/" + request->node_name + ACTIVATION_POSTFIX);
+		rclcpp_action::Client<dhtt_msgs::action::Activation>::SharedPtr a_client = rclcpp_action::create_client<dhtt_msgs::action::Activation>(this, std::string(TREE_PREFIX) + "/" + request->node_name + ACTIVATION_POSTFIX);
+		rclcpp_action::Client<dhtt_msgs::action::Condition>::SharedPtr c_client = rclcpp_action::create_client<dhtt_msgs::action::Condition>(this, std::string(TREE_PREFIX) + "/" + request->node_name + CONDITION_POSTFIX);
 
-		this->child_names.push_back(request->node_name);
-		this->activation_clients.push_back(n_client);
+		auto name_index_iter = (request->index == -1)? this->child_names.end() : this->child_names.begin() + request->index;
+		auto activation_index_iter = (request->index == -1)? this->activation_clients.end() : this->activation_clients.begin() + request->index;
+		auto condition_index_iter = (request->index == -1)? this->conditions_clients.end() : this->conditions_clients.begin() + request->index;
+
+		this->child_names.insert(name_index_iter, request->node_name);
+		this->activation_clients.insert(activation_index_iter, a_client);
+		this->conditions_clients.insert(condition_index_iter, c_client);
 		response->success = true;
 	}
 	
@@ -613,10 +810,25 @@ namespace dhtt
 		this->resource_status_updated = true;
 	}
 
-	// preconditions are stored as key: val pairs in a vector of strings in logic. Here we need to check them against world information
 	bool Node::check_preconditions()
 	{
+		// std::vector<std::vector<std::string>> preconditions = this->logic->get_preconditions();
+
+		// for ( auto iter : preconditions )
+		// {
+		// 	// pull corresponding value from the param server
+
+		// 	// check against value from preconditions
+		// 	if ( false )
+		// 		return false;
+		// }
+
 		return true;
+	}
+
+	void Node::apply_postconditions()
+	{
+		// set parameters on the param server
 	}
 
 	double Node::calculate_activation_potential()

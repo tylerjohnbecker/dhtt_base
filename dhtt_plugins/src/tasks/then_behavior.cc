@@ -20,6 +20,9 @@ namespace dhtt_plugins
 
 		this->created = false;
 
+		this->preconditions.logical_operator = dhtt_utils::LOGICAL_AND;
+		this->postconditions.logical_operator = dhtt_utils::LOGICAL_AND;
+
 		this->parse_params(params);
 
 		this->created = true;
@@ -165,6 +168,69 @@ namespace dhtt_plugins
 
 		return to_ret;
 	}
+
+	void ThenBehavior::maintain_conditions( dhtt::Node* container )
+	{
+		// this one is pretty simple 
+		auto response_cp = container->get_condition_results();
+
+		// append all of the predicates
+		this->preconditions.predicates.clear();
+		this->preconditions.conjunctions.clear();
+		this->postconditions.predicates.clear();
+		this->postconditions.conjunctions.clear();
+
+		bool first = true;
+
+		std::vector<dhtt_utils::PredicateConjunction> prev_postconditions;
+
+		// loop through strictly in the order of the children list from the container and generate the preconditions list
+		for ( auto const& child_name : container->get_child_names() )
+		{
+			auto inc_preconditions = dhtt_utils::convert_to_struct(response_cp[child_name]->preconditions);
+			auto inc_postconditions = dhtt_utils::convert_to_struct(response_cp[child_name]->postconditions);
+			
+			dhtt_utils::PredicateConjunction adjusted_preconditions;
+
+			std::shared_ptr<dhtt_utils::PredicateConjunction> tmp = std::make_shared<dhtt_utils::PredicateConjunction>();
+			*tmp = inc_postconditions;
+
+			if ( first )
+			{
+				prev_postconditions.push_back(inc_postconditions);
+				
+				adjusted_preconditions = inc_preconditions;
+				
+				first = false;
+			}
+			else
+			{
+				adjusted_preconditions = dhtt_utils::remove_partial_dependencies(prev_postconditions, inc_preconditions);
+
+				prev_postconditions.push_back(inc_postconditions);
+			}
+
+			dhtt_utils::append_predicate_conjunction(this->preconditions, adjusted_preconditions);
+
+			// Now copy over the postconditions
+			if ( inc_preconditions.logical_operator == dhtt_utils::LOGICAL_AND or inc_preconditions.logical_operator == dhtt_utils::LOGICAL_OTHER )
+				dhtt_utils::append_predicate_conjunction(this->postconditions, inc_postconditions);
+			else
+				this->postconditions.conjunctions.push_back( tmp );
+			// RCLCPP_WARN(container->get_logger(), "%s", dhtt_utils::to_string(this->postconditions).c_str());
+		}
+
+		// finally remove any repeated predicates from the predicate lists in pre and postconditions
+		dhtt_utils::remove_predicate_duplicates(this->preconditions);
+		dhtt_utils::remove_predicate_partial_duplicates(this->postconditions);
+
+		dhtt_utils::flatten_predicates(this->preconditions);
+		dhtt_utils::flatten_predicates(this->postconditions);
+
+		// RCLCPP_ERROR(container->get_logger(), "%s", dhtt_utils::to_string(this->preconditions).c_str());
+		// RCLCPP_ERROR(container->get_logger(), "%s", dhtt_utils::to_string(this->postconditions).c_str());
+	}
+
 
 	void ThenBehavior::parse_params( std::vector<std::string> params )
 	{

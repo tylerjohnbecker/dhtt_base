@@ -44,6 +44,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 
   # action files
   "action/Activation.action"
+  "action/Condition.action"
 
   # dependecies for messages
   DEPENDENCIES std_msgs

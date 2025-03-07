@@ -2,10 +2,16 @@
 int8 				type
 
 # list of nodes to be modified (added to, removed, or updated)
-string[] 	to_modify
+string[] 			to_modify
+
+# when modifying nodes we can either check if preconditions will be violated (false), or not (true)
+bool				force
 
 # optional: description of node to add to the tree
 dhtt_msgs/Node 		add_node
+
+# optional: index of the position to add the node at in the to_modify's children
+int8				index
 
 # optional: file path and name of the subtree to add to the current tree
 string			 	to_add

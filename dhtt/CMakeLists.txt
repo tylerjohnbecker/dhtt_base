@@ -25,11 +25,8 @@ find_package(pluginlib REQUIRED)
 
 find_package(yaml-cpp REQUIRED)
 
-find_package(Boost REQUIRED COMPONENTS
-  thread)
-
 # make nodes
-add_library(dhtt_lib SHARED src/tree/node.cc src/server/main_server.cc src/planning/goitr_type.cc src/server/sub_server.cc)
+add_library(dhtt_lib SHARED src/utils.cc src/tree/node.cc src/server/main_server.cc src/planning/goitr_type.cc src/server/sub_server.cc)
 target_include_directories(dhtt_lib PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
@@ -49,7 +46,7 @@ ament_target_dependencies(start_server rclcpp rclcpp_action rcl_yaml_param_parse
 target_include_directories(start_server PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_link_libraries(start_server dhtt_lib ${YAML_CPP_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(start_server dhtt_lib ${YAML_CPP_LIBRARIES})
 
 add_executable(param_node src/param_node.cpp)
 ament_target_dependencies(param_node rclcpp)
@@ -77,7 +74,8 @@ if(BUILD_TESTING)
     # tests/test_add_remove.py
     # tests/test_behavior_order.py
     # tests/test_dynamic_changes.py
-    tests/test_goitr_basic.py
+    # tests/test_goitr_basic.py
+    tests/test_pre_post.py
     )
 
   foreach(_test_path ${_pytest_tests})

@@ -12,8 +12,8 @@ def get_main_node(debug_text=''):
 	group_if = GroupAction( 
 							condition = LaunchConfigurationEquals('with_world_params', 'true'),
 							actions= [
-								Node( package='dhtt', executable='start_server', output='log', prefix=[debug_text], emulate_tty=True ),
-								Node( package='dhtt', executable='param_node', output='log', emulate_tty=True, parameters=[LaunchConfiguration('params_file')])
+								Node( package='dhtt', executable='start_server', output='log', prefix=[debug_text], emulate_tty=True )
+								# Node( package='dhtt', executable='param_node', output='log', emulate_tty=True, parameters=[LaunchConfiguration('params_file')])
 							]
 	 					  )
 
@@ -21,8 +21,8 @@ def get_main_node(debug_text=''):
 	group_unless = GroupAction( 
 							condition = LaunchConfigurationEquals('with_world_params', 'false'),
 							actions= [
-								Node( package='dhtt', executable='start_server', output='log', prefix=[debug_text], emulate_tty=True ),
-								Node( package='dhtt', executable='param_node', output='log', emulate_tty=True)
+								Node( package='dhtt', executable='start_server', output='log', prefix=[debug_text], emulate_tty=True )
+								# Node( package='dhtt', executable='param_node', output='log', emulate_tty=True)
 							]
 	 					  )
 

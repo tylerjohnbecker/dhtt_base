@@ -162,6 +162,49 @@ namespace dhtt_plugins
 			throw std::invalid_argument("Class TestBehavior only expects parameter activation_potential, but received " + key + ". Returning in error.");
 
 		this->activation_potential = atof(value.c_str());
+
+		if ( (int) params.size() == 2 )
+		{
+			std::string check_negate = params[1];
+			bool negate = false;
+
+			auto negate_pos = check_negate.find("!");
+
+			if ( negate_pos != std::string::npos )
+			{
+				negate = true;
+				check_negate = check_negate.substr(negate_pos + 1, check_negate.size() - 1);
+			}
+
+			auto separator_pos = check_negate.find(": ");
+
+			if ( separator_pos == std::string::npos )
+				throw std::invalid_argument("Parameters are expected in the format \"key: value\" but received in the form " + params[1] + ". Returning in error.");
+
+			key = check_negate.substr(0, separator_pos);
+			value = check_negate.substr(separator_pos + 2, check_negate.size() - separator_pos); 
+
+			dhtt_msgs::msg::Pair n_pre;
+
+			n_pre.key = key;
+			n_pre.value = value;
+			n_pre.negate = negate;
+			n_pre.type = dhtt_msgs::msg::Pair::LOCATION;
+
+			dhtt_msgs::msg::Pair n_post;
+
+			n_post.key = key;
+			n_post.value = value;
+			n_post.negate = not negate;
+			n_post.type = dhtt_msgs::msg::Pair::LOCATION;
+
+			this->preconditions.predicates.push_back(n_pre);
+			this->postconditions.predicates.push_back(n_post);
+
+			this->preconditions.logical_operator = dhtt_utils::LOGICAL_AND;
+			this->postconditions.logical_operator = dhtt_utils::LOGICAL_AND;
+		}
+
 		this->params = params;
 	}
 

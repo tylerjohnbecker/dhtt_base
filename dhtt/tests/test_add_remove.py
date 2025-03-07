@@ -111,6 +111,8 @@ class TestServerAddRemove:
 		for index, val in enumerate(node_parents_orig):
 			assert val in parent_names_from_server[index] or (val == 'NONE' and parent_names_from_server[index] == add_to)
 
+		return modify_rs.added_nodes
+
 	def multiple_yaml(self, path):
 		pass
 

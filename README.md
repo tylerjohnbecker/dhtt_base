@@ -33,8 +33,7 @@ If you use this work in an academic context, please cite the following publicati
 
 #### Dependencies
 
-- [Robot Operating System 2 (ROS2)](https://docs.ros.org/en/foxy/index.html)
-- [Boost]
+- [Robot Operating System 2 (ROS2) Minimum Version Foxy](https://docs.ros.org/en/foxy/index.html)
 - [Yaml-cpp]
 
 #### Building
