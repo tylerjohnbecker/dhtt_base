@@ -19,6 +19,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   # message files
@@ -27,9 +28,17 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Resource.msg"
   "msg/Resources.msg"
   "msg/NodeStatus.msg"
+<<<<<<< HEAD
   "msg/Pair.msg"
   "msg/UpdateInfo.msg"
   "msg/Result.msg"
+=======
+  "msg/CookingAction.msg"
+  "msg/CookingObject.msg"
+  "msg/CookingObservation.msg"
+  "msg/CookingRecipe.msg"
+  "msg/CookingAgent.msg"
+>>>>>>> 4a041a644ba49312bea745102bf159422d2a1e35
 
   # service files
   "srv/ControlRequest.srv"
@@ -39,8 +48,13 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/InternalControlRequest.srv"
   "srv/InternalModifyRequest.srv"
   "srv/InternalServiceRegistration.srv"
+<<<<<<< HEAD
   "srv/FetchInfo.srv"
   "srv/GoitrRequest.srv"
+=======
+#  "srv/NutreeJsonRequest.srv"
+  "srv/CookingRequest.srv"
+>>>>>>> 4a041a644ba49312bea745102bf159422d2a1e35
 
   # action files
   "action/Activation.action"
@@ -48,6 +62,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 
   # dependecies for messages
   DEPENDENCIES std_msgs
+  DEPENDENCIES geometry_msgs
   )
 
 if(BUILD_TESTING)

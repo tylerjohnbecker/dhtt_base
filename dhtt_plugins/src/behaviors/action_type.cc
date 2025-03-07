@@ -20,15 +20,12 @@ namespace dhtt_plugins
 		this->children_allowed = false;
 		this->done = false;
 
-		this->parse_params(params);
-
 		this->executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 		this->executor->add_node(this->pub_node_ptr);
 
 		this->necessary_resources = this->get_necessary_resources();
 
-		this->knowledge_pub = this->pub_node_ptr->create_publisher<std_msgs::msg::String>("/updated_knowledge", 10);
-
+		this->parse_params(params);
 		return;
 	}
 
