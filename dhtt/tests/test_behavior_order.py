@@ -34,6 +34,7 @@ class ServerNode (rclpy.node.Node):
 	def status_listener(self, data):
 		self.root_state = data.state
 
+@pytest.mark.serial
 class TestServerBehaviorOrder:
 
 	first = True

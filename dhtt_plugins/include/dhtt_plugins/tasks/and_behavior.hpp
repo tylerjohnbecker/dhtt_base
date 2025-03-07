@@ -39,10 +39,13 @@ namespace dhtt_plugins
 
 		/**
 		 * \brief work behavior for the AND node.
-		 * 
-		 * The AND node 
 		 */
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> work_callback( dhtt::Node* container ) override;
+
+		/**
+		 * \brief the AND node performs a logical and of the predicates of its children for both pre and post conditions
+		 */
+		void maintain_conditions(dhtt::Node* container) override;
 
 		/**
 		 * \brief this behavior takes no parameters

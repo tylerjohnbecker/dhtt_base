@@ -93,7 +93,19 @@ namespace dhtt_plugins
 		 * 
 		 * \return list of all resources to release 
 		 */
-		virtual std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container ) = 0;
+		virtual std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container ) 
+		{
+			return container->get_owned_resources();
+		};
+
+		/**
+		 * \brief this is where inheriting classes define the resources they need
+		 * 
+		 * The resources on the robot which an action type behavior needs to run should be defined here by overriding this method.
+		 * 
+		 * \return the list of resources required to run the behavior
+		 */
+		virtual std::vector<dhtt_msgs::msg::Resource> get_necessary_resources() = 0;
 
 		/**
 		 * \brief getter for the internal done variable
@@ -106,6 +118,8 @@ namespace dhtt_plugins
 
 	protected:
 
+		void send_state_updated();
+
 		bool done;
 
 		double activation_potential;
@@ -113,6 +127,7 @@ namespace dhtt_plugins
 
 		std::shared_ptr<rclcpp::Node> pub_node_ptr;
 		std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
+		rclcpp::Publisher<std_msgs::msg::String>::SharedPtr knowledge_pub;
 
 	private:
 	};

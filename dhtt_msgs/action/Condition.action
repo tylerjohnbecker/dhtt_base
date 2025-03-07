@@ -1,0 +1,18 @@
+### goal
+int8 type
+
+# both operations will return pre and postconditions, however, maintain will reform it's list of pre and postconditions recursively down the tree
+int8 GET=0
+int8 MAINTAIN=1
+
+---
+### result
+bool success
+string error_msg
+
+string preconditions
+string postconditions
+
+---
+### feedback
+# wow such empty

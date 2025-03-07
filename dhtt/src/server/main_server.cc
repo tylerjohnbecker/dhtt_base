@@ -2,13 +2,20 @@
 
 namespace dhtt
 {
-	MainServer::MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner) : rclcpp::Node(node_name), spinner_cp(spinner), total_nodes_added(1), verbose(true), running(false)
+	MainServer::MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner) : 
+									rclcpp::Node(node_name),//, rclcpp::NodeOptions().allow_undeclared_parameters(true).automatically_declare_parameters_from_overrides(true)), 
+									conc_group(nullptr), spinner_cp(spinner), total_nodes_added(1), end(false), verbose(true), running(false)
 	{
+		// create a callback group for parallel ones
+		this->conc_group = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+		this->sub_opts.callback_group = this->conc_group;
+		this->pub_opts.callback_group = this->conc_group;
+
 		/// initialize subscribers
-		this->status_sub = this->create_subscription<dhtt_msgs::msg::Node>("/status", MAX_NODE_NUM, std::bind(&MainServer::status_callback, this, std::placeholders::_1));
+		this->status_sub = this->create_subscription<dhtt_msgs::msg::Node>("/status", MAX_NODE_NUM, std::bind(&MainServer::status_callback, this, std::placeholders::_1), this->sub_opts);
 
 		/// initialize publishers
-		this->root_status_pub = this->create_publisher<dhtt_msgs::msg::NodeStatus>("/root_status", 10);
+		this->root_status_pub = this->create_publisher<dhtt_msgs::msg::NodeStatus>("/root_status", 10, this->pub_opts);
 
 		/// initialize internal services
 
@@ -24,7 +31,7 @@ namespace dhtt
 		root_node->child_name = std::vector<std::string>();
 
 		// pretty sure I'll switch this to a passed in parameter, but for now this should work
-		std::experimental::filesystem::path dhtt_folder_path = __FILE__;
+		dhtt_folder_path = __FILE__;
 
 		dhtt_folder_path = dhtt_folder_path.parent_path().parent_path().parent_path();
 
@@ -42,20 +49,25 @@ namespace dhtt
 		this->node_list.task_completion_percent = 0.0f;
 
 		// initialize physical Root Node. loaded a yaml file as a part of the constructor so we don't catch it and make the program fail to load if that happens
-		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>("ROOT_0", "dhtt_plugins::RootBehavior", root_node->params, "NONE");
+		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>("ROOT_0", "dhtt_plugins::RootBehavior", root_node->params, "NONE", "");
 		this->spinner_cp->add_node(this->node_map["ROOT_0"]);
 		this->node_map["ROOT_0"]->register_servers();
 		this->node_map["ROOT_0"]->set_resource_status_updated(true);
 		this->node_map["ROOT_0"]->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
 		/// initialize external services
-		this->modify_server = this->create_service<dhtt_msgs::srv::ModifyRequest>("/modify_service", std::bind(&MainServer::modify_callback, this, std::placeholders::_1, std::placeholders::_2));
-		this->control_server = this->create_service<dhtt_msgs::srv::ControlRequest>("/control_service", std::bind(&MainServer::control_callback, this, std::placeholders::_1, std::placeholders::_2));
-		this->fetch_server = this->create_service<dhtt_msgs::srv::FetchRequest>("/fetch_service", std::bind(&MainServer::fetch_callback, this, std::placeholders::_1, std::placeholders::_2));
-		this->history_server = this->create_service<dhtt_msgs::srv::HistoryRequest>("/history_service", std::bind(&MainServer::history_callback, this,std::placeholders::_1, std::placeholders::_2));
+		this->modify_server = this->create_service<dhtt_msgs::srv::ModifyRequest>("/modify_service", std::bind(&MainServer::modify_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->conc_group);
+		this->control_server = this->create_service<dhtt_msgs::srv::ControlRequest>("/control_service", std::bind(&MainServer::control_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->conc_group);
+		this->fetch_server = this->create_service<dhtt_msgs::srv::FetchRequest>("/fetch_service", std::bind(&MainServer::fetch_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->conc_group);
+		this->history_server = this->create_service<dhtt_msgs::srv::HistoryRequest>("/history_service", std::bind(&MainServer::history_callback, this,std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->conc_group);
 
-		this->client_ptr = rclcpp_action::create_client<dhtt_msgs::action::Activation>( this, "/dhtt/ROOT_0/activate");
+		this->client_ptr = rclcpp_action::create_client<dhtt_msgs::action::Activation>( this, "/dhtt/ROOT_0/activate", this->conc_group);
+		this->maintenance_client_ptrs["ROOT_0"] = rclcpp_action::create_client<dhtt_msgs::action::Condition>(this, "/dhtt/ROOT_0/condition", this->conc_group);
 		this->internal_control_client = this->create_client<dhtt_msgs::srv::InternalControlRequest>("/dhtt/control");
+
+		// initialize and start maintenance thread
+		this->maintenance_thread = std::make_shared<std::thread>( std::bind( &MainServer::maintainer_thread_cb, this ) );
+		this->maintenance_thread->detach();
 	}
 
 	MainServer::~MainServer()
@@ -67,95 +79,139 @@ namespace dhtt
 		// this->remove_node(std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>(), this->node_list.tree_nodes[0]);
 		this->node_list.tree_nodes.clear();
 		this->node_map.clear();
+
+		this->end = true;
+
+		this->maintenance_queue_condition.notify_one();
 	}
 
 	void MainServer::modify_callback( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response )
 	{
+		bool force = request->force;
+
 		RCLCPP_INFO(this->get_logger(), "--- Modify request received!");
 		this->publish_root_status();
 
-		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::ADD)
-		{
-			// docs aren't great, but search scoped locks here: https://www.boost.org/doc/libs/1_65_0/doc/html/thread/synchronization.html
-			std::lock_guard<boost::mutex> guard(this->modify_mut);
+		std::string to_remove;
 
-			if ( (int) request->to_modify.size() == 0 )
+		auto same_name = [&](std::string to_check) { return not strcmp(to_remove.c_str(), to_check.c_str()); };
+
+		auto add_modify = [&](std::vector<std::string> to_add) {
+
+			for ( auto iter : to_add )
+				this->being_modified.push_back(iter);
+		};
+
+		auto remove_modify = [&](std::vector<std::string> rem) {
+
+			for ( auto iter : rem )
+			{
+				to_remove = iter;
+
+				this->being_modified.erase(std::remove_if(this->being_modified.begin(), this->being_modified.end(), same_name), this->being_modified.end());
+			}
+		};
+
+		if ( (int) request->to_modify.size() == 0 )
+		{
+			response->success = false;
+			response->error_msg = "Failed to modify node because no node was given."; 
+
+			RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+
+			return;
+		}
+
+		for ( auto iter : request->to_modify )
+		{
+			if ( not this->can_modify(iter) )
 			{
 				response->success = false;
-				response->error_msg = "Failed to add node because no parent node was given."; 
+				response->error_msg = "Node " + iter + " is currently being modified... returning in error!";
 
 				RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
 
 				return;
 			}
+		}
+
+
+		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::ADD)
+		{
+			std::lock_guard<std::mutex> guard(this->modify_mut);
+
+			add_modify(request->to_modify);
 
 			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
 			{
-				response->error_msg = this->add_node(response, *iter, request->add_node);
+				if ( request->index < 0 )
+					request->index = -1;
+
+				response->error_msg = this->add_node(response, *iter, request->add_node, force, request->index);
 				response->success = not strcmp(response->error_msg.c_str(), "");
 
 				// exit early if modification fails
 				if ( not response->success )
 				{
 					RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+					remove_modify(request->to_modify);
 
 					return;
 				}
+
+				this->start_maintain(*iter);
 			}
+
+			remove_modify(request->to_modify);
 
 			return;
 		}
 
 		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::ADD_FROM_FILE)
 		{
-			std::lock_guard<boost::mutex> guard(this->modify_mut);
-			
-			if ( (int) request->to_modify.size() == 0 )
-			{
-				response->success = false;
-				response->error_msg = "Failed to add nodes from file because no parent node was given."; 
+			std::lock_guard<std::mutex> guard(this->modify_mut);
 
-				RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
-
-				return;
-			}
+			add_modify(request->to_modify);
 
 			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
 			{
-				// currently this opens the yaml file n times where n is the number of placesthat we add the nodes
+				// currently this opens the yaml file n times where n is the number of places that we add the nodes
 				// in practice we should have negligible time loss from this but it should technically be done first before the loop
 				// and then the dictionary should be passed in
-				response->error_msg = this->add_nodes_from_file(response, *iter, request->to_add);
+				response->error_msg = this->add_nodes_from_file(response, *iter, request->to_add, request->file_args, force);
 				response->success = not strcmp(response->error_msg.c_str(), "");
 
 				// exit early if modification fails
 				if ( not response->success )
 				{
 					RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+					remove_modify(request->to_modify);
 
 					return;
 				}
 			}
+
+			remove_modify(request->to_modify);
 
 			return;
 		}
 
 		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::REMOVE )
 		{
-			std::lock_guard<boost::mutex> guard(this->modify_mut);
+			std::lock_guard<std::mutex> guard(this->modify_mut);
 
-			if ( (int) request->to_modify.size() == 0 )
-			{
-				response->success = false;
-				response->error_msg = "Failed to remove nodes because no nodes to remove were given.";
-				
-				RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
-
-				return;
-			}
+			add_modify(request->to_modify);
 
 			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
 			{
+				if ( not force and not this->can_remove(*iter) )
+				{
+					RCLCPP_ERROR(this->get_logger(), "Cannot remove node %s due to precondition violation later in the tree. Try again or force removal!");
+					remove_modify(request->to_modify);
+
+					return;
+				}
+
 				response->error_msg = this->remove_node(response, *iter);
 				response->success = not strcmp(response->error_msg.c_str(), "");
 
@@ -163,27 +219,24 @@ namespace dhtt
 				if ( not response->success )
 				{
 					RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+					remove_modify(request->to_modify);
 
 					return;
 				}
+
+				this->start_maintain(*iter);
 			}
+
+			remove_modify(request->to_modify);
 
 			return;
 		}
 
 		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::MUTATE or request->type == dhtt_msgs::srv::ModifyRequest::Request::PARAM_UPDATE )
 		{
-			std::lock_guard<boost::mutex> guard(this->modify_mut);
-			
-			if ( (int) request->to_modify.size() == 0 )
-			{
-				response->success = false;
-				response->error_msg = "Failed to remove nodes because no nodes to remove were given.";
-				
-				RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+			std::lock_guard<std::mutex> guard(this->modify_mut);
 
-				return;
-			}
+			add_modify(request->to_modify);
 
 			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
 			{
@@ -195,33 +248,51 @@ namespace dhtt
 					response->error_msg = "Node with name " + (*iter) + " not found. Returning in error!";
 					response->success = false;
 
+					remove_modify(request->to_modify);
+
 					return;
 				}
 
-				RCLCPP_INFO(this->get_logger(), "Mutating node [%s] to type %s", (*iter).c_str(), request->mutate_type.c_str());
+				if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::MUTATE )
+				{
+					if ( not force and not this->can_mutate(*iter, this->node_map[*iter]->plugin_name, request->mutate_type) )
+					{
+						RCLCPP_ERROR(this->get_logger(), "Cannot mutate [%s] to requested type [%s] without violation occuring. Returning in error!", (*iter).c_str(), request->mutate_type.c_str());
 
-				// construct internal modify Request
-				// std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
-				// std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
+						response->success = false;
+						response->error_msg = "Cannot mutate to requested type without violation occuring. Returning in error!";
 
-				// req->type = request->type;
-				// req->to_modify.push_back(*iter);
-				// req->mutate_type = request->mutate_type;
-				// req->params = request->params;
+						remove_modify(request->to_modify);
+
+						return;
+					}
+
+					RCLCPP_INFO(this->get_logger(), "Mutating node [%s] to type %s", (*iter).c_str(), request->mutate_type.c_str());
+				}
+				else 
+					RCLCPP_INFO(this->get_logger(), "Changing params of node [%s]", (*iter).c_str());
 
 				this->node_map[(*iter)]->modify(request, response);
 
 				// response->error_msg = res->error_msg;
 				response->success = not strcmp(response->error_msg.c_str(), "");
 
+				RCLCPP_FATAL(this->get_logger(), "Done modifying [%s]", (*iter).c_str());
+
 				// exit early if modification fails
 				if ( not response->success )
 				{
 					RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
 
+					remove_modify(request->to_modify);
+
 					return;
 				}
+
+				this->start_maintain(*iter);
 			}
+
+			remove_modify(request->to_modify);
 
 			return;
 		}
@@ -240,6 +311,17 @@ namespace dhtt
 
 		RCLCPP_INFO(this->get_logger(), "--- Control request recieved!");
 		this->publish_root_status();
+
+		// save tree
+		if ( request->type == dhtt_msgs::srv::ControlRequest::Request::SAVE )
+		{
+			RCLCPP_WARN(this->get_logger(), "Request to save tree received!");
+
+			response->error_msg = this->save_tree(request->file_name, request->file_path);
+			response->success = not strcmp(response->error_msg.c_str(), "");
+
+			return;
+		}
 
 		// start tree
 		if ( request->type == dhtt_msgs::srv::ControlRequest::Request::START )
@@ -301,9 +383,13 @@ namespace dhtt
 		RCLCPP_INFO(this->get_logger(), "--- Fetch request recieved!");
 		this->publish_root_status();
 
+		// wait for the maintenance pipeline to finish before giving a response
+		this->wait_for_maintain_all();
+
 		if ( request->return_full_subtree )
 		{
-			response->found_subtrees.push_back(this->construct_subtree_from_node_iter(this->node_list.tree_nodes.begin()));
+			// response->found_subtrees.push_back(this->construct_subtree_from_node_iter(this->node_list.tree_nodes.begin()));
+			response->found_subtrees.push_back(this->node_list);
 			response->success = true;
 
 			return;
@@ -394,7 +480,7 @@ namespace dhtt
 
 	// modify helpers
 	// I should also think about the node number here
-	std::string MainServer::add_node( std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, dhtt_msgs::msg::Node to_add )
+	std::string MainServer::add_node( std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, dhtt_msgs::msg::Node to_add, bool force, int index)
 	{
 		auto is_parent = [&]( dhtt_msgs::msg::Node check ) { return not strcmp(parent_name.c_str(), check.node_name.c_str()); };
 
@@ -415,6 +501,11 @@ namespace dhtt
 			return "Parent cannot be a BEHAVIOR type node. Returning in error!";
 		}
 
+		if ( index > (int) this->node_map[parent_name]->get_child_names().size() )
+		{
+			return "Cannot add node to parent at given index: index is out of bounds!";
+		}
+
 		// add to our list of nodes (this should just modify the local copy)
 		to_add.node_name += "_" + std::to_string(this->total_nodes_added);
 
@@ -427,9 +518,15 @@ namespace dhtt
 		to_add.parent = std::distance(this->node_list.tree_nodes.begin(), found_parent);
 		to_add.node_status.state = dhtt_msgs::msg::NodeStatus::WAITING;
 		
+		// ensure that the goitr type is added if it exists
+		std::string goitr_type = "";
+
+		if ( strcmp(to_add.goitr_name.c_str(), ""))
+			goitr_type = to_add.goitr_name;
+
 		// create a physical node from the message and add to physical list
-		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(to_add.node_name, to_add.plugin_name, to_add.params, parent_name);
-		
+		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(to_add.node_name, to_add.plugin_name, to_add.params, parent_name, goitr_type);
+
 		if (this->node_map[to_add.node_name]->loaded_successfully() == false)
 		{
 			std::string err = this->node_map[to_add.node_name]->get_error_msg();
@@ -439,8 +536,26 @@ namespace dhtt
 			return err;
 		}
 
+		std::shared_ptr<dhtt_utils::PredicateConjunction> tmp1 = std::make_shared<dhtt_utils::PredicateConjunction>();
+		std::shared_ptr<dhtt_utils::PredicateConjunction> tmp2 = std::make_shared<dhtt_utils::PredicateConjunction>();
+
+		*tmp1 = this->node_map[to_add.node_name]->logic->get_preconditions();
+		*tmp2 = this->node_map[to_add.node_name]->logic->get_postconditions(); 
+
+		to_add.preconditions = dhtt_utils::to_string(tmp1);
+		to_add.postconditions = dhtt_utils::to_string(tmp2);
+
+		if ( not force and not this->can_add(to_add, index) )
+		{
+			std::string err = this->node_map[to_add.node_name]->get_error_msg();
+
+			this->node_map.erase(to_add.node_name);
+
+			return err;
+		}
+
 		this->spinner_cp->add_node(this->node_map[to_add.node_name]);
-		this->node_map[to_add.node_name]->register_with_parent();
+		this->node_map[to_add.node_name]->register_with_parent(index);
 		this->node_map[to_add.node_name]->register_servers();
 
 		if (this->node_map[to_add.node_name]->loaded_successfully() == false)
@@ -452,12 +567,17 @@ namespace dhtt
 			return err;
 		}
 
+		std::string condition_topic = std::string(TREE_PREFIX) + "/" + to_add.node_name + CONDITION_POSTFIX;
+		this->maintenance_client_ptrs[to_add.node_name] = rclcpp_action::create_client<dhtt_msgs::action::Condition>(this, condition_topic, this->conc_group);
+
 		// update the parent
-		(*found_parent).children.push_back( (int) this->node_list.tree_nodes.size() );
-		(*found_parent).child_name.push_back(to_add.node_name);
+		auto index_iter = (index == -1)? (*found_parent).children.end() : (*found_parent).children.begin() + index;
+		auto name_index_iter = (index == -1)? (*found_parent).child_name.end() : (*found_parent).child_name.begin() + index;
+
+		(*found_parent).children.insert( index_iter, (int) this->node_list.tree_nodes.size() );
+		(*found_parent).child_name.insert( name_index_iter, to_add.node_name );
 
 		this->node_list.tree_nodes.push_back(to_add);
-
 
 		// add this node_name to the list of added nodes
 		response->added_nodes.push_back(to_add.node_name);
@@ -468,77 +588,79 @@ namespace dhtt
 		return "";
 	}
 
-	std::string MainServer::add_nodes_from_file(std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, std::string file_name )
+	std::string MainServer::add_nodes_from_file(std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, std::string file_name, std::vector<std::string> file_args, bool force )
 	{
-		// first load all of the yaml nodes into the message format
-		std::vector<dhtt_msgs::msg::Node> nodes_to_add;
+		std::string cur_parent;
 
+		auto is_parent = [&]( dhtt_msgs::msg::Node check ) { return check.node_name.find(cur_parent) != std::string::npos; };
+
+		std::function<std::string(dhtt_msgs::msg::Subtree&, int)> add_post_order = [&]( dhtt_msgs::msg::Subtree& to_add, int current )
+		{
+			// RCLCPP_ERROR(this->get_logger(), "Add post order %s", to_add.tree_nodes[current].node_name.c_str());
+
+			// add node to the tree
+			cur_parent = to_add.tree_nodes[current].parent_name;
+			std::vector<dhtt_msgs::msg::Node>::iterator found_parent = std::find_if( this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), is_parent);
+
+			std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
+
+			// copy and then delete the children list of the node to avoid duplication
+			std::vector<int> children_cp = to_add.tree_nodes[current].children;
+
+			to_add.tree_nodes[current].child_name.clear();
+			to_add.tree_nodes[current].children.clear();
+
+			std::string err_msg = this->add_node(res, (*found_parent).node_name, to_add.tree_nodes[current], force, 0);
+
+			if ( strcmp(err_msg.c_str(), "") )
+				return err_msg;
+
+			// update own name 
+			std::string new_name = res->added_nodes[0];
+			response->added_nodes.push_back(new_name);
+
+			// update children's version of parent name and add children in reverse order
+			for ( auto riter = children_cp.rbegin() ; riter != children_cp.rend() ; riter++ )
+			{
+				to_add.tree_nodes[*riter].parent_name = new_name;
+
+				err_msg = add_post_order(to_add, *riter);
+
+				if ( strcmp(err_msg.c_str(), "") )
+					return err_msg;
+			}
+
+			// return empty if successful
+			return std::string();
+		};
+
+		// first load all of the yaml nodes into the message format
 		if (this->verbose)
 			RCLCPP_INFO(this->get_logger(), "Adding subtree loaded from file %s", file_name.c_str());
 
-		// yaml-cpp example code taken from here: https://stackoverflow.com/questions/70072926/yaml-cpp-how-to-read-this-yaml-file-content-using-c-linux-using-yaml-cpp-v
-		try 
-		{
-			YAML::Node config = YAML::LoadFile(file_name);
-		
-			std::vector<std::string> nodes = config["NodeList"].as<std::vector<std::string>>();
+		dhtt_msgs::msg::Subtree nodes_to_add;
 
-			for ( std::vector<std::string>::iterator iter = nodes.begin(); iter != nodes.end(); iter++)
-			{
-				dhtt_msgs::msg::Node to_build;
+		std::string err_msg = this->construct_subtree_from_yaml(nodes_to_add, file_name, file_args);
+		nodes_to_add.tree_nodes[0].parent_name = parent_name;
 
-				to_build.node_name = *iter;
-				to_build.parent_name = config["Nodes"][(*iter)]["parent"].as<std::string>();
+		if ( strcmp(err_msg.c_str(), "") )
+			return err_msg;
 
-				to_build.type = config["Nodes"][(*iter)]["type"].as<int>();
-				to_build.plugin_name = config["Nodes"][(*iter)]["behavior_type"].as<std::string>();
+		// add nodes post order
+		std::string error_msg = add_post_order(nodes_to_add, 0);
 
-				if (to_build.type > dhtt_msgs::msg::Node::BEHAVIOR)
-					return "Node type for node " + to_build.node_name + " incorrect at value " + std::to_string(to_build.type) + ". Returning in error.";
+		// make sure to pass the error through if anything fails
+		if ( strcmp(error_msg.c_str(), "") )
+		{// additional cleanup necessary?
+			this->remove_node(std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>(), nodes_to_add.tree_nodes[0].node_name);
 
-				// also make some consideration for the plugin type but not necessary until that functions
-
-				std::vector<std::string> params = config["Nodes"][(*iter)]["params"].as<std::vector<std::string>>();
-
-				for ( auto param_iter = params.begin(); param_iter != params.end(); param_iter++ )
-				{
-					to_build.params.push_back(*param_iter);
-				}
-
-				nodes_to_add.push_back(to_build);
-			}			
-		}
-		catch (const std::exception& exception)
-		{
-			return exception.what();
+			return error_msg;
 		}
 
-		// then use the add_node function which is already meant to work with node msgs
-		for ( std::vector<dhtt_msgs::msg::Node>::iterator iter = nodes_to_add.begin(); iter != nodes_to_add.end(); iter++ )
-		{
-			std::string old_name = (*iter).node_name;
-			std::string p_name = (*iter).parent_name;
+		// then maintain the pre and post conditions
+		int id = this->start_maintain(parent_name);
 
-			if ( not strcmp(p_name.c_str(), ROOT_PARENT_NAME ) )
-			{
-				p_name = parent_name;
-
-				(*iter).parent_name = parent_name;
-			}
-
-			std::string error_msg = this->add_node(response, p_name, (*iter));
-
-			// make sure to pass the error through if anything fails
-			if ( strcmp(error_msg.c_str(), "") )
-				return error_msg;
-
-			// because we change the name to a unique id when it is added we also need to update the parent names of the nodes we are adding
-			std::string new_name = this->node_list.tree_nodes.back().node_name;
-
-			for ( std::vector<dhtt_msgs::msg::Node>::iterator name_update_iter = iter + 1; name_update_iter != nodes_to_add.end(); name_update_iter++ )
-				if ( not strcmp( (*name_update_iter).parent_name.c_str(), old_name.c_str() ) )
-					(*name_update_iter).parent_name = new_name;
-		}
+		this->wait_for_maintain(id);
 
 		return "";
 	}
@@ -614,6 +736,163 @@ namespace dhtt
 		return "";
 	}
 
+	dhtt_utils::PredicateConjunction MainServer::get_postconditions(int subtree_index)
+	{
+		return dhtt_utils::convert_to_struct(this->node_list.tree_nodes[subtree_index].preconditions);
+	}
+
+	dhtt_utils::PredicateConjunction MainServer::get_preconditions(int subtree_index)
+	{
+		return dhtt_utils::convert_to_struct(this->node_list.tree_nodes[subtree_index].postconditions);
+	}
+
+	// need to change the node child index that we are looking for as we go up the tree
+	std::vector<int> MainServer::get_next_behaviors(std::string parent_name, int child_index)
+	{
+		// basic setup
+		std::vector<int> to_ret;
+
+		auto find_name = [&]( dhtt_msgs::msg::Node to_check ) { return not strcmp(parent_name.c_str(), to_check.node_name.c_str()); };
+
+		int iter = std::distance(this->node_list.tree_nodes.begin(), std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), find_name));
+		int next_index = child_index;
+
+		// first if the parent is a THEN we add all the subsequent children
+		if ( this->node_list.tree_nodes[iter].type == dhtt_msgs::msg::Node::THEN )
+			for ( int i = child_index; i < (int) this->node_list.tree_nodes[iter].children.size() ; i++ )
+				to_ret.push_back(this->node_list.tree_nodes[iter].children[i]); 
+
+		auto find_index = [&]( int to_check ) { return next_index == to_check; };
+
+		// up the tree till we hit a then node
+		while ( iter > 0 ) // 0 is always the root node ( no parents )
+		{
+			next_index = this->node_list.tree_nodes[iter].parent;
+
+			// if it's a then node
+			if ( this->node_list.tree_nodes[next_index].type == dhtt_msgs::msg::Node::THEN )
+			{
+				// take all the subsequent children
+				dhtt_msgs::msg::Node ancestor = this->node_list.tree_nodes[next_index];
+				int my_child_index = std::distance(ancestor.children.begin(), std::find_if(ancestor.children.begin(), ancestor.children.end(), find_index));
+
+				for ( int i = my_child_index + 1; i < (int) ancestor.children.size(); i++ )
+					to_ret.push_back(ancestor.children[i]);
+			} 
+
+			// continue up the tree
+			iter = next_index;
+		}
+
+		return to_ret;
+	}
+
+	bool MainServer::can_remove(std::string node_name)
+	{
+		auto name_match = [&]( dhtt_msgs::msg::Node check ) { return not strcmp(node_name.c_str(), check.node_name.c_str()); };
+
+		int name_index = std::distance(this->node_list.tree_nodes.begin(), std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), name_match));
+
+		// can't remove nonexistant nodes ( this should just be a backup check )
+		if ( name_index >= (int) this->node_list.tree_nodes.size() )
+			return false;
+
+		// std::vector<int> temporal_dependencies = this->get_next_behaviors(name_index);
+
+		// auto postconditions = *dhtt_utils::negate_predicates( this->get_postconditions( name_index ) );
+
+		// for ( int iter : temporal_dependencies )
+		// {
+		// 	auto preconditions = this->get_preconditions(iter);
+			
+		// 	if ( dhtt_utils::violates_predicates(postconditions, preconditions) )
+		// 		return false; 
+		// }
+
+		return true;
+	}
+
+	bool MainServer::can_add(dhtt_msgs::msg::Node to_add, int index)
+	{
+		// this all relies on the to_add node being in the internal representation of the tree already ( not actually created tho )
+		auto name_match = [&]( dhtt_msgs::msg::Node check ) { return not strcmp(to_add.parent_name.c_str(), check.node_name.c_str()); };
+
+		int name_index = std::distance(this->node_list.tree_nodes.begin(), std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), name_match));
+
+		std::vector<int> forward_temporal_dependencies = this->get_next_behaviors(to_add.parent_name, index);
+
+		auto postconditions = this->node_map[to_add.node_name]->logic->get_postconditions();
+		
+		for ( int iter : forward_temporal_dependencies )
+		{
+			auto preconditions = this->get_preconditions(iter);
+			
+			if ( dhtt_utils::violates_predicates(postconditions, preconditions) )
+				return false; 
+		}
+
+		return true;
+	}
+
+	bool MainServer::can_mutate(std::string node_name, std::string o_type, std::string n_type)
+	{
+		// -> OR is always 
+		// if ( not strcmp( n_type.c_str() , "dhtt_plugins::OrBehavior" ) )
+		// {
+		// 	return true;
+		// }
+		
+		// // -> THEN
+		// else if ( not strcmp( n_type.c_str() , "dhtt_plugins::ThenBehavior" ) )
+		// {
+		// 	// get node iter to node name
+		// 	auto name_match = [&]( dhtt_msgs::msg::Node check ) { return not strcmp(node_name.c_str(), check.node_name.c_str()); };
+
+		// 	int name_index = std::distance(this->node_list.tree_nodes.begin(), std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), name_match));
+
+		// 	// get list of children
+		// 	std::vector<int> children = this->node_list.tree_nodes[name_index].children;
+
+		// 	// check pre/post condition relationships in owned_resources
+		// 	dhtt_utils::PredicateConjunction total_postconditions = dhtt_utils::convert_to_struct(this->node_list.tree_nodes[children[0]].postconditions);
+
+		// 	for ( auto iter = children.begin() + 1 ; iter != children.end() ; iter++ )
+		// 	{
+		// 		// check for violations
+		// 		if ( dhtt_utils::violates_predicates( total_postconditions, dhtt_utils::convert_to_struct(this->node_list.tree_nodes[*iter].preconditions) ) )
+		// 			return false;
+
+		// 		// combine the postconditions with the total
+		// 		total_postconditions = dhtt_utils::combine_predicates(total_postconditions, dhtt_utils::convert_to_struct(this->node_list.tree_nodes[*iter].postconditions));
+		// 	}
+
+		// 	return true;
+		// }
+		
+		// // -> AND
+		// else if ( not strcmp( n_type.c_str() , "dhtt_plugins::AndBehavior" ) )
+		// {
+		// 	// THEN->AND ( here we assume that the original then was correct and therefore there is some order which is correct )
+		// 	if ( not strcmp( o_type.c_str() , "dhtt_plugins::ThenBehavior" ) )
+		// 	{
+		// 		return true;
+		// 	}
+		// 	// OR->AND ( just check for blatant contradictions b/c otherwise this is an NP-hard problem )
+		// 	else if ( not strcmp( o_type.c_str() , "dhtt_plugins::OrBehavior" ) )
+		// 	{
+		// 		auto name_match = [&]( dhtt_msgs::msg::Node check ) { return not strcmp(node_name.c_str(), check.node_name.c_str()); };
+
+		// 		int name_index = std::distance(this->node_list.tree_nodes.begin(), std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), name_match));
+
+		// 		return not dhtt_utils::contains_contradiction(dhtt_utils::convert_to_struct(this->node_list.tree_nodes[name_index].preconditions)) 
+		// 			and not dhtt_utils::contains_contradiction(dhtt_utils::convert_to_struct(this->node_list.tree_nodes[name_index].postconditions));
+		// 	}
+		// }
+
+		// anything else if fine as far as this scope
+		return true;
+	}
+
 	// control helpers
 	std::string MainServer::stop_tree( bool interrupt )
 	{
@@ -637,8 +916,52 @@ namespace dhtt
 		return "";
 	}
 
-	std::string MainServer::save_tree()
+	std::string MainServer::save_tree(std::string file_name, std::string file_path)
 	{
+		struct stat path;
+
+		std::string file;
+
+		if ( stat( file_path.c_str(), &path ) == 0 )
+		{
+			file = file_name + file_path;
+		}
+		else
+		{
+			if ( strcmp(file_path.c_str(), "") )
+				return "Specified file path does not exist, returning in error";
+
+			file = dhtt_folder_path.native() + DEFAULT_SAVE_LOCATION + file_name;
+		}
+
+		// construct the yaml friendly version of the tree
+		YAML::Node root_node;
+
+		for ( auto const& iter : this->node_list.tree_nodes )
+		{
+			if ( not strcmp(iter.node_name.c_str(), "ROOT_0") )
+				continue;
+
+			// construct the current node
+			YAML::Node current_node;
+
+			current_node["type"] = iter.type;
+			current_node["behavior_type"] = iter.plugin_name;
+			current_node["goitr_type"] = iter.goitr_name;
+			current_node["robot"] = 0; // for now we will always assume the one robot 
+			current_node["parent"] = iter.parent_name;
+
+			for ( auto param_iter = iter.params.begin() ; param_iter != iter.params.end() ; param_iter++ )
+				current_node["params"].push_back( (*param_iter) );
+			
+			// add to the total
+			root_node["NodeList"].push_back(iter.node_name);
+			root_node["Nodes"][iter.node_name] = current_node; 
+		}
+
+		std::ofstream fout(file);
+		fout << root_node;
+
 		return "";
 	}
 
@@ -720,6 +1043,105 @@ namespace dhtt
 		return this->construct_subtree_from_node_iter(found_iter);
 	}
 
+	void MainServer::maintainer_thread_cb()
+	{
+		std::shared_future<std::shared_ptr<rclcpp_action::Client<dhtt_msgs::action::Condition>::GoalHandle>> goal_handle;
+		bool waiting = false;
+		dhtt_msgs::action::Condition::Result::SharedPtr result;
+
+		// condition from which to wake up this thread ( does this thread clean up? )
+		auto check_queue_size = [&](){ return this->maintenance_queue.size() > 0 or this->end; };
+		auto result_cb = [&](const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Condition>::WrappedResult& res){ waiting = false; result = res.result; };
+
+		// useful example of using condition variables here: https://en.cppreference.com/w/cpp/thread/condition_variable
+		while ( rclcpp::ok() )
+		{
+			// Create lock and then wait for the queue to have a size greater than 1
+			std::unique_lock<std::mutex> lock(this->maintenance_mut);
+
+			if ( (int) this->maintenance_queue.size() == 0 )
+				maintenance_queue_condition.wait(lock, check_queue_size);
+			else
+				lock.lock();
+
+			if ( this->end )
+				return;
+
+			// after wait the lock is acquired so take the first name in the queue and send the maintenance request
+			std::string node_name = this->maintenance_queue.front();
+			this->maintenance_queue.pop();
+
+			RCLCPP_INFO(this->get_logger(), "Sending maintenance request to %s...", node_name.c_str());
+
+			if ( not this->maintenance_client_ptrs[node_name]->wait_for_action_server(std::chrono::seconds(10)) )
+			{
+				RCLCPP_ERROR(this->get_logger(), "Cannot reach action server to request maintenance for %s!", node_name.c_str());
+
+				return;
+			}
+
+			auto condition_goal = dhtt_msgs::action::Condition::Goal();
+			condition_goal.type = dhtt_msgs::action::Condition::Goal::MAINTAIN;
+
+			auto send_goal_options = rclcpp_action::Client<dhtt_msgs::action::Condition>::SendGoalOptions();
+			send_goal_options.result_callback = result_cb;
+
+			waiting = true;
+
+			goal_handle = this->maintenance_client_ptrs[node_name]->async_send_goal(condition_goal, send_goal_options);
+
+			while ( waiting and rclcpp::ok() );
+
+			RCLCPP_INFO(this->get_logger(), "Received condition response from %s.", node_name.c_str());
+
+			if ( not result->success )
+				RCLCPP_ERROR(this->get_logger(), "Maintenance request for %s failed with error_msg: %s", node_name.c_str(), result->error_msg.c_str());
+
+			// change finished id to the id that was just performed then return
+			this->last_finished_id = this->maintenance_dict[node_name];
+			this->maintenance_dict.erase(this->maintenance_dict.find(node_name));
+
+			finished_maintenance_id_condition.notify_one();
+
+			// unlock and then notify any waiting that the queue has shrunk by one
+			lock.unlock();
+		}
+	}
+
+	int MainServer::start_maintain(std::string node_name)
+	{
+		// grab the lock and add node_name to the queue
+		{
+			std::lock_guard<std::mutex> maintain_guard(this->maintenance_mut);
+
+			this->maintenance_queue.push(node_name);
+			this->maintenance_dict[node_name] = this->used_id;
+			this->used_id++;
+
+			this->maintenance_queue_condition.notify_one();
+		}
+
+		return this->maintenance_dict[node_name];
+	}
+
+	void MainServer::wait_for_maintain(int id)
+	{
+		auto maintain_finished = [&](){ return this->last_finished_id == id; };
+
+		std::unique_lock<std::mutex> lock(this->maintenance_mut);
+
+		// otherwise wait for the notification
+		this->finished_maintenance_id_condition.wait(lock, maintain_finished);
+	}
+
+	void MainServer::wait_for_maintain_all()
+	{
+		while ( (int) this->maintenance_queue.size() > 0 and rclcpp::ok() );
+
+		return;
+	}
+
+
 	// subscriber callbacks
 	void MainServer::status_callback( const std::shared_ptr<dhtt_msgs::msg::Node> data )
 	{
@@ -735,6 +1157,14 @@ namespace dhtt
 		(*found_node).node_status.state = data->node_status.state;
 		(*found_node).owned_resources = data->owned_resources;
 		(*found_node).plugin_name = data->plugin_name;
+
+		(*found_node).preconditions.clear();
+		(*found_node).postconditions.clear();
+
+		(*found_node).preconditions = data->preconditions;
+		(*found_node).postconditions = data->postconditions;
+
+		// RCLCPP_INFO(this->get_logger(), "%s: %s, %s", (*found_node).node_name.c_str(), (*found_node).preconditions.c_str(), (*found_node).postconditions.c_str());
 
 		bool is_leaf = (*found_node).child_name.empty();
 
@@ -787,7 +1217,7 @@ namespace dhtt
 				}
 			}
 
-			(*parent_iter).children[child_index] = std::distance(this->node_list.tree_nodes.rbegin(), node_iter) - 1;
+			(*parent_iter).children[child_index] = this->node_list.tree_nodes.size() - std::distance(this->node_list.tree_nodes.rbegin(), node_iter) - 1;
 		}
 
 		// finally erase and then maintain the overall tree metrics
@@ -933,12 +1363,9 @@ namespace dhtt
 		// deep copy
 		auto iter = top_node;
 
-		for (dhtt_msgs::msg::Node n : this->node_list.tree_nodes)
-
 		// find all the parents and construct the subtree
 		while (iter != this->node_list.tree_nodes.end())
 		{
-
 			nodes.push_back(*iter);
 			
 			// clear all prior subtree information from node
@@ -973,5 +1400,180 @@ namespace dhtt
 		this->fill_subtree_metrics(to_ret);
 
 		return to_ret;
+	}
+
+	std::string MainServer::construct_subtree_from_yaml( dhtt_msgs::msg::Subtree& to_construct, std::string file_name, std::vector<std::string> file_args )
+	{
+		std::vector<dhtt_msgs::msg::Node> nodes_to_add;
+
+		// yaml-cpp example code taken from here: https://stackoverflow.com/questions/70072926/yaml-cpp-how-to-read-this-yaml-file-content-using-c-linux-using-yaml-cpp-v
+		try 
+		{
+			// first build vector of nodes from yaml file
+			YAML::Node config = YAML::LoadFile(file_name);
+		
+			std::vector<std::string> nodes = config["NodeList"].as<std::vector<std::string>>();
+
+			for ( std::vector<std::string>::iterator iter = nodes.begin(); iter != nodes.end(); iter++)
+			{
+				dhtt_msgs::msg::Node to_build;
+
+				to_build.node_name = *iter;
+				to_build.parent_name = config["Nodes"][(*iter)]["parent"].as<std::string>();
+
+				to_build.type = config["Nodes"][(*iter)]["type"].as<int>();
+				to_build.plugin_name = config["Nodes"][(*iter)]["behavior_type"].as<std::string>();
+
+				// check optional parameter "goitr_type"
+				try 
+				{
+					to_build.goitr_name = config["Nodes"][(*iter)]["goitr_type"].as<std::string>();
+				}
+				catch (const std::exception& e)
+				{
+					to_build.goitr_name = "";
+				}
+
+				if (to_build.type > dhtt_msgs::msg::Node::BEHAVIOR)
+					return "Node type for node " + to_build.node_name + " incorrect at value " + std::to_string(to_build.type) + ". Returning in error.";
+
+				// also make some consideration for the plugin type but not necessary until that functions
+
+				std::vector<std::string> params = config["Nodes"][(*iter)]["params"].as<std::vector<std::string>>();
+
+				for ( auto param_iter = params.begin(); param_iter != params.end(); param_iter++ )
+				{	
+					size_t found_index = (*param_iter).find('$');
+
+					// allow for arguments to be passed with the $ character
+					if ( found_index != std::string::npos )
+					{
+						std::string param = (*param_iter).substr(0, found_index - 1);
+						std::string arg_to_find = (*param_iter).substr(found_index + 1, ( (*param_iter).length() - found_index ) + 1);
+
+						bool found = false;
+
+						for ( auto arg_iter = file_args.begin(); arg_iter != file_args.end(); arg_iter++ )
+						{
+							size_t found_index2 = (*arg_iter).find(arg_to_find);
+
+							if ( found_index2 != std::string::npos )
+							{
+								found = true;
+
+								found_index2 = (*arg_iter).find(':') + 1;
+
+								std::string param_val = (*arg_iter).substr(found_index2, ( (*arg_iter).length() - found_index2 ) + 1);
+								RCLCPP_FATAL(this->get_logger(), "\t\t%s: %s", param.c_str(), param_val.c_str());
+
+								to_build.params.push_back(param + param_val);
+
+								break;
+							}
+						}
+
+						if ( found == false )
+							return "Arg from yaml file not found. " + arg_to_find + " should be given a value in the file_args parameter.";
+					}
+					else
+					{
+						to_build.params.push_back(*param_iter);
+					}
+				}
+
+				nodes_to_add.push_back(to_build);
+			}			
+		}
+		catch (const std::exception& exception)
+		{
+			return exception.what();
+		}
+
+		// now construct subtree
+		std::unordered_map<std::string, int> added_nodes;
+		std::unordered_map<std::string, int> depth_by_node;
+
+		int max_width = -1;
+		int max_depth = -1;
+
+		while ( added_nodes.size() < nodes_to_add.size() )
+		{
+			// first time we can't use the dictionary
+			if ( added_nodes.size() == 0 )
+			{
+				for ( auto iter : nodes_to_add )
+				{
+					if ( not strcmp( iter.parent_name.c_str(), ROOT_PARENT_NAME ) )
+					{
+						to_construct.tree_nodes.push_back(iter);
+						added_nodes[iter.node_name] = 0;
+						depth_by_node[iter.node_name] = 0;
+
+						break;
+					}
+				}
+			}
+			else // all other times we are supposed to 
+			{
+				for ( auto iter : nodes_to_add )
+				{	
+					if ( added_nodes.find(iter.parent_name) != added_nodes.end() and added_nodes.find(iter.node_name) == added_nodes.end() )
+					{
+						int parent_index = added_nodes[iter.parent_name];
+						depth_by_node[iter.node_name] = depth_by_node[iter.parent_name] + 1;
+
+						if ( depth_by_node[iter.node_name] > max_depth )
+							max_depth = depth_by_node[iter.node_name];
+
+						added_nodes[iter.node_name] = to_construct.tree_nodes.size();
+						to_construct.tree_nodes.push_back(iter);
+
+						to_construct.tree_nodes[parent_index].children.push_back(added_nodes[iter.node_name]);
+						to_construct.tree_nodes[parent_index].child_name.push_back(iter.node_name);
+
+						if ( (int) to_construct.tree_nodes[parent_index].children.size() > max_width )
+							max_width = to_construct.tree_nodes[parent_index].children.size();
+						
+						to_construct.tree_nodes.back().parent = parent_index;
+					}
+					else if ( added_nodes.find(iter.parent_name) != added_nodes.end() and added_nodes.find(iter.node_name) != added_nodes.end() )
+						return "Parent " + iter.parent_name + " not found for child " + iter.node_name + " returning in error!";
+				}
+			}
+		}
+
+		to_construct.max_tree_depth = max_depth;
+		to_construct.max_tree_depth = max_depth;
+		to_construct.tree_status = dhtt_msgs::msg::NodeStatus::WAITING;
+
+		return "";
+	}
+
+	bool MainServer::can_modify(std::string to_modify)
+	{
+		// in order to modify a node we should make sure it is mutually disjoint from all nodes being modified
+		for ( auto being_modified_iter : this->being_modified )
+			if ( not this->subtrees_are_disjoint(to_modify, being_modified_iter) )
+				return false;
+
+		return true;
+	}
+
+	bool MainServer::subtrees_are_disjoint(std::string to_modify, std::string to_check)
+	{
+		dhtt_msgs::msg::Subtree to_modify_sub = this->fetch_subtree_by_name(to_modify);
+		dhtt_msgs::msg::Subtree to_check_sub = this->fetch_subtree_by_name(to_check);
+
+		// if to_modify is in to_check or to_check is in to_modify_sub return false
+		for ( auto to_modify_iter : to_modify_sub.tree_nodes )
+			if ( not strcmp( to_check.c_str(), to_modify_iter.node_name.c_str() ) )
+				return false;
+
+		for ( auto to_check_iter : to_check_sub.tree_nodes )
+			if ( not strcmp( to_modify.c_str(), to_check_iter.node_name.c_str() ) )
+				return false;
+
+		// otherwise return true
+		return true;
 	}
 }

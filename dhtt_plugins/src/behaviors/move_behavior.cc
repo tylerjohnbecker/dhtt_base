@@ -25,7 +25,11 @@ namespace dhtt_plugins
 		if ( strcmp(key.c_str(), "activation_potential") )
 			throw std::invalid_argument("Expected parameter activation_potential, but received " + key + ". Returning in error.");
 
-		this->activation_potential = atof(value.c_str());
+		// check if activation potential was left blank
+		float temp = atof(value.c_str()); 
+
+		if ( temp > 0 )
+			this->activation_potential = temp;
 		
 		separator_pos = params[1].find(": ");
 
@@ -64,6 +68,8 @@ namespace dhtt_plugins
 		while ( not this->work_done )
 			this->executor->spin_once();
 
+		this->done = true;
+
 		return;
 
 	}
@@ -82,6 +88,18 @@ namespace dhtt_plugins
 		(void) container;
 
 		return std::vector<dhtt_msgs::msg::Resource>();
+	}
+
+	std::vector<dhtt_msgs::msg::Resource> MoveBehavior::get_necessary_resources()
+	{
+		std::vector<dhtt_msgs::msg::Resource> to_ret;
+
+		dhtt_msgs::msg::Resource base;
+		base.type = dhtt_msgs::msg::Resource::BASE;
+
+		to_ret.push_back(base);
+
+		return to_ret;
 	}
 
 	void MoveBehavior::done_callback( std::shared_ptr<std_msgs::msg::String> data )

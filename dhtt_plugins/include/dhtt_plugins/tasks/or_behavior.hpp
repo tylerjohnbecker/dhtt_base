@@ -50,6 +50,11 @@ namespace dhtt_plugins
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> work_callback( dhtt::Node* container ) override;
 
 		/**
+		 * \brief the OR node performs a logical or of the predicates of its children for both pre and post conditions
+		 */
+		void maintain_conditions(dhtt::Node* container) override;
+
+		/**
 		 * \brief this behavior takes no parameters
 		 */
 		void parse_params( std::vector<std::string> params ) override;

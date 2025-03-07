@@ -33,6 +33,10 @@ float64 					activation_potential
 dhtt_msgs/Resource[] 		released_resources
 dhtt_msgs/Resource[] 		passed_resources
 
+# the last behavior which ran and whether or not it finished successfully 
+string						last_behavior
+bool 						success
+
 ---
 ### feedback
 # wow such empty

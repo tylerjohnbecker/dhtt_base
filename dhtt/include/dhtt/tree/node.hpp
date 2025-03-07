@@ -7,6 +7,8 @@
 #include "pluginlib/class_loader.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 
+#include "std_msgs/msg/string.hpp"
+
 #include "dhtt_msgs/msg/node.hpp"
 #include "dhtt_msgs/msg/resource.hpp"
 #include "dhtt_msgs/msg/resources.hpp"
@@ -16,12 +18,15 @@
 #include "dhtt_msgs/srv/modify_request.hpp"
 
 #include "dhtt_msgs/action/activation.hpp"
+#include "dhtt_msgs/action/condition.hpp"
 
 #include "dhtt/tree/node_type.hpp"
+#include "dhtt/planning/goitr_type.hpp"
 
 #define TREE_PREFIX "/dhtt"
 #define REGISTER_CHILD_POSTFIX "/register_child"
 #define ACTIVATION_POSTFIX "/activate"
+#define CONDITION_POSTFIX "/condition"
 #define RESOURCES_POSTFIX "/resource"
 #define CONTROL_POSTFIX "/control"
 
@@ -50,7 +55,7 @@ namespace dhtt
 		 * 
 		 * \return void
 		 */
-		Node(std::string name, std::string type, std::vector<std::string> params, std::string parent_name);
+		Node(std::string name, std::string type, std::vector<std::string> params, std::string parent_name, std::string goitr_type="");
 		~Node();
 
 		friend class MainServer;
@@ -120,7 +125,7 @@ namespace dhtt
 		 * 
 		 * \return void
 		 */
-		void register_with_parent();
+		void register_with_parent(int index=-1);
 
 		/**
 		 * \brief registers the necessary servers, publishers, action servers, etc. of this node.
@@ -156,6 +161,16 @@ namespace dhtt
 		void async_activate_child(std::string child_name, dhtt_msgs::action::Activation::Goal activation_goal);
 
 		/**
+		 * \brief propogates maintain conditions request to given child
+		 * 
+		 * \param child_name name of child to request
+		 * \param condition_goal goal to send child
+		 * 
+		 * \return void
+		 */
+		void async_request_conditions(std::string child_name, dhtt_msgs::action::Condition::Goal condition_goal);
+
+		/**
 		 * \brief spreads activation to all children
 		 * 
 		 * iterates through list and utilizes the async_activate_child method
@@ -167,6 +182,15 @@ namespace dhtt
 		void activate_all_children(dhtt_msgs::action::Activation::Goal activation_goal);
 
 		/**
+		 * \brief propogates condition maintenance to children
+		 * 
+		 * sends a Condition action to all children, and counts the number of expected responses for the block function.
+		 * 
+		 * \return void
+		 */
+		void request_conditions_from_children();
+
+		/**
 		 * \brief busy waits until the number of responses equals the number of activations sent out
 		 * 
 		 * number of activations is incremented with each call of async_activate_child, number of responses is counted in the store_result_callback
@@ -176,6 +200,13 @@ namespace dhtt
 		bool block_for_responses_from_children();
 
 		/**
+		 * \brief busy waits until all condition responses are received from children
+		 * 
+		 * \return void
+		 */
+		bool block_for_conditions_from_children();
+
+		/**
 		 * \brief getter for the responses from children
 		 * 
 		 * Should only be called after block_for_responses_from_children. 
@@ -183,6 +214,13 @@ namespace dhtt
 		 * \return map of child_names to the response they sent back after activating
 		 */
 		std::map<std::string, dhtt_msgs::action::Activation::Result::SharedPtr> get_activation_results(); 
+
+		/**
+		 * \brief getter for the condition responses from children
+		 * 
+		 * \return map of child_names to their corresponding pre and post conditions
+		 */
+		std::map<std::string, dhtt_msgs::action::Condition::Result::SharedPtr> get_condition_results();
 
 		/**
 		 * \brief getter for the list of child_names
@@ -228,6 +266,16 @@ namespace dhtt
 		 * \return void
 		 */
 		void update_status( int8_t n_state );
+
+		/**
+		 * \brief notifies any knowledge sensitive nodes that there have been changes to the param server
+		 * 
+		 * For some nodes new knowledge can change how they should behave (for instance a find action will change destination to the correct one if the object is found when looking for something else).
+		 * 	This publishes an empty message on the /updated_knowledge topic that will then utilize the callbacks in GOiTRs to have them update their own state.
+		 * 
+		 * \return void
+		 */
+		void fire_knowledge_updated();
 
 		/**
 		 * \brief setter for internal resource_status_updated flag
@@ -287,6 +335,26 @@ namespace dhtt
 		void activation_accepted_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Activation>> goal_handle);
 
 		/**
+		 * \brief accepts any goal for now
+		 */
+		rclcpp_action::GoalResponse condition_goal_activation_callback(const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const dhtt_msgs::action::Condition::Goal> goal);
+
+		/**
+		 * \brief cancels any goal for now
+		 */
+		rclcpp_action::CancelResponse condition_cancel_activation_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Condition>> goal_handle);
+
+		/**
+		 * \brief if the request is just a GET returns the pre and postconditions, if it is a maintain request this spins up a thread to run the combine_child_contions function instead.
+		 */
+		void condition_activation_accepted_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Condition>> goal_handle);
+
+		/**
+		 * \brief Sends a request to the children to get pre and postconditions, then combines them based on logic in the node_type and saves and returns the result
+		 */
+		void combine_child_conditions(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Condition>> goal_handle);
+
+		/**
 		 * \brief stores results received from activating children
 		 * 
 		 * Also increments the number of results gotten back so that the busy wait can end after enough responses are received.
@@ -297,6 +365,16 @@ namespace dhtt
 		 * \return void
 		 */
 		void store_result_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name );
+
+		/**
+		 * \brief stores the conditions of the given child
+		 * 
+		 * \param result from child
+		 * \param node_name child who sent back result
+		 * 
+		 * \return void
+		 */
+		void store_condition_callback ( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Condition>::WrappedResult & result, std::string node_name );
 
 		/**
 		 * \brief activates the auction mechanism of task nodes and behavior nodes
@@ -357,11 +435,20 @@ namespace dhtt
 		/**
 		 * \brief checks if the preconditions of the node are met
 		 * 
-		 * Currently this is not implemented until preconditions are being checked by the tree.
+		 * Checks key value pairs stored by the NodeType against those on the param server. If they are the same returns True.
 		 * 
-		 * \return True always for now
+		 * \return True if preconditions are met
 		 */
 		bool check_preconditions();
+
+		/**
+		 * \brief applies postconditions to world state
+		 * 
+		 * Postconditions are defined in nthe node type of this class. This changes the parameter server to reflect this behavior's postconditions.
+		 * 
+		 * \return void
+		 */
+		void apply_postconditions();
 
 		/**
 		 * \brief calculates activation potential as a function of the estimate from the NodeType plugin
@@ -375,11 +462,16 @@ namespace dhtt
 		/**
 		 * \brief sends failure to the currently active child
 		 * 
-		 * essentially just build a failure activation goal, sends it down to the active child, and blocks for a response.
+		 * Essentially just build a failure activation goal, sends it down to the active child, and blocks for a response.
 		 * 
 		 * \return void
 		 */
 		void propogate_failure_down();
+
+		// callback group
+		rclcpp::CallbackGroup::SharedPtr conc_group;
+		rclcpp::SubscriptionOptions sub_opts;
+		rclcpp::PublisherOptions pub_opts;
 
 		// activation server
 		rclcpp_action::Server<dhtt_msgs::action::Activation>::SharedPtr activation_server;
@@ -388,6 +480,13 @@ namespace dhtt
 		std::vector<rclcpp_action::Client<dhtt_msgs::action::Activation>::SharedPtr> activation_clients;
 		std::map<std::string, dhtt_msgs::action::Activation::Result::SharedPtr> responses;
 
+		// condition maintenance server
+		rclcpp_action::Server<dhtt_msgs::action::Condition>::SharedPtr condition_server;
+
+		// condition maintenance clients
+		std::vector<rclcpp_action::Client<dhtt_msgs::action::Condition>::SharedPtr> conditions_clients;
+		std::map<std::string, dhtt_msgs::action::Condition::Result::SharedPtr> child_conditions;
+
 		// services
 		rclcpp::Service<dhtt_msgs::srv::InternalServiceRegistration>::SharedPtr register_server;
 
@@ -395,12 +494,19 @@ namespace dhtt
 		pluginlib::ClassLoader<NodeType> node_type_loader;
 		std::shared_ptr<NodeType> logic;
 
+		pluginlib::ClassLoader<GoitrType> goitr_type_loader;
+		std::shared_ptr<GoitrType> replanner;
+
 		dhtt_msgs::msg::NodeStatus status;
 		rclcpp::Publisher<dhtt_msgs::msg::Node>::SharedPtr status_pub;
+
+		rclcpp::Publisher<std_msgs::msg::String>::SharedPtr knowledge_pub;
+
 		rclcpp::Subscription<dhtt_msgs::msg::Resources>::SharedPtr resources_sub;
 
 		std::shared_ptr<std::thread> work_thread;
 		std::shared_ptr<std::thread> fail_thread;
+		std::shared_ptr<std::thread> condition_thread;
 
 		std::mutex logic_mut;
 
@@ -412,6 +518,7 @@ namespace dhtt
 		std::string name;
 		std::string parent_name;
 		std::string plugin_name;
+		std::string goitr_name;
 
 		std::string active_child_name;
 
@@ -421,10 +528,15 @@ namespace dhtt
 		int activation_level;		
 		int stored_responses;
 		int expected_responses;
+		int stored_conditions;
+		int expected_conditions;
 
 		int priority;
 
 		bool resource_status_updated;
+		bool has_goitr;
+		bool first_activation;
+		bool active;
 
 		bool successful_load;
 		std::string error_msg;

@@ -28,6 +28,9 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Resource.msg"
   "msg/Resources.msg"
   "msg/NodeStatus.msg"
+  "msg/Pair.msg"
+  "msg/UpdateInfo.msg"
+  "msg/Result.msg"
   "msg/CookingAction.msg"
   "msg/CookingObject.msg"
   "msg/CookingObservation.msg"
@@ -42,11 +45,14 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/InternalControlRequest.srv"
   "srv/InternalModifyRequest.srv"
   "srv/InternalServiceRegistration.srv"
+  "srv/FetchInfo.srv"
+  "srv/GoitrRequest.srv"
 #  "srv/NutreeJsonRequest.srv"
   "srv/CookingRequest.srv"
 
   # action files
   "action/Activation.action"
+  "action/Condition.action"
 
   # dependecies for messages
   DEPENDENCIES std_msgs

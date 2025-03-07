@@ -58,6 +58,8 @@ namespace dhtt_plugins
 		while ( not this->work_done )
 			this->executor->spin_once();
 
+		this->done = true;
+
 		return;
 	}
 
@@ -75,6 +77,22 @@ namespace dhtt_plugins
 	std::vector<dhtt_msgs::msg::Resource> PlaceBehavior::get_released_resources( dhtt::Node* container ) 
 	{
 		return container->get_owned_resources();
+	}
+
+	std::vector<dhtt_msgs::msg::Resource> PlaceBehavior::get_necessary_resources()
+	{
+		std::vector<dhtt_msgs::msg::Resource> to_ret;
+
+		dhtt_msgs::msg::Resource base;
+		base.type = dhtt_msgs::msg::Resource::BASE;
+
+		dhtt_msgs::msg::Resource gripper;
+		base.type = dhtt_msgs::msg::Resource::GRIPPER;
+
+		to_ret.push_back(base);
+		to_ret.push_back(gripper);
+
+		return to_ret;
 	}
 
 	void PlaceBehavior::done_callback( std::shared_ptr<std_msgs::msg::String> data )

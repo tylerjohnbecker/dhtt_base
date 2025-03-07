@@ -41,7 +41,8 @@ class ServerNode (rclpy.node.Node):
 		node_name = data.node_name.split('_')[0]
 
 		self.node_states[node_name] = data
-
+		
+@pytest.mark.serial
 class TestDynamicChanges:
 
 	first = True

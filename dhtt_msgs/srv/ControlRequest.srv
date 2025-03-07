@@ -3,6 +3,7 @@ int8 				type
 
 # location and file_name to save as (uses a default location if save is the function chosen and this is left empty)
 string 				file_name
+string				file_path
 
 # for the stop command if this is set to true it will interrupt the current behavior mid execution, otherwise it will wait until the current behavior finishes
 bool 				interrupt
@@ -11,6 +12,7 @@ bool 				interrupt
 int8 				STOP=0
 int8 				START=1
 int8 				SAVE_TO_FILE=2
+int8				SAVE=2
 int8				RESET=3
 ---
 # returns whether or not the requested service succeeded

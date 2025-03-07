@@ -19,6 +19,7 @@ class ServerNode (rclpy.node.Node):
 		self.fetchsrv = self.create_client(FetchRequest, '/fetch_service')
 		assert self.fetchsrv.wait_for_service(timeout_sec=5.0)
 
+@pytest.mark.serial
 class TestServerAddRemove:
 
 	first = True
@@ -69,7 +70,7 @@ class TestServerAddRemove:
 				assert i in nodes_to_remove
 
 	# asserts here will only work if this is the only way that nodes have been added to the tree
-	def add_from_yaml(self, file_name, add_to="ROOT_0"):
+	def add_from_yaml(self, file_name, add_to="ROOT_0", file_args=[], start_index=1):
 		
 		yaml_dict = None
 
@@ -85,6 +86,7 @@ class TestServerAddRemove:
 
 		modify_rq.to_modify.append(add_to)
 		modify_rq.to_add = file_name
+		modify_rq.file_args = file_args
 
 		modify_future = self.node.modifysrv.call_async(modify_rq)
 		rclpy.spin_until_future_complete(self.node, modify_future)
@@ -98,8 +100,8 @@ class TestServerAddRemove:
 		node_names_orig = yaml_dict['NodeList']
 		node_parents_orig = [ yaml_dict['Nodes'][i]['parent'] for i in node_names_orig ]
 
-		node_names_from_server = [ i.node_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:] ]
-		parent_names_from_server = [ i.parent_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:] ]
+		node_names_from_server = [ i.node_name for i in fetch_rs.found_subtrees[0].tree_nodes[start_index:] ]
+		parent_names_from_server = [ i.parent_name for i in fetch_rs.found_subtrees[0].tree_nodes[start_index:] ]
 
 		# verify that all nodes were added
 		for index, val in enumerate(node_names_orig):
@@ -108,6 +110,8 @@ class TestServerAddRemove:
 		# verify that each node has the correct parent
 		for index, val in enumerate(node_parents_orig):
 			assert val in parent_names_from_server[index] or (val == 'NONE' and parent_names_from_server[index] == add_to)
+
+		return modify_rs.added_nodes
 
 	def multiple_yaml(self, path):
 		pass
@@ -407,3 +411,27 @@ class TestServerAddRemove:
 		self.reset_tree()
 
 		self.multiple_yaml(wd)
+
+	def test_add_with_file_args(self):
+		self.initialize()
+		self.reset_tree()
+
+		modify_rq = ModifyRequest.Request()
+		modify_rq.type = ModifyRequest.Request.ADD
+
+		modify_rq.to_modify.append('ROOT_0')
+
+		modify_rq.add_node = Node()
+		modify_rq.add_node.type = Node.THEN
+		modify_rq.add_node.node_name = 'ParentThen'
+		modify_rq.add_node.plugin_name = 'dhtt_plugins::ThenBehavior' # just for now
+
+		modify_rs = self.get_modify_result(modify_rq)
+
+		assert modify_rs.success == True
+		assert 'ParentThen' in modify_rs.added_nodes[0]
+		assert modify_rs.error_msg == ''
+
+		wd = pathlib.Path(__file__).parent.parent.resolve()
+
+		self.add_from_yaml(f'{wd}/sample_tasks/pick_place.yaml', add_to=modify_rs.added_nodes[0], file_args=[ 'target: object1', 'pick_spot: loc1', 'place_spot: loc2' ], start_index=2)

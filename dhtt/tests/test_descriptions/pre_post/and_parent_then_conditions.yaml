@@ -1,0 +1,44 @@
+NodeList: 
+  -  'ParentAnd'
+  -  'FirstTask'
+  -  'MidParentThen'
+  -  'SecondTask'
+  -  'ThirdTask'
+          
+
+expected_preconditions: '( a: b)^( c: d)^( e: f)'
+
+expected_postconditions: '(!a: b)^(!c: d)^(!e: f)'
+
+# the params for each behavior should be filled in wherever there is a n/a
+Nodes:
+  ParentAnd:
+    type: 1
+    behavior_type: 'dhtt_plugins::AndBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: []
+  FirstTask:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'ParentAnd'
+    params: ["activation_potential: 5.0", "a: b"]
+  MidParentThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'ParentAnd'
+    params: []
+  SecondTask:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'MidParentThen'
+    params: ["activation_potential: 10.0", "c: d"]
+  ThirdTask:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'MidParentThen'
+    params: ["activation_potential: 4.0", "e: f"]

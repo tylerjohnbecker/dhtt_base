@@ -18,7 +18,14 @@ namespace dhtt_plugins
 
 		this->activation_potential = 0;
 
+		this->created = false;
+
+		this->preconditions.logical_operator = dhtt_utils::LOGICAL_AND;
+		this->postconditions.logical_operator = dhtt_utils::LOGICAL_AND;
+
 		this->parse_params(params);
+
+		this->created = true;
 	}
 
 	std::shared_ptr<dhtt_msgs::action::Activation::Result> ThenBehavior::auction_callback( dhtt::Node* container )
@@ -35,7 +42,9 @@ namespace dhtt_plugins
 			this->started_activation = true;
 		}
 
-		if ( (int) children.size() == 0)
+		this->child_queue_size = (int) children.size();
+
+		if ( (int) children.size() == 0 or this->child_queue_index >= this->child_queue_size ) 
 		{
 			to_ret->done = true;
 
@@ -43,8 +52,6 @@ namespace dhtt_plugins
 
 			return to_ret;
 		}
-		
-		this->child_queue_size = (int) children.size();
 
 		dhtt_msgs::action::Activation::Goal n_goal;
 
@@ -56,13 +63,13 @@ namespace dhtt_plugins
 
 		container->block_for_responses_from_children();
 
-		RCLCPP_DEBUG(container->get_logger(), "Responses received...");
+		RCLCPP_INFO(container->get_logger(), "Responses received...");
 
 		auto results = container->get_activation_results();
 
 		std::string first_child_in_queue = children[this->child_queue_index];
 
-		while ( results[first_child_in_queue]->done and this->child_queue_index < this->child_queue_size - 1)
+		while ( results[first_child_in_queue]->done and this->child_queue_index < this->child_queue_size - 1 )
 		{
 			this->child_queue_index++;
 			first_child_in_queue = children[this->child_queue_index];
@@ -91,6 +98,10 @@ namespace dhtt_plugins
 
 		int next = this->child_queue_index + 1;
 
+		// make sure to send back failure to all if nothing is possible
+		if ( not to_ret->possible )
+			next -= 1;
+
 		for (std::vector<std::string>::iterator name_iter = children.begin() + next ; name_iter != children.end() ; name_iter++)
 			container->async_activate_child(*name_iter, n_goal);
 
@@ -103,6 +114,8 @@ namespace dhtt_plugins
 	std::shared_ptr<dhtt_msgs::action::Activation::Result> ThenBehavior::work_callback( dhtt::Node* container )
 	{
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> to_ret = std::make_shared<dhtt_msgs::action::Activation::Result>();
+
+		std::lock_guard<std::mutex> guard(this->queue_index_mut);
 
 		// send success to winning child		
 		dhtt_msgs::action::Activation::Goal n_goal;
@@ -149,23 +162,113 @@ namespace dhtt_plugins
 		// RCLCPP_INFO(container->get_logger(), "Queue index %d and Queue size %d and is done %d", this->child_queue_index, this->child_queue_size, this->is_done());
 
 		to_ret->released_resources = result->released_resources;
+		to_ret->last_behavior = result->last_behavior;
 		to_ret->done = this->is_done();
+		to_ret->success = result->success;
 
 		return to_ret;
 	}
 
-	void ThenBehavior::parse_params( std::vector<std::string> params )
+	void ThenBehavior::maintain_conditions( dhtt::Node* container )
 	{
-		if ( (int) params.size() > 0 )
-			throw std::invalid_argument("Then Behaviors do not take parameters but " + ((int) params.size()) + std::string(" were given. Returning in error."));
+		// this one is pretty simple 
+		auto response_cp = container->get_condition_results();
 
-		if ( (int) params.size() == 0 )
+		// append all of the predicates
+		this->preconditions.predicates.clear();
+		this->preconditions.conjunctions.clear();
+		this->postconditions.predicates.clear();
+		this->postconditions.conjunctions.clear();
+
+		bool first = true;
+
+		std::vector<dhtt_utils::PredicateConjunction> prev_postconditions;
+
+		// loop through strictly in the order of the children list from the container and generate the preconditions list
+		for ( auto const& child_name : container->get_child_names() )
 		{
-			this->activation_potential = 0;
+			auto inc_preconditions = dhtt_utils::convert_to_struct(response_cp[child_name]->preconditions);
+			auto inc_postconditions = dhtt_utils::convert_to_struct(response_cp[child_name]->postconditions);
+			
+			dhtt_utils::PredicateConjunction adjusted_preconditions;
 
-			return;
+			std::shared_ptr<dhtt_utils::PredicateConjunction> tmp = std::make_shared<dhtt_utils::PredicateConjunction>();
+			*tmp = inc_postconditions;
+
+			if ( first )
+			{
+				prev_postconditions.push_back(inc_postconditions);
+				
+				adjusted_preconditions = inc_preconditions;
+				
+				first = false;
+			}
+			else
+			{
+				adjusted_preconditions = dhtt_utils::remove_partial_dependencies(prev_postconditions, inc_preconditions);
+
+				prev_postconditions.push_back(inc_postconditions);
+			}
+
+			dhtt_utils::append_predicate_conjunction(this->preconditions, adjusted_preconditions);
+
+			// Now copy over the postconditions
+			if ( inc_preconditions.logical_operator == dhtt_utils::LOGICAL_AND or inc_preconditions.logical_operator == dhtt_utils::LOGICAL_OTHER )
+				dhtt_utils::append_predicate_conjunction(this->postconditions, inc_postconditions);
+			else
+				this->postconditions.conjunctions.push_back( tmp );
+			// RCLCPP_WARN(container->get_logger(), "%s", dhtt_utils::to_string(this->postconditions).c_str());
 		}
 
+		// finally remove any repeated predicates from the predicate lists in pre and postconditions
+		dhtt_utils::remove_predicate_duplicates(this->preconditions);
+		dhtt_utils::remove_predicate_partial_duplicates(this->postconditions);
+
+		dhtt_utils::flatten_predicates(this->preconditions);
+		dhtt_utils::flatten_predicates(this->postconditions);
+
+		// RCLCPP_ERROR(container->get_logger(), "%s", dhtt_utils::to_string(this->preconditions).c_str());
+		// RCLCPP_ERROR(container->get_logger(), "%s", dhtt_utils::to_string(this->postconditions).c_str());
+	}
+
+
+	void ThenBehavior::parse_params( std::vector<std::string> params )
+	{
+		// if ( (int) params.size() > 0 )
+		// 	throw std::invalid_argument("Then Behaviors do not take parameters but " + ((int) params.size()) + std::string(" were given. Returning in error."));
+
+		// if ( (int) params.size() == 0 )
+		// {
+		// 	this->activation_potential = 0;
+
+		// 	return;
+		// }
+
+		// parse reorderings after created
+
+		(void) params;
+
+		if (this->created)
+		{
+			std::lock_guard<std::mutex> guard(this->queue_index_mut);
+		
+			if ( (int) params.size() == 0 )
+				throw std::invalid_argument("Need at least one parameter to change, but no params were given...");
+
+			auto colon_index = params[0].find(':');
+			std::string key = params[0].substr(0, colon_index);
+			std::string val = params[0].substr(colon_index + 2, params[0].size() - colon_index);
+
+			if ( strcmp(key.c_str(), "child_queue_index") )
+				throw std::invalid_argument("Invalid parameter passed: " + key + " expected \"child_queue_index: int\"");
+
+			this->child_queue_index = atoi(val.c_str());
+
+			if ( this->child_queue_index < 0 or this->child_queue_index > this->child_queue_size )
+				throw std::invalid_argument("Invalid queue index passed " + std::to_string(this->child_queue_index) + "... Returning in error!");
+
+			// throw std::invalid_argument(std::to_string(this->child_queue_index));
+		}
 	}
 
 	double ThenBehavior::get_perceived_efficiency()

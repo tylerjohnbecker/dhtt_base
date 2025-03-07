@@ -1,0 +1,35 @@
+NodeList: 
+  - 'ParentAnd'
+  - 'GoitrAnd'
+  - 'GoitrThen'
+  - 'GoitrOr'
+        
+# the params for each behavior should be filled in wherever there is a n/a
+Nodes:
+  ParentAnd:
+    type: 1
+    behavior_type: 'dhtt_plugins::AndBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: []
+  GoitrAnd:
+    type: 4
+    behavior_type: 'dhtt_plugins::AndBehavior'
+    goitr_type: 'dhtt_plugins::GoitrTest'
+    robot: 0
+    parent: 'ParentAnd'
+    params: ["pick_two_things_test.yaml", "target_1: object1", "location_1: loc1", "location_2: loc2", "target_2: object2", "location_3: loc3", "location_4: loc4"]
+  GoitrThen:
+    type: 4
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    goitr_type: 'dhtt_plugins::GoitrTest'
+    robot: 0
+    parent: 'ParentAnd'
+    params: ["find_test.yaml", "ap: 1.0", "initial_dest: loc1", "target: object1"]
+  GoitrOr:
+    type: 4
+    behavior_type: 'dhtt_plugins::OrBehavior'
+    goitr_type: 'dhtt_plugins::GoitrTest'
+    robot: 0
+    parent: 'ParentAnd'
+    params: ["pick_two_things_test.yaml", "target_1: object1", "location_1: loc1", "location_2: loc2", "target_2: object2", "location_3: loc3", "location_4: loc4"]

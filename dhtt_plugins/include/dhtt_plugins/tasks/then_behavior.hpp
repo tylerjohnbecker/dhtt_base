@@ -50,6 +50,11 @@ namespace dhtt_plugins
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> work_callback( dhtt::Node* container ) override;
 
 		/**
+		 * \brief the THEN node logically and's it's child preconditions and then removes any temporal post->preconditions relationships that would be internally satisfied
+		 */
+		void maintain_conditions(dhtt::Node* container) override;
+
+		/**
 		 * \brief this behavior takes no parameters
 		 */
 		void parse_params( std::vector<std::string> params ) override;
@@ -69,11 +74,14 @@ namespace dhtt_plugins
 		bool is_done() override;
 
 	protected:
+		std::mutex queue_index_mut;
+
 		double activation_potential;
 
 		int child_queue_index;
 		int child_queue_size;
 		bool started_activation;
+		bool created;
 	private:
 	};
 }
