@@ -93,7 +93,10 @@ namespace dhtt_plugins
 		 * 
 		 * \return list of all resources to release 
 		 */
-		virtual std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container ) = 0;
+		virtual std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container ) 
+		{
+			return container->get_owned_resources();
+		};
 
 		/**
 		 * \brief this is where inheriting classes define the resources they need
