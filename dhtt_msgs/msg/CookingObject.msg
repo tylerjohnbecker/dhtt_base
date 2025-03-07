@@ -1,7 +1,7 @@
 # header containing the timestamp of the msg
 std_msgs/Header			head
 
-int8 world_id # (unique id)
+uint64 world_id # (unique id)
 bool moveable
 bool walkable
 
@@ -16,4 +16,4 @@ int8 progress
 
 # optional: for ContentObjects, ids of contained objects
 # ros doesn't allow recursive msgs
-int8[] content_ids
+uint64[] content_ids

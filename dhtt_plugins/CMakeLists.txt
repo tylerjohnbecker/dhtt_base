@@ -25,8 +25,8 @@ find_package(pluginlib REQUIRED)
 
 add_library(dhtt_plugins SHARED src/dhtt_plugins.cpp src/behaviors/test_behavior.cc src/behaviors/action_type.cc src/tasks/root_behavior.cc src/tasks/and_behavior.cc
                                 src/tasks/then_behavior.cc src/tasks/or_behavior.cc src/behaviors/move_behavior.cc src/behaviors/pick_behavior.cc src/behaviors/place_behavior.cc
-                                src/behaviors/cooking_execute_behavior.cc src/behaviors/cooking_interact_special_behavior.cc src/behaviors/cooking_move_behavior.cc
-                                src/behaviors/cooking_pick_behavior.cc src/behaviors/cooking_place_behavior.cc)
+                                src/behaviors/cooking_behavior.cc src/behaviors/cooking_execute_behavior.cc src/behaviors/cooking_interact_special_behavior.cc
+                                src/behaviors/cooking_move_behavior.cc src/behaviors/cooking_pick_behavior.cc src/behaviors/cooking_place_behavior.cc)
 target_include_directories(dhtt_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
