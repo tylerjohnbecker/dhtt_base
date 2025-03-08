@@ -87,7 +87,7 @@ namespace dhtt_plugins
 		base.type = dhtt_msgs::msg::Resource::BASE;
 
 		dhtt_msgs::msg::Resource gripper;
-		base.type = dhtt_msgs::msg::Resource::GRIPPER;
+		gripper.type = dhtt_msgs::msg::Resource::GRIPPER;
 
 		to_ret.push_back(base);
 		to_ret.push_back(gripper);
