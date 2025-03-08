@@ -71,6 +71,7 @@ class CookingBehavior : public ActionType
 	const std::string PARAM_OBJECT_TYPE = "object";
 	const std::string PARAM_OBJECT_CONDITIONS = "conditions";
 
+  protected:
   private:
 };
 } // namespace dhtt_plugins

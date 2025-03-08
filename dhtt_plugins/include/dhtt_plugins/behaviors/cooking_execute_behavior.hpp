@@ -42,8 +42,6 @@ class CookingExecuteBehavior : public CookingBehavior
 	std::vector<dhtt_msgs::msg::Resource> get_necessary_resources() override;
 
   protected:
-	double activation_potential;
-
   private:
 };
 } // namespace dhtt_plugins
