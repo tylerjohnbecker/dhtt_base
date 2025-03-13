@@ -53,8 +53,11 @@ void CookingExecuteBehavior::do_work(dhtt::Node *container)
 	req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
 	req->super_action = dhtt_msgs::srv::CookingRequest::Request::ACTION;
 	req->action.player_name = dhtt_msgs::msg::CookingAction::DEFAULT_PLAYER_NAME;
-	req->action.action_type =
-		dhtt_msgs::msg::CookingAction::EXECUTE_ACTION; // TODO change to explicit arm
+
+	// see pr2.yaml
+	req->action.action_type = CookingBehavior::which_arm(container) == "left_arm"
+								  ? dhtt_msgs::msg::CookingAction::EXECUTE_ACTION_ARM1
+								  : dhtt_msgs::msg::CookingAction::EXECUTE_ACTION_ARM2;
 
 	res = this->cooking_request_client->async_send_request(req);
 	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending execute request");

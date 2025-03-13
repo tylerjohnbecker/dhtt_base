@@ -20,7 +20,8 @@ class CookingBehavior : public ActionType
 	 * 		- coord: a coordinate in format 'x, y'. Leave empty "" if not used
 	 * 		- object: a cooking object type name to automatically find the closest of that
 	 * 		- conditions: an optional comma-separated string of conditions the object needs to have.
-	 *i.e. 'Chopped, Toasted'.
+	 *i.e. 'Chopped, Toasted'. Also supports 'Free' for objects containing nothing, or 'Contains'
+	 *for objects containing something.
 	 *
 	 * \param params a vector of string params parsed from the yaml description
 	 *
@@ -59,6 +60,8 @@ class CookingBehavior : public ActionType
 	 */
 	void set_destination_to_closest_object();
 
+	static std::string which_arm(dhtt::Node *container);
+
 	rclcpp::Subscription<dhtt_msgs::msg::CookingObservation>::SharedPtr
 		cooking_observation_subscriber;
 
@@ -70,8 +73,8 @@ class CookingBehavior : public ActionType
 	const std::string PARAM_COORDINATE = "coord";
 	const std::string PARAM_OBJECT_TYPE = "object";
 	const std::string PARAM_OBJECT_CONDITIONS = "conditions";
+	const int LEVEL_SIZE = 6;
 
-  protected:
   private:
 };
 } // namespace dhtt_plugins

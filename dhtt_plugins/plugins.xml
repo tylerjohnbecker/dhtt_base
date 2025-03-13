@@ -46,6 +46,7 @@
 		<description>GOiTR meant for controlling a subtree that finds objects in a list of known locations in the environment.</description>
 	</class>
 
+    <!-- COOKING BEHAVIORS -->
     <class type="dhtt_plugins::CookingExecuteBehavior" base_class_type="dhtt::NodeType">
         <description>TODO</description>
     </class>
@@ -59,6 +60,12 @@
         <description>TODO</description>
     </class>
     <class type="dhtt_plugins::CookingPlaceBehavior" base_class_type="dhtt::NodeType">
+        <description>TODO</description>
+    </class>
+    <class type="dhtt_plugins::CookingPlatePlaceBehavior" base_class_type="dhtt::NodeType">
+        <description>TODO</description>
+    </class>
+    <class type="dhtt_plugins::CookingObjectExistsBehavior" base_class_type="dhtt::NodeType">
         <description>TODO</description>
     </class>
 

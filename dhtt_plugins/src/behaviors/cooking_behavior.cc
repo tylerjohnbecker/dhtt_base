@@ -89,7 +89,7 @@ void CookingBehavior::parse_params(std::vector<std::string> params)
 											"but received in the form " +
 											params[1] + ". Returning in error.");
 			key = params[1].substr(0, separator_pos);
-			value = params[1].substr(separator_pos + 2, params[0].size() - separator_pos);
+			value = params[1].substr(separator_pos + 2, params[1].size() - separator_pos);
 
 			if (key != this->PARAM_OBJECT_CONDITIONS)
 			{
@@ -263,7 +263,7 @@ void CookingBehavior::set_destination_to_closest_object()
 	};
 	std::vector<std::string> conds = parse_coord_string(dst_conds);
 
-	auto pred = [dst_val, conds](dhtt_msgs::msg::CookingObject obj)
+	auto pred = [dst_val, conds, this](dhtt_msgs::msg::CookingObject obj)
 	{
 		if (obj.object_type == dst_val)
 		{
@@ -271,8 +271,54 @@ void CookingBehavior::set_destination_to_closest_object()
 			// any condition.
 			for (auto cond : conds)
 			{
-				if (std::find(obj.physical_state.begin(), obj.physical_state.end(), cond) ==
-					obj.physical_state.end())
+				if (cond == "Free" or cond == "Contains")
+				{
+					// Counters are not ContentObjects
+					if (cond == "Free" and obj.object_type == "Counter")
+					{
+						// Check counter isn't an unreachable corner
+						if ((obj.location.x == 0 and obj.location.y == 0) or
+							(obj.location.x == 0 and
+							 obj.location.y == CookingBehavior::LEVEL_SIZE) or
+							(obj.location.x == CookingBehavior::LEVEL_SIZE and
+							 obj.location.y == 0) or
+							(obj.location.x == CookingBehavior::LEVEL_SIZE and
+							 obj.location.y == CookingBehavior::LEVEL_SIZE))
+						{
+							return false;
+						}
+
+						auto obj_on_counter = std::find_if(
+							this->last_obs->objects.cbegin(), this->last_obs->objects.cend(),
+							[obj](dhtt_msgs::msg::CookingObject other_obj)
+							{
+								// Don't match on ourself
+								if (other_obj.object_type == obj.object_type)
+								{
+									return false;
+								}
+								else
+								{
+									return obj.location == other_obj.location;
+								}
+							});
+						if (obj_on_counter !=
+							this->last_obs->objects.cend()) // if found obj on counter
+						{
+							return false;
+						}
+					}
+					else if (cond == "Free" and not obj.content_ids.empty())
+					{
+						return false;
+					}
+					else if (cond == "Contains" and obj.content_ids.empty())
+					{
+						return false;
+					}
+				}
+				else if (std::find(obj.physical_state.begin(), obj.physical_state.end(), cond) ==
+						 obj.physical_state.end())
 				{
 					return false; // Not the right condition
 				}
@@ -307,6 +353,23 @@ void CookingBehavior::set_destination_to_closest_object()
 		}
 		this->destination_is_good = true;
 		this->destination_point = ret;
+	}
+}
+
+std::string CookingBehavior::which_arm(dhtt::Node *container)
+{
+	auto owned_resources = container->get_owned_resources(); // segfaults if not a copy
+	auto found_gripper = std::find_if(owned_resources.cbegin(), owned_resources.cend(),
+									  [](dhtt_msgs::msg::Resource resource)
+									  { return resource.type == resource.GRIPPER; });
+
+	if (found_gripper != owned_resources.cend())
+	{
+		return found_gripper->name;
+	}
+	else
+	{
+		return "";
 	}
 }
 
