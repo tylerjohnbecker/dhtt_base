@@ -207,8 +207,7 @@ void CookingBehavior::observation_callback(std::shared_ptr<dhtt_msgs::msg::Cooki
 	// Chicken-egg, This may be called before parse_params() has set destination_* members, which
 	// set_destination_to_closest_object() needs to find the relevant object, but that function also
 	// needs this initial observation. Check that they are set.
-	if (this->destination_type == this->PARAM_OBJECT_TYPE and
-		not this->destination_value.empty() and not this->destination_conditions.empty())
+	if (this->destination_type == this->PARAM_OBJECT_TYPE and not this->destination_value.empty())
 	{
 		this->set_destination_to_closest_object();
 	}
