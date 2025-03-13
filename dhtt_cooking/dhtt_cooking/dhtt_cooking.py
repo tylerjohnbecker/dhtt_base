@@ -225,13 +225,14 @@ class CookingEnvironment:
         :return: tuple of dict terminations, dict truncations
         """
         num_agents = 1
-        max_steps = 400
+        max_steps = 1_000_000
         render = True
         obs_spaces = ["symbolic"]
         action_scheme = "scheme1_twohand"
-        meta_file = "example_absorbing_toaster"
-        level = "switch_test_absorbing_toaster"
-        allowed_recipes = ["TomatoLettucePlate", "MashedCarrotPlate", "ToastedBreadPlate"]
+        meta_file = "dhtt_experiment"
+        level = "dhtt_experiment"
+        allowed_recipes = ["TomatoToastedBreadPlate", "CarrotBananaPlate", "ToastedBreadPlate", "AppleWatermelonPlate",
+                           "ApplePlate", "WatermelonPlate"]
         end_condition_all_dishes = True
         agent_visualization = ["human"]
         reward_scheme = {"recipe_reward": 20, "max_time_penalty": -5, "recipe_penalty": -40, "recipe_node_reward": 0}
