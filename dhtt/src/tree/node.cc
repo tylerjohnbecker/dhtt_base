@@ -842,9 +842,12 @@ namespace dhtt
 
 		n_goal.success = false;
 
-		this->async_activate_child(this->active_child_name, n_goal);
-
-		this->block_for_responses_from_children();
+		// TODO occasionally causes a segfault, not sure if this is the right solution
+		if (not this->active_child_name.empty())
+		{
+			this->async_activate_child(this->active_child_name, n_goal);
+			this->block_for_responses_from_children();
+		}
 
 		this->active_child_name = "";
 	}
