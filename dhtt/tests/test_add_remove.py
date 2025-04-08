@@ -341,6 +341,29 @@ class TestServerAddRemove:
 
 		# check when the plugin is nonexistant (easier once I make the class structure)
 
+	def test_add_node_mismatch_typeplugin(self):
+		self.initialize()
+		self.reset_tree()
+
+		root_name = self.get_tree().found_subtrees[0].tree_nodes[0].node_name
+
+		# check when the node type is not possible
+		modify_rq = ModifyRequest.Request()
+		modify_rq.type = ModifyRequest.Request.ADD
+
+		modify_rq.to_modify.append(root_name)
+
+		modify_rq.add_node = Node()
+		modify_rq.add_node.type = Node.AND
+		modify_rq.add_node.node_name = 'MismatchedTypeAndPlugin'
+		modify_rq.add_node.plugin_name = 'dhtt_plugins::OrBehavior'
+
+		modify_rs = self.get_modify_result(modify_rq)
+
+		assert modify_rs.success == False
+		assert len(modify_rs.added_nodes) == 0
+		assert modify_rs.error_msg != ''
+
 	def test_add_to_behavior(self):
 		self.initialize()
 		self.reset_tree()

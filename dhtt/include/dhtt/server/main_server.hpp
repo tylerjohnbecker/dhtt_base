@@ -519,6 +519,12 @@ namespace dhtt
 		int total_nodes_added;
 		bool verbose;
 		bool running;
+
+		// see dhtt_plugins/plugins.xml
+		const std::map<int, std::string> NODE_TYPE_TO_PLUGIN{
+			{dhtt_msgs::msg::Node::AND, "dhtt_plugins::AndBehavior"},
+			{dhtt_msgs::msg::Node::THEN, "dhtt_plugins::ThenBehavior"},
+			{dhtt_msgs::msg::Node::OR, "dhtt_plugins::OrBehavior"}};
 	};
 
 }

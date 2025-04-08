@@ -506,6 +506,13 @@ namespace dhtt
 			return "Cannot add node to parent at given index: index is out of bounds!";
 		}
 
+		if (to_add.type != dhtt_msgs::msg::Node::BEHAVIOR and
+			to_add.plugin_name != MainServer::NODE_TYPE_TO_PLUGIN.at(to_add.type))
+		{
+			return "Node plugin name " + to_add.plugin_name + " does not match node type " +
+				   std::to_string(to_add.type);
+		}
+
 		// add to our list of nodes (this should just modify the local copy)
 		to_add.node_name += "_" + std::to_string(this->total_nodes_added);
 
@@ -551,7 +558,8 @@ namespace dhtt
 
 			this->node_map.erase(to_add.node_name);
 
-			return err;
+			// sometimes get_error_msg() is empty, which is misinterpreted later as success.
+			return err + "Force not set and failed pre- post-conditions check";
 		}
 
 		this->spinner_cp->add_node(this->node_map[to_add.node_name]);
