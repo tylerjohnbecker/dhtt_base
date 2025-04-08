@@ -592,6 +592,8 @@ namespace dhtt
 	{
 		std::string cur_parent;
 
+		bool first = true;
+
 		auto is_parent = [&]( dhtt_msgs::msg::Node check ) { return check.node_name.find(cur_parent) != std::string::npos; };
 
 		std::function<std::string(dhtt_msgs::msg::Subtree&, int)> add_post_order = [&]( dhtt_msgs::msg::Subtree& to_add, int current )
@@ -610,7 +612,15 @@ namespace dhtt
 			to_add.tree_nodes[current].child_name.clear();
 			to_add.tree_nodes[current].children.clear();
 
-			std::string err_msg = this->add_node(res, (*found_parent).node_name, to_add.tree_nodes[current], force, 0);
+			int index = 0;
+
+			if (first)
+			{
+				index = -1;
+				first = false;
+			}
+
+			std::string err_msg = this->add_node(res, (*found_parent).node_name, to_add.tree_nodes[current], force, index);
 
 			if ( strcmp(err_msg.c_str(), "") )
 				return err_msg;
