@@ -5,6 +5,7 @@
 #include "dhtt_msgs/srv/cooking_request.hpp"
 #include "dhtt_plugins/behaviors/action_type.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include <float.h>
 
 namespace dhtt_plugins
 {
@@ -20,8 +21,10 @@ class CookingBehavior : public ActionType
 	 * 		- coord: a coordinate in format 'x, y'. Leave empty "" if not used
 	 * 		- object: a cooking object type name to automatically find the closest of that
 	 * 		- conditions: an optional comma-separated string of conditions the object needs to have.
-	 *i.e. 'Chopped, Toasted'. Also supports 'Free' for objects containing nothing, or 'Contains'
-	 *for objects containing something.
+	 *i.e. 'conditions: Chopped, Toasted'. Also supports 'Free' for objects containing nothing, or
+	 *'Contains' for objects containing something. Further, specifying 'Contains+"listofobjects"'
+	 *allows a list of objects to be contained,
+	 *i.e. params: [ 'object: Plate', 'conditions: Contains+"Lettuce, Tomato"' ]
 	 *
 	 * \param params a vector of string params parsed from the yaml description
 	 *
@@ -62,6 +65,11 @@ class CookingBehavior : public ActionType
 
 	static std::string which_arm(dhtt::Node *container);
 
+	/**
+	 * @return whether activation potential and dest_good are correct for us to work
+	 */
+    bool can_work() const;
+
 	rclcpp::Subscription<dhtt_msgs::msg::CookingObservation>::SharedPtr
 		cooking_observation_subscriber;
 
@@ -76,6 +84,30 @@ class CookingBehavior : public ActionType
 	const int LEVEL_SIZE = 6;
 
   private:
+	/**
+	 *
+	 * @param conds_str an optional comma-separated string of conditions the object needs to have.
+	 * i.e. 'conditions: Chopped, Toasted'. Also supports 'Free' for objects containing nothing, or
+	 * 'Contains' for objects containing something. Further, specifying 'Contains+"listofobjects"'
+	 * allows a list of objects to be contained, i.e. params: [ 'object: Plate', 'conditions:
+	 * Contains+"Lettuce, Tomato"' ]
+	 * @return vector of each condition (i.e. separate out the csv). Contains+"..." is one value and
+	 * needs to be parsed separately.
+	 */
+	static std::vector<std::string> parse_conds_string(const std::string &conds_str);
+
+	/**
+	 *
+	 * @param cond_string Condition string formatted as 'Contains+"item1, item2, ..."' the double
+	 * quotes are included, single quotes not. Further alternate lists can be delimited with a pipe
+	 * '|' as a logical or.
+	 * @param obj_contained_ids ids of the objects contained by this object (i.e.
+	 * CookingObject->content_ids)
+	 * @return Whether the list of objects (or one of the alternate lists) is all contained by the
+	 * object
+	 */
+	bool check_contains_list(const std::string &cond_string,
+							 const std::vector<unsigned long> &obj_contained_ids) const;
 };
 } // namespace dhtt_plugins
 

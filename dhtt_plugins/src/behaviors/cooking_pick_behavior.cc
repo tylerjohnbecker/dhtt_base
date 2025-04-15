@@ -23,6 +23,11 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 {
 	(void)container; // Unused
 
+	if (not CookingBehavior::can_work())
+	{
+		return;
+	}
+
 	/* move_to */
 	auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
 	req->super_action = dhtt_msgs::srv::CookingRequest::Request::ACTION;

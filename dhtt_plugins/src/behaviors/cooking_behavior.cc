@@ -228,39 +228,7 @@ void CookingBehavior::set_destination_to_closest_object()
 		throw std::runtime_error("Empty destination_value");
 	}
 
-	// Helper to trim whitespace from beginning and end of a string.
-	auto trim = [](const std::string &str)
-	{
-		auto start = str.begin();
-		while (start != str.end() && std::isspace(*start))
-		{
-			++start;
-		}
-
-		auto end = str.end();
-		do
-		{
-			--end;
-		} while (std::distance(start, end) > 0 && std::isspace(*end));
-
-		return std::string(start, end + 1);
-	};
-
-	// Helper to parse comma-separated conditions into a vector of conditions
-	auto parse_coord_string = [trim](const std::string &conds_str)
-	{
-		std::istringstream iss(conds_str); // pretty nifty: skips whitespace
-		std::vector<std::string> conds;
-		std::string cond;
-
-		while (std::getline(iss, cond, ','))
-		{
-			conds.push_back(trim(cond));
-		}
-
-		return conds;
-	};
-	std::vector<std::string> conds = parse_coord_string(dst_conds);
+	std::vector<std::string> conds = CookingBehavior::parse_conds_string(dst_conds);
 
 	auto pred = [dst_val, conds, this](dhtt_msgs::msg::CookingObject obj)
 	{
@@ -316,6 +284,13 @@ void CookingBehavior::set_destination_to_closest_object()
 						return false;
 					}
 				}
+				else if (cond.find("Contains+") != std::string::npos)
+				{
+					if (CookingBehavior::check_contains_list(cond, obj.content_ids) == false)
+					{
+						return false;
+					}
+				}
 				else if (std::find(obj.physical_state.begin(), obj.physical_state.end(), cond) ==
 						 obj.physical_state.end())
 				{
@@ -333,8 +308,9 @@ void CookingBehavior::set_destination_to_closest_object()
 
 	if (found_iter == this->last_obs->objects.cend())
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
-					 ("Could not find object of type: " + dst_val).c_str());
+		RCLCPP_WARN(
+			this->pub_node_ptr->get_logger(),
+			("Could not find object of type and conds: " + dst_val + " " + dst_conds).c_str());
 		this->destination_is_good = false;
 	}
 	else
@@ -370,6 +346,183 @@ std::string CookingBehavior::which_arm(dhtt::Node *container)
 	{
 		return "";
 	}
+}
+
+bool CookingBehavior::can_work() const
+{
+	// TODO check good floating point comparisons
+	if (this->activation_potential <= FLT_EPSILON)
+	{
+		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+					 "We set activation potential to 0 but the node still ran, skipping work. "
+					 "Complain to Tyler.");
+		return false;
+	}
+
+	if (not this->destination_is_good)
+	{
+		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+					 "Destination is not good but the node still ran. Skipping work.");
+		return false;
+	}
+
+	return true;
+}
+
+std::vector<std::string> CookingBehavior::parse_conds_string(const std::string &conds_str)
+{
+	std::vector<std::string> conds;
+	std::ostringstream cond;
+
+	bool inside_quote = false;
+	for (const char c : conds_str)
+	{
+		if (inside_quote)
+		{
+			if (c == '"')
+			{
+				inside_quote = false;
+			}
+			cond << c;
+		}
+		else if (c == '"')
+		{
+			cond << c;
+			inside_quote = true;
+		}
+		else if (std::isspace(c))
+		{
+			// ignore spaces
+		}
+		else if (c == ',')
+		{
+			conds.push_back(cond.str());
+			cond = std::ostringstream();
+		}
+		else
+		{
+			cond << c;
+		}
+	}
+
+	// don't forget the last value
+	if (not cond.str().empty())
+	{
+		conds.push_back(cond.str());
+	}
+
+	if (inside_quote)
+	{
+		throw std::runtime_error("Quote not closed in " + conds_str);
+	}
+
+	return conds;
+}
+
+bool CookingBehavior::check_contains_list(const std::string &cond_string,
+										  const std::vector<unsigned long> &obj_contained_ids) const
+{
+	// lets the user use the pipe '|' to signify alternate contains lists
+	// if we want deeper logic, we need a better boolean parser
+	auto parse_pipe_delimited = [](const std::string &piped_string)
+	{
+		std::vector<std::vector<std::string>> nested_conds;
+		std::ostringstream cond_string;
+
+		for (const char c : piped_string)
+		{
+			if (c == '|')
+			{
+				nested_conds.push_back(CookingBehavior::parse_conds_string(cond_string.str()));
+				cond_string = std::ostringstream();
+			}
+			else
+			{
+				cond_string << c;
+			}
+		}
+		// don't forget the last value
+		const std::string &last_val = cond_string.str();
+		if (last_val.empty())
+		{
+			throw std::runtime_error("Malformed contains list " + piped_string);
+		}
+
+		nested_conds.push_back(CookingBehavior::parse_conds_string(last_val));
+
+		return nested_conds;
+	};
+
+	// expecting format Contains+"Lettuce, Tomato"
+	if (cond_string.find("Contains+\"") != 0)
+	{
+		throw std::runtime_error("Malformed contains list " + cond_string);
+	}
+
+	std::size_t obj_list_starts = cond_string.find("\"") + 1;
+	std::size_t obj_list_ends =
+		cond_string.find('"', obj_list_starts); // substr is not end-inclusive
+	auto contains_lists =
+		parse_pipe_delimited(cond_string.substr(obj_list_starts, obj_list_ends - obj_list_starts));
+
+	auto contains_list_match_it = std::find_if(
+		contains_lists.cbegin(), contains_lists.cend(),
+		[&](const std::vector<std::string> &want_contained_objects)
+		{
+			if (want_contained_objects.size() == 1 and want_contained_objects[0] == "None")
+			{
+				return obj_contained_ids.empty();
+			}
+
+			if (want_contained_objects.size() != obj_contained_ids.size())
+			{
+				return false; // don't match on an object that contains more than
+							  // what we asked for
+			}
+
+			// iterate through object names we want to be contained in obj, this should get to
+			// .cend() because all of `want_contained_obj_name` should return true
+			// (std::find_if_not)
+			auto contained_objs_it = std::find_if_not(
+				want_contained_objects.cbegin(), want_contained_objects.cend(),
+				[&](const std::string &want_contained_obj_name)
+				{
+					auto world_id_to_name = [&](const unsigned long &id)
+					{
+						auto matched_obj_it = std::find_if(
+							this->last_obs->objects.cbegin(), this->last_obs->objects.cend(),
+							[&](const dhtt_msgs::msg::CookingObject &world_obj)
+							{ return world_obj.world_id == id; });
+						if (matched_obj_it == this->last_obs->objects.cend())
+						{
+							throw std::runtime_error("Object in last_obs contains an "
+													 "id that does not exist");
+						}
+						return matched_obj_it->object_type;
+					};
+
+					// iterate through the contained object ids, this is the second level of the
+					// double for loop, this should not get to .cend() because a world_id should
+					// match
+					auto contained_objs_id_match_it =
+						std::find_if(obj_contained_ids.cbegin(), obj_contained_ids.cend(),
+									 [&](const unsigned long &contained_id)
+									 {
+										 std::string resolved_name = world_id_to_name(contained_id);
+										 return resolved_name == want_contained_obj_name;
+									 });
+
+					// we want an id to match
+					return contained_objs_id_match_it != obj_contained_ids.cend();
+				});
+
+			// we want this to reach the end, having checked every object
+			return contained_objs_it == want_contained_objects.cend();
+		});
+
+	// we want one of the lists to match
+	bool to_ret = contains_list_match_it != contains_lists.cend();
+	return to_ret;
 }
 
 } // namespace dhtt_plugins
