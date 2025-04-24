@@ -72,11 +72,11 @@ std::vector<dhtt_msgs::msg::Resource> CookingMoveBehavior::get_necessary_resourc
 	base.type = dhtt_msgs::msg::Resource::BASE;
 
 	// TODO sometimes seems to help
-	// dhtt_msgs::msg::Resource gripper;
-	// gripper.type = dhtt_msgs::msg::Resource::GRIPPER;
+	dhtt_msgs::msg::Resource gripper;
+	gripper.type = dhtt_msgs::msg::Resource::GRIPPER;
 
 	to_ret.push_back(base);
-	// to_ret.push_back(gripper);
+	to_ret.push_back(gripper);
 
 	return to_ret;
 }

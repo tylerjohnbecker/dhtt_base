@@ -17,10 +17,12 @@ NodeList:
   - LettuceSaladPlatePick
   - LettuceSaladPlateMoveToCounter
   - LettuceSaladPlatePlaceCounter           # END LOWER PLATE
+  - LettuceSaladPlateMoveTo
   - LettuceSaladPlatePickTwo                # BEGIN HIGHER PLATE
   - LettuceSaladPlateMoveToChoppedLettuce
   - LettuceSaladPlatePlaceChoppedLettuce
   - LettuceSaladPlateChoppedLettucePick
+  - LettuceSaladPlateMoveToDeliversquare
   - LettuceSaladPlatePlaceDeliversquare     # END HIGHER PLATE
 
 Nodes:
@@ -136,6 +138,12 @@ Nodes:
     parent: 'LettuceSaladPlateThen'
     params: [ 'object: Counter', 'conditions: Free' ]
 
+  LettuceSaladPlateMoveTo:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'LettuceSaladThen'
+    params: [ 'object: Plate', 'conditions: Free' ]
   LettuceSaladPlatePickTwo:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
@@ -160,6 +168,12 @@ Nodes:
     robot: 0
     parent: 'LettuceSaladThen'
     params: [ 'object: Plate', 'conditions: Contains' ]
+  LettuceSaladPlateMoveToDeliversquare:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'LettuceSaladThen'
+    params: [ 'object: AbsorbingDeliversquare' ]
   LettuceSaladPlatePlaceDeliversquare:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'

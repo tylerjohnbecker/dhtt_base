@@ -161,6 +161,15 @@ namespace dhtt
 		void async_activate_child(std::string child_name, dhtt_msgs::action::Activation::Goal activation_goal);
 
 		/**
+		 * \brief spreads failed child activation
+		 *
+		 * \param child_name name of child to activate
+		 *
+		 * \return void
+		 */
+		void async_activate_child_failed(std::string child_name);
+
+		/**
 		 * \brief propogates maintain conditions request to given child
 		 * 
 		 * \param child_name name of child to request
@@ -198,6 +207,13 @@ namespace dhtt
 		 * \return void
 		 */
 		bool block_for_responses_from_children();
+
+		/**
+		 * \brief busy waits until the number of failed responses equals the number of expected responses
+		 *
+		 * \return void
+		 */
+		bool block_for_responses_from_failed_children();
 
 		/**
 		 * \brief busy waits until all condition responses are received from children
@@ -367,6 +383,18 @@ namespace dhtt
 		void store_result_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name );
 
 		/**
+		 * \brief stores results received from activating children
+		 *
+		 * Also increments the number of results gotten back so that the busy wait can end after enough responses are received.
+		 *
+		 * \param result action server result sent back from child to be saved
+		 * \param node_name child from which the result was received (saved when the result callback was bound)
+		 *
+		 * \return void
+		 */
+		void store_failed_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name );
+
+		/**
 		 * \brief stores the conditions of the given child
 		 * 
 		 * \param result from child
@@ -528,6 +556,8 @@ namespace dhtt
 		int activation_level;		
 		int stored_responses;
 		int expected_responses;
+		int stored_failed_responses;
+		int expected_failed_responses;
 		int stored_conditions;
 		int expected_conditions;
 

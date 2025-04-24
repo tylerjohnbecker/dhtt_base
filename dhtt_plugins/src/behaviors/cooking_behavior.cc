@@ -99,8 +99,6 @@ void CookingBehavior::parse_params(std::vector<std::string> params)
 
 			this->destination_conditions = value;
 		}
-
-		this->set_destination_to_closest_object();
 	}
 	else
 	{
@@ -117,10 +115,23 @@ double CookingBehavior::get_perceived_efficiency()
 
 	if (not this->last_obs)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
-					 "No observation yet. This node probably won't behave as intended. Setting "
-					 "activation_potential to 0");
-		return 0;
+		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
+					 "No observation yet. This node probably won't behave as intended. Making "
+					 "Observe request");
+
+		// Make sure we get an initial observation
+		auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
+		req->super_action = dhtt_msgs::srv::CookingRequest::Request::OBSERVE;
+		auto res = this->cooking_request_client->async_send_request(req);
+		RCLCPP_DEBUG(this->pub_node_ptr->get_logger(), "Sent initial observation request");
+		this->executor->spin_until_future_complete(res);
+		RCLCPP_DEBUG(this->pub_node_ptr->get_logger(),
+					 "Received initial observation request: We're good to go.");
+
+		while (not this->last_obs)
+			;
+
+		// no return
 	}
 
 	if (this->destination_point.x == 0 and this->destination_point.y == 0)
@@ -183,15 +194,6 @@ void CookingBehavior::initialize_()
 		throw std::runtime_error("Could not contact dhtt_cooking service");
 	}
 
-	// Make sure we get an initial observation
-	auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
-	req->super_action = dhtt_msgs::srv::CookingRequest::Request::OBSERVE;
-	auto res = this->cooking_request_client->async_send_request(req);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sent initial observation request");
-	this->executor->spin_until_future_complete(res);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(),
-				"Received initial observation request: We're good to go.");
-
 	if (not this->last_obs)
 	{
 		RCLCPP_FATAL(this->pub_node_ptr->get_logger(),
@@ -201,7 +203,7 @@ void CookingBehavior::initialize_()
 
 void CookingBehavior::observation_callback(std::shared_ptr<dhtt_msgs::msg::CookingObservation> msg)
 {
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Inside observation callback");
+	RCLCPP_DEBUG(this->pub_node_ptr->get_logger(), "Inside observation callback");
 	this->last_obs = std::move(msg);
 
 	// Chicken-egg, This may be called before parse_params() has set destination_* members, which
@@ -220,8 +222,8 @@ void CookingBehavior::set_destination_to_closest_object()
 	auto &dst_val = this->destination_value;
 	auto &dst_conds = this->destination_conditions;
 
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Setting destination to val: %s, with conds: %s",
-				dst_val.c_str(), dst_conds.c_str());
+	RCLCPP_DEBUG(this->pub_node_ptr->get_logger(), "Setting destination to val: %s, with conds: %s",
+				 dst_val.c_str(), dst_conds.c_str());
 
 	if (dst_val.empty())
 	{
