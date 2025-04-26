@@ -5,11 +5,8 @@ namespace dhtt_plugins
 
 void CookingBehavior::parse_params(std::vector<std::string> params)
 {
-	// Parse params is executed by ActionType after it creates pub_node_ptr, which we need to create
-	// services and such. This should go in the constructor, but pub_node_ptr wouldn't exist yet. It
-	// so happens that parse_params is called at the same time we would want an initializer, so it
-	// fits the API better.
-	this->initialize_();
+	std::pair<std::string, std::string> kv;
+	std::string key, value;
 	auto parse_coord_string = [](const std::string &coord)
 	{
 		std::istringstream iss(coord); // pretty nifty: skips whitespace
@@ -40,69 +37,74 @@ void CookingBehavior::parse_params(std::vector<std::string> params)
 	};
 
 	// Copied from move_behavior.cc
-	if (static_cast<int>(params.size()) > 2)
+	if (static_cast<int>(params.size()) > 3)
 		throw std::invalid_argument(
 			"Too many parameters passed to node. Coord or object required and "
-			"optionally object conditions.");
+			"optionally object conditions and mark.");
 
 	if (static_cast<int>(params.size()) == 0)
 	{
 		throw std::invalid_argument(
 			"Not enough parameters passed to node. Coord or Object required and "
-			"optionally object conditions.");
+			"optionally object conditions and mark.");
 	}
 
 	/* Coord/Object type */
-	auto separator_pos = params[0].find(": ");
-	if (separator_pos == std::string::npos)
+	kv = CookingBehavior::extract_keyval(params[0]);
+	key = kv.first;
+	value = kv.second;
+
+	if (not(key == CookingBehavior::PARAM_COORDINATE or key == CookingBehavior::PARAM_OBJECT_TYPE))
 		throw std::invalid_argument(
-			"Parameters are expected in the format \"key: value\" but received in the form " +
-			params[0] + ". Returning in error.");
-
-	std::string key = params[0].substr(0, separator_pos);
-	std::string value = params[0].substr(separator_pos + 2, params[0].size() - separator_pos);
-
-	if (not(key == this->PARAM_COORDINATE or key == this->PARAM_OBJECT_TYPE))
-		throw std::invalid_argument("Expected parameter " + this->PARAM_COORDINATE + " or " +
-									this->PARAM_OBJECT_TYPE + ", but received " + key +
-									". Returning in error.");
+			"Expected parameter " + std::string(CookingBehavior::PARAM_COORDINATE) + " or " +
+			CookingBehavior::PARAM_OBJECT_TYPE + ", but received " + key + ". Returning in error.");
 	this->destination_type = key;
 	this->destination_value = value;
 
-	if (this->destination_type == this->PARAM_COORDINATE)
+	if (this->destination_type == CookingBehavior::PARAM_COORDINATE)
 	{
 		this->destination_point = parse_coord_string(this->destination_value);
 		this->destination_is_good = true;
 	}
-	else if (this->destination_type == this->PARAM_OBJECT_TYPE)
+	else if (this->destination_type == CookingBehavior::PARAM_OBJECT_TYPE)
 	{
-		if (static_cast<int>(params.size()) != 2)
+		if (params.size() < 2) // only specified object type, no conditions or mark
 		{
 			this->destination_conditions = "";
+			this->destination_mark = "";
 		}
 		else
 		{
-			/* Object Conditions */
-			separator_pos = params[1].find(": ");
-			if (separator_pos == std::string::npos)
-				throw std::invalid_argument("Parameters are expected in the format \"key: value\" "
-											"but received in the form " +
-											params[1] + ". Returning in error.");
-			key = params[1].substr(0, separator_pos);
-			value = params[1].substr(separator_pos + 2, params[1].size() - separator_pos);
-
-			if (key != this->PARAM_OBJECT_CONDITIONS)
+			/* Object Conditions and Marks */
+			for (auto param = params.cbegin() + 1; param < params.cend(); ++param)
 			{
-				throw std::invalid_argument("Expected parameter " + this->PARAM_OBJECT_CONDITIONS +
-											", but received " + key);
-			}
+				kv = CookingBehavior::extract_keyval(*param);
+				key = kv.first;
+				value = kv.second;
 
-			this->destination_conditions = value;
+				if (key == CookingBehavior::PARAM_OBJECT_CONDITIONS)
+				{
+					this->destination_conditions = value;
+				}
+				else if (key == CookingBehavior::PARAM_OBJECT_MARK)
+				{
+					this->destination_mark = value;
+				}
+				else
+				{
+					throw std::invalid_argument(
+						"Expected parameter " +
+						std::string(CookingBehavior::PARAM_OBJECT_CONDITIONS) + " or " +
+						std::string(CookingBehavior::PARAM_MARK_OBJECTS) + ", but received " + key);
+				}
+			}
 		}
 	}
 	else
 	{
-		throw std::invalid_argument("");
+		throw std::invalid_argument(
+			"Expected parameter " + std::string(CookingBehavior::PARAM_OBJECT_TYPE) + " or " +
+			std::string(CookingBehavior::PARAM_COORDINATE) + ", but received " + key);
 	}
 
 	this->params = params;
@@ -116,17 +118,25 @@ double CookingBehavior::get_perceived_efficiency()
 	if (not this->last_obs)
 	{
 		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
-					 "No observation yet. This node probably won't behave as intended. Making "
-					 "Observe request");
+					"No observation yet. This node probably won't behave as intended. Making "
+					"Observe request");
 
 		// Make sure we get an initial observation
 		auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
 		req->super_action = dhtt_msgs::srv::CookingRequest::Request::OBSERVE;
 		auto res = this->cooking_request_client->async_send_request(req);
 		RCLCPP_DEBUG(this->pub_node_ptr->get_logger(), "Sent initial observation request");
-		this->executor->spin_until_future_complete(res);
-		RCLCPP_DEBUG(this->pub_node_ptr->get_logger(),
-					 "Received initial observation request: We're good to go.");
+		this->executor->spin_until_future_complete(res, std::chrono::seconds(1));
+
+		if (res.valid())
+		{
+			RCLCPP_DEBUG(this->pub_node_ptr->get_logger(),
+						 "Received initial observation request: We're good to go.");
+		}
+		else
+		{
+			RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "BUG, observation request timed out");
+		}
 
 		while (not this->last_obs)
 			;
@@ -178,20 +188,39 @@ double CookingBehavior::agent_point_distance(const geometry_msgs::msg::Point &po
 	return this->point_distance(agent_loc, point);
 }
 
-void CookingBehavior::initialize_()
+void CookingBehavior::initialize(std::vector<std::string> params)
 {
+	ActionType::initialize(params);
+
+	// subscribers
 	this->cooking_observation_subscriber =
 		this->pub_node_ptr->create_subscription<dhtt_msgs::msg::CookingObservation>(
 			"Cooking_Observations", 10,
 			std::bind(&CookingBehavior::observation_callback, this, std::placeholders::_1));
 
+	// clients
 	this->cooking_request_client =
 		this->pub_node_ptr->create_client<dhtt_msgs::srv::CookingRequest>("Cooking_Server", 10);
 
+	this->param_node_ptr =
+		std::make_shared<rclcpp::Node>(std::string(this->pub_node_ptr->get_name()) + "_params",
+									   rclcpp::NodeOptions()
+										   .allow_undeclared_parameters(true)
+										   .automatically_declare_parameters_from_overrides(true));
+	this->params_client_ptr =
+		std::make_shared<rclcpp::SyncParametersClient>(this->param_node_ptr, "/param_node");
+
+	// checks
 	if (not this->cooking_request_client->wait_for_service(std::chrono::seconds(1)))
 	{
 		RCLCPP_FATAL(this->pub_node_ptr->get_logger(), "Could not contact dhtt_cooking service");
 		throw std::runtime_error("Could not contact dhtt_cooking service");
+	}
+
+	if (not this->params_client_ptr->wait_for_service(std::chrono::seconds(1)))
+	{
+		RCLCPP_FATAL(this->pub_node_ptr->get_logger(), "Could not contact param node");
+		throw std::runtime_error("Could not contact param node");
 	}
 
 	if (not this->last_obs)
@@ -219,118 +248,125 @@ void CookingBehavior::set_destination_to_closest_object()
 {
 	// Assumes on entry that this->last_obs is valid. I.e. we've received an observation and
 	// destination_type is object not coord. It is the callers responsibility to be sure of that,
-	auto &dst_val = this->destination_value;
-	auto &dst_conds = this->destination_conditions;
+	if (this->last_obs == nullptr or this->destination_type == CookingBehavior::PARAM_COORDINATE)
+	{
+		throw std::runtime_error("Bad call to set_destination_to_closest_object()");
+	}
 
-	RCLCPP_DEBUG(this->pub_node_ptr->get_logger(), "Setting destination to val: %s, with conds: %s",
-				 dst_val.c_str(), dst_conds.c_str());
-
-	if (dst_val.empty())
+	if (this->destination_value.empty())
 	{
 		throw std::runtime_error("Empty destination_value");
 	}
 
-	std::vector<std::string> conds = CookingBehavior::parse_conds_string(dst_conds);
+	RCLCPP_DEBUG(this->pub_node_ptr->get_logger(), "Setting destination to val: %s, with conds: %s",
+				 this->destination_value.c_str(), this->destination_conditions.c_str());
 
-	auto pred = [dst_val, conds, this](dhtt_msgs::msg::CookingObject obj)
+	auto pred_typeandconds = [this](const dhtt_msgs::msg::CookingObject &obj)
 	{
-		if (obj.object_type == dst_val)
+		if (obj.location == this->last_obs->agents.front().object_members.location)
 		{
-			// Note that if conds is empty (user provided empty string ""), we select the closest of
-			// any condition.
-			for (auto cond : conds)
-			{
-				if (cond == "Free" or cond == "Contains")
-				{
-					// Counters are not ContentObjects
-					if (cond == "Free" and obj.object_type == "Counter")
-					{
-						// Check counter isn't an unreachable corner
-						if ((obj.location.x == 0 and obj.location.y == 0) or
-							(obj.location.x == 0 and
-							 obj.location.y == CookingBehavior::LEVEL_SIZE) or
-							(obj.location.x == CookingBehavior::LEVEL_SIZE and
-							 obj.location.y == 0) or
-							(obj.location.x == CookingBehavior::LEVEL_SIZE and
-							 obj.location.y == CookingBehavior::LEVEL_SIZE))
-						{
-							return false;
-						}
+			return false; // Don't count objects the agent is already holding
+		}
 
-						auto obj_on_counter = std::find_if(
-							this->last_obs->objects.cbegin(), this->last_obs->objects.cend(),
-							[obj](dhtt_msgs::msg::CookingObject other_obj)
-							{
-								// Don't match on ourself
-								if (other_obj.object_type == obj.object_type)
-								{
-									return false;
-								}
-								else
-								{
-									return obj.location == other_obj.location;
-								}
-							});
-						if (obj_on_counter !=
-							this->last_obs->objects.cend()) // if found obj on counter
-						{
-							return false;
-						}
-					}
-					else if (cond == "Free" and not obj.content_ids.empty())
-					{
-						return false;
-					}
-					else if (cond == "Contains" and obj.content_ids.empty())
-					{
-						return false;
-					}
-				}
-				else if (cond.find("Contains+") != std::string::npos)
-				{
-					if (CookingBehavior::check_contains_list(cond, obj.content_ids) == false)
-					{
-						return false;
-					}
-				}
-				else if (std::find(obj.physical_state.begin(), obj.physical_state.end(), cond) ==
-						 obj.physical_state.end())
-				{
-					return false; // Not the right condition
-				}
+		if (obj.object_type == this->destination_value)
+		{
+			// Check conditions
+			const std::vector<std::string> conds =
+				CookingBehavior::parse_conds_string(this->destination_conditions);
+			if (this->check_conds(conds, obj) == false)
+			{
+				return false;
 			}
-			return true; // Correct type and conditions
+
+			// // Check marks
+			// if (not this->destination_mark.empty() and this->check_mark(obj) == false)
+			// {
+			// 	return false;
+			// }
+
+			return true; // Correct type, conditions and mark
 		}
 		return false; // Not correct type
 	};
 
-	geometry_msgs::msg::Point ret;
-	const auto found_iter =
-		std::find_if(this->last_obs->objects.cbegin(), this->last_obs->objects.cend(), pred);
-
-	if (found_iter == this->last_obs->objects.cend())
+	std::vector<std::vector<dhtt_msgs::msg::CookingObject>::const_iterator> found_typeconds_iters;
+	std::vector<std::vector<dhtt_msgs::msg::CookingObject>::const_iterator>
+		found_typecondsmark_iters;
+	for (auto iter = this->last_obs->objects.cbegin(); iter != this->last_obs->objects.cend();
+		 ++iter)
 	{
-		RCLCPP_WARN(
-			this->pub_node_ptr->get_logger(),
-			("Could not find object of type and conds: " + dst_val + " " + dst_conds).c_str());
-		this->destination_is_good = false;
-	}
-	else
-	{
-		ret = found_iter->location;
-
-		// See if we can't find a closer object that matches
-		for (auto iter = found_iter + 1; iter != this->last_obs->objects.cend(); ++iter)
+		if (pred_typeandconds(*iter))
 		{
-			if (pred(*iter) and
-				this->agent_point_distance(iter->location) < this->agent_point_distance(ret))
+			found_typeconds_iters.push_back(iter);
+		}
+	}
+
+	if (found_typeconds_iters.empty())
+	{
+		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
+					("Could not find object of type and conds: " + this->destination_value + " " +
+					 this->destination_conditions)
+						.c_str());
+		this->destination_is_good = false;
+		return;
+	}
+
+	// We have some objects in the world that match our type and conditions. Now check if any of
+	// them have our mark. If we can't find one because they are all marked by someone else, we
+	// fail. If because at least one of them is not marked at all, return that one.
+	if (not this->destination_mark.empty())
+	{
+		std::vector<char> mark_rets;
+		for (auto iter : found_typeconds_iters)
+		{
+			mark_rets.push_back(this->check_mark(*iter));
+		}
+
+		for (auto i = 0; i < mark_rets.size(); ++i)
+		{
+			if (mark_rets[i] == '1') // our taint
 			{
-				ret = iter->location;
+				found_typecondsmark_iters.push_back(found_typeconds_iters[i]);
 			}
 		}
-		this->destination_is_good = true;
-		this->destination_point = ret;
+		if (found_typecondsmark_iters
+				.empty()) // none of our taints found, reconsider with unmarked objects
+		{
+			for (auto i = 0; i < mark_rets.size(); ++i)
+			{
+				if (mark_rets[i] == '2')
+				{
+					found_typecondsmark_iters.push_back(found_typeconds_iters[i]);
+				}
+			}
+		}
+
+		if (found_typecondsmark_iters.empty())
+		{
+			RCLCPP_WARN(this->pub_node_ptr->get_logger(),
+						("Found object of correct type and cond, but incorrect mark: " +
+						 this->destination_mark)
+							.c_str());
+			this->destination_is_good = false;
+			return;
+		}
 	}
+
+	auto found_iters = this->destination_mark.empty() ? std::move(found_typeconds_iters)
+													  : std::move(found_typecondsmark_iters);
+
+	const auto found_min_it =
+		std::min_element(found_iters.cbegin(), found_iters.cend(),
+						 [this](std::vector<dhtt_msgs::msg::CookingObject>::const_iterator itL,
+								std::vector<dhtt_msgs::msg::CookingObject>::const_iterator itR)
+						 {
+							 return this->agent_point_distance(itL->location) <
+									this->agent_point_distance(itR->location);
+						 });
+
+	this->destination_point = (*found_min_it)->location;
+	this->destination_object = **found_min_it;
+	this->destination_is_good = true;
 }
 
 std::string CookingBehavior::which_arm(dhtt::Node *container)
@@ -353,7 +389,7 @@ std::string CookingBehavior::which_arm(dhtt::Node *container)
 bool CookingBehavior::can_work() const
 {
 	// TODO check good floating point comparisons
-	if (this->activation_potential <= FLT_EPSILON)
+	if (this->activation_potential <= DBL_EPSILON)
 	{
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
 					 "We set activation potential to 0 but the node still ran, skipping work. "
@@ -367,6 +403,52 @@ bool CookingBehavior::can_work() const
 					 "Destination is not good but the node still ran. Skipping work.");
 		return false;
 	}
+
+	return true;
+}
+
+bool CookingBehavior::mark_object(unsigned long object_id, const std::string &mark) const
+{
+	auto object_exists_it =
+		std::find_if(this->last_obs->objects.cbegin(), this->last_obs->objects.cend(),
+					 [object_id](const dhtt_msgs::msg::CookingObject &obj)
+					 { return obj.world_id == object_id; });
+
+	if (object_exists_it == this->last_obs->objects.cend())
+	{
+		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+					 "Tried to mark object %lu but it doesn't exist", object_id);
+		return false;
+	}
+
+	auto existing_marked_objects = this->params_client_ptr->get_parameter<std::vector<long int>>(
+		CookingBehavior::PARAM_MARK_OBJECTS, {});
+	auto existing_marked_objects_taints =
+		this->params_client_ptr->get_parameter<std::vector<std::string>>(
+			CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, {});
+
+	if (existing_marked_objects.size() != existing_marked_objects_taints.size())
+	{
+		RCLCPP_FATAL(this->pub_node_ptr->get_logger(),
+					 "Marked object IDs and their Taints do not match up");
+		return false;
+	}
+
+	if (std::find(existing_marked_objects.cbegin(), existing_marked_objects.cend(), object_id) !=
+		existing_marked_objects.cend())
+	{
+		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+					 "Tried to mark object %lu but it is already marked", object_id);
+		return false;
+	}
+
+	existing_marked_objects.push_back(object_id);
+	existing_marked_objects_taints.push_back(mark);
+
+	this->params_client_ptr->set_parameters(
+		{rclcpp::Parameter(CookingBehavior::PARAM_MARK_OBJECTS, existing_marked_objects),
+		 rclcpp::Parameter(CookingBehavior::PARAM_MARK_OBJECTS_TAINTS,
+						   existing_marked_objects_taints)});
 
 	return true;
 }
@@ -525,6 +607,121 @@ bool CookingBehavior::check_contains_list(const std::string &cond_string,
 	// we want one of the lists to match
 	bool to_ret = contains_list_match_it != contains_lists.cend();
 	return to_ret;
+}
+
+bool CookingBehavior::check_conds(const std::vector<std::string> &conds,
+								  const dhtt_msgs::msg::CookingObject &obj) const
+{
+	// Note that if conds is empty (user provided empty string ""), we select the closest of
+	// any condition.
+	for (const auto &cond : conds)
+	{
+		if (cond == "Free" or cond == "Contains")
+		{
+			// Counters are not ContentObjects
+			if (cond == "Free" and obj.object_type == "Counter")
+			{
+				// Check counter isn't an unreachable corner
+				if ((obj.location.x == 0 and obj.location.y == 0) or
+					(obj.location.x == 0 and obj.location.y == CookingBehavior::LEVEL_SIZE) or
+					(obj.location.x == CookingBehavior::LEVEL_SIZE and obj.location.y == 0) or
+					(obj.location.x == CookingBehavior::LEVEL_SIZE and
+					 obj.location.y == CookingBehavior::LEVEL_SIZE))
+				{
+					return false;
+				}
+
+				auto obj_on_counter =
+					std::find_if(this->last_obs->objects.cbegin(), this->last_obs->objects.cend(),
+								 [obj](const dhtt_msgs::msg::CookingObject &other_obj)
+								 {
+									 // Don't match on ourself and cannot have two Counters in the
+									 // same place
+									 if (other_obj.object_type == obj.object_type)
+									 {
+										 return false;
+									 }
+									 else
+									 {
+										 return obj.location == other_obj.location;
+									 }
+								 });
+				if (obj_on_counter != this->last_obs->objects.cend()) // if found obj on counter
+				{
+					return false;
+				}
+			}
+			else if ((cond == "Free" and not obj.content_ids.empty()) or
+					 (cond == "Contains" and obj.content_ids.empty()))
+			{
+				return false;
+			}
+		}
+		else if (cond.find("Contains+") != std::string::npos)
+		{
+			if (CookingBehavior::check_contains_list(cond, obj.content_ids) == false)
+			{
+				return false;
+			}
+		}
+		else if (std::find(obj.physical_state.begin(), obj.physical_state.end(), cond) ==
+				 obj.physical_state.end())
+		{
+			return false; // Not the right condition
+		}
+	}
+
+	return true; // all conditions satisfied
+}
+
+char CookingBehavior::check_mark(const dhtt_msgs::msg::CookingObject &obj) const
+{
+	// const auto res = this->params_client_ptr->get_parameters(
+	// 	{CookingBehavior::PARAM_MARK_OBJECTS, CookingBehavior::PARAM_MARK_OBJECTS_TAINTS});
+
+	const std::vector<long int> marked_object_ids =
+		this->params_client_ptr->get_parameter<std::vector<long int>>(
+			CookingBehavior::PARAM_MARK_OBJECTS, {});
+
+	const std::vector<std::string> marked_object_taints =
+		this->params_client_ptr->get_parameter<std::vector<std::string>>(
+			CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, {});
+
+	// const std::vector<int64_t> marked_object_ids = res[0].as_integer_array();
+	// const std::vector<std::string> marked_object_taints = res[1].as_string_array();
+
+	// three cases: 0. object is marked but with another taint; 1. object is marked with our
+	// taint; 2. object not marked at all;
+	auto found_marked_id_it =
+		std::find_if(marked_object_ids.cbegin(), marked_object_ids.cend(),
+					 [obj](int64_t other_obj_id) { return other_obj_id == obj.world_id; });
+
+	if (found_marked_id_it == marked_object_ids.cend())
+	{
+		return '2'; // not marked at all
+	}
+
+	const auto found_index = std::distance(marked_object_ids.cbegin(), found_marked_id_it);
+	const auto &found_taint = marked_object_taints[found_index];
+	if (this->destination_mark != found_taint)
+	{
+		return '0'; // object is marked with another taint
+	}
+
+	return '1'; // object is marked with our taint
+}
+
+std::pair<std::string, std::string> CookingBehavior::extract_keyval(const std::string &param_string)
+{
+	auto separator_pos = param_string.find(": ");
+	if (separator_pos == std::string::npos)
+		throw std::invalid_argument(
+			"Parameters are expected in the format \"key: value\" but received in the form " +
+			param_string + ". Returning in error.");
+
+	std::string key = param_string.substr(0, separator_pos);
+	std::string value = param_string.substr(separator_pos + 2, param_string.size() - separator_pos);
+	return std::make_pair(key, value);
 }
 
 } // namespace dhtt_plugins

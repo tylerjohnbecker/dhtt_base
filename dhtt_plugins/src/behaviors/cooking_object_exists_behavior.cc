@@ -9,7 +9,7 @@ double CookingObjectExistsBehavior::get_perceived_efficiency()
 
 void CookingObjectExistsBehavior::do_work(dhtt::Node *container)
 {
-	this->done = this->destination_is_good;
+	this->done |= this->destination_is_good; // TODO check this and if we need to do can_work
 
 	// Tick the world with a NOP
 	auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();

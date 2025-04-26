@@ -604,9 +604,29 @@ namespace dhtt
 
 		auto is_parent = [&]( dhtt_msgs::msg::Node check ) { return check.node_name.find(cur_parent) != std::string::npos; };
 
+		// TODO remove this when done with cooking_zoo
+		++this->cooking_zoo_counter;
+
 		std::function<std::string(dhtt_msgs::msg::Subtree&, int)> add_post_order = [&]( dhtt_msgs::msg::Subtree& to_add, int current )
 		{
 			// RCLCPP_ERROR(this->get_logger(), "Add post order %s", to_add.tree_nodes[current].node_name.c_str());
+
+			// TODO remove this when done with cooking_zoo
+			for (auto& param : to_add.tree_nodes[current].params)
+			{
+				if (const auto index = param.find('#'); index != std::string::npos)
+				{
+					param.replace(index, 1, std::to_string(this->cooking_zoo_counter));
+				}
+			}
+
+			for (auto& param : to_add.tree_nodes[current].params)
+			{
+				if (const auto index = param.find('#'); index != std::string::npos)
+				{
+					throw std::runtime_error("");
+				}
+			}
 
 			// add node to the tree
 			cur_parent = to_add.tree_nodes[current].parent_name;

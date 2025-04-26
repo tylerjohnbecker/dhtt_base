@@ -63,7 +63,7 @@ Nodes:
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Lettuce', 'conditions: Fresh' ]
+    params: [ 'object: Lettuce', 'conditions: Fresh', 'mark: A#' ]
   LettuceSaladLettuceMoveToCutboard:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
@@ -87,7 +87,7 @@ Nodes:
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Lettuce', 'conditions: Chopped' ]
+    params: [ 'object: Lettuce', 'conditions: Chopped', 'mark: A#' ]
   LettuceSaladChoppedLettuceMoveToCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
@@ -124,7 +124,7 @@ Nodes:
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladPlateThen'
-    params: [ 'object: Plate', 'conditions: Free' ]
+    params: [ 'object: Plate', 'conditions: Free', 'mark: A#' ]
   LettuceSaladPlateMoveToCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
@@ -143,31 +143,31 @@ Nodes:
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Plate', 'conditions: Free' ]
+    params: [ 'object: Plate', 'conditions: Free', 'mark: A#' ]
   LettuceSaladPlatePickTwo:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Plate', 'conditions: Free' ]
+    params: [ 'object: Plate', 'conditions: Free', 'mark: A#' ]
   LettuceSaladPlateMoveToChoppedLettuce:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Lettuce', 'conditions: Chopped' ]
+    params: [ 'object: Lettuce', 'conditions: Chopped', 'mark: A#' ]
   LettuceSaladPlatePlaceChoppedLettuce:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlatePlaceBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Lettuce', 'conditions: Chopped' ]
+    params: [ 'object: Lettuce', 'conditions: Chopped', 'mark: A#' ]
   LettuceSaladPlateChoppedLettucePick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Plate', 'conditions: Contains' ]
+    params: [ 'object: Plate', 'conditions: Contains', 'mark: A#' ]
   LettuceSaladPlateMoveToDeliversquare:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'

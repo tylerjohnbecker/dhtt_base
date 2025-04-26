@@ -294,10 +294,11 @@ class CookingEnvironment:
             self.my_agent.update_location(self.observations[DEFAULT_PLAYER_NAME])
             closest_loc: tuple = self.my_agent.closest(self.my_agent.location, locs,
                                                        self.observations[DEFAULT_PLAYER_NAME])
-            # rosidl won't implicitly cast an int to geometry_msgs float
-            closest_point = geometry_msgs.msg.Point(x=float(closest_loc[0]), y=float(closest_loc[1]))
-            closest_loc_distance = self.my_agent.distance(self.my_agent.location, closest_loc)
-            to_ret[object_type_name] = (closest_point, closest_loc_distance)
+            if closest_loc is not None:
+                # rosidl won't implicitly cast an int to geometry_msgs float
+                closest_point = geometry_msgs.msg.Point(x=float(closest_loc[0]), y=float(closest_loc[1]))
+                closest_loc_distance = self.my_agent.distance(self.my_agent.location, closest_loc)
+                to_ret[object_type_name] = (closest_point, closest_loc_distance)
         return to_ret
 
     @staticmethod
