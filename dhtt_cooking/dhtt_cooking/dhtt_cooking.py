@@ -10,7 +10,8 @@ from dhtt_msgs.srv import CookingRequest, CookingRequest_Request, CookingRequest
 
 from cooking_zoo.cooking_agents.base_agent import BaseAgent
 from cooking_zoo.environment.cooking_env import CookingEnvironment as CookingZooEnvironment, parallel_env
-from cooking_zoo.cooking_world.abstract_classes import Object as cooking_zoo_Object
+from cooking_zoo.cooking_world.abstract_classes import Object as cooking_zoo_Object, \
+    StaticObject as cooking_zoo_StaticObject
 from cooking_zoo.cooking_world.world_objects import Agent as cooking_zoo_Agent
 from cooking_zoo.cooking_book.recipe import RecipeNode as cooking_zoo_RecipeNode
 
@@ -307,6 +308,7 @@ class CookingEnvironment:
         to_ret.world_id = obj.unique_id
         to_ret.moveable = obj.movable
         to_ret.walkable = obj.walkable
+        to_ret.is_static = isinstance(obj, cooking_zoo_StaticObject)
         to_ret.object_type = type(obj).__name__
         to_ret.location.x = float(obj.location[0])
         to_ret.location.y = float(obj.location[1])

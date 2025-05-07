@@ -453,6 +453,77 @@ bool CookingBehavior::mark_object(unsigned long object_id, const std::string &ma
 	return true;
 }
 
+bool CookingBehavior::unmark_static_object_under_obj(const dhtt_msgs::msg::CookingObject &obj) const
+{
+	// TODO remove this!
+	size_t foo = 0;
+	for (const auto &world_obj : this->last_obs->objects)
+	{
+		if (world_obj.is_static and world_obj.location == obj.location)
+		{
+			foo++;
+		}
+	}
+	if (foo > 1)
+	{
+		throw std::runtime_error("Look at me!");
+	}
+
+	for (const auto &world_obj : this->last_obs->objects)
+	{
+		if (world_obj.is_static and world_obj.location == obj.location)
+		{
+			// should only be one static object at a location
+			return this->unmark_object(world_obj.world_id);
+		}
+	}
+
+	RCLCPP_ERROR(
+		this->pub_node_ptr->get_logger(),
+		("Tried to unmark static object but none under object " + obj.object_type).c_str());
+	return false;
+}
+
+bool CookingBehavior::unmark_object(unsigned long object_id) const
+{
+	std::vector<long int> marked_object_ids =
+		this->params_client_ptr->get_parameter<std::vector<long int>>(
+			CookingBehavior::PARAM_MARK_OBJECTS, {});
+
+	std::vector<std::string> marked_object_taints =
+		this->params_client_ptr->get_parameter<std::vector<std::string>>(
+			CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, {});
+
+	auto found_marked_id_it =
+		std::find_if(marked_object_ids.cbegin(), marked_object_ids.cend(),
+					 [object_id](const int64_t& other_obj_id) { return other_obj_id == object_id; });
+
+	if (found_marked_id_it == marked_object_ids.cend())
+	{
+		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
+					"Tried to unmark object %lu but it is not marked", object_id);
+		return false;
+	}
+
+	const auto found_index = std::distance(marked_object_ids.cbegin(), found_marked_id_it);
+	const auto &found_taint = marked_object_taints[found_index];
+	if (this->destination_mark != found_taint)
+	{
+		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+					 "Tried to unmark object %lu but it is not marked with our taint", object_id);
+		return false;
+	}
+
+	marked_object_ids.erase(found_marked_id_it);
+	marked_object_taints.erase(marked_object_taints.begin() + found_index);
+
+	this->params_client_ptr->set_parameters(
+		{rclcpp::Parameter(CookingBehavior::PARAM_MARK_OBJECTS, marked_object_ids),
+		 rclcpp::Parameter(CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, marked_object_taints)});
+
+	return true;
+}
+
 std::vector<std::string> CookingBehavior::parse_conds_string(const std::string &conds_str)
 {
 	std::vector<std::string> conds;
@@ -676,9 +747,6 @@ bool CookingBehavior::check_conds(const std::vector<std::string> &conds,
 
 char CookingBehavior::check_mark(const dhtt_msgs::msg::CookingObject &obj) const
 {
-	// const auto res = this->params_client_ptr->get_parameters(
-	// 	{CookingBehavior::PARAM_MARK_OBJECTS, CookingBehavior::PARAM_MARK_OBJECTS_TAINTS});
-
 	const std::vector<long int> marked_object_ids =
 		this->params_client_ptr->get_parameter<std::vector<long int>>(
 			CookingBehavior::PARAM_MARK_OBJECTS, {});
@@ -686,9 +754,6 @@ char CookingBehavior::check_mark(const dhtt_msgs::msg::CookingObject &obj) const
 	const std::vector<std::string> marked_object_taints =
 		this->params_client_ptr->get_parameter<std::vector<std::string>>(
 			CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, {});
-
-	// const std::vector<int64_t> marked_object_ids = res[0].as_integer_array();
-	// const std::vector<std::string> marked_object_taints = res[1].as_string_array();
 
 	// three cases: 0. object is marked but with another taint; 1. object is marked with our
 	// taint; 2. object not marked at all;

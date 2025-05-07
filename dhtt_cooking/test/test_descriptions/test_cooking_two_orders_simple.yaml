@@ -17,8 +17,8 @@ NodeList:
   - LettuceSaladPlatePick
   - LettuceSaladPlateMoveToCounter
   - LettuceSaladPlatePlaceCounter           # END LOWER PLATE
-  - LettuceSaladPlateMoveTo
-  - LettuceSaladPlatePickTwo                # BEGIN HIGHER PLATE
+  - LettuceSaladPlateMoveTo                 # BEGIN HIGHER PLATE
+  - LettuceSaladPlatePickTwo
   - LettuceSaladPlateMoveToChoppedLettuce
   - LettuceSaladPlatePlaceChoppedLettuce
   - LettuceSaladPlateChoppedLettucePick
@@ -51,55 +51,55 @@ Nodes:
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: LettuceDispenser', 'mark: A#' ]
+    params: [ 'object: LettuceDispenser' ]
   LettuceSaladLettuceExecuteDispenser:
     type: 4
     behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: LettuceDispenser', 'mark: A#' ]
+    params: [ 'object: LettuceDispenser' ]
   LettuceSaladLettucePick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Lettuce', 'conditions: Fresh', 'mark: A#' ]
+    params: [ 'object: Lettuce', 'conditions: Fresh' ]
   LettuceSaladLettuceMoveToCutboard:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Cutboard', 'mark: A#' ]
+    params: [ 'object: Cutboard' ]
   LettuceSaladLettucePlaceCutboard:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Cutboard', 'conditions: Free', 'mark: A#' ]
+    params: [ 'object: Cutboard', 'conditions: Free' ]
   LettuceSaladLettuceExecuteCutboard:
     type: 4
     behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Cutboard', 'mark: A#' ]
+    params: [ 'object: Cutboard' ]
   LettuceSaladChoppedLettucePick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Lettuce', 'conditions: Chopped', 'mark: A#' ]
+    params: [ 'object: Lettuce', 'conditions: Chopped' ]
   LettuceSaladChoppedLettuceMoveToCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Counter', 'conditions: Free', 'mark: A#' ]
+    params: [ 'object: Counter', 'conditions: Free' ]
   LettuceSaladChoppedLettucePlaceCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Counter', 'conditions: Free', 'mark: A#' ]
+    params: [ 'object: Counter', 'conditions: Free' ]
 
   LettuceSaladPlateThen:
     type: 2
@@ -112,71 +112,71 @@ Nodes:
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladPlateThen'
-    params: [ 'object: PlateDispenser', 'mark: A#' ]
+    params: [ 'object: PlateDispenser' ]
   LettuceSaladPlateExecuteDispenser:
     type: 4
     behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
     robot: 0
     parent: 'LettuceSaladPlateThen'
-    params: [ 'object: PlateDispenser', 'mark: A#' ]
+    params: [ 'object: PlateDispenser' ]
   LettuceSaladPlatePick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladPlateThen'
-    params: [ 'object: Plate', 'conditions: Free', 'mark: A#' ]
+    params: [ 'object: Plate', 'conditions: Free' ]
   LettuceSaladPlateMoveToCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladPlateThen'
-    params: [ 'object: Counter', 'conditions: Free', 'mark: A#' ]
+    params: [ 'object: Counter', 'conditions: Free' ]
   LettuceSaladPlatePlaceCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'LettuceSaladPlateThen'
-    params: [ 'object: Counter', 'conditions: Free', 'mark: A#' ]
+    params: [ 'object: Counter', 'conditions: Free' ]
 
   LettuceSaladPlateMoveTo:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Plate', 'conditions: Free', 'mark: A#' ]
+    params: [ 'object: Plate', 'conditions: Free' ]
   LettuceSaladPlatePickTwo:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Plate', 'conditions: Free', 'mark: A#' ]
+    params: [ 'object: Plate', 'conditions: Free' ]
   LettuceSaladPlateMoveToChoppedLettuce:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Lettuce', 'conditions: Chopped', 'mark: A#' ]
+    params: [ 'object: Lettuce', 'conditions: Chopped' ]
   LettuceSaladPlatePlaceChoppedLettuce:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlatePlaceBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Lettuce', 'conditions: Chopped', 'mark: A#' ]
+    params: [ 'object: Lettuce', 'conditions: Chopped' ]
   LettuceSaladPlateChoppedLettucePick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Plate', 'conditions: Contains', 'mark: A#' ]
+    params: [ 'object: Plate', 'conditions: Contains+"Lettuce"' ]
   LettuceSaladPlateMoveToDeliversquare:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: AbsorbingDeliversquare', 'mark: A#' ]
+    params: [ 'object: AbsorbingDeliversquare' ]
   LettuceSaladPlatePlaceDeliversquare:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: AbsorbingDeliversquare', 'mark: A#' ]
+    params: [ 'object: AbsorbingDeliversquare' ]

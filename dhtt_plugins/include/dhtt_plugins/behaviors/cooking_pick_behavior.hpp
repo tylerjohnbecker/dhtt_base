@@ -14,7 +14,12 @@ class CookingPickBehavior : public CookingBehavior
 	double get_perceived_efficiency() override;
 
 	/**
-	 * First move_to the target location (to set the orientation), then pick
+	 * First move_to the target location (to set the orientation), then pick.
+	 *
+	 * If the object we are picking is on top of a static object (it always should be) that is
+	 * marked, unmark that static object to free up that counter/cutboard/dispenser for other
+	 * behaviors.
+	 *
 	 * @param container unused
 	 */
 	void do_work(dhtt::Node *container) override;

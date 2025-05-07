@@ -53,7 +53,8 @@ void CookingMoveBehavior::do_work(dhtt::Node *container)
 	// if object is not marked for anyone
 	if (not this->destination_mark.empty() and this->check_mark(this->destination_object) == '2')
 	{
-		RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Marking object");
+		RCLCPP_INFO(this->pub_node_ptr->get_logger(),
+					("Marking object as " + this->destination_mark).c_str());
 		suc = this->mark_object(this->destination_object.world_id, this->destination_mark);
 		if (not suc)
 		{

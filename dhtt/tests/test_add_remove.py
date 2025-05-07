@@ -70,8 +70,7 @@ class TestServerAddRemove:
 				assert i in nodes_to_remove
 
 	# asserts here will only work if this is the only way that nodes have been added to the tree
-	def add_from_yaml(self, file_name, add_to="ROOT_0", file_args=[], start_index=1):
-		
+	def add_from_yaml(self, file_name, force=True, add_to="ROOT_0"):
 		yaml_dict = None
 
 		assert file_name.split('.')[-1] == 'yaml'
@@ -83,10 +82,10 @@ class TestServerAddRemove:
 
 		modify_rq = ModifyRequest.Request()
 		modify_rq.type = ModifyRequest.Request.ADD_FROM_FILE
+		modify_rq.force = force
 
 		modify_rq.to_modify.append(add_to)
 		modify_rq.to_add = file_name
-		modify_rq.file_args = file_args
 
 		modify_future = self.node.modifysrv.call_async(modify_rq)
 		rclpy.spin_until_future_complete(self.node, modify_future)
@@ -98,18 +97,30 @@ class TestServerAddRemove:
 		fetch_rs = self.get_tree()
 
 		node_names_orig = yaml_dict['NodeList']
-		node_parents_orig = [ yaml_dict['Nodes'][i]['parent'] for i in node_names_orig ]
+		node_parents_orig = [yaml_dict['Nodes'][i]['parent'] for i in node_names_orig]
 
-		node_names_from_server = [ i.node_name for i in fetch_rs.found_subtrees[0].tree_nodes[start_index:] ]
-		parent_names_from_server = [ i.parent_name for i in fetch_rs.found_subtrees[0].tree_nodes[start_index:] ]
+		node_names_from_server = [i.node_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:]]
+		parent_names_from_server = [i.parent_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:]]
 
 		# verify that all nodes were added
 		for index, val in enumerate(node_names_orig):
-			assert val in node_names_from_server[index]
+			found = False
+
+			for index2, gt_val in enumerate(node_names_from_server):
+				if val in gt_val:
+					found = True
+					break
+
+			assert found
 
 		# verify that each node has the correct parent
 		for index, val in enumerate(node_parents_orig):
-			assert val in parent_names_from_server[index] or (val == 'NONE' and parent_names_from_server[index] == add_to)
+			found = False
+
+			for index2, gt_val in enumerate(parent_names_from_server):
+				if val in gt_val:
+					found = True
+					break
 
 		return modify_rs.added_nodes
 

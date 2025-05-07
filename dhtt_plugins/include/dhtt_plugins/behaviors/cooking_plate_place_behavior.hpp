@@ -25,7 +25,14 @@ class CookingPlatePlaceBehavior : public CookingPlaceBehavior
 {
   public:
 	/**
-	 * First move_to the target location (to set the orientation), then send two interact commands
+	 * First move_to the target location (to set the orientation), then send two interact commands.
+	 *
+	 * If placing on a deliversquare, send a NOP so it clears.
+	 *
+	 * In the special case that we are placing on a deliversquare that is marked with our taint,
+	 * unmark it to free it up for other behaviors. Normally the pick behavior is the only one to
+	 * unmark static objects, but deliversquares 'pick' themselves.
+	 *
 	 * @param container unused
 	 */
 	void do_work(dhtt::Node *container) override;

@@ -75,6 +75,23 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
 					 "interact_primary request did not succeed: %s",
 					 res.future.get()->error_msg.c_str());
+		return;
+	}
+
+	// Equivalent of get_released_resources() but for "resources" on the paramserver
+	if (not this->destination_mark.empty() and this->check_mark(this->destination_object) == '1')
+	{
+		RCLCPP_INFO(this->pub_node_ptr->get_logger(),
+					("Unmarking object that was marked as " + this->destination_mark + " under " +
+					 this->destination_object.object_type)
+						.c_str());
+		suc = this->unmark_static_object_under_obj(this->destination_object);
+		if (not suc)
+		{
+			RCLCPP_ERROR(this->pub_node_ptr->get_logger(), ("Error unmarking static object under " +
+															this->destination_object.object_type)
+															   .c_str());
+		}
 	}
 
 	this->done = suc;

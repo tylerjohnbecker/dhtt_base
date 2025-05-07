@@ -4,6 +4,7 @@ std_msgs/Header			head
 uint64 world_id # (unique id)
 bool moveable
 bool walkable
+bool is_static
 
 string object_type # Class.__name__ ie. Lettuce
 

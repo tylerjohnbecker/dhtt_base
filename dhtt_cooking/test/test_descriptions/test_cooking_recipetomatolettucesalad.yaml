@@ -1,0 +1,307 @@
+NodeList:
+  - AllOrdersThen
+  - TomatoLettuceSaladThen
+  - TomatoLettuceSaladAnd
+  - TomatoLettuceSaladLettuceThen                 # BEGIN LETTUCE
+  - TomatoLettuceSaladLettuceMoveToDispenser
+  - TomatoLettuceSaladLettuceExecuteDispenser
+  - TomatoLettuceSaladLettucePick
+  - TomatoLettuceSaladLettuceMoveToCutboard
+  - TomatoLettuceSaladLettucePlaceCutboard
+  - TomatoLettuceSaladLettuceExecuteCutboard
+  - TomatoLettuceSaladChoppedLettucePick
+  - TomatoLettuceSaladChoppedLettuceMoveToCounter
+  - TomatoLettuceSaladChoppedLettucePlaceCounter  # END LETTUCE
+  - TomatoLettuceSaladTomatoThen                  # BEGIN TOMATO
+  - TomatoLettuceSaladTomatoMoveToDispenser
+  - TomatoLettuceSaladTomatoExecuteDispenser
+  - TomatoLettuceSaladTomatoPick
+  - TomatoLettuceSaladTomatoMoveToCutboard
+  - TomatoLettuceSaladTomatoPlaceCutboard
+  - TomatoLettuceSaladTomatoExecuteCutboard
+  - TomatoLettuceSaladChoppedTomatoPick
+  - TomatoLettuceSaladChoppedTomatoMoveToCounter
+  - TomatoLettuceSaladChoppedTomatoPlaceCounter   # END TOMATO
+  - TomatoLettuceSaladPlateMoveToDispenser        # BEGIN PLATE # BEGIN HIGHER PLATE
+  - TomatoLettuceSaladPlateExecuteDispenser
+  - TomatoLettuceSaladPlatePick
+  - TomatoLettuceSaladPlateMoveToCounter
+  - TomatoLettuceSaladPlatePlaceCounter           # END HIGHER PLATE
+  - TomatoLettuceSaladPlateAnd
+  - TomatoLettuceSaladPlateChoppedLettuceThen     # BEGIN PLATE LETTUCE
+  - TomatoLettuceSaladPlateMoveToChoppedLettuce
+  - TomatoLettuceSaladPlatePickChoppedLettuce
+  - TomatoLettuceSaladPlateMoveToOne
+  - TomatoLettuceSaladPlatePlaceChoppedLettuce    # END PLATE LETTUCE
+  - TomatoLettuceSaladPlateChoppedTomatoThen      # BEGIN PLATE TOMATO
+  - TomatoLettuceSaladPlateMoveToChoppedTomato
+  - TomatoLettuceSaladPlateChoppedTomatoPick
+  - TomatoLettuceSaladPlateMoveToTwo
+  - TomatoLettuceSaladPlatePlaceChoppedTomato     # END PLATE TOMATO
+  - TomatoLettuceSaladPlateMoveToThree            # BEGIN LOWER PLATE
+  - TomatoLettuceSaladPlatePickTwo
+  - TomatoLettuceSaladPlateMoveToDeliversquare
+  - TomatoLettuceSaladPlatePlaceDeliversquare     # END LOWER PLATE # END PLATE
+
+Nodes:
+  AllOrdersThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: [ ]
+  TomatoLettuceSaladThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'AllOrdersThen'
+    params: [ ]
+  TomatoLettuceSaladAnd:
+    type: 1
+    behavior_type: 'dhtt_plugins::AndBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladThen'
+    params: [ ]
+  TomatoLettuceSaladLettuceThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladAnd'
+    params: [ ]
+  TomatoLettuceSaladLettuceMoveToDispenser:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladLettuceThen'
+    params: [ 'object: LettuceDispenser' ]
+  TomatoLettuceSaladLettuceExecuteDispenser:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladLettuceThen'
+    params: [ 'object: LettuceDispenser' ]
+  TomatoLettuceSaladLettucePick:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladLettuceThen'
+    params: [ 'object: Lettuce', 'conditions: Fresh' ]
+  TomatoLettuceSaladLettuceMoveToCutboard:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladLettuceThen'
+    params: [ 'object: Cutboard' ]
+  TomatoLettuceSaladLettucePlaceCutboard:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladLettuceThen'
+    params: [ 'object: Cutboard', 'conditions: Free' ]
+  TomatoLettuceSaladLettuceExecuteCutboard:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladLettuceThen'
+    params: [ 'object: Cutboard' ]
+  TomatoLettuceSaladChoppedLettucePick:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladLettuceThen'
+    params: [ 'object: Lettuce', 'conditions: Chopped' ]
+  TomatoLettuceSaladChoppedLettuceMoveToCounter:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladLettuceThen'
+    params: [ 'object: Counter', 'conditions: Free' ]
+  TomatoLettuceSaladChoppedLettucePlaceCounter:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladLettuceThen'
+    params: [ 'object: Counter', 'conditions: Free' ]
+  TomatoLettuceSaladTomatoThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladAnd'
+    params: [ ]
+  TomatoLettuceSaladTomatoMoveToDispenser:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladTomatoThen'
+    params: [ 'object: TomatoDispenser' ]
+  TomatoLettuceSaladTomatoExecuteDispenser:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladTomatoThen'
+    params: [ 'object: TomatoDispenser' ]
+  TomatoLettuceSaladTomatoPick:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladTomatoThen'
+    params: [ 'object: Tomato', 'conditions: Fresh' ]
+  TomatoLettuceSaladTomatoMoveToCutboard:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladTomatoThen'
+    params: [ 'object: Cutboard' ]
+  TomatoLettuceSaladTomatoPlaceCutboard:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladTomatoThen'
+    params: [ 'object: Cutboard', 'conditions: Free' ]
+  TomatoLettuceSaladTomatoExecuteCutboard:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladTomatoThen'
+    params: [ 'object: Cutboard' ]
+  TomatoLettuceSaladChoppedTomatoPick:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladTomatoThen'
+    params: [ 'object: Tomato', 'conditions: Chopped' ]
+  TomatoLettuceSaladChoppedTomatoMoveToCounter:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladTomatoThen'
+    params: [ 'object: Counter', 'conditions: Free' ]
+  TomatoLettuceSaladChoppedTomatoPlaceCounter:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladTomatoThen'
+    params: [ 'object: Counter', 'conditions: Free' ]
+  TomatoLettuceSaladPlateMoveToDispenser:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladThen'
+    params: [ 'object: PlateDispenser' ]
+  TomatoLettuceSaladPlateExecuteDispenser:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladThen'
+    params: [ 'object: PlateDispenser' ]
+  TomatoLettuceSaladPlatePick:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladThen'
+    params: [ 'object: Plate', 'conditions: Free' ]
+  TomatoLettuceSaladPlateMoveToCounter:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladThen'
+    params: [ 'object: Counter', 'conditions: Free' ]
+  TomatoLettuceSaladPlatePlaceCounter:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladThen'
+    params: [ 'object: Counter', 'conditions: Free' ]
+  TomatoLettuceSaladPlateAnd:
+    type: 1
+    behavior_type: 'dhtt_plugins::AndBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladThen'
+    params: [ ]
+  TomatoLettuceSaladPlateChoppedLettuceThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladPlateAnd'
+    params: [ ]
+  TomatoLettuceSaladPlateMoveToChoppedLettuce:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladPlateChoppedLettuceThen'
+    params: [ 'object: Lettuce', 'conditions: Chopped' ]
+  TomatoLettuceSaladPlatePickChoppedLettuce:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladPlateChoppedLettuceThen'
+    params: [ 'object: Lettuce', 'conditions: Chopped' ]
+  TomatoLettuceSaladPlateMoveToOne:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladPlateChoppedLettuceThen'
+    params: [ 'object: Plate', 'conditions: Contains+"None | Tomato"' ]
+  TomatoLettuceSaladPlatePlaceChoppedLettuce:
+    type: 4
+#    behavior_type: 'dhtt_plugins::CookingPlatePlaceBehavior'
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladPlateChoppedLettuceThen'
+    params: [ 'object: Plate', 'conditions: Contains+"None | Tomato"' ]
+  TomatoLettuceSaladPlateChoppedTomatoThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladPlateAnd'
+    params: [ ]
+  TomatoLettuceSaladPlateMoveToChoppedTomato:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladPlateChoppedTomatoThen'
+    params: [ 'object: Tomato', 'conditions: Chopped' ]
+  TomatoLettuceSaladPlateChoppedTomatoPick:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladPlateChoppedTomatoThen'
+    params: [ 'object: Tomato', 'conditions: Chopped' ]
+  TomatoLettuceSaladPlateMoveToTwo:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladPlateChoppedTomatoThen'
+    params: [ 'object: Plate', 'conditions: Contains+"None | Lettuce"' ]
+  TomatoLettuceSaladPlatePlaceChoppedTomato:
+    type: 4
+#    behavior_type: 'dhtt_plugins::CookingPlatePlaceBehavior'
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladPlateChoppedTomatoThen'
+    params: [ 'object: Plate', 'conditions: Contains+"None | Lettuce"' ]
+  TomatoLettuceSaladPlateMoveToThree:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladThen'
+    params: [ 'object: Plate', 'conditions: Contains+"Lettuce, Tomato"' ]
+  TomatoLettuceSaladPlatePickTwo:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladThen'
+    params: [ 'object: Plate', 'conditions: Contains+"Lettuce, Tomato"' ]
+  TomatoLettuceSaladPlateMoveToDeliversquare:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladThen'
+    params: [ 'object: AbsorbingDeliversquare' ]
+  TomatoLettuceSaladPlatePlaceDeliversquare:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'TomatoLettuceSaladThen'
+    params: [ 'object: AbsorbingDeliversquare' ]
+

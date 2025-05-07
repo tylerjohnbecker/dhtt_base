@@ -18,7 +18,14 @@ class CookingPlaceBehavior : public CookingBehavior
 	double get_perceived_efficiency() override;
 
 	/**
-	 * First move_to the target location (to set the orientation), then place
+	 * First move_to the target location (to set the orientation), then place.
+	 *
+	 * If placing on a deliversquare, send a NOP so it clears.
+	 *
+	 * In the special case that we are placing on a deliversquare that is marked with our taint,
+	 * unmark it to free it up for other behaviors. Normally the pick behavior is the only one to
+	 * unmark static objects, but deliversquares 'pick' themselves.
+	 *
 	 * @param container unused
 	 */
 	void do_work(dhtt::Node *container) override;

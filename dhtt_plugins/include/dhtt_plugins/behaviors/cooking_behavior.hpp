@@ -12,6 +12,9 @@ namespace dhtt_plugins
 class CookingBehavior : public ActionType
 {
   public:
+	// TODO refactor subclass do_work() for redundant action requests
+	// void do_work(...)
+
 	/**
 	 * \brief parses activation_potential and destination parameters for the move behavior
 	 *
@@ -69,7 +72,7 @@ class CookingBehavior : public ActionType
 	static std::string which_arm(dhtt::Node *container);
 
 	/**
-	 * @return whether activation potential and dest_good are correct for us to work
+	 * @return whether activation potential and destination_is_good are correct for us to work
 	 */
 	bool can_work() const;
 
@@ -79,12 +82,13 @@ class CookingBehavior : public ActionType
 	 * @return '0' if obj is marked with a different taint, '1' if obj is marked with our
 	 * this->destination_mark, '2' if obj is not marked. Note that these are character '1' not 1.
 	 */
+	// TODO use an enum for this
 	char check_mark(const dhtt_msgs::msg::CookingObject &obj) const;
 
 	bool mark_object(unsigned long object_id, const std::string &mark) const;
 
-	// TODO and clear all on tree reset
-	// bool unmark_object(unsigned long object_id) const;
+	// Assumes static object and this->destination_object have the same mark
+	bool unmark_static_object_under_obj(const dhtt_msgs::msg::CookingObject &obj) const;
 
 	rclcpp::Subscription<dhtt_msgs::msg::CookingObservation>::SharedPtr
 		cooking_observation_subscriber;
@@ -135,6 +139,9 @@ class CookingBehavior : public ActionType
 					 const dhtt_msgs::msg::CookingObject &obj) const;
 
 	static std::pair<std::string, std::string> extract_keyval(const std::string &param_string);
+
+	// TODO clear all on tree reset
+	bool unmark_object(unsigned long object_id) const;
 };
 } // namespace dhtt_plugins
 

@@ -1,0 +1,51 @@
+NodeList:
+  - 'ParentThen'
+  - 'FirstTask'
+  - 'MidAnd'
+  - 'SecondTask'
+  - 'ThirdTask'
+  - 'FourthTask'
+
+expected_order:
+  - 'FirstTask'
+  - 'FourthTask'
+  - 'ThirdTask'
+  - 'SecondTask'
+
+Nodes:
+  ParentThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: [ ]
+  FirstTask:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'ParentThen'
+    params: ['object: Toaster']
+  MidAnd:
+    type: 1
+    behavior_type: 'dhtt_plugins::AndBehavior'
+    robot: 0
+    parent: 'ParentThen'
+    params: [ ]
+  SecondTask:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'MidAnd'
+    params: ['object: Cutboard']
+  ThirdTask:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'MidAnd'
+    params: ['object: LettuceDispenser']
+  FourthTask:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'MidAnd'
+    params: ['object: TomatoDispenser']

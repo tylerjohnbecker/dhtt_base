@@ -75,6 +75,50 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
 					 "interact_primary request did not succeed: %s",
 					 res.future.get()->error_msg.c_str());
+		return;
+	}
+
+	/* if placing on a deliversquare, send an extra nop so the deliversquare clears and unmark it if
+	 * needed*/
+	if (this->destination_object.object_type.find("Deliversquare") != std::string::npos)
+	{
+		req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
+		req->super_action = dhtt_msgs::srv::CookingRequest::Request::ACTION;
+		req->action.player_name = dhtt_msgs::msg::CookingAction::DEFAULT_PLAYER_NAME;
+
+		// see pr2.yaml
+		req->action.action_type = dhtt_msgs::msg::CookingAction::NO_OP;
+
+		res = this->cooking_request_client->async_send_request(req);
+		RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending NOP request");
+		this->executor->spin_until_future_complete(res);
+		RCLCPP_INFO(this->pub_node_ptr->get_logger(), "NOP interact completed");
+
+		suc = res.future.get()->success;
+		if (not suc)
+		{
+			RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "NOP request did not succeed: %s",
+						 res.future.get()->error_msg.c_str());
+			return;
+		}
+
+		// Equivalent of get_released_resources() but for "resources" on the paramserver
+		if (not this->destination_mark.empty() and
+			this->check_mark(this->destination_object) == '1')
+		{
+			RCLCPP_INFO(this->pub_node_ptr->get_logger(),
+						("Unmarking object that was marked as " + this->destination_mark +
+						 " under " + this->destination_object.object_type)
+							.c_str());
+			suc = this->unmark_static_object_under_obj(this->destination_object);
+			if (not suc)
+			{
+				RCLCPP_ERROR(
+					this->pub_node_ptr->get_logger(),
+					("Error unmarking static object under " + this->destination_object.object_type)
+						.c_str());
+			}
+		}
 	}
 
 	this->done = suc;
