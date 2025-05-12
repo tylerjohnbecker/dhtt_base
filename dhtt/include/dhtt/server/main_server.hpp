@@ -174,6 +174,19 @@ namespace dhtt
 		dhtt_utils::PredicateConjunction get_preconditions(int subtree_index);
 
 		/**
+		 * \brief collect the postconditions of temporally previous behaviors into a single predicate conjunction
+		 * 
+		 * Upwardly traverses the tree and adds all new postconditions to a growing list in order to create an estimate of the world state before a certain node is to begin
+		 * 	this is useful for deciding if the preconditions of a behavior will be met by the time it runs.
+		 * 
+		 * \param parent_name immediate parent to the proposed node
+		 * \param the index of that node in it's parent's children list
+		 * 
+		 * \return PredicateConjuction represents the prior world state
+		 */
+		dhtt_utils::PredicateConjunction collect_previous_postconditions(std::string parent_name, int child_index);
+
+		/**
 		 * \brief returns the list of subtrees which temporally will occur after the given index
 		 * 
 		 * Subtrees will only happen temporally after the given index if they share an ancestor which enforces temporal constraints (and will run after). This function gathers each topmost 
@@ -181,10 +194,11 @@ namespace dhtt
 		 * 
 		 * \param parent_name immediate parent to the proposed node
 		 * \param child_index index where the child will be inserted
+		 * \param offset to ignore the parent node set to one (each level of the tree the offset will be added to the initial value of the child index)
 		 * 
 		 * \return list of indices of the subsequent subtrees in the internal node_list
 		 */
-		std::vector<int> get_next_behaviors(std::string parent_name, int child_index);
+		std::vector<int> get_next_behaviors(std::string parent_name, int child_index, int offset=0);
 
 		/**
 		 * \brief modify helper to check if removing a node will violate any preconditions
@@ -209,12 +223,11 @@ namespace dhtt
 		 * \brief modify helper to check if mutating the given node will violate a precondition of another as well as the preconditions of it's children 
 		 * 
 		 * \param node_name candidate node for mutation
-		 * \param o_type type of behavior before mutation
 		 * \param n_type new type of the node after mutation
 		 * 
 		 * \return True if given operation doesn't violate preconditions, false otherwise
 		 */
-		bool can_mutate(std::string node_name, std::string o_type, std::string n_type);
+		bool can_mutate(std::string node_name, std::string n_type);
 
 		// control helpers
 
@@ -497,7 +510,6 @@ namespace dhtt
 		dhtt_msgs::action::Condition::Result::SharedPtr maintenance_result;
 
 		bool waiting_for_maintenance;
-		bool end;
 		int last_finished_id;
 		int used_id;
 
@@ -519,6 +531,7 @@ namespace dhtt
 		int total_nodes_added;
 		bool verbose;
 		bool running;
+		bool end;
 	};
 
 }

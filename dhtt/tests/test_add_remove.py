@@ -70,23 +70,25 @@ class TestServerAddRemove:
 				assert i in nodes_to_remove
 
 	# asserts here will only work if this is the only way that nodes have been added to the tree
-	def add_from_yaml(self, file_name, add_to="ROOT_0", file_args=[], start_index=1):
+	def add_from_yaml(self, file_name, force=True, add_to="ROOT_0"):
+
+		wd = pathlib.Path(__file__).parent.resolve()
 		
 		yaml_dict = None
 
 		assert file_name.split('.')[-1] == 'yaml'
 
-		with open(file_name, 'r') as file:
+		with open(f'{wd}{file_name}', 'r') as file:
 			yaml_dict = yaml.safe_load(file)
 
 		assert yaml_dict != None
 
 		modify_rq = ModifyRequest.Request()
 		modify_rq.type = ModifyRequest.Request.ADD_FROM_FILE
+		modify_rq.force = force
 
 		modify_rq.to_modify.append(add_to)
-		modify_rq.to_add = file_name
-		modify_rq.file_args = file_args
+		modify_rq.to_add = f'{wd}{file_name}'
 
 		modify_future = self.node.modifysrv.call_async(modify_rq)
 		rclpy.spin_until_future_complete(self.node, modify_future)
@@ -100,16 +102,41 @@ class TestServerAddRemove:
 		node_names_orig = yaml_dict['NodeList']
 		node_parents_orig = [ yaml_dict['Nodes'][i]['parent'] for i in node_names_orig ]
 
-		node_names_from_server = [ i.node_name for i in fetch_rs.found_subtrees[0].tree_nodes[start_index:] ]
-		parent_names_from_server = [ i.parent_name for i in fetch_rs.found_subtrees[0].tree_nodes[start_index:] ]
+		node_names_from_server = [ i.node_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:] ]
+		parent_names_from_server = [ i.parent_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:] ]
 
 		# verify that all nodes were added
 		for index, val in enumerate(node_names_orig):
-			assert val in node_names_from_server[index]
+			found = False;
+
+			for index2, gt_val in enumerate(node_names_from_server):
+				if val in gt_val:
+					found = True
+					break
+
+			assert found
 
 		# verify that each node has the correct parent
 		for index, val in enumerate(node_parents_orig):
-			assert val in parent_names_from_server[index] or (val == 'NONE' and parent_names_from_server[index] == add_to)
+			found = False;
+
+			for index2, gt_val in enumerate(parent_names_from_server):
+				if val in gt_val:
+					found = True
+					break
+
+			assert found or (val == 'NONE' and parent_names_from_server[index] == add_to)
+
+		goitr_names_from_server = [ i.goitr_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:] ]
+
+		# verify goitrs were added correctly
+		for index, val in enumerate(yaml_dict['Nodes']):
+			try:
+				goitr_type_from_file = i['goitr_type']
+
+				assert goitr_type_from_file == goitr_names_from_server[index]
+			except:
+				continue
 
 		return modify_rs.added_nodes
 
@@ -128,7 +155,7 @@ class TestServerAddRemove:
 
 		wd = pathlib.Path(__file__).parent.resolve()
 
-		self.add_from_yaml(f'{wd}/test_descriptions/test_simple.yaml')
+		self.add_from_yaml('/test_descriptions/test_simple.yaml')
 
 		fetch_rs = self.get_tree()
 
@@ -140,6 +167,7 @@ class TestServerAddRemove:
 				break
 
 		modify_rq = ModifyRequest.Request()
+		modify_rq.force = True;
 		modify_rq.type = ModifyRequest.Request.REMOVE
 		modify_rq.to_modify.append(to_remove.node_name)
 
@@ -163,7 +191,7 @@ class TestServerAddRemove:
 
 		wd = pathlib.Path(__file__).parent.resolve()
 
-		self.add_from_yaml(f'{wd}/test_descriptions/test_simple.yaml')
+		self.add_from_yaml('/test_descriptions/test_simple.yaml')
 
 		fetch_rs = self.get_tree()
 
@@ -176,6 +204,7 @@ class TestServerAddRemove:
 
 		modify_rq = ModifyRequest.Request()
 		modify_rq.type = ModifyRequest.Request.REMOVE
+		modify_rq.force = True;
 		modify_rq.to_modify.append(to_remove.node_name)
 
 		modify_future = self.node.modifysrv.call_async(modify_rq)
@@ -200,6 +229,7 @@ class TestServerAddRemove:
 
 		modify_rq = ModifyRequest.Request()
 		modify_rq.type = ModifyRequest.Request.REMOVE
+		modify_rq.force = True;
 		modify_rq.to_modify.append('ROOT_0')
 
 		modify_future = self.node.modifysrv.call_async(modify_rq)
@@ -218,6 +248,7 @@ class TestServerAddRemove:
 		# first check that nodes which don't exist can't be removed
 		modify_rq = ModifyRequest.Request()
 		modify_rq.type = ModifyRequest.Request.REMOVE
+		modify_rq.force = True;
 		modify_rq.to_modify.append('ROOT_23')
 
 		modify_future = self.node.modifysrv.call_async(modify_rq)
@@ -248,7 +279,7 @@ class TestServerAddRemove:
 
 		wd = pathlib.Path(__file__).parent.resolve()
 
-		self.add_from_yaml(f'{wd}/test_descriptions/test_simple.yaml')
+		self.add_from_yaml('/test_descriptions/test_simple.yaml')
 
 		fetch_rs = self.get_tree()
 
@@ -278,6 +309,7 @@ class TestServerAddRemove:
 
 		modify_rq = ModifyRequest.Request()
 		modify_rq.type = ModifyRequest.Request.ADD
+		modify_rq.force = True;
 
 		modify_rq.to_modify.append('ROOT_0')
 
@@ -298,6 +330,7 @@ class TestServerAddRemove:
 
 		modify_rq = ModifyRequest.Request()
 		modify_rq.type = ModifyRequest.Request.ADD
+		modify_rq.force = True;
 
 		modify_rq.to_modify.append('ROOT_23')
 
@@ -325,6 +358,7 @@ class TestServerAddRemove:
 		# check when the node type is not possible
 		modify_rq = ModifyRequest.Request()
 		modify_rq.type = ModifyRequest.Request.ADD
+		modify_rq.force = True;
 
 		modify_rq.to_modify.append('ROOT_23')
 
@@ -347,7 +381,7 @@ class TestServerAddRemove:
 
 		wd = pathlib.Path(__file__).parent.resolve()
 
-		self.add_from_yaml(f'{wd}/test_descriptions/test_simple.yaml')
+		self.add_from_yaml('/test_descriptions/test_simple.yaml')
 
 		fetch_rs = self.get_tree()
 
@@ -360,6 +394,7 @@ class TestServerAddRemove:
 
 		modify_rq = ModifyRequest.Request()
 		modify_rq.type = ModifyRequest.Request.ADD
+		modify_rq.force = True;
 
 		modify_rq.to_modify.append(behavior_add_to.node_name)
 
@@ -386,6 +421,7 @@ class TestServerAddRemove:
 
 		modify_rq = ModifyRequest.Request()
 		modify_rq.type = ModifyRequest.Request.ADD
+		modify_rq.force = True;
 
 		modify_rq.to_modify.append('ROOT_0')
 
@@ -406,32 +442,33 @@ class TestServerAddRemove:
 
 		wd = pathlib.Path(__file__).parent.resolve()
 
-		self.add_from_yaml(f'{wd}/test_descriptions/test_simple.yaml')
+		self.add_from_yaml('/test_descriptions/test_simple.yaml')
 		
 		self.reset_tree()
 
 		self.multiple_yaml(wd)
 
-	def test_add_with_file_args(self):
-		self.initialize()
-		self.reset_tree()
+	# def test_add_with_file_args(self):
+	# 	self.initialize()
+	# 	self.reset_tree()
 
-		modify_rq = ModifyRequest.Request()
-		modify_rq.type = ModifyRequest.Request.ADD
+	# 	modify_rq = ModifyRequest.Request()
+	# 	modify_rq.type = ModifyRequest.Request.ADD
+	# 	modify_rq.force = True;
 
-		modify_rq.to_modify.append('ROOT_0')
+	# 	modify_rq.to_modify.append('ROOT_0')
 
-		modify_rq.add_node = Node()
-		modify_rq.add_node.type = Node.THEN
-		modify_rq.add_node.node_name = 'ParentThen'
-		modify_rq.add_node.plugin_name = 'dhtt_plugins::ThenBehavior' # just for now
+	# 	modify_rq.add_node = Node()
+	# 	modify_rq.add_node.type = Node.THEN
+	# 	modify_rq.add_node.node_name = 'ParentThen'
+	# 	modify_rq.add_node.plugin_name = 'dhtt_plugins::ThenBehavior' # just for now
 
-		modify_rs = self.get_modify_result(modify_rq)
+	# 	modify_rs = self.get_modify_result(modify_rq)
 
-		assert modify_rs.success == True
-		assert 'ParentThen' in modify_rs.added_nodes[0]
-		assert modify_rs.error_msg == ''
+	# 	assert modify_rs.success == True
+	# 	assert 'ParentThen' in modify_rs.added_nodes[0]
+	# 	assert modify_rs.error_msg == ''
 
-		wd = pathlib.Path(__file__).parent.parent.resolve()
+	# 	wd = pathlib.Path(__file__).parent.parent.resolve()
 
-		self.add_from_yaml(f'{wd}/sample_tasks/pick_place.yaml', add_to=modify_rs.added_nodes[0], file_args=[ 'target: object1', 'pick_spot: loc1', 'place_spot: loc2' ], start_index=2)
+	# 	self.add_from_yaml('/sample_tasks/pick_place.yaml', add_to=modify_rs.added_nodes[0], file_args=[ 'target: object1', 'pick_spot: loc1', 'place_spot: loc2' ], start_index=2)

@@ -113,7 +113,7 @@ void CookingBehavior::parse_params(std::vector<std::string> params)
 double CookingBehavior::get_perceived_efficiency()
 {
 	// Make sure we're up to date with observations
-	this->executor->spin_all(std::chrono::nanoseconds(0));
+	// this->executor->spin_all(std::chrono::nanoseconds(0));
 
 	if (not this->last_obs)
 	{
@@ -175,7 +175,7 @@ void CookingBehavior::initialize_()
 			std::bind(&CookingBehavior::observation_callback, this, std::placeholders::_1));
 
 	this->cooking_request_client =
-		this->pub_node_ptr->create_client<dhtt_msgs::srv::CookingRequest>("Cooking_Server", 10);
+		this->pub_node_ptr->create_client<dhtt_msgs::srv::CookingRequest>("Cooking_Server");
 
 	if (not this->cooking_request_client->wait_for_service(std::chrono::seconds(1)))
 	{

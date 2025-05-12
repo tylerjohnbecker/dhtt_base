@@ -181,6 +181,12 @@ class ServerNode (rclpy.node.Node):
 		self.waiting = False
 		self.success = data.success
 
+def find(to_search, name):
+	for i in to_search:
+		if name in i:
+			return i
+	assert False
+
 class TestGoitrSimple:
 	
 	rclpy.init()
@@ -343,19 +349,36 @@ class TestGoitrSimple:
 
 		assert modify_rs.success == pass_check
 
-	def remove_node(self, node_name):
+	def remove_node(self, node_name, success=True, force=True):
 
 		modify_rq = ModifyRequest.Request()
 
 		modify_rq.type = ModifyRequest.Request.REMOVE
 		modify_rq.to_modify = [ node_name ]
+		modify_rq.force = force
 
 		modify_future = self.node.modifysrv.call_async(modify_rq)
 		rclpy.spin_until_future_complete(self.node, modify_future)
 
 		modify_rs = modify_future.result()
 
-		assert modify_rs.success == True
+		assert modify_rs.success == success
+
+	def mutate_node(self, node_name, n_type, success=True, force=True):
+
+		modify_rq = ModifyRequest.Request()
+
+		modify_rq.type = ModifyRequest.Request.MUTATE
+		modify_rq.to_modify = [ node_name ]
+		modify_rq.force = force
+		modify_rq.mutate_type = n_type
+
+		modify_future = self.node.modifysrv.call_async(modify_rq)
+		rclpy.spin_until_future_complete(self.node, modify_future)
+
+		modify_rs = modify_future.result()
+
+		assert modify_rs.success == success
 
 	def start_tree(self):
 		control_rq = ControlRequest.Request()
@@ -660,7 +683,7 @@ class TestGoitrSimple:
 		self.add_node(wrong_node, added_nodes[0], 1, False)
 
 		wrong_node2 = Node()
-		wrong_node2.node_name = "yes_add"
+		wrong_node2.node_name = "no_add"
 		wrong_node2.parent_name = 'NONE'
 		wrong_node2.params = ['activation_potential: .4', 'a: b'] 
 		wrong_node2.plugin_name = 'dhtt_plugins::TestBehavior'
@@ -677,15 +700,254 @@ class TestGoitrSimple:
 
 		self.add_node(right_node, added_nodes[0], 1, True)
 
-
 	def test_can_add_multi_level(self, serial):
-		pass
+		
+		self.initialize()
+		self.reset_tree()
 
-	def test_can_remove(self, serial):
-		pass
+		added_nodes = self.add_from_yaml("/test_descriptions/pre_post/test_can_add_multi_level.yaml", force=True)
+
+		assert len(added_nodes) > 0
+
+		# adding wrong nodes to the tree at bottom then
+		add_to = None
+
+		for i in added_nodes:
+			if 'BottomThen' in i:
+				add_to = i
+				break
+
+		assert add_to != None
+
+		# A1 violation
+		wrong_node = Node()
+		wrong_node.node_name = 'no_add'
+		wrong_node.parent_name = 'None'
+		wrong_node.params = ['activation_potential: .4', 'c: d'] # after A1 we have !c: d
+		wrong_node.plugin_name = 'dhtt_plugins::TestBehavior'
+		wrong_node.type = Node.BEHAVIOR
+
+		self.add_node(wrong_node, add_to, 1, False)
+
+		# A2 violation
+		wrong_node.node_name = 'no_add'
+		wrong_node.parent_name = 'None'
+		wrong_node.params = ['activation_potential: .4', 'e: f'] # For A2 we need e: f
+		wrong_node.plugin_name = 'dhtt_plugins::TestBehavior'
+		wrong_node.type = Node.BEHAVIOR
+
+		self.add_node(wrong_node, add_to, 1, False)
+
+		# A4 violation
+		wrong_node.node_name = 'no_add'
+		wrong_node.parent_name = 'None'
+		wrong_node.params = ['activation_potential: .4', 'a: b'] # After A4 we have !a: b
+		wrong_node.plugin_name = 'dhtt_plugins::TestBehavior'
+		wrong_node.type = Node.BEHAVIOR
+
+		self.add_node(wrong_node, add_to, 1, False)
+
+		# A4 violation
+		wrong_node.node_name = 'no_add'
+		wrong_node.parent_name = 'None'
+		wrong_node.params = ['activation_potential: .4', '!a: b'] # For A5 we need !a: b
+		wrong_node.plugin_name = 'dhtt_plugins::TestBehavior'
+		wrong_node.type = Node.BEHAVIOR
+
+		self.add_node(wrong_node, add_to, 1, False)
+
+		# now for the same test with the or node
+		self.reset_tree()
+		added_nodes = self.add_from_yaml("/test_descriptions/pre_post/test_can_add_multi_level_or.yaml", force=True)
+
+		assert len(added_nodes) > 0
+
+		# adding wrong nodes to the tree at bottom then
+		add_to = None
+
+		for i in added_nodes:
+			if 'BottomThen' in i:
+				add_to = i
+				break
+
+		assert add_to != None
+
+		# A1 violation 
+		wrong_node.node_name = 'add'
+		wrong_node.parent_name = 'None'
+		wrong_node.params = ['activation_potential: .4', 'c: d'] # after A1 we have !c: d
+		wrong_node.plugin_name = 'dhtt_plugins::TestBehavior'
+		wrong_node.type = Node.BEHAVIOR
+
+		self.add_node(wrong_node, add_to, 1, False)
+
+		# A2 violation is not a problem because OR
+		wrong_node.node_name = 'add'
+		wrong_node.parent_name = 'None'
+		wrong_node.params = ['activation_potential: .4', 'e: f'] # For A2 we need e: f
+		wrong_node.plugin_name = 'dhtt_plugins::TestBehavior'
+		wrong_node.type = Node.BEHAVIOR
+
+		self.add_node(wrong_node, add_to, 1, True)
+
+		# A4 violation
+		wrong_node.node_name = 'no_add'
+		wrong_node.parent_name = 'None'
+		wrong_node.params = ['activation_potential: .4', 'a: b'] # After A4 we have !a: b
+		wrong_node.plugin_name = 'dhtt_plugins::TestBehavior'
+		wrong_node.type = Node.BEHAVIOR
+
+		self.add_node(wrong_node, add_to, 1, False)
+
+		# A4 violation
+		wrong_node.node_name = 'no_add'
+		wrong_node.parent_name = 'None'
+		wrong_node.params = ['activation_potential: .4', '!a: b'] # For A5 we need !a: b
+		wrong_node.plugin_name = 'dhtt_plugins::TestBehavior'
+		wrong_node.type = Node.BEHAVIOR
+
+		self.add_node(wrong_node, add_to, 1, False)
+
+	def test_can_remove_multi_level(self, serial):
+		
+		self.initialize()
+		self.reset_tree()
+
+		added_nodes = self.add_from_yaml("/test_descriptions/pre_post/test_can_remove_multi_level.yaml", force=True)
+
+		assert len(added_nodes) > 0
+
+		remove1 = find(added_nodes, 'A1')
+		remove2 = find(added_nodes, 'A3')
+		remove3 = find(added_nodes, 'A4')
+		remove4 = find(added_nodes, 'A7')
+		remove5 = find(added_nodes, 'A2')
+		remove6 = find(added_nodes, 'A5')
+		remove7 = find(added_nodes, 'A6')
+		remove8 = find(added_nodes, 'A8')
+
+		self.remove_node(remove1, False, False)
+		self.remove_node(remove2, False, False)
+		self.remove_node(remove3, False, False)
+		self.remove_node(remove4, False, False)
+		self.remove_node(remove5, True, False)
+		self.remove_node(remove6, True, False)
+		self.remove_node(remove7, True, False)
+		self.remove_node(remove8, True, False)
+
+		self.reset_tree()
+
+		added_nodes = self.add_from_yaml("/test_descriptions/pre_post/test_can_remove_multi_level_or.yaml", force=True)
+
+		assert len(added_nodes) > 0
+
+		remove1 = find(added_nodes, 'A1')
+		remove2 = find(added_nodes, 'A3')
+		remove3 = find(added_nodes, 'A6')
+		remove4 = find(added_nodes, 'A4')
+		remove5 = find(added_nodes, 'A5')
+		remove6 = find(added_nodes, 'A7')
+		remove7 = find(added_nodes, 'A2')
+		remove8 = find(added_nodes, 'A8')
+
+		self.remove_node(remove3, False, False)
+		self.remove_node(remove1, True, False)
+		self.remove_node(remove2, True, False)
+		self.remove_node(remove4, True, False)
+		self.remove_node(remove5, True, False)
+		self.remove_node(remove6, True, False)
+		self.remove_node(remove7, True, False)
+		self.remove_node(remove8, True, False)
+
 
 	def test_can_mutate(self, serial):
-		pass
+
+		self.initialize()
+		self.reset_tree()
+
+		# first check and to or 
+		## no problem
+		self.reset_tree()
+		added_nodes = self.add_from_yaml("/test_descriptions/pre_post/and_no_problem.yaml", force=True)
+
+		to_mut = find(added_nodes, 'ParentAnd')
+		self.mutate_node(to_mut, 'dhtt_plugins::OrBehavior', True, False)
+
+		## problem
+		# self.reset_tree()
+		# added_nodes = self.add_from_yaml("/test_descriptions/pre_post/and_problem_up_tree.yaml", force=True)
+
+		# to_mut = find(added_nodes, 'BottomAnd')
+		# self.mutate_node(to_mut, 'dhtt_plugins::OrBehavior', False, False)
+
+		# next then to and
+		## no problem 
+		self.reset_tree()
+		added_nodes = self.add_from_yaml("/test_descriptions/pre_post/then_no_problem.yaml", force=True)
+
+		to_mut = find(added_nodes, 'ParentThen')
+		self.mutate_node(to_mut, 'dhtt_plugins::AndBehavior', True, False)
+
+		# next then to or
+		## no problem
+		self.reset_tree()
+		added_nodes = self.add_from_yaml("/test_descriptions/pre_post/then_no_problem.yaml", force=True)
+
+		to_mut = find(added_nodes, 'ParentThen')
+		self.mutate_node(to_mut, 'dhtt_plugins::OrBehavior', True, False)
+
+		## problem
+		# self.reset_tree()
+		# added_nodes = self.add_from_yaml("/test_descriptions/pre_post/then_problem_up_tree.yaml", force=True)
+
+		# to_mut = find(added_nodes, 'BottomThen')
+		# self.mutate_node(to_mut, 'dhtt_plugins::OrBehavior', False, False)
+
+		# next OR to AND
+		## no problem
+		self.reset_tree()
+		added_nodes = self.add_from_yaml("/test_descriptions/pre_post/or_no_problem.yaml", force=True)
+
+		to_mut = find(added_nodes, 'ParentOr')
+		self.mutate_node(to_mut, 'dhtt_plugins::AndBehavior', True, False)
+
+		## problem
+		# self.reset_tree()
+		# added_nodes = self.add_from_yaml("/test_descriptions/pre_post/or_problem_up_tree.yaml", force=True)
+
+		# to_mut = find(added_nodes, 'BottomOr')
+		# self.mutate_node(to_mut, 'dhtt_plugins::AndBehavior', False, False)
+
+		# AND to THEN
+		## no problem
+		self.reset_tree()
+		added_nodes = self.add_from_yaml("/test_descriptions/pre_post/and_no_problem.yaml", force=True)
+
+		to_mut = find(added_nodes, 'ParentAnd')
+		self.mutate_node(to_mut, 'dhtt_plugins::ThenBehavior', True, False)
+
+		## problem
+		self.reset_tree()
+		added_nodes = self.add_from_yaml("/test_descriptions/pre_post/and_problem_with_child_order.yaml", force=True)
+
+		to_mut = find(added_nodes, 'BottomAnd')
+		self.mutate_node(to_mut, 'dhtt_plugins::ThenBehavior', False, False)
+
+		# OR to THEN
+		## no problem
+		self.reset_tree()
+		added_nodes = self.add_from_yaml("/test_descriptions/pre_post/or_no_problem.yaml", force=True)
+
+		to_mut = find(added_nodes, 'ParentOr')
+		self.mutate_node(to_mut, 'dhtt_plugins::ThenBehavior', True, False)
+
+		## problem
+		self.reset_tree()
+		added_nodes = self.add_from_yaml("/test_descriptions/pre_post/or_problem_with_child_order.yaml", force=True)
+
+		to_mut = find(added_nodes, 'BottomOr')
+		self.mutate_node(to_mut, 'dhtt_plugins::ThenBehavior', False, False)
+
 
 	def test_maintenance_time_to_compute(self, serial):
 		pass

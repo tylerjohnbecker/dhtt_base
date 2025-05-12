@@ -470,6 +470,8 @@ namespace dhtt
 
 		// callback group
 		rclcpp::CallbackGroup::SharedPtr conc_group;
+		rclcpp::CallbackGroup::SharedPtr exclusive_group;
+		rclcpp::CallbackGroup::SharedPtr exclusive_maintenance_group;
 		rclcpp::SubscriptionOptions sub_opts;
 		rclcpp::PublisherOptions pub_opts;
 
@@ -509,6 +511,9 @@ namespace dhtt
 		std::shared_ptr<std::thread> condition_thread;
 
 		std::mutex logic_mut;
+		std::mutex maintenance_mut;
+
+		std::map<std::string, bool> server_ready;
 
 		std::vector<dhtt_msgs::msg::Resource> owned_resources;
 		std::vector<dhtt_msgs::msg::Resource> available_resources;

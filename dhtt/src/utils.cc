@@ -45,6 +45,13 @@ namespace dhtt_utils
 		return to_ret;
 	}
 
+	std::string to_string(const dhtt_msgs::msg::Pair& pred)
+	{
+			std::string to_ret = std::string( ( pred.negate ) ? "!" : " " );
+
+			return "(" + to_ret + pred.key + ": " + pred.value + ")";
+	}
+
 	std::string to_string(std::shared_ptr<PredicateConjunction> pred) 
 	{
 		// essentially strings should look like () for each predicate, [] for each depth, ! is not, and then key: val
@@ -205,7 +212,10 @@ namespace dhtt_utils
 	{
 		bool operator()(const dhtt_msgs::msg::Pair& lhs, const dhtt_msgs::msg::Pair& rhs) const
 		{
-			return not predicate_partial_equals(lhs, rhs); 
+			if ( predicate_partial_equals(lhs, rhs) )
+				return false;
+
+			return to_string(lhs) < to_string(rhs); 
 		}
 	};
 
@@ -263,82 +273,130 @@ namespace dhtt_utils
 		auto OR = [](bool a, bool b){ return a or b; };
 
 		// this might be useful enough to make a full function
-		std::function<void(std::map<dhtt_msgs::msg::Pair, bool, PairComparator>&, const PredicateConjunction&)> build_ground_truth = 
-			[&build_ground_truth](std::map<dhtt_msgs::msg::Pair, bool, PairComparator>& ground_truth, const PredicateConjunction& postconditions)
+		std::function<void(std::list<std::map<std::string, bool>>&, const PredicateConjunction&)> build_ground_truth = 
+			[&build_ground_truth](std::list<std::map<std::string, bool>>& ground_truth_tables, const PredicateConjunction& postconditions)
 		{
-			// loop through predicates
-			for ( auto iter = postconditions.predicates.begin() ; iter != postconditions.predicates.end() ; iter++ )
-				ground_truth[*iter] = true;
+			if ( postconditions.logical_operator == LOGICAL_AND or postconditions.logical_operator == LOGICAL_OTHER )
+			{
+				// loop through predicates
+				for ( auto iter = postconditions.predicates.begin() ; iter != postconditions.predicates.end() ; iter++ )
+				{
+					dhtt_msgs::msg::Pair cp = predicate_copy(*iter);
+					cp.negate = false;
 
-			// then recurse through conjunctions
-			for ( auto iter = postconditions.conjunctions.begin() ; iter != postconditions.conjunctions.end() ; iter++ )
-				build_ground_truth(ground_truth, **iter);
+					ground_truth_tables.front()[to_string(cp)] = (*iter).negate;
+				}
+
+				// then recurse through conjunctions
+				for ( auto iter = postconditions.conjunctions.begin() ; iter != postconditions.conjunctions.end() ; iter++ )
+					build_ground_truth(ground_truth_tables, **iter);
+			}
+			else // this call is essentially distributing the or across the equation (presumably very memory intensive)
+			{
+				// first make a deep copy of the 0th map
+				std::map<std::string, bool> copy = ground_truth_tables.front();
+
+				// then delete
+				ground_truth_tables.erase(ground_truth_tables.begin());
+
+				// then for each potential predicate insert a new table at 0
+				for ( auto iter = postconditions.predicates.begin() ; iter != postconditions.predicates.end() ; iter++ )
+				{
+					std::map<std::string, bool> tmp = copy;
+
+					dhtt_msgs::msg::Pair cp = predicate_copy(*iter);
+					cp.negate = false;
+
+					copy[to_string(cp)] = (*iter).negate;
+
+					ground_truth_tables.insert(ground_truth_tables.begin(), tmp);
+				}
+
+				// for each conjunction insert a new table at 0 and recurse
+				for ( auto iter = postconditions.conjunctions.begin() ; iter != postconditions.conjunctions.end(); iter++ )
+				{					
+					std::map<std::string, bool> tmp = copy;
+					ground_truth_tables.insert(ground_truth_tables.begin(), tmp);
+
+					build_ground_truth(ground_truth_tables, **iter);
+				}
+			}
 		};
 
-		std::function<bool(const std::map<dhtt_msgs::msg::Pair, bool, PairComparator>&, const PredicateConjunction&)> evaluate_conjunction = 
-			[&] (const std::map<dhtt_msgs::msg::Pair, bool, PairComparator>& ground_truth, const PredicateConjunction& preconditions) 
+		std::function<bool(const std::map<std::string, bool>&, const PredicateConjunction&)> evaluate_conjunction = 
+			[&] (const std::map<std::string, bool>& ground_truth, const PredicateConjunction& conditions) 
 		{
-			auto op = (preconditions.logical_operator == LOGICAL_AND)? AND : OR;
+			auto op = (conditions.logical_operator == LOGICAL_AND)? AND : OR;
 
-			bool satisfied = (preconditions.logical_operator == LOGICAL_AND)? true : false;
+			bool satisfied = (conditions.logical_operator == LOGICAL_AND)? true : false;
 
 			// first check all the predicates
-			for ( auto iter = preconditions.predicates.begin() ; iter != preconditions.predicates.end() ; iter++ )
+			for ( auto iter = conditions.predicates.begin() ; iter != conditions.predicates.end() ; iter++ )
 			{
 				dhtt_msgs::msg::Pair cp = predicate_copy(*iter);
+				cp.negate = false;
 
 				bool exists = true;
 				bool pred = false;
 
 				// try to find the normal value
-				if ( ground_truth.find(cp) != ground_truth.end() )
-					pred = ground_truth.at(cp);
+				if ( ground_truth.find(to_string(cp)) != ground_truth.end() )
+					pred = ground_truth.at(to_string(cp));
 				else
 					exists = false;
 
 				cp.negate = not cp.negate;
 
 				// now try the negated version to check if it is contradicted
-				if ( ground_truth.find(cp) != ground_truth.end() )
-					exists = exists or false;
+				// if ( ground_truth.find(cp) != ground_truth.end() )
+				// 	std::cout << "as;lkjf" << std::endl; 
 
 				if ( not exists )
-				{
 					satisfied = op(satisfied, true);
-				}
-				else if ( pred )
-				{
+				else if ( pred == (*iter).negate )
 					satisfied = op(satisfied, true);
-				}
 				else // the negation of the predicate exists in ground truth and therefore the predicate is false 
-				{
 					satisfied = op(satisfied, false);
-				}
 
 				// early exit
-				if ( preconditions.logical_operator == LOGICAL_AND and not satisfied )
+				if ( ( conditions.logical_operator == LOGICAL_AND or conditions.logical_operator == LOGICAL_OTHER ) and not satisfied )
 					return false;
+				else if ( conditions.logical_operator == LOGICAL_OR and satisfied )
+					return true;
 			}
 
 			// next recursively check the predicate conjunctions
-			for ( auto iter = preconditions.conjunctions.begin() ; iter != preconditions.conjunctions.end() ; iter++ )
+			for ( auto iter = conditions.conjunctions.begin() ; iter != conditions.conjunctions.end() ; iter++ )
 			{
 				satisfied = op(satisfied, evaluate_conjunction( ground_truth, **iter ) );
 
-				if ( preconditions.logical_operator == LOGICAL_AND and not satisfied )
+				if ( ( conditions.logical_operator == LOGICAL_AND or conditions.logical_operator == LOGICAL_OTHER ) and not satisfied )
 					return false;
+				else if ( conditions.logical_operator == LOGICAL_OR and satisfied )
+					return true;
 			}
 
-			return satisfied;
+			return true;
 		};
 
 		// first build the dictionary of ground truth
-		std::map<dhtt_msgs::msg::Pair, bool, PairComparator> ground_truth;
+		std::list<std::map<std::string, bool>> ground_truth_tables;
+		ground_truth_tables.push_back(std::map<std::string, bool>());
 
-		build_ground_truth(ground_truth, postconditions);
+		build_ground_truth(ground_truth_tables, postconditions);
 
 		// check the truth value recursively against the dictionary and return
-		return not evaluate_conjunction(ground_truth, preconditions);
+		bool to_ret = false;
+
+		for ( auto iter = ground_truth_tables.begin() ; iter != ground_truth_tables.end() ; iter++ )
+		{
+			to_ret = evaluate_conjunction(*iter, preconditions);
+
+			if (to_ret)
+				return false;
+		}
+
+		return true;
 	}
 
 	bool contains_contradiction (const PredicateConjunction& to_check)
@@ -430,10 +488,10 @@ namespace dhtt_utils
 
 	std::shared_ptr<PredicateConjunction> negate_predicates(const PredicateConjunction& to_negate)
 	{
-		std::shared_ptr<dhtt_utils::PredicateConjunction> to_ret;
-
-		// follow de'morgan's law
-		to_ret->logical_operator = (to_negate.logical_operator == LOGICAL_AND)? LOGICAL_OR : LOGICAL_AND;	
+		std::shared_ptr<PredicateConjunction> to_ret = std::make_shared<PredicateConjunction>();
+		to_ret->predicates = std::vector<dhtt_msgs::msg::Pair>();
+		to_ret->conjunctions = std::vector<std::shared_ptr<PredicateConjunction>>();
+		to_ret->logical_operator = to_negate.logical_operator;
 
 		// negate all the predicates
 		for ( auto iter = to_negate.predicates.begin() ; iter != to_negate.predicates.end() ; iter++ )

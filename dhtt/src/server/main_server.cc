@@ -4,7 +4,7 @@ namespace dhtt
 {
 	MainServer::MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner) : 
 									rclcpp::Node(node_name),//, rclcpp::NodeOptions().allow_undeclared_parameters(true).automatically_declare_parameters_from_overrides(true)), 
-									conc_group(nullptr), spinner_cp(spinner), total_nodes_added(1), end(false), verbose(true), running(false)
+									conc_group(nullptr), spinner_cp(spinner), total_nodes_added(1), verbose(true), running(false)
 	{
 		// create a callback group for parallel ones
 		this->conc_group = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
@@ -223,8 +223,6 @@ namespace dhtt
 
 					return;
 				}
-
-				this->start_maintain(*iter);
 			}
 
 			remove_modify(request->to_modify);
@@ -255,7 +253,7 @@ namespace dhtt
 
 				if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::MUTATE )
 				{
-					if ( not force and not this->can_mutate(*iter, this->node_map[*iter]->plugin_name, request->mutate_type) )
+					if ( not force and not this->can_mutate(*iter, request->mutate_type) )
 					{
 						RCLCPP_ERROR(this->get_logger(), "Cannot mutate [%s] to requested type [%s] without violation occuring. Returning in error!", (*iter).c_str(), request->mutate_type.c_str());
 
@@ -289,7 +287,8 @@ namespace dhtt
 					return;
 				}
 
-				this->start_maintain(*iter);
+				int id = this->start_maintain("ROOT_0");
+				this->wait_for_maintain(id);
 			}
 
 			remove_modify(request->to_modify);
@@ -338,6 +337,16 @@ namespace dhtt
 		if ( request->type == dhtt_msgs::srv::ControlRequest::Request::RESET )
 		{
 			RCLCPP_INFO(this->get_logger(), "Reset request received!");
+
+			while ( (int) this->being_modified.size() > 0 and rclcpp::ok() );
+
+			if ( not rclcpp::ok() )
+			{
+				response->error_msg = "ROS died so tree was technically reset!";
+
+				response->success = not strcmp(response->error_msg.c_str(), "");
+				return;
+			}
 
 			response->error_msg = this->reset_tree();
 
@@ -547,7 +556,7 @@ namespace dhtt
 
 		if ( not force and not this->can_add(to_add, index) )
 		{
-			std::string err = this->node_map[to_add.node_name]->get_error_msg();
+			std::string err = "Precondition violation found in subsequent behaviors.";
 
 			this->node_map.erase(to_add.node_name);
 
@@ -712,6 +721,9 @@ namespace dhtt
 
 			this->node_list.tree_nodes.erase(found_node_iter);
 
+			// remove the maintenance client as well
+			this->maintenance_client_ptrs.erase(to_remove);
+
 			response->removed_nodes.push_back(look_for);
 
 			// now remove the node and it's reference from the parent from the real node map, also remove from the spinner
@@ -726,6 +738,9 @@ namespace dhtt
 		// instead they just have to be maintained after the subtree is removed
 		this->maintain_local_subtree();
 
+		int id = this->start_maintain("ROOT_0");
+		this->wait_for_maintain(id);
+
 		return "";
 	}
 	
@@ -738,16 +753,78 @@ namespace dhtt
 
 	dhtt_utils::PredicateConjunction MainServer::get_postconditions(int subtree_index)
 	{
-		return dhtt_utils::convert_to_struct(this->node_list.tree_nodes[subtree_index].preconditions);
+		return dhtt_utils::convert_to_struct(this->node_list.tree_nodes[subtree_index].postconditions);
 	}
 
 	dhtt_utils::PredicateConjunction MainServer::get_preconditions(int subtree_index)
 	{
-		return dhtt_utils::convert_to_struct(this->node_list.tree_nodes[subtree_index].postconditions);
+		return dhtt_utils::convert_to_struct(this->node_list.tree_nodes[subtree_index].preconditions);
+	}
+
+	dhtt_utils::PredicateConjunction MainServer::collect_previous_postconditions(std::string parent_name, int child_index)
+	{
+		// basic setup
+		dhtt_utils::PredicateConjunction to_ret;
+		to_ret.logical_operator = dhtt_utils::LOGICAL_AND;
+
+		auto find_name = [&]( dhtt_msgs::msg::Node to_check ) { return not strcmp(parent_name.c_str(), to_check.node_name.c_str()); };
+
+		int iter = std::distance(this->node_list.tree_nodes.begin(), std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), find_name));
+		int prev_index = this->node_list.tree_nodes[iter].children[child_index];
+
+		auto find_index = [&]( int to_check ) { return prev_index == to_check; };
+
+		std::stack<dhtt_utils::PredicateConjunction> pred_stack;
+		bool first = true;
+
+		// all the way up the tree (0 is always the root node)
+		while ( iter > 0 ) 
+		{
+			// if it's a then node
+			if ( this->node_list.tree_nodes[iter].type == dhtt_msgs::msg::Node::THEN )
+			{
+
+				// take all the subsequent children
+				dhtt_msgs::msg::Node ancestor = this->node_list.tree_nodes[iter];
+				int my_child_index = std::distance(ancestor.children.begin(), std::find_if(ancestor.children.begin(), ancestor.children.end(), find_index));
+				RCLCPP_WARN(this->get_logger(), "Found Ancestor %s", ancestor.node_name.c_str());
+
+				if ( not first )
+					my_child_index -= 1;
+				else 
+					first = false;
+
+				// push the left behaviors onto the stack
+				for ( int i = my_child_index; i >= 0; i-- )
+				{
+					RCLCPP_ERROR(this->get_logger(), "Pushing child [%s] onto the stack", this->node_list.tree_nodes[ancestor.children[i]].node_name.c_str());
+					pred_stack.push(this->get_postconditions(ancestor.children[i]));
+				}
+
+			} 
+
+			// continue up the tree
+			prev_index = iter;
+			iter = this->node_list.tree_nodes[iter].parent;
+		}
+
+		while ( not pred_stack.empty() )
+		{
+			dhtt_utils::PredicateConjunction popped_pred = pred_stack.top();
+
+			dhtt_utils::append_predicate_conjunction(to_ret, popped_pred);
+			dhtt_utils::remove_predicate_partial_duplicates(to_ret);
+			RCLCPP_WARN(this->get_logger(), "%s -----------> %s", dhtt_utils::to_string(popped_pred).c_str(),dhtt_utils::to_string(to_ret).c_str() );
+
+			pred_stack.pop();
+		}
+
+
+		return to_ret;
 	}
 
 	// need to change the node child index that we are looking for as we go up the tree
-	std::vector<int> MainServer::get_next_behaviors(std::string parent_name, int child_index)
+	std::vector<int> MainServer::get_next_behaviors(std::string parent_name, int child_index, int offset)
 	{
 		// basic setup
 		std::vector<int> to_ret;
@@ -755,33 +832,35 @@ namespace dhtt
 		auto find_name = [&]( dhtt_msgs::msg::Node to_check ) { return not strcmp(parent_name.c_str(), to_check.node_name.c_str()); };
 
 		int iter = std::distance(this->node_list.tree_nodes.begin(), std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), find_name));
-		int next_index = child_index;
+		int prev_index = this->node_list.tree_nodes[iter].children[child_index + offset];
 
-		// first if the parent is a THEN we add all the subsequent children
-		if ( this->node_list.tree_nodes[iter].type == dhtt_msgs::msg::Node::THEN )
-			for ( int i = child_index; i < (int) this->node_list.tree_nodes[iter].children.size() ; i++ )
-				to_ret.push_back(this->node_list.tree_nodes[iter].children[i]); 
+		auto find_index = [&]( int to_check ) { return prev_index == to_check; };
 
-		auto find_index = [&]( int to_check ) { return next_index == to_check; };
+		bool first = true;
 
-		// up the tree till we hit a then node
-		while ( iter > 0 ) // 0 is always the root node ( no parents )
+		// all the way up the tree (0 is always the root node)
+		while ( iter > 0 ) 
 		{
-			next_index = this->node_list.tree_nodes[iter].parent;
-
 			// if it's a then node
-			if ( this->node_list.tree_nodes[next_index].type == dhtt_msgs::msg::Node::THEN )
+			if ( this->node_list.tree_nodes[iter].type == dhtt_msgs::msg::Node::THEN )
 			{
+
 				// take all the subsequent children
-				dhtt_msgs::msg::Node ancestor = this->node_list.tree_nodes[next_index];
+				dhtt_msgs::msg::Node ancestor = this->node_list.tree_nodes[iter];
 				int my_child_index = std::distance(ancestor.children.begin(), std::find_if(ancestor.children.begin(), ancestor.children.end(), find_index));
 
-				for ( int i = my_child_index + 1; i < (int) ancestor.children.size(); i++ )
+				if ( not first )
+					my_child_index += offset;
+				else 
+					first = false;
+
+				for ( int i = my_child_index; i < (int) ancestor.children.size(); i++ )
 					to_ret.push_back(ancestor.children[i]);
 			} 
 
 			// continue up the tree
-			iter = next_index;
+			prev_index = iter;
+			iter = this->node_list.tree_nodes[iter].parent;
 		}
 
 		return to_ret;
@@ -797,17 +876,39 @@ namespace dhtt
 		if ( name_index >= (int) this->node_list.tree_nodes.size() )
 			return false;
 
-		// std::vector<int> temporal_dependencies = this->get_next_behaviors(name_index);
+		// get position in parent list of children ( sorry for this monstrosity  )
+		int index = -1;
+		for ( index = 0; index < (int) this->node_list.tree_nodes[this->node_list.tree_nodes[name_index].parent].children.size(); index++ )
+			if ( this->node_list.tree_nodes[this->node_list.tree_nodes[name_index].parent].children[index] == name_index )
+				break;
 
-		// auto postconditions = *dhtt_utils::negate_predicates( this->get_postconditions( name_index ) );
+		std::vector<int> forward_temporal_dependencies = this->get_next_behaviors(this->node_list.tree_nodes[name_index].parent_name, index, 1);
+		auto postconditions = *dhtt_utils::negate_predicates(this->node_map[node_name]->logic->get_postconditions());
 
-		// for ( int iter : temporal_dependencies )
-		// {
-		// 	auto preconditions = this->get_preconditions(iter);
+		int most_recent_parent = this->node_list.tree_nodes[name_index].parent;
+		
+		for ( int iter : forward_temporal_dependencies )
+		{
+			auto subsequent_preconditions = this->get_preconditions(iter);
+			auto subsequent_postconditions = this->get_postconditions(iter);
+
+			RCLCPP_WARN(this->get_logger(), "Check predicate %s for %s", dhtt_utils::to_string(postconditions).c_str(), this->node_list.tree_nodes[iter].node_name.c_str());
+
+			if ( dhtt_utils::violates_predicates(postconditions, subsequent_preconditions) )
+				return false; 
+
+			if ( this->node_list.tree_nodes[iter].parent != most_recent_parent )
+			{
+				most_recent_parent = this->node_list.tree_nodes[iter].parent;
+				dhtt_utils::append_predicate_conjunction(subsequent_postconditions, postconditions);
 			
-		// 	if ( dhtt_utils::violates_predicates(postconditions, preconditions) )
-		// 		return false; 
-		// }
+				postconditions = *dhtt_utils::conjunction_copy(subsequent_postconditions);// basically we want to follow the order of subsequent postconditions first
+			}
+			else
+				dhtt_utils::append_predicate_conjunction(postconditions, subsequent_postconditions);
+
+			dhtt_utils::remove_predicate_partial_duplicates(postconditions);
+		}
 
 		return true;
 	}
@@ -819,77 +920,156 @@ namespace dhtt
 
 		int name_index = std::distance(this->node_list.tree_nodes.begin(), std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), name_match));
 
+		auto preconditions = this->node_map[to_add.node_name]->logic->get_preconditions();
+		auto postconditions = this->node_map[to_add.node_name]->logic->get_postconditions();
+
+		// collect previous postconditions to get the world state before this new behavior
+		auto prev_postconditions = this->collect_previous_postconditions(to_add.parent_name, index - 1);
+
+		// check the new preconditions against the expected world state
+		if ( dhtt_utils::violates_predicates(prev_postconditions, preconditions) )
+			return false;
+
 		std::vector<int> forward_temporal_dependencies = this->get_next_behaviors(to_add.parent_name, index);
 
-		auto postconditions = this->node_map[to_add.node_name]->logic->get_postconditions();
+		int most_recent_parent = name_index;
 		
 		for ( int iter : forward_temporal_dependencies )
 		{
-			auto preconditions = this->get_preconditions(iter);
-			
-			if ( dhtt_utils::violates_predicates(postconditions, preconditions) )
+			auto subsequent_preconditions = this->get_preconditions(iter);
+			auto subsequent_postconditions = this->get_postconditions(iter);
+
+			RCLCPP_WARN(this->get_logger(), "Check predicate %s for %s", dhtt_utils::to_string(postconditions).c_str(), this->node_list.tree_nodes[iter].node_name.c_str());
+
+			if ( dhtt_utils::violates_predicates(postconditions, subsequent_preconditions) )
 				return false; 
+
+			if ( this->node_list.tree_nodes[iter].parent != most_recent_parent )
+			{
+				most_recent_parent = this->node_list.tree_nodes[iter].parent;
+				dhtt_utils::append_predicate_conjunction(subsequent_postconditions, postconditions);
+			
+				postconditions = *dhtt_utils::conjunction_copy(subsequent_postconditions);// basically we want to follow the order of subsequent postconditions first
+			}
+			else
+				dhtt_utils::append_predicate_conjunction(postconditions, subsequent_postconditions);
+
+			dhtt_utils::remove_predicate_partial_duplicates(postconditions);
 		}
 
 		return true;
 	}
 
-	bool MainServer::can_mutate(std::string node_name, std::string o_type, std::string n_type)
+	bool MainServer::can_mutate(std::string node_name, std::string n_type)
 	{
-		// -> OR is always 
-		// if ( not strcmp( n_type.c_str() , "dhtt_plugins::OrBehavior" ) )
-		// {
-		// 	return true;
-		// }
+		/// check child order
+		// get node iter to node name
+		auto name_match = [&]( dhtt_msgs::msg::Node check ) { return not strcmp(node_name.c_str(), check.node_name.c_str()); };
+		auto name_match_strings = [&]( std::string check ) { return not strcmp(check.c_str(), node_name.c_str()); };
+
+		int name_index = std::distance(this->node_list.tree_nodes.begin(), std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), name_match));
+
+		// get list of children
+		std::vector<int> children = this->node_list.tree_nodes[name_index].children;
 		
-		// // -> THEN
-		// else if ( not strcmp( n_type.c_str() , "dhtt_plugins::ThenBehavior" ) )
-		// {
-		// 	// get node iter to node name
-		// 	auto name_match = [&]( dhtt_msgs::msg::Node check ) { return not strcmp(node_name.c_str(), check.node_name.c_str()); };
+		// -> THEN
+		if ( not strcmp( n_type.c_str() , "dhtt_plugins::ThenBehavior" ) )
+		{
 
-		// 	int name_index = std::distance(this->node_list.tree_nodes.begin(), std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), name_match));
-
-		// 	// get list of children
-		// 	std::vector<int> children = this->node_list.tree_nodes[name_index].children;
-
-		// 	// check pre/post condition relationships in owned_resources
-		// 	dhtt_utils::PredicateConjunction total_postconditions = dhtt_utils::convert_to_struct(this->node_list.tree_nodes[children[0]].postconditions);
-
-		// 	for ( auto iter = children.begin() + 1 ; iter != children.end() ; iter++ )
-		// 	{
-		// 		// check for violations
-		// 		if ( dhtt_utils::violates_predicates( total_postconditions, dhtt_utils::convert_to_struct(this->node_list.tree_nodes[*iter].preconditions) ) )
-		// 			return false;
-
-		// 		// combine the postconditions with the total
-		// 		total_postconditions = dhtt_utils::combine_predicates(total_postconditions, dhtt_utils::convert_to_struct(this->node_list.tree_nodes[*iter].postconditions));
-		// 	}
-
-		// 	return true;
-		// }
+			// check pre/post condition relationships in owned_resources
+			dhtt_utils::PredicateConjunction postconditions = this->get_postconditions(children.front());
+			bool first = true;
 		
-		// // -> AND
-		// else if ( not strcmp( n_type.c_str() , "dhtt_plugins::AndBehavior" ) )
-		// {
-		// 	// THEN->AND ( here we assume that the original then was correct and therefore there is some order which is correct )
-		// 	if ( not strcmp( o_type.c_str() , "dhtt_plugins::ThenBehavior" ) )
-		// 	{
-		// 		return true;
-		// 	}
-		// 	// OR->AND ( just check for blatant contradictions b/c otherwise this is an NP-hard problem )
-		// 	else if ( not strcmp( o_type.c_str() , "dhtt_plugins::OrBehavior" ) )
-		// 	{
-		// 		auto name_match = [&]( dhtt_msgs::msg::Node check ) { return not strcmp(node_name.c_str(), check.node_name.c_str()); };
+			for ( int iter : children )
+			{
+				if ( first )
+				{
+					first = false;
+					continue;
+				}
 
-		// 		int name_index = std::distance(this->node_list.tree_nodes.begin(), std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), name_match));
+				auto subsequent_preconditions = this->get_preconditions(iter);
+				auto subsequent_postconditions = this->get_postconditions(iter);
 
-		// 		return not dhtt_utils::contains_contradiction(dhtt_utils::convert_to_struct(this->node_list.tree_nodes[name_index].preconditions)) 
-		// 			and not dhtt_utils::contains_contradiction(dhtt_utils::convert_to_struct(this->node_list.tree_nodes[name_index].postconditions));
-		// 	}
-		// }
+				RCLCPP_WARN(this->get_logger(), "Check predicate %s for %s", dhtt_utils::to_string(postconditions).c_str(), this->node_list.tree_nodes[iter].node_name.c_str());
 
-		// anything else if fine as far as this scope
+				if ( dhtt_utils::violates_predicates(postconditions, subsequent_preconditions) )
+					return false; 
+
+				dhtt_utils::append_predicate_conjunction(postconditions, subsequent_postconditions);
+				dhtt_utils::remove_predicate_partial_duplicates(postconditions);
+			}
+		}
+
+		/// check up the tree
+		// mutate the postcondition child list such that it reflects the new change
+
+		// first generate the map of child conditions with which to trick the node stuff below
+		std::map<std::string, dhtt_msgs::action::Condition::Result::SharedPtr> trick_conditions;
+
+		for ( int iter : children )
+		{
+			std::string name = this->node_list.tree_nodes[iter].node_name;
+			dhtt_msgs::action::Condition::Result::SharedPtr conditions = std::make_shared<dhtt_msgs::action::Condition::Result>();
+
+			conditions->success = true;
+			conditions->error_msg = "";
+			conditions->preconditions = dhtt_utils::to_string(this->get_preconditions(iter));
+			conditions->postconditions = dhtt_utils::to_string(this->get_postconditions(iter));
+			
+			trick_conditions[name] = conditions;
+		}
+
+		// now make a dummy node of the new type to generate the postconditions list
+		dhtt::Node dummy("dummy", n_type, std::vector<std::string>(), "NONE");
+
+		// if it doesn't load most likely the plugin does not exist or requires some parameters
+		if ( not dummy.successful_load )
+			return false;
+
+		// now collect the postconditions by maintaining the conditions in the node logic
+		dummy.child_conditions = trick_conditions;
+		dummy.logic->maintain_conditions(&dummy);
+
+		auto postconditions = dummy.logic->get_postconditions();
+
+		int index = std::distance(this->node_list.tree_nodes[this->node_list.tree_nodes[name_index].parent].child_name.begin(),
+						 std::find_if(this->node_list.tree_nodes[this->node_list.tree_nodes[name_index].parent].child_name.begin(), 
+						 				this->node_list.tree_nodes[this->node_list.tree_nodes[name_index].parent].child_name.end(), name_match_strings));
+
+		RCLCPP_ERROR(this->get_logger(), "%d", index);
+
+		// now check those postconditions going up the tree
+		std::vector<int> forward_temporal_dependencies = this->get_next_behaviors(this->node_list.tree_nodes[this->node_list.tree_nodes[name_index].parent].node_name, index, 1);
+
+		int most_recent_parent = name_index;
+		
+		for ( int iter : forward_temporal_dependencies )
+		{
+			auto subsequent_preconditions = this->get_preconditions(iter);
+			auto subsequent_postconditions = this->get_postconditions(iter);
+
+			RCLCPP_WARN(this->get_logger(), "Check predicate %s for %s", dhtt_utils::to_string(postconditions).c_str(), this->node_list.tree_nodes[iter].node_name.c_str());
+
+			if ( dhtt_utils::violates_predicates(postconditions, subsequent_preconditions) )
+			{
+				RCLCPP_INFO(this->get_logger(), "Hello paul im here too");
+				return false; 
+			}
+
+			if ( this->node_list.tree_nodes[iter].parent != most_recent_parent )
+			{
+				most_recent_parent = this->node_list.tree_nodes[iter].parent;
+				dhtt_utils::append_predicate_conjunction(subsequent_postconditions, postconditions);
+			
+				postconditions = *dhtt_utils::conjunction_copy(subsequent_postconditions);// basically we want to follow the order of subsequent postconditions first
+			}
+			else
+				dhtt_utils::append_predicate_conjunction(postconditions, subsequent_postconditions);
+
+			dhtt_utils::remove_predicate_partial_duplicates(postconditions);
+		}
+
 		return true;
 	}
 

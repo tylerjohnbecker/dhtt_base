@@ -1,0 +1,46 @@
+NodeList: 
+  - 'TopmostThen'
+  - 'BottomThen'
+  - 'A1'
+  - 'A2'
+  - 'A3'
+  - 'A4'
+
+# the params for each behavior should be filled in wherever there is a n/a
+Nodes:
+  TopmostThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: []
+  BottomThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'TopmostThen'
+    params: []
+  A1:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'BottomThen'
+    params: ["activation_potential: 5.0", "c: d"]
+  A2:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'BottomThen'
+    params: ["activation_potential: 0.0", "e: f"]
+  A3:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'BottomThen'
+    params: ["activation_potential: 10.0", "g: h"]
+  A4:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'TopmostThen'
+    params: ["activation_potential: 10.0", "!e: f", "!g: h"]

@@ -20,7 +20,7 @@ string[] 			file_args # arguments are parameters in the files which look like $a
 # optional: string description of the parameters to change (strings are of the form "param: val")
 string[] 			params
 
-# optional: type of node to mutate into (given by the types in the Node.msg file, or as a literal name in the case of behaviors)
+# optional: type of node to mutate into (actual name of the plugin should be here)
 string			 	mutate_type
 
 # msg constants (self explanatory)

@@ -7,6 +7,8 @@ namespace dhtt
 	{
 		// create a callback group for parallel ones
 		this->conc_group = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+		this->exclusive_group = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+		// this->exclusive_maintenance_group = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
 		this->sub_opts.callback_group = this->conc_group;
 		this->pub_opts.callback_group = this->conc_group;
 
@@ -153,21 +155,21 @@ namespace dhtt
 
 		this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1), this->sub_opts);
 
-		this->register_server = this->create_service<dhtt_msgs::srv::InternalServiceRegistration>(my_register_topic, std::bind(&Node::register_child_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->conc_group);
+		this->register_server = this->create_service<dhtt_msgs::srv::InternalServiceRegistration>(my_register_topic, std::bind(&Node::register_child_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->exclusive_group);
 
 		// set up activation server
 		this->activation_server = rclcpp_action::create_server<dhtt_msgs::action::Activation>(this, my_activation_topic,
 			std::bind(&Node::goal_activation_callback, this, std::placeholders::_1, std::placeholders::_2),
 			std::bind(&Node::cancel_activation_callback, this, std::placeholders::_1),
 			std::bind(&Node::activation_accepted_callback, this, std::placeholders::_1));
-			//rcl_action_server_get_default_options(), this->conc_group);
+			// rcl_action_server_get_default_options(), this->exclusive_group);
 
 		// set up condition maintenance server
 		this->condition_server = rclcpp_action::create_server<dhtt_msgs::action::Condition>(this, my_condition_topic,
 			std::bind(&Node::condition_goal_activation_callback, this, std::placeholders::_1, std::placeholders::_2),
 			std::bind(&Node::condition_cancel_activation_callback, this, std::placeholders::_1),
-			std::bind(&Node::condition_activation_accepted_callback, this, std::placeholders::_1));
-			//rcl_action_server_get_default_options(), this->conc_group);
+			std::bind(&Node::condition_activation_accepted_callback, this, std::placeholders::_1),
+			rcl_action_server_get_default_options(), this->exclusive_group);
 
 		this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
@@ -176,6 +178,7 @@ namespace dhtt
 
 	bool Node::remove_child(std::string child_name)
 	{
+		std::lock_guard<std::mutex> lock(this->maintenance_mut);
 		auto found_name = [&]( std::string to_check ) { return not strcmp(to_check.c_str(), child_name.c_str()); };
 
 		auto found_iter = std::find_if(this->child_names.begin(), this->child_names.end(), found_name);
@@ -186,6 +189,7 @@ namespace dhtt
 		int found_index = std::distance(this->child_names.begin(), found_iter);
 
 		this->activation_clients.erase(std::next(this->activation_clients.begin(), found_index));
+		this->conditions_clients.erase(std::next(this->conditions_clients.begin(), found_index)); // hopefully these are always in the same order
 		this->child_names.erase(found_iter);
 
 		return true;
@@ -253,7 +257,10 @@ namespace dhtt
 		this->expected_conditions = 0;
 
 		for (std::string iter : this->child_names)
+		{
+			while ( not this->server_ready[iter] );
 			this->async_request_conditions(iter, n_goal);
+		}
 	}
 
 	bool Node::block_for_responses_from_children()
@@ -539,6 +546,7 @@ namespace dhtt
 	void Node::combine_child_conditions(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Condition>> goal_handle)
 	{
 		// RCLCPP_WARN(this->get_logger(), "Requesting conditions from children and combining!");
+		std::lock_guard<std::mutex> guard(this->maintenance_mut);
 
 		(void) goal_handle->get_goal();
 
@@ -692,7 +700,8 @@ namespace dhtt
 
 	void Node::register_child_callback(std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Request> request, std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Response> response)
 	{
-		// std::lock_guard<std::mutex> guard(this->logic_mut);
+		std::lock_guard<std::mutex> guard(this->logic_mut);
+		std::lock_guard<std::mutex> maintenance_guard(this->maintenance_mut);
 
 		if (not this->logic->can_add_child())
 		{
@@ -700,6 +709,8 @@ namespace dhtt
 
 			return;
 		}
+
+		this->server_ready[request->node_name] = false;
 
 		// make a client and push back
 		rclcpp_action::Client<dhtt_msgs::action::Activation>::SharedPtr a_client = rclcpp_action::create_client<dhtt_msgs::action::Activation>(this, std::string(TREE_PREFIX) + "/" + request->node_name + ACTIVATION_POSTFIX);
@@ -712,6 +723,7 @@ namespace dhtt
 		this->child_names.insert(name_index_iter, request->node_name);
 		this->activation_clients.insert(activation_index_iter, a_client);
 		this->conditions_clients.insert(condition_index_iter, c_client);
+		this->server_ready[request->node_name] = true;
 		response->success = true;
 	}
 	

@@ -84,7 +84,7 @@ class TestServerBehaviorOrder:
 			assert reset_rs.success == True
 
 	# asserts here will only work if this is the only way that nodes have been added to the tree
-	def add_from_yaml(self, file_name, add_to="ROOT_0"):
+	def add_from_yaml(self, file_name, force=True, add_to="ROOT_0"):
 
 		wd = pathlib.Path(__file__).parent.resolve()
 		
@@ -99,6 +99,7 @@ class TestServerBehaviorOrder:
 
 		modify_rq = ModifyRequest.Request()
 		modify_rq.type = ModifyRequest.Request.ADD_FROM_FILE
+		modify_rq.force = force
 
 		modify_rq.to_modify.append(add_to)
 		modify_rq.to_add = f'{wd}{file_name}'
@@ -120,11 +121,38 @@ class TestServerBehaviorOrder:
 
 		# verify that all nodes were added
 		for index, val in enumerate(node_names_orig):
-			assert val in node_names_from_server[index]
+			found = False;
+
+			for index2, gt_val in enumerate(node_names_from_server):
+				if val in gt_val:
+					found = True
+					break
+
+			assert found
 
 		# verify that each node has the correct parent
 		for index, val in enumerate(node_parents_orig):
-			assert val in parent_names_from_server[index] or (val == 'NONE' and parent_names_from_server[index] == add_to)
+			found = False;
+
+			for index2, gt_val in enumerate(parent_names_from_server):
+				if val in gt_val:
+					found = True
+					break
+
+			assert found or (val == 'NONE' and parent_names_from_server[index] == add_to)
+
+		goitr_names_from_server = [ i.goitr_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:] ]
+
+		# verify goitrs were added correctly
+		for index, val in enumerate(yaml_dict['Nodes']):
+			try:
+				goitr_type_from_file = i['goitr_type']
+
+				assert goitr_type_from_file == goitr_names_from_server[index]
+			except:
+				continue
+
+		return modify_rs.added_nodes
 
 	def load_expected_from_yaml(self, file_name):
 

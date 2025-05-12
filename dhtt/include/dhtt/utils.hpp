@@ -168,8 +168,6 @@ namespace dhtt_utils
 	/**
 	 * \brief recursively negate the predicates of the given predicate conjunction
 	 * 
-	 * This negation also follows de'morgans law so it will flip the and to an or and vice versa at each statement.
-	 * 
 	 * \param to_negate Predicate Conjunction which is to be negated
 	 * 
 	 * \return inverse copy of to_negate
