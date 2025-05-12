@@ -1,0 +1,60 @@
+NodeList:
+  - 'ParentThen'
+  - 'MoveTo'
+  - 'Execute'
+  - 'MoveToTwo'
+  - 'MoveToThree'
+  - 'Pick'
+  - 'MoveToFour'
+  - 'Place'
+
+
+Nodes:
+  ParentThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: [ ]
+  MoveTo:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'ParentThen'
+    params: ['object: LettuceDispenser']
+  Execute:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'ParentThen'
+    params: [ 'object: LettuceDispenser' ]
+  MoveToTwo:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'ParentThen'
+    params: [ 'object: Toaster' ]
+  MoveToThree:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'ParentThen'
+    params: [ 'object: Lettuce', 'conditions: Fresh' ]
+  Pick:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'ParentThen'
+    params: [ 'object: Lettuce', 'conditions: Fresh' ]
+  MoveToFour:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'ParentThen'
+    params: [ 'object: Counter']
+  Place:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'ParentThen'
+    params: [ 'object: Counter' ]

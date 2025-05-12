@@ -14,6 +14,7 @@ def get_main_node(debug_text=''):
 							actions= [
 								Node( package='dhtt', executable='start_server', output='log', prefix=[debug_text], emulate_tty=True ),
 								Node( package='dhtt', executable='param_node', output='log', emulate_tty=True, parameters=[LaunchConfiguration('params_file')]),
+                                Node( package='dhtt_cooking', executable='dhtt_cooking', output='log', prefix=[debug_text], emulate_tty=True ),
 							]
 	 					  )
 
@@ -23,6 +24,7 @@ def get_main_node(debug_text=''):
 							actions= [
 								Node( package='dhtt', executable='start_server', output='log', prefix=[debug_text], emulate_tty=True ),
 								Node( package='dhtt', executable='param_node', output='log', emulate_tty=True),
+                                Node( package='dhtt_cooking', executable='dhtt_cooking', output='log', prefix=[debug_text], emulate_tty=True ),
 							]
 	 					  )
 

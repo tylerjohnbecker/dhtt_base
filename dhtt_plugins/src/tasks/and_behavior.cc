@@ -71,13 +71,14 @@ namespace dhtt_plugins
 		this->activation_potential = activation_potential_sum / num_children;
 
 		// check if a possible child exists
-		to_ret->possible = strcmp( "", local_best_child.c_str() );
+		if ( strcmp( "", local_best_child.c_str() ) )
+			to_ret->possible = results[local_best_child]->possible;
 
 		// send stop back to the rest
 		n_goal.success = false;
 
 		for ( std::string active_children_iter : active_children )
-			if (strcmp(active_children_iter.c_str(), local_best_child.c_str()))
+			if (strcmp(active_children_iter.c_str(), local_best_child.c_str()) and results[active_children_iter]->possible )
 				container->async_activate_child(active_children_iter, n_goal);
 	
 		container->block_for_responses_from_children();

@@ -5,12 +5,16 @@
 #include "dhtt_msgs/srv/cooking_request.hpp"
 #include "dhtt_plugins/behaviors/action_type.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include <float.h>
 
 namespace dhtt_plugins
 {
 class CookingBehavior : public ActionType
 {
   public:
+	// TODO refactor subclass do_work() for redundant action requests
+	// void do_work(...)
+
 	/**
 	 * \brief parses activation_potential and destination parameters for the move behavior
 	 *
@@ -20,7 +24,11 @@ class CookingBehavior : public ActionType
 	 * 		- coord: a coordinate in format 'x, y'. Leave empty "" if not used
 	 * 		- object: a cooking object type name to automatically find the closest of that
 	 * 		- conditions: an optional comma-separated string of conditions the object needs to have.
-	 *i.e. 'Chopped, Toasted'.
+	 * 		- mark: an optional taint to look for on the paramserver
+	 *i.e. 'conditions: Chopped, Toasted'. Also supports 'Free' for objects containing nothing, or
+	 *'Contains' for objects containing something. Further, specifying 'Contains+"listofobjects"'
+	 *allows a list of objects to be contained,
+	 *i.e. params: [ 'object: Plate', 'conditions: Contains+"Lettuce, Tomato"', 'mark: A1' ]
 	 *
 	 * \param params a vector of string params parsed from the yaml description
 	 *
@@ -39,7 +47,9 @@ class CookingBehavior : public ActionType
 	std::string destination_type;  // key: coordinate or closest object
 	std::string destination_value; // value: of destination_type, i.e. either '1,1' or 'Toaster'
 	std::string destination_conditions; // conditions for closest object
+	std::string destination_mark;
 	geometry_msgs::msg::Point destination_point;
+	dhtt_msgs::msg::CookingObject destination_object; // closest object
 	bool destination_is_good = false;
 
 	static double point_distance(const geometry_msgs::msg::Point &point1,
@@ -48,10 +58,10 @@ class CookingBehavior : public ActionType
 	void observation_callback(std::shared_ptr<dhtt_msgs::msg::CookingObservation> msg);
 
 	/**
-	 * Perform some CookingBehavior-specific initialization (Client and Subscriber creation). Due to
-	 * API quirks, this is called in parse_params()
+	 * Calls base initialize() then perform some CookingBehavior-specific initialization
+	 (Client and Subscriber creation).
 	 */
-	void initialize_();
+	void initialize(std::vector<std::string> params) override;
 
 	/**
 	 * Using this->destination_value, this->destination_conds, and this->last_obs, set
@@ -59,20 +69,79 @@ class CookingBehavior : public ActionType
 	 */
 	void set_destination_to_closest_object();
 
+	static std::string which_arm(dhtt::Node *container);
+
+	/**
+	 * @return whether activation potential and destination_is_good are correct for us to work
+	 */
+	bool can_work() const;
+
+	/**
+	 * @param obj CookingObject to check it's world_id and this->destination_mark against marked
+	 * objects on the paramserver
+	 * @return '0' if obj is marked with a different taint, '1' if obj is marked with our
+	 * this->destination_mark, '2' if obj is not marked. Note that these are character '1' not 1.
+	 */
+	// TODO use an enum for this
+	char check_mark(const dhtt_msgs::msg::CookingObject &obj) const;
+
+	bool mark_object(unsigned long object_id, const std::string &mark) const;
+
+	// Assumes static object and this->destination_object have the same mark
+	bool unmark_static_object_under_obj(const dhtt_msgs::msg::CookingObject &obj) const;
+
 	rclcpp::Subscription<dhtt_msgs::msg::CookingObservation>::SharedPtr
 		cooking_observation_subscriber;
 
 	rclcpp::Client<dhtt_msgs::srv::CookingRequest>::SharedPtr cooking_request_client;
 
+	std::shared_ptr<rclcpp::Node> param_node_ptr;
+	std::shared_ptr<rclcpp::SyncParametersClient> params_client_ptr;
+
 	std::shared_ptr<dhtt_msgs::msg::CookingObservation> last_obs;
 
-	const std::string PARAM_ACTIVATION_POTENTIAL = "activation_potential";
-	const std::string PARAM_COORDINATE = "coord";
-	const std::string PARAM_OBJECT_TYPE = "object";
-	const std::string PARAM_OBJECT_CONDITIONS = "conditions";
+	static constexpr auto PARAM_ACTIVATION_POTENTIAL = "activation_potential";
+	static constexpr auto PARAM_COORDINATE = "coord";
+	static constexpr auto PARAM_OBJECT_TYPE = "object";
+	static constexpr auto PARAM_OBJECT_CONDITIONS = "conditions";
+	static constexpr auto PARAM_OBJECT_MARK = "mark";
+	static constexpr auto PARAM_MARK_OBJECTS = "world.marked_objects_ids";
+	static constexpr auto PARAM_MARK_OBJECTS_TAINTS = "world.marked_objects_taints";
+	const int LEVEL_SIZE = 6;
 
-  protected:
   private:
+	/**
+	 *
+	 * @param conds_str an optional comma-separated string of conditions the object needs to have.
+	 * i.e. 'conditions: Chopped, Toasted'. Also supports 'Free' for objects containing nothing, or
+	 * 'Contains' for objects containing something. Further, specifying 'Contains+"listofobjects"'
+	 * allows a list of objects to be contained, i.e. params: [ 'object: Plate', 'conditions:
+	 * Contains+"Lettuce, Tomato"' ]
+	 * @return vector of each condition (i.e. separate out the csv). Contains+"..." is one value and
+	 * needs to be parsed separately.
+	 */
+	static std::vector<std::string> parse_conds_string(const std::string &conds_str);
+
+	/**
+	 *
+	 * @param cond_string Condition string formatted as 'Contains+"item1, item2, ..."' the double
+	 * quotes are included, single quotes not. Further alternate lists can be delimited with a pipe
+	 * '|' as a logical or.
+	 * @param obj_contained_ids ids of the objects contained by this object (i.e.
+	 * CookingObject->content_ids)
+	 * @return Whether the list of objects (or one of the alternate lists) is all contained by the
+	 * object
+	 */
+	bool check_contains_list(const std::string &cond_string,
+							 const std::vector<unsigned long> &obj_contained_ids) const;
+
+	bool check_conds(const std::vector<std::string> &conds,
+					 const dhtt_msgs::msg::CookingObject &obj) const;
+
+	static std::pair<std::string, std::string> extract_keyval(const std::string &param_string);
+
+	// TODO clear all on tree reset
+	bool unmark_object(unsigned long object_id) const;
 };
 } // namespace dhtt_plugins
 

@@ -515,6 +515,13 @@ namespace dhtt
 			return "Cannot add node to parent at given index: index is out of bounds!";
 		}
 
+		if (to_add.type != dhtt_msgs::msg::Node::BEHAVIOR and
+			to_add.plugin_name != MainServer::NODE_TYPE_TO_PLUGIN.at(to_add.type))
+		{
+			return "Node plugin name " + to_add.plugin_name + " does not match node type " +
+				   std::to_string(to_add.type);
+		}
+
 		// add to our list of nodes (this should just modify the local copy)
 		to_add.node_name += "_" + std::to_string(this->total_nodes_added);
 
@@ -560,7 +567,8 @@ namespace dhtt
 
 			this->node_map.erase(to_add.node_name);
 
-			return err;
+			// sometimes get_error_msg() is empty, which is misinterpreted later as success.
+			return err + "Force not set and failed pre- post-conditions check";
 		}
 
 		this->spinner_cp->add_node(this->node_map[to_add.node_name]);
@@ -601,11 +609,33 @@ namespace dhtt
 	{
 		std::string cur_parent;
 
+		bool first = true;
+
 		auto is_parent = [&]( dhtt_msgs::msg::Node check ) { return check.node_name.find(cur_parent) != std::string::npos; };
+
+		// TODO remove this when done with cooking_zoo
+		++this->cooking_zoo_counter;
 
 		std::function<std::string(dhtt_msgs::msg::Subtree&, int)> add_post_order = [&]( dhtt_msgs::msg::Subtree& to_add, int current )
 		{
 			// RCLCPP_ERROR(this->get_logger(), "Add post order %s", to_add.tree_nodes[current].node_name.c_str());
+
+			// TODO remove this when done with cooking_zoo
+			for (auto& param : to_add.tree_nodes[current].params)
+			{
+				if (const auto index = param.find('#'); index != std::string::npos)
+				{
+					param.replace(index, 1, std::to_string(this->cooking_zoo_counter));
+				}
+			}
+
+			for (auto& param : to_add.tree_nodes[current].params)
+			{
+				if (const auto index = param.find('#'); index != std::string::npos)
+				{
+					throw std::runtime_error("");
+				}
+			}
 
 			// add node to the tree
 			cur_parent = to_add.tree_nodes[current].parent_name;
@@ -619,7 +649,15 @@ namespace dhtt
 			to_add.tree_nodes[current].child_name.clear();
 			to_add.tree_nodes[current].children.clear();
 
-			std::string err_msg = this->add_node(res, (*found_parent).node_name, to_add.tree_nodes[current], force, 0);
+			int index = 0;
+
+			if (first)
+			{
+				index = -1;
+				first = false;
+			}
+
+			std::string err_msg = this->add_node(res, (*found_parent).node_name, to_add.tree_nodes[current], force, index);
 
 			if ( strcmp(err_msg.c_str(), "") )
 				return err_msg;

@@ -1,25 +1,8 @@
-#include "dhtt_plugins/behaviors/cooking_place_behavior.hpp"
+#include "dhtt_plugins/behaviors/cooking_plate_place_behavior.hpp"
 
 namespace dhtt_plugins
 {
-double CookingPlaceBehavior::get_perceived_efficiency()
-{
-	double activation_check = CookingBehavior::get_perceived_efficiency();
-
-	if (activation_check != 0)
-	{
-		// High activation if we're right next to the object. No activation otherwise.
-		double to_ret = this->agent_point_distance(this->destination_point) == 1.0 ? 1.0 : 0.0;
-		RCLCPP_INFO(this->pub_node_ptr->get_logger(), "I report %f efficiency", to_ret);
-
-		this->activation_potential = to_ret; // TODO is this necessary?
-		return to_ret;
-	}
-
-	return 0;
-}
-
-void CookingPlaceBehavior::do_work(dhtt::Node *container)
+void CookingPlatePlaceBehavior::do_work(dhtt::Node *container)
 {
 	(void)container; // Unused
 
@@ -44,17 +27,17 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 	this->executor->spin_until_future_complete(res);
 	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "move_to request completed");
 
-	bool suc = res.get()->success;
+	bool suc = res.future.get()->success;
 	if (not suc)
 	{
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
 					 "move_to request did not succeed, returning early: %s",
-					 res.get()->error_msg.c_str());
+					 res.future.get()->error_msg.c_str());
 		this->done = false;
 		return;
 	}
 
-	/* interact_primary */
+	/* first interact_primary */
 	req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
 	req->super_action = dhtt_msgs::srv::CookingRequest::Request::ACTION;
 	req->action.player_name = dhtt_msgs::msg::CookingAction::DEFAULT_PLAYER_NAME;
@@ -65,11 +48,35 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 								  : dhtt_msgs::msg::CookingAction::INTERACT_PRIMARY_ARM2;
 
 	res = this->cooking_request_client->async_send_request(req);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending interact request");
+	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending first interact request");
 	this->executor->spin_until_future_complete(res);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "execute interact completed");
+	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "First interact completed");
 
-	suc = res.get()->success;
+	suc = res.future.get()->success;
+	if (not suc)
+	{
+		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+					 "interact_primary request did not succeed: %s",
+					 res.future.get()->error_msg.c_str());
+		return;
+	}
+
+	/* second interact_primary */
+	req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
+	req->super_action = dhtt_msgs::srv::CookingRequest::Request::ACTION;
+	req->action.player_name = dhtt_msgs::msg::CookingAction::DEFAULT_PLAYER_NAME;
+
+	// see pr2.yaml
+	req->action.action_type = CookingBehavior::which_arm(container) == "left_arm"
+								  ? dhtt_msgs::msg::CookingAction::INTERACT_PRIMARY_ARM1
+								  : dhtt_msgs::msg::CookingAction::INTERACT_PRIMARY_ARM2;
+
+	res = this->cooking_request_client->async_send_request(req);
+	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending second interact request");
+	this->executor->spin_until_future_complete(res);
+	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Second interact completed");
+
+	suc = res.future.get()->success;
 	if (not suc)
 	{
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
@@ -122,34 +129,5 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 	}
 
 	this->done = suc;
-}
-
-std::vector<dhtt_msgs::msg::Resource>
-CookingPlaceBehavior::get_retained_resources(dhtt::Node *container)
-{
-	(void)container;
-	return std::vector<dhtt_msgs::msg::Resource>{};
-}
-
-std::vector<dhtt_msgs::msg::Resource>
-CookingPlaceBehavior::get_released_resources(dhtt::Node *container)
-{
-	return container->get_owned_resources();
-}
-
-std::vector<dhtt_msgs::msg::Resource> CookingPlaceBehavior::get_necessary_resources()
-{
-	std::vector<dhtt_msgs::msg::Resource> to_ret;
-
-	dhtt_msgs::msg::Resource base;
-	base.type = dhtt_msgs::msg::Resource::BASE;
-
-	dhtt_msgs::msg::Resource gripper;
-	gripper.type = dhtt_msgs::msg::Resource::GRIPPER;
-
-	to_ret.push_back(base);
-	to_ret.push_back(gripper);
-
-	return to_ret;
 }
 } // namespace dhtt_plugins

@@ -1,0 +1,10 @@
+NodeList:
+  - 'FirstTask'
+
+Nodes:
+  FirstTask:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: ["coord: 1, 1"]

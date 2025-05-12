@@ -22,6 +22,11 @@ void CookingMoveBehavior::do_work(dhtt::Node *container)
 {
 	(void)container; // Unused
 
+	if (not CookingBehavior::can_work())
+	{
+		return;
+	}
+
 	auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
 	req->super_action = dhtt_msgs::srv::CookingRequest::Request::ACTION;
 	req->action.player_name = dhtt_msgs::msg::CookingAction::DEFAULT_PLAYER_NAME;
@@ -41,7 +46,21 @@ void CookingMoveBehavior::do_work(dhtt::Node *container)
 	if (not suc)
 	{
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "move_to request did not succeed: %s",
-					 res.get()->error_msg.c_str());
+					 res.future.get()->error_msg.c_str());
+		return;
+	}
+
+	// if object is not marked for anyone
+	if (not this->destination_mark.empty() and this->check_mark(this->destination_object) == '2')
+	{
+		RCLCPP_INFO(this->pub_node_ptr->get_logger(),
+					("Marking object as " + this->destination_mark).c_str());
+		suc = this->mark_object(this->destination_object.world_id, this->destination_mark);
+		if (not suc)
+		{
+			RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "Marking object failed: %s",
+						 res.future.get()->error_msg.c_str());
+		}
 	}
 
 	this->done = suc;
@@ -66,7 +85,13 @@ std::vector<dhtt_msgs::msg::Resource> CookingMoveBehavior::get_necessary_resourc
 	dhtt_msgs::msg::Resource base;
 	base.type = dhtt_msgs::msg::Resource::BASE;
 
+	// TODO sometimes seems to help
+	dhtt_msgs::msg::Resource gripper;
+	gripper.type = dhtt_msgs::msg::Resource::GRIPPER;
+
 	to_ret.push_back(base);
+	to_ret.push_back(gripper);
+
 	return to_ret;
 }
 

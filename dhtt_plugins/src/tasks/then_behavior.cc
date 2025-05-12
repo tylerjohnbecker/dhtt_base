@@ -57,6 +57,9 @@ namespace dhtt_plugins
 
 		n_goal.passed_resources = container->get_passed_resources();
 
+		for (auto resource : n_goal.passed_resources)
+			RCLCPP_FATAL(container->get_logger(), "type: %d, owned: %d", resource.type, resource.locked);
+
 		// activate all children for activation potential calculation and give the first one the resources that we were passed
 		for (std::vector<std::string>::iterator name_iter = children.begin() + this->child_queue_index ; name_iter != children.end() ; name_iter++)
 			container->async_activate_child(*name_iter, n_goal);
@@ -100,10 +103,13 @@ namespace dhtt_plugins
 
 		// make sure to send back failure to all if nothing is possible
 		if ( not to_ret->possible )
+		{
 			next -= 1;
+		}
 
 		for (std::vector<std::string>::iterator name_iter = children.begin() + next ; name_iter != children.end() ; name_iter++)
-			container->async_activate_child(*name_iter, n_goal);
+			if (results[*name_iter]->possible)
+				container->async_activate_child(*name_iter, n_goal);
 
 		container->block_for_responses_from_children();
 		

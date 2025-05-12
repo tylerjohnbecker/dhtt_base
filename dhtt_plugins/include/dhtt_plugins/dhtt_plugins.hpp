@@ -15,6 +15,8 @@
 #include "dhtt_plugins/behaviors/cooking_interact_special_behavior.hpp"
 #include "dhtt_plugins/behaviors/cooking_move_behavior.hpp"
 #include "dhtt_plugins/behaviors/cooking_pick_behavior.hpp"
+#include "dhtt_plugins/behaviors/cooking_plate_place_behavior.hpp"
+#include "dhtt_plugins/behaviors/cooking_object_exists_behavior.hpp"
 #include "dhtt_plugins/behaviors/cooking_place_behavior.hpp"
 #include "dhtt_plugins/tasks/root_behavior.hpp"
 #include "dhtt_plugins/tasks/and_behavior.hpp"
@@ -39,6 +41,8 @@ PLUGINLIB_EXPORT_CLASS(dhtt_plugins::CookingInteractSpecialBehavior, dhtt::NodeT
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::CookingMoveBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::CookingPickBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::CookingPlaceBehavior, dhtt::NodeType)
+PLUGINLIB_EXPORT_CLASS(dhtt_plugins::CookingPlatePlaceBehavior, dhtt::NodeType)
+PLUGINLIB_EXPORT_CLASS(dhtt_plugins::CookingObjectExistsBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::RootBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::ThenBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::AndBehavior, dhtt::NodeType)

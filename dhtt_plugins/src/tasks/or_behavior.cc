@@ -94,7 +94,7 @@ namespace dhtt_plugins
 			n_goal.success = false;
 
 			for ( auto iter : container->get_child_names() )
-				if ( strcmp( iter.c_str(), this->activated_child_name.c_str() ) )
+				if ( strcmp( iter.c_str(), this->activated_child_name.c_str() ) and results[iter]->possible )
 					container->async_activate_child(iter, n_goal);
 				
 			container->block_for_responses_from_children();

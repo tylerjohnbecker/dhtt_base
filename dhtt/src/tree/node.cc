@@ -153,7 +153,7 @@ namespace dhtt
 		this->status_pub = this->create_publisher<dhtt_msgs::msg::Node>("/status", 10, this->pub_opts);
 		// this->knowledge_pub = this->create_publisher<std_msgs::msg::String>("/updated_knowledge", 10);
 
-		this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1), this->sub_opts);
+		this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1));//, this->sub_opts);
 
 		this->register_server = this->create_service<dhtt_msgs::srv::InternalServiceRegistration>(my_register_topic, std::bind(&Node::register_child_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->exclusive_group);
 
@@ -219,6 +219,34 @@ namespace dhtt
 		(*client_iter)->async_send_goal(activation_goal, send_goal_options);
 	}
 
+	void Node::async_activate_child_failed(std::string child_name)
+	{
+		auto found_name = [&]( std::string to_check ) { return not strcmp(to_check.c_str(), child_name.c_str()); };
+
+		auto found_iter = std::find_if(this->child_names.begin(), this->child_names.end(), found_name);
+		int found_index = std::distance(this->child_names.begin(), found_iter);
+
+		dhtt_msgs::action::Activation::Goal n_goal;
+
+		n_goal.success = false;
+
+		auto client_iter = std::next(this->activation_clients.begin(), found_index);
+
+		if ( not (*client_iter)->wait_for_action_server() )
+		{
+			this->error_msg = "Cannot reach action server of requested child, are you sure it started up?";
+			return;
+		}
+
+		this->expected_responses++;
+
+		auto send_goal_options = rclcpp_action::Client<dhtt_msgs::action::Activation>::SendGoalOptions();
+
+		send_goal_options.result_callback = std::bind(&Node::store_failed_callback, this, std::placeholders::_1, child_name);
+
+		(*client_iter)->async_send_goal(n_goal, send_goal_options);
+	}
+
 	void Node::async_request_conditions(std::string child_name, dhtt_msgs::action::Condition::Goal condition_goal)
 	{
 		auto found_name = [&]( std::string to_check ) { return not strcmp(to_check.c_str(), child_name.c_str()); };
@@ -268,6 +296,17 @@ namespace dhtt
 		// RCLCPP_INFO(this->get_logger(), "Waiting for %d responses from children, currently received %d...", this->expected_responses, this->stored_responses );
 
 		while (this->stored_responses < this->expected_responses);
+
+		// RCLCPP_INFO(this->get_logger(), "Responses received!");
+
+		return true;
+	}
+
+	bool Node::block_for_responses_from_failed_children()
+	{
+		// RCLCPP_INFO(this->get_logger(), "Waiting for %d responses from children, currently received %d...", this->expected_responses, this->stored_responses );
+
+		while (this->stored_failed_responses < this->expected_failed_responses);
 
 		// RCLCPP_INFO(this->get_logger(), "Responses received!");
 
@@ -459,7 +498,7 @@ namespace dhtt
 			}
 			else
 			{
-				RCLCPP_INFO(this->get_logger(), "Request not successful returning to state WAITING");
+				RCLCPP_INFO(this->get_logger(), "Request not successful returning to state WAITING.");
 
 				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
@@ -584,9 +623,18 @@ namespace dhtt
 
 	void Node::store_result_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name )
 	{
+		// TODO if (not result.result->possible)
 		this->responses[node_name] = result.result;
 	
 		this->stored_responses++;
+	}
+
+	void Node::store_failed_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name )
+	{
+		// TODO if (not result.result->possible)
+		// this->responses[node_name] = result.result;
+
+		this->stored_failed_responses++;
 	}
 
 	void Node::store_condition_callback ( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Condition>::WrappedResult & result, std::string node_name )
@@ -606,6 +654,8 @@ namespace dhtt
 		this->owned_resources.clear();
 
 		RCLCPP_INFO(this->get_logger(), "Activation received from parent...");
+
+		// this->block_for_responses_from_failed_children();
 
 		if ( this->has_goitr )
 			this->replanner->block_for_thread();
@@ -646,6 +696,8 @@ namespace dhtt
 
 				if ( to_ret->possible )
 					this->active = true;
+				else
+					this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
 				if (this->logic->is_done())
 					this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
@@ -850,13 +902,13 @@ namespace dhtt
 
 	void Node::propogate_failure_down()
 	{
-		dhtt_msgs::action::Activation::Goal n_goal;
 
-		n_goal.success = false;
-
-		this->async_activate_child(this->active_child_name, n_goal);
-
-		this->block_for_responses_from_children();
+		// TODO occasionally causes a segfault, not sure if this is the right solution
+		if (not this->active_child_name.empty())
+		{
+			this->async_activate_child_failed(this->active_child_name);
+			this->block_for_responses_from_failed_children();
+		}
 
 		this->active_child_name = "";
 	}

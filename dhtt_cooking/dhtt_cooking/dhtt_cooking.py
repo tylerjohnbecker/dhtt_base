@@ -10,7 +10,8 @@ from dhtt_msgs.srv import CookingRequest, CookingRequest_Request, CookingRequest
 
 from cooking_zoo.cooking_agents.base_agent import BaseAgent
 from cooking_zoo.environment.cooking_env import CookingEnvironment as CookingZooEnvironment, parallel_env
-from cooking_zoo.cooking_world.abstract_classes import Object as cooking_zoo_Object
+from cooking_zoo.cooking_world.abstract_classes import Object as cooking_zoo_Object, \
+    StaticObject as cooking_zoo_StaticObject
 from cooking_zoo.cooking_world.world_objects import Agent as cooking_zoo_Agent
 from cooking_zoo.cooking_book.recipe import RecipeNode as cooking_zoo_RecipeNode
 
@@ -225,13 +226,14 @@ class CookingEnvironment:
         :return: tuple of dict terminations, dict truncations
         """
         num_agents = 1
-        max_steps = 400
+        max_steps = 1_000_000
         render = True
         obs_spaces = ["symbolic"]
         action_scheme = "scheme1_twohand"
-        meta_file = "example_absorbing_toaster"
-        level = "switch_test_absorbing_toaster"
-        allowed_recipes = ["TomatoLettucePlate", "MashedCarrotPlate", "ToastedBreadPlate"]
+        meta_file = "dhtt_experiment"
+        level = "dhtt_experiment"
+        allowed_recipes = ["TomatoToastedBreadPlate", "CarrotBananaPlate", "ToastedBreadPlate", "AppleWatermelonPlate",
+                           "ApplePlate", "WatermelonPlate"]
         end_condition_all_dishes = True
         agent_visualization = ["human"]
         reward_scheme = {"recipe_reward": 20, "max_time_penalty": -5, "recipe_penalty": -40, "recipe_node_reward": 0}
@@ -293,10 +295,11 @@ class CookingEnvironment:
             self.my_agent.update_location(self.observations[DEFAULT_PLAYER_NAME])
             closest_loc: tuple = self.my_agent.closest(self.my_agent.location, locs,
                                                        self.observations[DEFAULT_PLAYER_NAME])
-            # rosidl won't implicitly cast an int to geometry_msgs float
-            closest_point = geometry_msgs.msg.Point(x=float(closest_loc[0]), y=float(closest_loc[1]))
-            closest_loc_distance = self.my_agent.distance(self.my_agent.location, closest_loc)
-            to_ret[object_type_name] = (closest_point, closest_loc_distance)
+            if closest_loc is not None:
+                # rosidl won't implicitly cast an int to geometry_msgs float
+                closest_point = geometry_msgs.msg.Point(x=float(closest_loc[0]), y=float(closest_loc[1]))
+                closest_loc_distance = self.my_agent.distance(self.my_agent.location, closest_loc)
+                to_ret[object_type_name] = (closest_point, closest_loc_distance)
         return to_ret
 
     @staticmethod
@@ -305,6 +308,7 @@ class CookingEnvironment:
         to_ret.world_id = obj.unique_id
         to_ret.moveable = obj.movable
         to_ret.walkable = obj.walkable
+        to_ret.is_static = isinstance(obj, cooking_zoo_StaticObject)
         to_ret.object_type = type(obj).__name__
         to_ret.location.x = float(obj.location[0])
         to_ret.location.y = float(obj.location[1])

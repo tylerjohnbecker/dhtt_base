@@ -29,7 +29,7 @@ class CookingExecuteBehavior : public CookingBehavior
 
 	/**
 	 * CookingExecuteBehavior uses one arm and the base to execute on an object, then immediately
-	 * releases the arm, which is to say, all owned resources.
+	 * releases the arm and base, which is to say, all owned resources.
 	 * @param container pointer to the node which is running this logic.
 	 * @return vector releasing all owned resources
 	 */

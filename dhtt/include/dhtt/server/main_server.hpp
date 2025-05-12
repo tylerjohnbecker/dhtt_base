@@ -532,6 +532,14 @@ namespace dhtt
 		bool verbose;
 		bool running;
 		bool end;
+
+		long unsigned int cooking_zoo_counter = 0;
+
+		// see dhtt_plugins/plugins.xml
+		const std::map<int, std::string> NODE_TYPE_TO_PLUGIN{
+			{dhtt_msgs::msg::Node::AND, "dhtt_plugins::AndBehavior"},
+			{dhtt_msgs::msg::Node::THEN, "dhtt_plugins::ThenBehavior"},
+			{dhtt_msgs::msg::Node::OR, "dhtt_plugins::OrBehavior"}};
 	};
 
 }

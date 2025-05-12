@@ -29,6 +29,7 @@ add_library(dhtt_plugins SHARED src/dhtt_plugins.cpp
                                 src/behaviors/action_type.cc src/behaviors/move_behavior.cc src/behaviors/pick_behavior.cc src/behaviors/place_behavior.cc
                                 src/behaviors/cooking_behavior.cc src/behaviors/cooking_execute_behavior.cc src/behaviors/cooking_interact_special_behavior.cc
                                 src/behaviors/cooking_move_behavior.cc src/behaviors/cooking_pick_behavior.cc src/behaviors/cooking_place_behavior.cc
+                                src/behaviors/cooking_plate_place_behavior.cc src/behaviors/cooking_object_exists_behavior.cc
                                 src/goitrs/goitr_test.cc src/goitrs/find_goitr.cc)
 
 target_include_directories(dhtt_plugins PUBLIC
