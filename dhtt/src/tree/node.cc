@@ -12,6 +12,7 @@ namespace dhtt
 		this->sub_opts.callback_group = this->conc_group;
 		this->pub_opts.callback_group = this->conc_group;
 
+		this->active_child_name = "";
 		this->error_msg = "";
 		this->successful_load = true;
 
@@ -238,7 +239,7 @@ namespace dhtt
 			return;
 		}
 
-		this->expected_responses++;
+		this->expected_failed_responses++;
 
 		auto send_goal_options = rclcpp_action::Client<dhtt_msgs::action::Activation>::SendGoalOptions();
 
@@ -633,6 +634,8 @@ namespace dhtt
 	{
 		// TODO if (not result.result->possible)
 		// this->responses[node_name] = result.result;
+		(void) result;
+		(void) node_name;
 
 		this->stored_failed_responses++;
 	}
@@ -902,6 +905,7 @@ namespace dhtt
 
 	void Node::propogate_failure_down()
 	{
+		std::lock_guard<std::mutex> logic_lock(this->logic_mut); 
 
 		// TODO occasionally causes a segfault, not sure if this is the right solution
 		if (not this->active_child_name.empty())

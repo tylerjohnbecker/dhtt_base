@@ -46,7 +46,7 @@ void CookingMoveBehavior::do_work(dhtt::Node *container)
 	if (not suc)
 	{
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "move_to request did not succeed: %s",
-					 res.future.get()->error_msg.c_str());
+					 res.get()->error_msg.c_str());
 		return;
 	}
 
@@ -59,7 +59,7 @@ void CookingMoveBehavior::do_work(dhtt::Node *container)
 		if (not suc)
 		{
 			RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "Marking object failed: %s",
-						 res.future.get()->error_msg.c_str());
+						 res.get()->error_msg.c_str());
 		}
 	}
 

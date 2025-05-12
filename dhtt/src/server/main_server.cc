@@ -623,15 +623,19 @@ namespace dhtt
 			// TODO remove this when done with cooking_zoo
 			for (auto& param : to_add.tree_nodes[current].params)
 			{
-				if (const auto index = param.find('#'); index != std::string::npos)
+				const auto index = param.find('#');
+
+				if ( index != std::string::npos )
 				{
 					param.replace(index, 1, std::to_string(this->cooking_zoo_counter));
 				}
 			}
 
+			// just a sanity check that the # symbols have been replaced
 			for (auto& param : to_add.tree_nodes[current].params)
 			{
-				if (const auto index = param.find('#'); index != std::string::npos)
+				const auto index = param.find('#'); 
+				if ( index != std::string::npos )
 				{
 					throw std::runtime_error("");
 				}

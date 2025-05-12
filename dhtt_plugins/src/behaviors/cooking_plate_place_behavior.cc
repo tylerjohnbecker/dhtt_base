@@ -27,12 +27,12 @@ void CookingPlatePlaceBehavior::do_work(dhtt::Node *container)
 	this->executor->spin_until_future_complete(res);
 	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "move_to request completed");
 
-	bool suc = res.future.get()->success;
+	bool suc = res.get()->success;
 	if (not suc)
 	{
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
 					 "move_to request did not succeed, returning early: %s",
-					 res.future.get()->error_msg.c_str());
+					 res.get()->error_msg.c_str());
 		this->done = false;
 		return;
 	}
@@ -52,12 +52,12 @@ void CookingPlatePlaceBehavior::do_work(dhtt::Node *container)
 	this->executor->spin_until_future_complete(res);
 	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "First interact completed");
 
-	suc = res.future.get()->success;
+	suc = res.get()->success;
 	if (not suc)
 	{
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
 					 "interact_primary request did not succeed: %s",
-					 res.future.get()->error_msg.c_str());
+					 res.get()->error_msg.c_str());
 		return;
 	}
 
@@ -76,12 +76,12 @@ void CookingPlatePlaceBehavior::do_work(dhtt::Node *container)
 	this->executor->spin_until_future_complete(res);
 	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Second interact completed");
 
-	suc = res.future.get()->success;
+	suc = res.get()->success;
 	if (not suc)
 	{
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
 					 "interact_primary request did not succeed: %s",
-					 res.future.get()->error_msg.c_str());
+					 res.get()->error_msg.c_str());
 		return;
 	}
 
@@ -101,11 +101,11 @@ void CookingPlatePlaceBehavior::do_work(dhtt::Node *container)
 		this->executor->spin_until_future_complete(res);
 		RCLCPP_INFO(this->pub_node_ptr->get_logger(), "NOP interact completed");
 
-		suc = res.future.get()->success;
+		suc = res.get()->success;
 		if (not suc)
 		{
 			RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "NOP request did not succeed: %s",
-						 res.future.get()->error_msg.c_str());
+						 res.get()->error_msg.c_str());
 			return;
 		}
 
