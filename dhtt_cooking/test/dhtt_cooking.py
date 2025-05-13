@@ -1,11 +1,12 @@
 from array import array
+from typing import Tuple, List
 
 import geometry_msgs.msg
 import pytest
 from cooking_zoo.cooking_world.constants import ChopFoodStates, ToasterFoodStates
 
 from dhtt_msgs.msg import CookingAction, CookingObservation, CookingObject, CookingRecipe
-from dhtt_msgs.srv import CookingRequest, CookingRequest_Request, CookingRequest_Response
+from dhtt_msgs.srv import CookingRequest
 
 import rclpy
 import rclpy.logging
@@ -28,7 +29,7 @@ class CookingClient(rclpy.node.Node):
         self.cooking_observation_subscriber = self.create_subscription(CookingObservation, 'Cooking_Observations',
                                                                        self.obs_callback, 10)
 
-        self.received_messages: list[CookingObservation] = []
+        self.received_messages: List[CookingObservation] = []
 
     def obs_callback(self, msg: CookingObservation):
         print("Got topic message")
@@ -36,18 +37,18 @@ class CookingClient(rclpy.node.Node):
 
 
 def make_request(super_action: int = 0, action_type: int = 0, params: str = '',
-                 player_name: str = DEFAULT_PLAYER_NAME) -> tuple[CookingRequest_Request, CookingRequest_Response]:
+                 player_name: str = DEFAULT_PLAYER_NAME) -> Tuple[CookingRequest.Request, CookingRequest.Response]:
     request = CookingRequest.Request()
     request.super_action = super_action
     request.action.action_type = action_type
     request.action.params = params
     request.action.player_name = player_name
-    return request, CookingRequest_Response()
+    return request, CookingRequest.Response()
 
 
 class TestCookingEnvironment:
     @staticmethod
-    def update_agent_loc(cenv: CookingEnvironment, player_name: str) -> tuple[int, int]:
+    def update_agent_loc(cenv: CookingEnvironment, player_name: str) -> Tuple[int, int]:
         cenv.my_agent.update_location(cenv.observations[player_name])
         return cenv.my_agent.location
 
@@ -134,7 +135,7 @@ class TestCookingEnvironment:
         for obj in {Lettuce((0, 0)), Agent((0, 0), '', 'foo', 1), Counter((0, 0)), Floor((0, 0))}:
             msg = cenv._object_to_object_msg(obj)
             assert msg
-            assert isinstance(msg.physical_state, list)
+            assert isinstance(msg.physical_state, List)
             assert isinstance(msg.location.x, float)
             assert isinstance(msg.location.y, float)
             assert isinstance(msg.location.z, float)
@@ -183,19 +184,19 @@ class TestCookingEnvironment:
 
         msg = cenv.get_observation_msg()
 
-        assert isinstance(msg.objects, list)
+        assert isinstance(msg.objects, List)
         assert all(isinstance(obj, CookingObject) for obj in msg.objects)
 
-        assert isinstance(msg.closest_objects_types, list)
+        assert isinstance(msg.closest_objects_types, List)
         assert all(isinstance(obj, str) for obj in msg.closest_objects_types)
 
-        assert isinstance(msg.closest_objects_locations, list)
+        assert isinstance(msg.closest_objects_locations, List)
         assert all(isinstance(obj, geometry_msgs.msg.Point) for obj in msg.closest_objects_locations)
         assert all(isinstance(point.x, float) for point in msg.closest_objects_locations)
         assert all(isinstance(point.y, float) for point in msg.closest_objects_locations)
         assert all(isinstance(point.z, float) for point in msg.closest_objects_locations)
 
-        assert isinstance(msg.closest_objects_distances, list) or isinstance(msg.closest_objects_distances, array)
+        assert isinstance(msg.closest_objects_distances, List) or isinstance(msg.closest_objects_distances, array)
         assert all(isinstance(obj, float) for obj in msg.closest_objects_distances)
 
 

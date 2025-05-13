@@ -20,7 +20,7 @@ class ServerNode (rclpy.node.Node):
 		self.root_state = 0
 
 		# holds a key val pair for each node's state
-		# node_name: [ [status, ...] , [start_time, ...] , [width, ...] ]
+		# node_name: [ start_time, end_time ]
 		self.node_states = {}
 		self.running = False
 
@@ -34,35 +34,114 @@ class ServerNode (rclpy.node.Node):
 		self.root_state = data.state
 
 	def status_listener(self, data):
-		node_name = data.node_name.split('_')[0]
+		# just record the initial start time and the final end time
+		if not data.node_name in self.node_states.keys() and data.node_status.state == NodeStatus.WORKING:
+			self.node_states[data.node_name] = [ data ] 
+		elif data.node_status.state == NodeStatus.DONE:
+			self.node_states[data.node_name].append(data)
 
-		if data.head.stamp.sec + 10e-9 * data.head.stamp.nanosec > self.max_time:
-			self.max_time = data.head.stamp.sec + 10e-9 * data.head.stamp.nanosec
+		# if data.head.stamp.sec + 10e-9 * data.head.stamp.nanosec > self.max_time:
+		# 	self.max_time = data.head.stamp.sec + 10e-9 * data.head.stamp.nanosec
 
-		if not self.running:
-			return
+		# if not self.running:
+		# 	return
 
-		# don't record the root node
-		if node_name == 'ROOT':
-			return
+		# # don't record the root node
+		# if node_name == 'ROOT':
+		# 	return
 
-		# if this is the first time we've heard from this node initialize it in the data structure
-		if not node_name in self.node_states.keys():
-			self.node_states[node_name] = [ [], [], [] ]
-			self.node_states[node_name][0].append(data.node_status.state)
-			self.node_states[node_name][1].append(data.head.stamp.sec + 10e-9 * data.head.stamp.nanosec)
-			self.node_states[node_name][2].append(0)
+		# # if this is the first time we've heard from this node initialize it in the data structure
+		# if not node_name in self.node_states.keys():
+		# 	self.node_states[node_name] = [ [], [], [] ]
+		# 	self.node_states[node_name][0].append(data.node_status.state)
+		# 	self.node_states[node_name][1].append(data.head.stamp.sec + 10e-9 * data.head.stamp.nanosec)
+		# 	self.node_states[node_name][2].append(0)
 
-			return
+		# 	return
 
-		# otherwise only add another value if the previous and current state are different
-		if self.node_states[node_name][0][-1] != data.node_status.state:
-			# width is final time minus initial time
-			self.node_states[node_name][2][-1] = data.head.stamp.sec + 10e-9 * data.head.stamp.nanosec - self.node_states[node_name][1][-1]
+		# # otherwise only add another value if the previous and current state are different
+		# if self.node_states[node_name][0][-1] != data.node_status.state:
+		# 	# width is final time minus initial time
+		# 	self.node_states[node_name][2][-1] = data.head.stamp.sec + 10e-9 * data.head.stamp.nanosec - self.node_states[node_name][1][-1]
 
-			self.node_states[node_name][0].append(data.node_status.state)
-			self.node_states[node_name][1].append(data.head.stamp.sec + 10e-9 * data.head.stamp.nanosec)
-			self.node_states[node_name][2].append(0)
+		# 	self.node_states[node_name][0].append(data.node_status.state)
+		# 	self.node_states[node_name][1].append(data.head.stamp.sec + 10e-9 * data.head.stamp.nanosec)
+		# 	self.node_states[node_name][2].append(0)
+
+	def get_time_float(self, data):
+		return data.head.stamp.sec + 10e-9 * data.head.stamp.nanosec
+
+	def insert_sorted_by_val(self, sorted_list, val_to_insert, original_index):
+
+		for index, val in enumerate(sorted_list):
+			# this is when we insert
+			if val[0] < val_to_insert:
+				sorted_list.insert(index, [val_to_insert, original_index])
+
+		sorted_list.append([val_to_insert, original_index])
+
+	# def get_nodes_of_depth(self, depth_range):
+	# 	pass
+
+	def sort_by_given_indices(self, to_sort, given_indices):
+
+		to_ret = []
+
+		for i in given_indices:
+			to_ret.append(to_sort[i])
+
+		to_sort = to_ret
+
+
+	# the data will become: [ data_start, data_end, [ start_time, end_time, width, row ] ]
+	def get_statistics(self, nodes):
+
+		# assume we passed in at least one element
+		min_time = self.get_float_time(nodes[0][0])
+		max_time = self.get_float_time(nodes[0][1])
+
+		# first generate width, start_time, min_time, and max_time
+		final_order = []
+		for i, val in nodes[1:]:
+			start_time = self.get_float_time(val[0])
+			end_time = self.get_float_time(val[1])
+
+			width = end_time - start_time
+
+			val.append([start_time, end_time, width])
+
+			# sort them by start time
+			self.insert_sorted_by_val(final_order, start_time, i)
+
+			if min_time > start_time:
+				min_time = start_time
+
+			if max_time < end_time:
+				max_time = end_time
+
+		# now sort them by their start time
+		self.sort_by_given_indices(nodes, final_order[:][1])
+
+		# assign each a row greedily
+		# if there is no overlap then delete a row and move it up
+		final_rows_list = [ [] for i in range(len(nodes)) ]
+		for index, val in enumerate( nodes ):
+			for i in range(len(final_rows_list)):
+				if len(final_rows_list[i]) == 0: # if we hit an empty row just append it here ( we always do because there are n rows and n items)
+					final_rows_list[i].append(val)
+				elif final_rows_list[i][-1][2][1] < val[2][0]: # compare end time of the end of the row to start time of the new member
+					final_rows_list[i].append(val)
+
+		# finally get rid of any empty rows
+		to_delete = -1
+		for i in range(len(final_rows_list)):
+			if len(final_rows_list[i]) == 0:
+				to_delete = i
+
+				break
+
+		return final_rows_list[:i]
+
 
 	def record_results(self):
 		while self.root_state != NodeStatus.ACTIVE and rclpy.ok():

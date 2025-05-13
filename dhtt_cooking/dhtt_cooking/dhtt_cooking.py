@@ -6,7 +6,7 @@ import rclpy.node
 import geometry_msgs.msg
 
 from dhtt_msgs.msg import CookingAction, CookingAgent, CookingObservation, CookingObject, CookingRecipe
-from dhtt_msgs.srv import CookingRequest, CookingRequest_Request, CookingRequest_Response
+from dhtt_msgs.srv import CookingRequest
 
 from cooking_zoo.cooking_agents.base_agent import BaseAgent
 from cooking_zoo.environment.cooking_env import CookingEnvironment as CookingZooEnvironment, parallel_env
@@ -14,6 +14,8 @@ from cooking_zoo.cooking_world.abstract_classes import Object as cooking_zoo_Obj
     StaticObject as cooking_zoo_StaticObject
 from cooking_zoo.cooking_world.world_objects import Agent as cooking_zoo_Agent
 from cooking_zoo.cooking_book.recipe import RecipeNode as cooking_zoo_RecipeNode
+
+from typing import List, Tuple, Dict
 
 DEFAULT_PLAYER_NAME = CookingAction.DEFAULT_PLAYER_NAME  # usually player_0 this is from cooking_zoo cooking_env.py
 DEFAULT_AGENT_ID = CookingAction.DEFAULT_AGENT_ID  # usually agent-1. This is the name given to the actual agent object
@@ -48,8 +50,8 @@ class CookingNode(rclpy.node.Node):
             self.get_logger().info('Published initial observation')
             self.get_logger().debug(f'Initial obs: {obs}')
 
-    def cooking_request_callback(self, request: CookingRequest_Request,
-                                 response: CookingRequest_Response) -> CookingRequest_Response:
+    def cooking_request_callback(self, request: CookingRequest.Request,
+                                 response: CookingRequest.Response) -> CookingRequest.Response:
         to_ret = ""
         if request.super_action == CookingRequest.Request.START:
             self.get_logger().info('Got start request')
@@ -151,7 +153,7 @@ class CookingEnvironment:
     def reset(self):
         self.env.reset()
 
-    def resolve_dhtt_action(self, request: CookingRequest_Request, response: CookingRequest_Response):
+    def resolve_dhtt_action(self, request: CookingRequest.Request, response: CookingRequest.Response):
         """
         Take an action from a dHTT CookingRequest and step the environment. Simple actions like move and interact
         return in one step. High-level actions like MoveTo may take several steps.
@@ -283,8 +285,8 @@ class CookingEnvironment:
     def _walking_distance(self):
         pass  # TODO instead of euclidean distance used in BaseAgent.distance()
 
-    def _closest_of_each_type(self, world_objects: dict['str', list[cooking_zoo_Object]]) -> dict[
-        'str', tuple[geometry_msgs.msg.Point, float]]:
+    def _closest_of_each_type(self, world_objects: Dict['str', List[cooking_zoo_Object]]) -> Dict[
+        'str', Tuple[geometry_msgs.msg.Point, float]]:
         """
         :param world_objects:
         :return: Locations of and distances to the closest of each type of world object

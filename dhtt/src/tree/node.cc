@@ -154,7 +154,7 @@ namespace dhtt
 		this->status_pub = this->create_publisher<dhtt_msgs::msg::Node>("/status", 10, this->pub_opts);
 		// this->knowledge_pub = this->create_publisher<std_msgs::msg::String>("/updated_knowledge", 10);
 
-		this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1));//, this->sub_opts);
+		this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1), this->sub_opts);
 
 		this->register_server = this->create_service<dhtt_msgs::srv::InternalServiceRegistration>(my_register_topic, std::bind(&Node::register_child_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->exclusive_group);
 
@@ -162,15 +162,15 @@ namespace dhtt
 		this->activation_server = rclcpp_action::create_server<dhtt_msgs::action::Activation>(this, my_activation_topic,
 			std::bind(&Node::goal_activation_callback, this, std::placeholders::_1, std::placeholders::_2),
 			std::bind(&Node::cancel_activation_callback, this, std::placeholders::_1),
-			std::bind(&Node::activation_accepted_callback, this, std::placeholders::_1));
-			// rcl_action_server_get_default_options(), this->exclusive_group);
+			std::bind(&Node::activation_accepted_callback, this, std::placeholders::_1),
+			rcl_action_server_get_default_options(), this->conc_group);
 
 		// set up condition maintenance server
 		this->condition_server = rclcpp_action::create_server<dhtt_msgs::action::Condition>(this, my_condition_topic,
 			std::bind(&Node::condition_goal_activation_callback, this, std::placeholders::_1, std::placeholders::_2),
 			std::bind(&Node::condition_cancel_activation_callback, this, std::placeholders::_1),
-			std::bind(&Node::condition_activation_accepted_callback, this, std::placeholders::_1),
-			rcl_action_server_get_default_options(), this->exclusive_group);
+			std::bind(&Node::condition_activation_accepted_callback, this, std::placeholders::_1));
+			// rcl_action_server_get_default_options(), this->exclusive_group);
 
 		this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
@@ -683,7 +683,7 @@ namespace dhtt
 				// wait real quick for the status to be updated
 				while (not this->resource_status_updated);
 
-				RCLCPP_DEBUG(this->get_logger(), "Resource status updated activating callback");
+				RCLCPP_FATAL(this->get_logger(), "Resource status updated activating callback");
 
 				// deal with any passed resources
 				for ( dhtt_msgs::msg::Resource passed_resource : goal_handle->get_goal()->passed_resources )

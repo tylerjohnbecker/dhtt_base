@@ -8,6 +8,7 @@
   <license>TODO: License declaration</license>
 
   <depend>cooking_zoo</depend>
+  <depend>dhtt_msgs</depend>
 
   <test_depend>python3-pytest</test_depend>
 
