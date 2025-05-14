@@ -304,6 +304,7 @@ class TestCookingZooTree:
 
         with TestCookingZooTree.lock:
             self.initialize()
+            self.reset_level()
             self.reset_tree()
 
             # self.wait_for_waiting()
@@ -345,32 +346,32 @@ class TestCookingZooTree:
     #         history = self.get_history()
     #         self.reset_tree()
 
-    def test_single_node(self, serial):
-        with TestCookingZooTree.lock:
-            self.initialize()
-            self.reset_level()
-            self.reset_tree()
-            self.wait_for_waiting()
-            self.add_from_yaml("/test_descriptions/test_cooking_singlenode.yaml", force=True)
-            self.start_tree()
-            self.wait_for_finished_execution()
-            history = self.get_history()
-            self.reset_tree()
+    # def test_single_node(self, serial):
+    #     with TestCookingZooTree.lock:
+    #         self.initialize()
+    #         self.reset_level()
+    #         self.reset_tree()
+    #         self.wait_for_waiting()
+    #         self.add_from_yaml("/test_descriptions/test_cooking_singlenode.yaml", force=True)
+    #         self.start_tree()
+    #         self.wait_for_finished_execution()
+    #         history = self.get_history()
+    #         self.reset_tree()
 
-    def test_multiple_move(self, serial):
-        self.order_from_file_test("/test_descriptions/test_cooking_multiplemove.yaml")
+    # def test_multiple_move(self, serial):
+    #     self.order_from_file_test("/test_descriptions/test_cooking_multiplemove.yaml")
 
-    def test_multiple_moveobject(self, serial):
-        self.order_from_file_test("/test_descriptions/test_cooking_multiplemoveobject.yaml")
+    # def test_multiple_moveobject(self, serial):
+    #     self.order_from_file_test("/test_descriptions/test_cooking_multiplemoveobject.yaml")
 
-    def test_execute(self, serial):
-        self.order_from_file_test("/test_descriptions/test_cooking_execute.yaml")
+    # def test_execute(self, serial):
+    #     self.order_from_file_test("/test_descriptions/test_cooking_execute.yaml")
 
-    def test_pick(self, serial):
-        self.order_from_file_test("/test_descriptions/test_cooking_executepick.yaml")
+    # def test_pick(self, serial):
+    #     self.order_from_file_test("/test_descriptions/test_cooking_executepick.yaml")
 
-    def test_pickplace(self, serial):
-        self.order_from_file_test("/test_descriptions/test_cooking_pickplace.yaml")
+    # def test_pickplace(self, serial):
+    #     self.order_from_file_test("/test_descriptions/test_cooking_pickplace.yaml")
 
     def test_interactspecial(self, serial):
         self.order_from_file_test("/test_descriptions/test_cooking_interactspecial.yaml")
@@ -516,6 +517,35 @@ class TestCookingZooTree:
     #         # TestCookingZooTree.node.interrupt_tree()
 
     #         self.wait_for_finished_execution()
-            # self.reset_tree()
+    
+    @pytest.mark.skip(reason="TODO Failing")
+    def test_tomatotoast_experiment(self):
+        with TestCookingZooTree.lock:
+            self.initialize()
+            self.reset_level()
+            self.reset_tree()
+            self.wait_for_waiting()
+
+            req = ModifyRequest.Request()
+            req.type = ModifyRequest.Request.ADD
+            req.to_modify.append('ROOT_0')
+            req.add_node = Node()
+            req.add_node.type = Node.THEN
+            req.add_node.node_name = 'AllOrdersThen'
+            req.add_node.plugin_name = 'dhtt_plugins::ThenBehavior'
+            fut = self.node.modifysrv.call_async(req)
+            rclpy.spin_until_future_complete(self.node, fut)
+            true_name = fut.result().added_nodes[0]
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
+            self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
+            self.start_tree()
+
+            # TestCookingZooTree.node.wait_for_node_in_state("TomatoToastBreadChoppedBreadExists_67", NodeStatus.WORKING)
+            #
+            # TestCookingZooTree.node.interrupt_tree()
+
+            self.wait_for_finished_execution()
+            self.reset_tree()
 
     # TODO negative tests

@@ -113,7 +113,7 @@ void CookingBehavior::parse_params(std::vector<std::string> params)
 double CookingBehavior::get_perceived_efficiency()
 {
 	// Make sure we're up to date with observations
-	this->executor->spin_some(std::chrono::nanoseconds(0));
+	this->executor->spin_all(std::chrono::nanoseconds(0));
 
 	if (not this->last_obs)
 	{
