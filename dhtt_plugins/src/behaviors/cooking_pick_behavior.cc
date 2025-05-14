@@ -78,6 +78,19 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 		return;
 	}
 
+	// if object is not marked for anyone
+	if (not this->destination_mark.empty() and this->check_mark(this->destination_object) == '2')
+	{
+		RCLCPP_INFO(this->pub_node_ptr->get_logger(),
+					("Marking object as " + this->destination_mark).c_str());
+		suc = this->mark_object(this->destination_object.world_id, this->destination_mark);
+		if (not suc)
+		{
+			RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "Marking object failed: %s",
+						 res.get()->error_msg.c_str());
+		}
+	}
+
 	// Equivalent of get_released_resources() but for "resources" on the paramserver
 	if (not this->destination_mark.empty() and this->check_mark(this->destination_object) == '1')
 	{

@@ -15,6 +15,10 @@ class CookingExecuteBehavior : public CookingBehavior
 
 	/**
 	 * First move_to the target location (to set the orientation), then execute
+	 *
+	 * If the object is not marked yet (i.e. it is not marked on the paramserver but we have
+	 * param 'mark: ...') we will taint it with this->destination_mark.
+	 *
 	 * @param container unused
 	 */
 	void do_work(dhtt::Node *container) override;

@@ -18,8 +18,7 @@ class CookingMoveBehavior : public CookingBehavior
 	 * Makes a move_to request to the target destination.
 	 *
 	 * If the object is not marked yet (i.e. it is not marked on the paramserver but we have
-	 * param 'mark: ...') we will taint it with this->destination_mark. This is the only behavior
-	 * that does this because we assume all sequences of behaviors begin with a move.
+	 * param 'mark: ...') we will taint it with this->destination_mark.
 	 *
 	 * @param container unused
 	 */

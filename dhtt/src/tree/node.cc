@@ -873,7 +873,7 @@ namespace dhtt
 
 	void Node::resource_availability_callback( const dhtt_msgs::msg::Resources::SharedPtr canonical_list )
 	{
-		RCLCPP_INFO(this->get_logger(), "Resources updated");
+		RCLCPP_DEBUG(this->get_logger(), "Resources updated");
 		this->available_resources = canonical_list->resource_state;
 
 		this->resource_status_updated = true;

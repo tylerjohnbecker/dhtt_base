@@ -16,6 +16,9 @@ class CookingPickBehavior : public CookingBehavior
 	/**
 	 * First move_to the target location (to set the orientation), then pick.
 	 *
+	 * If the object is not marked yet (i.e. it is not marked on the paramserver but we have
+	 * param 'mark: ...') we will taint it with this->destination_mark.
+	 *
 	 * If the object we are picking is on top of a static object (it always should be) that is
 	 * marked, unmark that static object to free up that counter/cutboard/dispenser for other
 	 * behaviors.

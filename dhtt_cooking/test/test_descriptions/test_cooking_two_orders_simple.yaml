@@ -51,55 +51,55 @@ Nodes:
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: LettuceDispenser' ]
+    params: [ 'object: LettuceDispenser', 'mark: foo#' ]
   LettuceSaladLettuceExecuteDispenser:
     type: 4
     behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: LettuceDispenser' ]
+    params: [ 'object: LettuceDispenser', 'mark: foo#' ]
   LettuceSaladLettucePick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Lettuce', 'conditions: Fresh' ]
+    params: [ 'object: Lettuce', 'conditions: Fresh', 'mark: foo#' ]
   LettuceSaladLettuceMoveToCutboard:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Cutboard' ]
+    params: [ 'object: Cutboard', 'mark: foo#' ]
   LettuceSaladLettucePlaceCutboard:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Cutboard', 'conditions: Free' ]
+    params: [ 'object: Cutboard', 'conditions: Free', 'mark: foo#' ]
   LettuceSaladLettuceExecuteCutboard:
     type: 4
     behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Cutboard' ]
+    params: [ 'object: Cutboard', 'mark: foo#' ]
   LettuceSaladChoppedLettucePick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Lettuce', 'conditions: Chopped' ]
+    params: [ 'object: Lettuce', 'conditions: Chopped', 'mark: foo#' ]
   LettuceSaladChoppedLettuceMoveToCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Counter', 'conditions: Free' ]
+    params: [ 'object: Counter', 'conditions: Free', 'mark: foo#' ]
   LettuceSaladChoppedLettucePlaceCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'LettuceSaladLettuceThen'
-    params: [ 'object: Counter', 'conditions: Free' ]
+    params: [ 'object: Counter', 'conditions: Free', 'mark: foo#' ]
 
   LettuceSaladPlateThen:
     type: 2
@@ -112,71 +112,71 @@ Nodes:
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladPlateThen'
-    params: [ 'object: PlateDispenser' ]
+    params: [ 'object: PlateDispenser', 'mark: foo#' ]
   LettuceSaladPlateExecuteDispenser:
     type: 4
     behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
     robot: 0
     parent: 'LettuceSaladPlateThen'
-    params: [ 'object: PlateDispenser' ]
+    params: [ 'object: PlateDispenser', 'mark: foo#' ]
   LettuceSaladPlatePick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladPlateThen'
-    params: [ 'object: Plate', 'conditions: Free' ]
+    params: [ 'object: Plate', 'conditions: Free', 'mark: foo#' ]
   LettuceSaladPlateMoveToCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladPlateThen'
-    params: [ 'object: Counter', 'conditions: Free' ]
+    params: [ 'object: Counter', 'conditions: Free', 'mark: foo#' ]
   LettuceSaladPlatePlaceCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'LettuceSaladPlateThen'
-    params: [ 'object: Counter', 'conditions: Free' ]
+    params: [ 'object: Counter', 'conditions: Free', 'mark: foo#' ]
 
   LettuceSaladPlateMoveTo:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Plate', 'conditions: Free' ]
+    params: [ 'object: Plate', 'conditions: Free', 'mark: foo#' ]
   LettuceSaladPlatePickTwo:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Plate', 'conditions: Free' ]
+    params: [ 'object: Plate', 'conditions: Free', 'mark: foo#' ]
   LettuceSaladPlateMoveToChoppedLettuce:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Lettuce', 'conditions: Chopped' ]
+    params: [ 'object: Lettuce', 'conditions: Chopped', 'mark: foo#' ]
   LettuceSaladPlatePlaceChoppedLettuce:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlatePlaceBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Lettuce', 'conditions: Chopped' ]
+    params: [ 'object: Lettuce', 'conditions: Chopped', 'mark: foo#' ]
   LettuceSaladPlateChoppedLettucePick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: Plate', 'conditions: Contains+"Lettuce"' ]
+    params: [ 'object: Plate', 'conditions: Contains+"Lettuce"', 'mark: foo#' ]
   LettuceSaladPlateMoveToDeliversquare:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: AbsorbingDeliversquare' ]
+    params: [ 'object: AbsorbingDeliversquare', 'mark: foo#' ]
   LettuceSaladPlatePlaceDeliversquare:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'LettuceSaladThen'
-    params: [ 'object: AbsorbingDeliversquare' ]
+    params: [ 'object: AbsorbingDeliversquare', 'mark: foo#' ]
