@@ -8,6 +8,14 @@ NodeList:
   - 'MoveToFour'
   - 'Place'
 
+expected_order:
+  - 'MoveTo'
+  - 'Execute'
+  - 'MoveToTwo'
+  - 'MoveToThree'
+  - 'Pick'
+  - 'MoveToFour'
+  - 'Place'
 
 Nodes:
   ParentThen:
