@@ -156,7 +156,7 @@ namespace dhtt
 
 		this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1), this->sub_opts);
 
-		this->register_server = this->create_service<dhtt_msgs::srv::InternalServiceRegistration>(my_register_topic, std::bind(&Node::register_child_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->exclusive_group);
+		this->register_server = this->create_service<dhtt_msgs::srv::InternalServiceRegistration>(my_register_topic, std::bind(&Node::register_child_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->conc_group);
 
 		// set up activation server
 		this->activation_server = rclcpp_action::create_server<dhtt_msgs::action::Activation>(this, my_activation_topic,
@@ -305,7 +305,7 @@ namespace dhtt
 
 	bool Node::block_for_responses_from_failed_children()
 	{
-		// RCLCPP_INFO(this->get_logger(), "Waiting for %d responses from children, currently received %d...", this->expected_responses, this->stored_responses );
+		RCLCPP_DEBUG(this->get_logger(), "Waiting for %d responses from children, currently received %d...", this->expected_responses, this->stored_responses );
 
 		while (this->stored_failed_responses < this->expected_failed_responses);
 
@@ -660,30 +660,31 @@ namespace dhtt
 
 		// this->block_for_responses_from_failed_children();
 
-		if ( this->has_goitr )
-			this->replanner->block_for_thread();
+		// if ( this->has_goitr )
+		// 	this->replanner->block_for_thread();
 
-		if ( this->has_goitr and this->first_activation )
-		{
-			RCLCPP_DEBUG(this->get_logger(), "This is first activation so building subtree...");
-			this->replanner->first_activation_callback();
+		// if ( this->has_goitr and this->first_activation )
+		// {
+		// 	RCLCPP_DEBUG(this->get_logger(), "This is first activation so building subtree...");
+		// 	this->replanner->first_activation_callback();
 
-			to_ret->done = false;
-			to_ret->possible = false;
+		// 	to_ret->done = false;
+		// 	to_ret->possible = false;
 			
-			// this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
-			this->first_activation = false;
-		}
-		else
+		// 	// this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
+		// 	this->first_activation = false;
+		// }
+		// else
+
 		{
 			std::lock_guard<std::mutex> guard(this->logic_mut);
 
 			if ( this->status.state == dhtt_msgs::msg::NodeStatus::ACTIVE )
 			{
 				// wait real quick for the status to be updated
-				while (not this->resource_status_updated);
+				// while (not this->resource_status_updated);
 
-				RCLCPP_FATAL(this->get_logger(), "Resource status updated activating callback");
+				// RCLCPP_FATAL(this->get_logger(), "Resource status updated activating callback");
 
 				// deal with any passed resources
 				for ( dhtt_msgs::msg::Resource passed_resource : goal_handle->get_goal()->passed_resources )
@@ -872,6 +873,7 @@ namespace dhtt
 
 	void Node::resource_availability_callback( const dhtt_msgs::msg::Resources::SharedPtr canonical_list )
 	{
+		RCLCPP_INFO(this->get_logger(), "Resources updated");
 		this->available_resources = canonical_list->resource_state;
 
 		this->resource_status_updated = true;
@@ -905,7 +907,7 @@ namespace dhtt
 
 	void Node::propogate_failure_down()
 	{
-		std::lock_guard<std::mutex> logic_lock(this->logic_mut); 
+		// std::lock_guard<std::mutex> logic_lock(this->logic_mut); 
 
 		// TODO occasionally causes a segfault, not sure if this is the right solution
 		if (not this->active_child_name.empty())

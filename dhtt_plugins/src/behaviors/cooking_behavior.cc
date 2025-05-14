@@ -113,7 +113,7 @@ void CookingBehavior::parse_params(std::vector<std::string> params)
 double CookingBehavior::get_perceived_efficiency()
 {
 	// Make sure we're up to date with observations
-	// this->executor->spin_all(std::chrono::nanoseconds(0));
+	this->executor->spin_some(std::chrono::nanoseconds(0));
 
 	if (not this->last_obs)
 	{
@@ -233,7 +233,7 @@ void CookingBehavior::initialize(std::vector<std::string> params)
 void CookingBehavior::observation_callback(std::shared_ptr<dhtt_msgs::msg::CookingObservation> msg)
 {
 	RCLCPP_DEBUG(this->pub_node_ptr->get_logger(), "Inside observation callback");
-	this->last_obs = std::move(msg);
+	this->last_obs = msg;
 
 	// Chicken-egg, This may be called before parse_params() has set destination_* members, which
 	// set_destination_to_closest_object() needs to find the relevant object, but that function also
@@ -389,13 +389,13 @@ std::string CookingBehavior::which_arm(dhtt::Node *container)
 bool CookingBehavior::can_work() const
 {
 	// TODO check good floating point comparisons
-	if (this->activation_potential <= DBL_EPSILON)
-	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
-					 "We set activation potential to 0 but the node still ran, skipping work. "
-					 "Complain to Tyler.");
-		return false;
-	}
+	// if (this->activation_potential <= DBL_EPSILON)
+	// {
+	// 	RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+	// 				 "We set activation potential to 0 but the node still ran, skipping work. "
+	// 				 "Complain to Tyler.");
+	// 	return false;
+	// }
 
 	if (not this->destination_is_good)
 	{

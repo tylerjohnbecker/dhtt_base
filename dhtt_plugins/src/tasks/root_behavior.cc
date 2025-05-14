@@ -53,7 +53,7 @@ namespace dhtt_plugins
 
 			container->activate_all_children(n_goal);
 
-			RCLCPP_FATAL(container->get_logger(), "\tWaiting for respones...\n");
+			RCLCPP_FATAL(container->get_logger(), "\tWaiting for response...\n");
 
 			// get responses
 			container->block_for_responses_from_children();
