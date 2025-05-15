@@ -4,6 +4,7 @@ NodeList:
   - TomatoToastBreadThen                          # BEGIN TOAST
   - TomatoToastBreadOr
   - TomatoToastBreadChoppedBreadExists            # BEGIN FIND TOAST # END FIND TOAST
+  - TomatoToastBreadLoafExists            # BEGIN FIND Loaf # END FIND Loaf
   - TomatoToastBreadNewBreadThen                          # BEGIN NEW TOAST
   - TomatoToastBreadMoveToDispenser
   - TomatoToastBreadExecuteDispenser
@@ -33,32 +34,32 @@ NodeList:
   - TomatoToastToastPick
   - TomatoToastToastMoveToCounter
   - TomatoToastToastPlaceCounter                  # END TOAST
-  - TomatoToastTomatoThen                         # BEGIN TOMATO
-  - TomatoToastTomatoMoveToDispenser
-  - TomatoToastTomatoExecuteDispenser
-  - TomatoToastTomatoPick
-  - TomatoToastTomatoMoveToCutboard
-  - TomatoToastTomatoPlaceCutboard
-  - TomatoToastTomatoExecuteCutboard
-  - TomatoToastChoppedTomatoPick
-  - TomatoToastChoppedTomatoMoveToCounter
-  - TomatoToastChoppedTomatoPlaceCounter          # END TOMATO
-  - TomatoToastPlateThen                       # BEGIN LOWER PLATE
-  - TomatoToastPlateMoveToDispenser
-  - TomatoToastPlateExecuteDispenser
-  - TomatoToastPlatePick
-  - TomatoToastPlateMoveToCounter
-  - TomatoToastPlatePlaceCounter               # END LOWER PLATE
-  - TomatoToastPlateMoveTo                     # BEGIN HIGHER PLATE
-  - TomatoToastPlatePickTwo
-  - TomatoToastPlateMoveToToast
-  - TomatoToastPlatePlaceToast
-  - TomatoToastPlateToastPick
-  - TomatoToastPlateToastMoveToTomato
-  - TomatoToastPlatePlaceTomato
-  - TomatoToastPlateStackPick
-  - TomatoToastPlateDeliversquareMoveTo
-  - TomatoToastPlateDeliversquarePlace        # END HIGHER PLATE
+#  - TomatoToastTomatoThen                         # BEGIN TOMATO
+#  - TomatoToastTomatoMoveToDispenser
+#  - TomatoToastTomatoExecuteDispenser
+#  - TomatoToastTomatoPick
+#  - TomatoToastTomatoMoveToCutboard
+#  - TomatoToastTomatoPlaceCutboard
+#  - TomatoToastTomatoExecuteCutboard
+#  - TomatoToastChoppedTomatoPick
+#  - TomatoToastChoppedTomatoMoveToCounter
+#  - TomatoToastChoppedTomatoPlaceCounter          # END TOMATO
+#  - TomatoToastPlateThen                       # BEGIN LOWER PLATE
+#  - TomatoToastPlateMoveToDispenser
+#  - TomatoToastPlateExecuteDispenser
+#  - TomatoToastPlatePick
+#  - TomatoToastPlateMoveToCounter
+#  - TomatoToastPlatePlaceCounter               # END LOWER PLATE
+#  - TomatoToastPlateMoveTo                     # BEGIN HIGHER PLATE
+#  - TomatoToastPlatePickTwo
+#  - TomatoToastPlateMoveToToast
+#  - TomatoToastPlatePlaceToast
+#  - TomatoToastPlateToastPick
+#  - TomatoToastPlateToastMoveToTomato
+#  - TomatoToastPlatePlaceTomato
+#  - TomatoToastPlateStackPick
+#  - TomatoToastPlateDeliversquareMoveTo
+#  - TomatoToastPlateDeliversquarePlace        # END HIGHER PLATE
 
 Nodes:
   TomatoToastThen:
@@ -93,6 +94,12 @@ Nodes:
     robot: 0
     parent: 'TomatoToastBreadOr'
     params: [ 'object: Bread', 'conditions: Chopped' ]
+  TomatoToastBreadLoafExists:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingObjectExistsBehavior'
+    robot: 0
+    parent: 'TomatoToastBreadOr'
+    params: [ 'object: Bread', 'conditions: Fresh' ]
   TomatoToastBreadNewBreadThen:
     type: 2
     behavior_type: 'dhtt_plugins::ThenBehavior'
@@ -104,43 +111,43 @@ Nodes:
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastBreadNewBreadThen'
-    params: [ 'object: BreadDispenser' ]
+    params: [ 'object: BreadDispenser', 'mark: A#' ]
   TomatoToastBreadExecuteDispenser:
     type: 4
     behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
     robot: 0
     parent: 'TomatoToastBreadNewBreadThen'
-    params: [ 'object: BreadDispenser' ]
+    params: [ 'object: BreadDispenser', 'mark: A#' ]
   TomatoToastBreadMoveToBread:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastBreadNewBreadThen'
-    params: [ 'object: Bread' ]
+    params: [ 'object: Bread', 'mark: A#' ]
   TomatoToastBreadPick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'TomatoToastBreadNewBreadThen'
-    params: [ 'object: Bread' ]
+    params: [ 'object: Bread', 'mark: A#' ]
   TomatoToastBreadMoveToCutboard:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastBreadNewBreadThen'
-    params: [ 'object: Cutboard' ]
+    params: [ 'object: Cutboard', 'mark: A#' ]
   TomatoToastBreadPlaceCutboard:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'TomatoToastBreadNewBreadThen'
-    params: [ 'object: Cutboard' ]
+    params: [ 'object: Cutboard', 'mark: A#' ]
   TomatoToastBreadExecuteCutboard:
     type: 4
     behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
     robot: 0
     parent: 'TomatoToastBreadNewBreadThen'
-    params: [ 'object: Cutboard' ]
+    params: [ 'object: Cutboard', 'mark: A#' ]
 
   TomatoToastBreadChoppedBreadAnd:
     type: 1
@@ -159,25 +166,25 @@ Nodes:
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastBreadChoppedBreadThenOne'
-    params: [ 'object: Bread', 'conditions: Chopped' ]
+    params: [ 'object: Bread', 'conditions: Chopped', 'mark: A#' ]
   TomatoToastBreadChoppedBreadPickOne:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'TomatoToastBreadChoppedBreadThenOne'
-    params: [ 'object: Bread', 'conditions: Chopped' ]
+    params: [ 'object: Bread', 'conditions: Chopped', 'mark: A#' ]
   TomatoToastBreadChoppedBreadMoveToCounterOne:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastBreadChoppedBreadThenOne'
-    params: [ 'object: Counter', 'conditions: Free' ]
+    params: [ 'object: Counter', 'conditions: Free', 'mark: A#' ]
   TomatoToastBreadChoppedBreadPlaceCounterOne:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'TomatoToastBreadChoppedBreadThenOne'
-    params: [ 'object: Counter', 'conditions: Free' ]
+    params: [ 'object: Counter', 'conditions: Free', 'mark: A#' ]
   TomatoToastBreadChoppedBreadThenTwo:
     type: 2
     behavior_type: 'dhtt_plugins::ThenBehavior'
@@ -189,85 +196,85 @@ Nodes:
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastBreadChoppedBreadThenTwo'
-    params: [ 'object: Bread', 'conditions: Chopped' ]
+    params: [ 'object: Bread', 'conditions: Chopped', 'mark: A#' ]
   TomatoToastBreadChoppedBreadPickTwo:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'TomatoToastBreadChoppedBreadThenTwo'
-    params: [ 'object: Bread', 'conditions: Chopped' ]
+    params: [ 'object: Bread', 'conditions: Chopped', 'mark: A#' ]
   TomatoToastBreadChoppedBreadMoveToCounterTwo:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastBreadChoppedBreadThenTwo'
-    params: [ 'object: Counter', 'conditions: Free' ]
+    params: [ 'object: Counter', 'conditions: Free', 'mark: A#' ]
   TomatoToastBreadChoppedBreadPlaceCounterTwo:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'TomatoToastBreadChoppedBreadThenTwo'
-    params: [ 'object: Counter', 'conditions: Free' ]
+    params: [ 'object: Counter', 'conditions: Free', 'mark: A#', 'unmark: foo' ]
   TomatoToastBreadChoppedBreadMoveTo:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastBreadThen'
-    params: [ 'object: Bread', 'conditions: Chopped' ]
+    params: [ 'object: Bread', 'conditions: Chopped', 'mark: A#' ]
   TomatoToastBreadChoppedBreadPick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'TomatoToastBreadThen'
-    params: [ 'object: Bread' ]
+    params: [ 'object: Bread', 'mark: A#' ]
   TomatoToastBreadChoppedBreadMoveToToaster:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastBreadThen'
-    params: [ 'object: Toaster' ]
+    params: [ 'object: Toaster', 'mark: A#' ]
   TomatoToastBreadChoppedBreadPlaceToaster:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'TomatoToastBreadThen'
-    params: [ 'object: Toaster' ]
+    params: [ 'object: Toaster', 'mark: A#' ]
   TomatoToastBreadChoppedBreadExecuteToaster:
     type: 4
     behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
     robot: 0
     parent: 'TomatoToastBreadThen'
-    params: [ 'object: Toaster' ]
+    params: [ 'object: Toaster', 'mark: A#' ]
   TomatoToastToastExists:
     type: 4
     behavior_type: 'dhtt_plugins::CookingObjectExistsBehavior'
     robot: 0
     parent: 'TomatoToastBreadThen'
-    params: [ 'object: Bread', 'conditions: Toasted' ]
+    params: [ 'object: Bread', 'conditions: Toasted', 'mark: A#' ]
   TomatoToastToastMoveToToast:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastBreadThen'
-    params: [ 'object: Bread', 'conditions: Toasted' ]
+    params: [ 'object: Bread', 'conditions: Toasted', 'mark: A#' ]
   TomatoToastToastPick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'TomatoToastBreadThen'
-    params: [ 'object: Bread' ]
+    params: [ 'object: Bread', 'mark: A#' ]
   TomatoToastToastMoveToCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastBreadThen'
-    params: [ 'object: Counter', 'conditions: Free' ]
+    params: [ 'object: Counter', 'conditions: Free', 'mark: A#' ]
   TomatoToastToastPlaceCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'TomatoToastBreadThen'
-    params: [ 'object: Counter' ]
+    params: [ 'object: Counter', 'mark: A#' ]
 
   TomatoToastTomatoThen:
     type: 2
@@ -280,55 +287,55 @@ Nodes:
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastTomatoThen'
-    params: [ 'object: TomatoDispenser' ]
+    params: [ 'object: TomatoDispenser', 'mark: A#' ]
   TomatoToastTomatoExecuteDispenser:
     type: 4
     behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
     robot: 0
     parent: 'TomatoToastTomatoThen'
-    params: [ 'object: TomatoDispenser' ]
+    params: [ 'object: TomatoDispenser', 'mark: A#' ]
   TomatoToastTomatoPick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'TomatoToastTomatoThen'
-    params: [ 'object: Tomato' ]
+    params: [ 'object: Tomato', 'mark: A#' ]
   TomatoToastTomatoMoveToCutboard:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastTomatoThen'
-    params: [ 'object: Cutboard' ]
+    params: [ 'object: Cutboard', 'mark: A#' ]
   TomatoToastTomatoPlaceCutboard:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'TomatoToastTomatoThen'
-    params: [ 'object: Cutboard' ]
+    params: [ 'object: Cutboard', 'mark: A#' ]
   TomatoToastTomatoExecuteCutboard:
     type: 4
     behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
     robot: 0
     parent: 'TomatoToastTomatoThen'
-    params: [ 'object: Cutboard' ]
+    params: [ 'object: Cutboard', 'mark: A#' ]
   TomatoToastChoppedTomatoPick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'TomatoToastTomatoThen'
-    params: [ 'object: Tomato' ]
+    params: [ 'object: Tomato', 'mark: A#' ]
   TomatoToastChoppedTomatoMoveToCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastTomatoThen'
-    params: [ 'object: Counter', 'conditions: Free' ]
+    params: [ 'object: Counter', 'conditions: Free', 'mark: A#' ]
   TomatoToastChoppedTomatoPlaceCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'TomatoToastTomatoThen'
-    params: [ 'object: Counter', 'conditions: Free' ]
+    params: [ 'object: Counter', 'conditions: Free', 'mark: A#' ]
 
   TomatoToastPlateThen:
     type: 2
@@ -341,89 +348,89 @@ Nodes:
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastPlateThen'
-    params: [ 'object: PlateDispenser' ]
+    params: [ 'object: PlateDispenser', 'mark: A#' ]
   TomatoToastPlateExecuteDispenser:
     type: 4
     behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
     robot: 0
     parent: 'TomatoToastPlateThen'
-    params: [ 'object: PlateDispenser' ]
+    params: [ 'object: PlateDispenser', 'mark: A#' ]
   TomatoToastPlatePick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'TomatoToastPlateThen'
-    params: [ 'object: Plate' ]
+    params: [ 'object: Plate', 'mark: A#' ]
   TomatoToastPlateMoveToCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastPlateThen'
-    params: [ 'object: Counter', 'conditions: Free' ]
+    params: [ 'object: Counter', 'conditions: Free', 'mark: A#' ]
   TomatoToastPlatePlaceCounter:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'TomatoToastPlateThen'
-    params: [ 'object: Counter' ]
+    params: [ 'object: Counter', 'mark: A#' ]
 
   TomatoToastPlateMoveTo:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastThen'
-    params: [ 'object: Plate', 'conditions: Free' ]
+    params: [ 'object: Plate', 'conditions: Free', 'mark: A#' ]
   TomatoToastPlatePickTwo:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'TomatoToastThen'
-    params: [ 'object: Plate' ]
+    params: [ 'object: Plate', 'mark: A#' ]
   TomatoToastPlateMoveToToast:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastThen'
-    params: [ 'object: Bread', 'conditions: Toasted' ]
+    params: [ 'object: Bread', 'conditions: Toasted', 'mark: A#' ]
   TomatoToastPlatePlaceToast:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlatePlaceBehavior'
     robot: 0
     parent: 'TomatoToastThen'
-    params: [ 'object: Bread' ]
+    params: [ 'object: Bread', 'mark: A#' ]
   TomatoToastPlateToastPick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'TomatoToastThen'
-    params: [ 'object: Bread' ]
+    params: [ 'object: Bread', 'mark: A#' ]
   TomatoToastPlateToastMoveToTomato:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastThen'
-    params: [ 'object: Tomato', 'conditions: Chopped' ]
+    params: [ 'object: Tomato', 'conditions: Chopped', 'mark: A#' ]
   TomatoToastPlatePlaceTomato:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlatePlaceBehavior'
     robot: 0
     parent: 'TomatoToastThen'
-    params: [ 'object: Tomato' ]
+    params: [ 'object: Tomato', 'mark: A#' ]
   TomatoToastPlateStackPick:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPickBehavior'
     robot: 0
     parent: 'TomatoToastThen'
-    params: [ 'object: Plate' ]
+    params: [ 'object: Plate', 'mark: A#' ]
   TomatoToastPlateDeliversquareMoveTo:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'TomatoToastThen'
-    params: [ 'object: AbsorbingDeliversquare' ]
+    params: [ 'object: AbsorbingDeliversquare', 'mark: A#' ]
   TomatoToastPlateDeliversquarePlace:
     type: 4
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'TomatoToastThen'
-    params: [ 'object: AbsorbingDeliversquare' ]
+    params: [ 'object: AbsorbingDeliversquare', 'mark: A#' ]

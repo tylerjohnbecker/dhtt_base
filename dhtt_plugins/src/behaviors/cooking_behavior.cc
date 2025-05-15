@@ -37,10 +37,10 @@ void CookingBehavior::parse_params(std::vector<std::string> params)
 	};
 
 	// Copied from move_behavior.cc
-	if (static_cast<int>(params.size()) > 3)
+	if (static_cast<int>(params.size()) > 4)
 		throw std::invalid_argument(
 			"Too many parameters passed to node. Coord or object required and "
-			"optionally object conditions and mark.");
+			"optionally object conditions and mark and unmark.");
 
 	if (static_cast<int>(params.size()) == 0)
 	{
@@ -90,12 +90,17 @@ void CookingBehavior::parse_params(std::vector<std::string> params)
 				{
 					this->destination_mark = value;
 				}
+				else if (key == CookingBehavior::PARAM_UNMARK)
+				{
+					this->should_unmark = true;
+				}
 				else
 				{
 					throw std::invalid_argument(
 						"Expected parameter " +
 						std::string(CookingBehavior::PARAM_OBJECT_CONDITIONS) + " or " +
-						std::string(CookingBehavior::PARAM_MARK_OBJECTS) + ", but received " + key);
+						std::string(CookingBehavior::PARAM_MARK_OBJECTS) + "or" +
+						std::string(CookingBehavior::PARAM_UNMARK) + ", but received " + key);
 				}
 			}
 		}

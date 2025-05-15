@@ -505,9 +505,9 @@ class TestCookingZooTree:
             req.type = ModifyRequest.Request.ADD
             req.to_modify.append('ROOT_0')
             req.add_node = Node()
-            req.add_node.type = Node.THEN
-            req.add_node.node_name = 'AllOrdersThen'
-            req.add_node.plugin_name = 'dhtt_plugins::ThenBehavior'
+            req.add_node.type = Node.AND
+            req.add_node.node_name = 'AllOrdersAnd'
+            req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
             fut = self.node.modifysrv.call_async(req)
             rclpy.spin_until_future_complete(self.node, fut)
             true_name = fut.result().added_nodes[0]

@@ -26,6 +26,8 @@ class CookingPlaceBehavior : public CookingBehavior
 	 * unmark it to free it up for other behaviors. Normally the pick behavior is the only one to
 	 * unmark static objects, but deliversquares 'pick' themselves.
 	 *
+	 * If param "unmark" was passed, unmark the object
+	 *
 	 * @param container unused
 	 */
 	void do_work(dhtt::Node *container) override;

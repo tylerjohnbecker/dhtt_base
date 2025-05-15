@@ -4,7 +4,8 @@ namespace dhtt_plugins
 {
 double CookingObjectExistsBehavior::get_perceived_efficiency()
 {
-	return CookingBehavior::get_perceived_efficiency();
+	this->activation_potential = CookingBehavior::get_perceived_efficiency();
+	return this->activation_potential;
 }
 
 void CookingObjectExistsBehavior::do_work(dhtt::Node *container)
@@ -19,14 +20,14 @@ void CookingObjectExistsBehavior::do_work(dhtt::Node *container)
 	req->action.action_type = dhtt_msgs::msg::CookingAction::NO_OP;
 
 	auto res = this->cooking_request_client->async_send_request(req);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending move_to request");
+	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending nop request");
 	this->executor->spin_until_future_complete(res);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "move_to request completed");
+	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "nop request completed");
 
 	bool suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "move_to request did not succeed: %s",
+		RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "nop request did not succeed: %s",
 					 res.get()->error_msg.c_str());
 	}
 }

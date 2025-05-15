@@ -73,8 +73,7 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 	if (not suc)
 	{
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
-					 "interact_primary request did not succeed: %s",
-					 res.get()->error_msg.c_str());
+					 "interact_primary request did not succeed: %s", res.get()->error_msg.c_str());
 		return;
 	}
 
@@ -118,6 +117,20 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 					("Error unmarking static object under " + this->destination_object.object_type)
 						.c_str());
 			}
+		}
+
+
+	}
+
+	if (this->should_unmark and not this->destination_mark.empty())
+	{
+		this->unmark_object(this->destination_object.world_id);
+		suc = true; // not actually a failure, TODO make unmark object return an enum
+		if (not suc)
+		{
+			RCLCPP_ERROR(
+				this->pub_node_ptr->get_logger(),
+				("Error unmarking object " + this->destination_object.object_type).c_str());
 		}
 	}
 
