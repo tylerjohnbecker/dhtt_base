@@ -19,7 +19,6 @@ class ServerNode (rclpy.node.Node):
 		self.fetchsrv = self.create_client(FetchRequest, '/fetch_service')
 		assert self.fetchsrv.wait_for_service(timeout_sec=5.0)
 
-@pytest.mark.serial
 class TestServerAddRemove:
 
 	first = True

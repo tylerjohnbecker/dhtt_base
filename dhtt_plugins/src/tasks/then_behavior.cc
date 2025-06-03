@@ -57,35 +57,45 @@ namespace dhtt_plugins
 
 		n_goal.passed_resources = container->get_passed_resources();
 
-		// for (auto resource : n_goal.passed_resources)
-		// 	RCLCPP_FATAL(container->get_logger(), "type: %d, owned: %d", resource.type, resource.locked);
+		for (auto resource: container->get_owned_resources())
+			n_goal.passed_resources.push_back(resource);
 
-		// activate all children for activation potential calculation and give the first one the resources that we were passed
-		for (std::vector<std::string>::iterator name_iter = children.begin() + this->child_queue_index ; name_iter != children.end() ; name_iter++)
-			container->async_activate_child(*name_iter, n_goal);
+		auto results = container->get_activation_results();
+		std::string first_child_in_queue;
 
-		container->block_for_responses_from_children();
+		for ( this->next = 0 ; ( this->child_queue_index + this->next ) < this->child_queue_size ; this->next++ )
+		{
+			first_child_in_queue = *(children.begin() + this->child_queue_index + this->next);
+
+			// for (auto resource : n_goal.passed_resources)
+			// 	RCLCPP_FATAL(container->get_logger(), "type: %d, owned: %d", resource.type, resource.locked);
+
+			container->async_activate_child(first_child_in_queue, n_goal);
+
+			container->block_for_responses_from_children();
+
+			results = container->get_activation_results();
+
+			if (results[first_child_in_queue] == nullptr or not results[first_child_in_queue]->done)
+				break;
+		}
 
 		RCLCPP_INFO(container->get_logger(), "Responses received...");
 
-		auto results = container->get_activation_results();
-
-		std::string first_child_in_queue = children[this->child_queue_index];
-
-		while ( results[first_child_in_queue]->done and this->child_queue_index < this->child_queue_size - 1 )
-		{
-			this->child_queue_index++;
-			first_child_in_queue = children[this->child_queue_index];
-		}
+		// while ( results[first_child_in_queue]->done and this->child_queue_index < this->child_queue_size - 1 )
+		// {
+		// 	this->child_queue_index++;
+		// 	first_child_in_queue = children[this->child_queue_index];
+		// }
 
 		to_ret->local_best_node = first_child_in_queue;
 
 		// calculate activation potential
-		double total_sum = 0;
-		int total_num_children = (int) results.size();
-
-		for (auto const& x  : results)
-			total_sum += x.second->activation_potential;
+		// double total_sum = 0;
+		// int total_num_children = (int) results.size();
+		//
+		// for (auto const& x  : results)
+		// 	total_sum += x.second->activation_potential;
 
 		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation in queue position %d..", first_child_in_queue.c_str(), this->child_queue_index) ;
 
@@ -94,24 +104,22 @@ namespace dhtt_plugins
 		to_ret->done = results[first_child_in_queue]->done;
 		to_ret->possible = results[first_child_in_queue]->possible;
 
-		this->activation_potential = total_sum / total_num_children;
-
-		// send failure back to the children not at the front of the queue
-		n_goal.success = false;
-
-		int next = this->child_queue_index + 1;
+		this->activation_potential = results[first_child_in_queue]->activation_potential;// / total_num_children;
 
 		// make sure to send back failure to all if nothing is possible
-		if ( not to_ret->possible )
-		{
-			next -= 1;
-		}
+		// if ( not to_ret->possible )
+		// {
+		// 	n_goal.success = false;
+		//
+		// 	container->async_activate_child(first_child_in_queue, n_goal);
+		// 	container->block_for_responses_from_children();
+		// }
 
-		for (std::vector<std::string>::iterator name_iter = children.begin() + next ; name_iter != children.end() ; name_iter++)
-			if (results[*name_iter]->possible)
-				container->async_activate_child(*name_iter, n_goal);
-
-		container->block_for_responses_from_children();
+		// for (std::vector<std::string>::iterator name_iter = children.begin() + next ; name_iter != children.end() ; name_iter++)
+		// 	if (results[*name_iter]->possible)
+		// 		container->async_activate_child(*name_iter, n_goal);
+		//
+		// container->block_for_responses_from_children();
 		
 		// return the result
 		return to_ret;
@@ -122,6 +130,8 @@ namespace dhtt_plugins
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> to_ret = std::make_shared<dhtt_msgs::action::Activation::Result>();
 
 		std::lock_guard<std::mutex> guard(this->queue_index_mut);
+
+		this->child_queue_index += this->next;
 
 		// send success to winning child		
 		dhtt_msgs::action::Activation::Goal n_goal;

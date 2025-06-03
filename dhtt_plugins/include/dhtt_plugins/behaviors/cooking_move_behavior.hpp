@@ -11,6 +11,9 @@ class CookingMoveBehavior : public CookingBehavior
 	/**
 	 * @return inverse of 1 + the l2 distance to the target destination. That is, 1 if we are
 	 * already at the destination, or approaching 0 when far away.
+	 *
+	 * TODO Tyler uses parameter this->should_unmark to set priority for certain move_to behaviors
+	 *  (doubles activation).
 	 */
 	double get_perceived_efficiency() override;
 

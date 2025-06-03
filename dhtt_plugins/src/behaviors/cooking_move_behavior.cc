@@ -11,6 +11,14 @@ double CookingMoveBehavior::get_perceived_efficiency()
 		double to_ret = pow(1.0 + this->agent_point_distance(this->destination_point), -1);
 		RCLCPP_INFO(this->pub_node_ptr->get_logger(), "I report %f efficiency", to_ret);
 
+		if (this->should_unmark)
+		{
+			to_ret *= 2;
+
+			if (to_ret > 2)
+				to_ret = 2;
+		}
+
 		this->activation_potential = to_ret; // TODO is this necessary?
 		return to_ret;
 	}

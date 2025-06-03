@@ -565,6 +565,7 @@ namespace dhtt
 		int expected_failed_responses;
 		int stored_conditions;
 		int expected_conditions;
+		int num_threads;
 
 		int priority;
 
@@ -572,6 +573,7 @@ namespace dhtt
 		bool has_goitr;
 		bool first_activation;
 		bool active;
+		bool collect_threads;
 
 		bool successful_load;
 		std::string error_msg;

@@ -56,10 +56,12 @@ namespace dhtt_plugins
 				necessary_resources_cp.erase(found);
 		}
 
+		to_ret->activation_potential = this->get_perceived_efficiency();
 		to_ret->requested_resources = necessary_resources_cp;
 		to_ret->owned_resources = container->get_owned_resources();
 		to_ret->done = this->is_done();
 		to_ret->possible = container->is_request_possible(to_ret->requested_resources);
+		to_ret->possible &= to_ret->activation_potential > 0;
 
 		return to_ret;
 	}

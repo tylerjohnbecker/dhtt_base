@@ -5,12 +5,17 @@ namespace dhtt_plugins
 double CookingObjectExistsBehavior::get_perceived_efficiency()
 {
 	this->activation_potential = CookingBehavior::get_perceived_efficiency();
+
+	// TODO dbl_epsilon
+	if (this->activation_potential < .0001 and this->should_unmark)
+		this->activation_potential = .0001;
+
 	return this->activation_potential;
 }
 
 void CookingObjectExistsBehavior::do_work(dhtt::Node *container)
 {
-	(void) container;
+	(void)container;
 	this->done |= this->destination_is_good; // TODO check this and if we need to do can_work
 
 	// Tick the world with a NOP
@@ -30,18 +35,31 @@ void CookingObjectExistsBehavior::do_work(dhtt::Node *container)
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "nop request did not succeed: %s",
 					 res.get()->error_msg.c_str());
 	}
+
+	if (this->destination_is_good)
+	{
+		if (not this->mark_object(this->destination_object.world_id, this->destination_mark))
+		{
+			RCLCPP_ERROR_STREAM(this->pub_node_ptr->get_logger(),
+								"Marking object " << this->destination_object.world_id << " with "
+												  << this->destination_mark << " failed.");
+			this->done = false;
+		}
+	}
+
+	this->done &= suc;
 }
 
 std::vector<dhtt_msgs::msg::Resource>
 CookingObjectExistsBehavior::get_retained_resources(dhtt::Node *container)
 {
-	return container->get_owned_resources();
+	(void)container;
+	return {};
 }
 std::vector<dhtt_msgs::msg::Resource>
 CookingObjectExistsBehavior::get_released_resources(dhtt::Node *container)
 {
-	(void) container;
-	return {};
+	return container->get_owned_resources();
 }
 
 std::vector<dhtt_msgs::msg::Resource> CookingObjectExistsBehavior::get_necessary_resources()

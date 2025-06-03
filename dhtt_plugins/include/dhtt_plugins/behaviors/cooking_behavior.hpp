@@ -111,6 +111,7 @@ class CookingBehavior : public ActionType
 	static constexpr auto PARAM_OBJECT_MARK = "mark";
 	static constexpr auto PARAM_MARK_OBJECTS = "world.marked_objects_ids";
 	static constexpr auto PARAM_MARK_OBJECTS_TAINTS = "world.marked_objects_taints";
+	static constexpr auto PARAM_MARK_OBJECTS_TYPES = "world.marked_objects_types";
 	static constexpr auto PARAM_UNMARK = "unmark";
 	const int LEVEL_SIZE = 6;
 
