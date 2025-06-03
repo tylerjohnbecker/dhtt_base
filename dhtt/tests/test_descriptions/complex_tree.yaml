@@ -98,7 +98,7 @@ Nodes:
     behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
     parent: 'LowParentThen'
-    params: ["activation_potential: 9.0"]
+    params: ["activation_potential: 7.0"]
   PlaceBowl:
     type: 4
     behavior_type: 'dhtt_plugins::TestBehavior'

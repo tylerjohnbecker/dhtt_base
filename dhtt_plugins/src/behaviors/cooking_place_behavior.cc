@@ -28,6 +28,8 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 		return;
 	}
 
+	const auto prev_dest_obj = this->destination_object;
+
 	/* move_to */
 	auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
 	req->super_action = dhtt_msgs::srv::CookingRequest::Request::ACTION;
@@ -73,8 +75,7 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 	if (not suc)
 	{
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
-					 "interact_primary request did not succeed: %s",
-					 res.get()->error_msg.c_str());
+					 "interact_primary request did not succeed: %s", res.get()->error_msg.c_str());
 		return;
 	}
 
@@ -117,6 +118,26 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 					this->pub_node_ptr->get_logger(),
 					("Error unmarking static object under " + this->destination_object.object_type)
 						.c_str());
+			}
+		}
+	}
+
+	if (this->should_unmark)
+	{
+		// unmark everything at destination location (before it gets changed by observation
+		// callback), which should now include the placed object
+		this->executor->spin_all(std::chrono::nanoseconds(0));
+
+		for (const auto &world_obj : this->last_obs->objects)
+		{
+			if (world_obj.location == prev_dest_obj.location)
+			{
+				if (not CookingBehavior::unmark_object(world_obj.world_id))
+				{
+					// suc = false; not actually an error when unmarking an unmarked object
+					RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+								 ("Error unmarking object " + prev_dest_obj.object_type).c_str());
+				}
 			}
 		}
 	}

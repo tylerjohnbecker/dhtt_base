@@ -74,8 +74,7 @@ void CookingInteractSpecialBehavior::do_work(dhtt::Node *container)
 	if (not suc)
 	{
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
-					 "interact_special request did not succeed: %s",
-					 res.get()->error_msg.c_str());
+					 "interact_special request did not succeed: %s", res.get()->error_msg.c_str());
 	}
 
 	this->done = suc;

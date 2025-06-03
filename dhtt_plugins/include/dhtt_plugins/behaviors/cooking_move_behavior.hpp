@@ -11,6 +11,9 @@ class CookingMoveBehavior : public CookingBehavior
 	/**
 	 * @return inverse of 1 + the l2 distance to the target destination. That is, 1 if we are
 	 * already at the destination, or approaching 0 when far away.
+	 *
+	 * TODO Tyler uses parameter this->should_unmark to set priority for certain move_to behaviors
+	 *  (doubles activation).
 	 */
 	double get_perceived_efficiency() override;
 
@@ -18,8 +21,7 @@ class CookingMoveBehavior : public CookingBehavior
 	 * Makes a move_to request to the target destination.
 	 *
 	 * If the object is not marked yet (i.e. it is not marked on the paramserver but we have
-	 * param 'mark: ...') we will taint it with this->destination_mark. This is the only behavior
-	 * that does this because we assume all sequences of behaviors begin with a move.
+	 * param 'mark: ...') we will taint it with this->destination_mark.
 	 *
 	 * @param container unused
 	 */

@@ -51,6 +51,7 @@ class CookingBehavior : public ActionType
 	geometry_msgs::msg::Point destination_point;
 	dhtt_msgs::msg::CookingObject destination_object; // closest object
 	bool destination_is_good = false;
+	bool should_unmark = false;
 
 	static double point_distance(const geometry_msgs::msg::Point &point1,
 								 const geometry_msgs::msg::Point &point2);
@@ -90,6 +91,9 @@ class CookingBehavior : public ActionType
 	// Assumes static object and this->destination_object have the same mark
 	bool unmark_static_object_under_obj(const dhtt_msgs::msg::CookingObject &obj) const;
 
+	// TODO clear all on tree reset
+	bool unmark_object(unsigned long object_id) const;
+
 	rclcpp::Subscription<dhtt_msgs::msg::CookingObservation>::SharedPtr
 		cooking_observation_subscriber;
 
@@ -107,6 +111,8 @@ class CookingBehavior : public ActionType
 	static constexpr auto PARAM_OBJECT_MARK = "mark";
 	static constexpr auto PARAM_MARK_OBJECTS = "world.marked_objects_ids";
 	static constexpr auto PARAM_MARK_OBJECTS_TAINTS = "world.marked_objects_taints";
+	static constexpr auto PARAM_MARK_OBJECTS_TYPES = "world.marked_objects_types";
+	static constexpr auto PARAM_UNMARK = "unmark";
 	const int LEVEL_SIZE = 6;
 
   private:
@@ -139,9 +145,6 @@ class CookingBehavior : public ActionType
 					 const dhtt_msgs::msg::CookingObject &obj) const;
 
 	static std::pair<std::string, std::string> extract_keyval(const std::string &param_string);
-
-	// TODO clear all on tree reset
-	bool unmark_object(unsigned long object_id) const;
 };
 } // namespace dhtt_plugins
 

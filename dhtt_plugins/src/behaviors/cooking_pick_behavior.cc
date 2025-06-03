@@ -23,6 +23,8 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 {
 	(void)container; // Unused
 
+	std::vector<dhtt_msgs::msg::CookingObject> prev_held = this->last_obs->agents[0].holding;
+
 	if (not CookingBehavior::can_work())
 	{
 		return;
@@ -54,6 +56,18 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 		return;
 	}
 
+	// Equivalent of get_released_resources() but for "resources" on the paramserver
+	RCLCPP_INFO(this->pub_node_ptr->get_logger(),
+				("Unmarking object that was marked as " + this->destination_mark + " under " +
+				 this->destination_object.object_type)
+					.c_str());
+	if (not this->unmark_static_object_under_obj(this->destination_object))
+	{
+		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
+					("Error unmarking static object under " + this->destination_object.object_type)
+						.c_str());
+	}
+
 	/* interact_primary */
 	req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
 	req->super_action = dhtt_msgs::srv::CookingRequest::Request::ACTION;
@@ -73,24 +87,32 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 	if (not suc)
 	{
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
-					 "interact_primary request did not succeed: %s",
-					 res.get()->error_msg.c_str());
+					 "interact_primary request did not succeed: %s", res.get()->error_msg.c_str());
 		return;
 	}
 
-	// Equivalent of get_released_resources() but for "resources" on the paramserver
-	if (not this->destination_mark.empty() and this->check_mark(this->destination_object) == '1')
+	// Mark the object that was picked. If the static object had multiple objects on top (chopping
+	// bread), it is ambiguous which one will be picked.
+	dhtt_msgs::msg::CookingObject picked_obj;
+	for (const auto &held : this->last_obs->agents[0].holding)
+	{
+		if (std::find(prev_held.cbegin(), prev_held.cend(), held) == prev_held.cend())
+		{
+			picked_obj = held;
+			break; // assume we can only pick one object
+		}
+	}
+
+	// if picked object is not marked for anyone
+	if (not this->destination_mark.empty() and this->check_mark(picked_obj) == '2')
 	{
 		RCLCPP_INFO(this->pub_node_ptr->get_logger(),
-					("Unmarking object that was marked as " + this->destination_mark + " under " +
-					 this->destination_object.object_type)
-						.c_str());
-		suc = this->unmark_static_object_under_obj(this->destination_object);
+					("Marking object as " + this->destination_mark).c_str());
+		suc = this->mark_object(picked_obj.world_id, this->destination_mark);
 		if (not suc)
 		{
-			RCLCPP_ERROR(this->pub_node_ptr->get_logger(), ("Error unmarking static object under " +
-															this->destination_object.object_type)
-															   .c_str());
+			RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "Marking object failed: %s",
+						 res.get()->error_msg.c_str());
 		}
 	}
 
@@ -100,6 +122,11 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 std::vector<dhtt_msgs::msg::Resource>
 CookingPickBehavior::get_retained_resources(dhtt::Node *container)
 {
+	if (this->should_unmark)
+	{
+		return container->get_owned_resources();
+	}
+
 	std::vector<dhtt_msgs::msg::Resource> to_ret;
 
 	// just keep access to the first gripper found (shouldn't matter for now)
@@ -118,6 +145,11 @@ CookingPickBehavior::get_retained_resources(dhtt::Node *container)
 std::vector<dhtt_msgs::msg::Resource>
 CookingPickBehavior::get_released_resources(dhtt::Node *container)
 {
+	if (this->should_unmark)
+	{
+		return std::vector<dhtt_msgs::msg::Resource>();
+	}
+
 	std::vector<dhtt_msgs::msg::Resource> to_ret;
 	bool first = true;
 

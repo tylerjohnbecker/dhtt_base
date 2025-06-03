@@ -16,6 +16,11 @@ namespace dhtt
 		this->error_msg = "";
 		this->successful_load = true;
 
+		this->collect_threads = false;
+		this->num_threads = 0;
+		this->stored_failed_responses = 0;
+		this->expected_failed_responses = 0;
+
 		try
 		{
 			this->logic = node_type_loader.createSharedInstance(type);
@@ -61,6 +66,11 @@ namespace dhtt
 		// empty for now
 		if ( this->has_goitr )	
 			this->replanner->destruct();
+
+		this->collect_threads = true;
+
+		while (this->num_threads > 0)
+			;
 	}
 
 	bool Node::loaded_successfully()
@@ -217,6 +227,9 @@ namespace dhtt
 
 		send_goal_options.result_callback = std::bind(&Node::store_result_callback, this, std::placeholders::_1, child_name);
 
+		if ( this->collect_threads )
+			return;
+
 		(*client_iter)->async_send_goal(activation_goal, send_goal_options);
 	}
 
@@ -242,6 +255,9 @@ namespace dhtt
 		this->expected_failed_responses++;
 
 		auto send_goal_options = rclcpp_action::Client<dhtt_msgs::action::Activation>::SendGoalOptions();
+
+		if ( this->collect_threads )
+			return;
 
 		send_goal_options.result_callback = std::bind(&Node::store_failed_callback, this, std::placeholders::_1, child_name);
 
@@ -269,6 +285,9 @@ namespace dhtt
 
 		send_goal_options.result_callback = std::bind(&Node::store_condition_callback, this, std::placeholders::_1, child_name);
 
+		if ( this->collect_threads )
+			return;
+
 		(*client_iter)->async_send_goal(condition_goal, send_goal_options);
 	}
 
@@ -287,6 +306,9 @@ namespace dhtt
 
 		for (std::string iter : this->child_names)
 		{
+			if ( this->collect_threads )
+				return;
+
 			while ( not this->server_ready[iter] );
 			this->async_request_conditions(iter, n_goal);
 		}
@@ -296,8 +318,9 @@ namespace dhtt
 	{
 		// RCLCPP_INFO(this->get_logger(), "Waiting for %d responses from children, currently received %d...", this->expected_responses, this->stored_responses );
 
-		while (this->stored_responses < this->expected_responses);
+		while (this->stored_responses < this->expected_responses and not collect_threads);
 
+		this->expected_responses = 0;
 		// RCLCPP_INFO(this->get_logger(), "Responses received!");
 
 		return true;
@@ -307,7 +330,7 @@ namespace dhtt
 	{
 		RCLCPP_DEBUG(this->get_logger(), "Waiting for %d responses from children, currently received %d...", this->expected_responses, this->stored_responses );
 
-		while (this->stored_failed_responses < this->expected_failed_responses);
+		while (this->stored_failed_responses < this->expected_failed_responses and not collect_threads);
 
 		// RCLCPP_INFO(this->get_logger(), "Responses received!");
 
@@ -316,7 +339,7 @@ namespace dhtt
 	
 	bool Node::block_for_conditions_from_children()
 	{
-		while (this->stored_conditions < this->expected_conditions);
+		while (this->stored_conditions < this->expected_conditions and not collect_threads);
 
 		return true;
 	}
@@ -486,6 +509,7 @@ namespace dhtt
 			// spin up the auction activation thread
 			this->work_thread = std::make_shared<std::thread>(&Node::activate, this, goal_handle);
 			this->work_thread->detach();
+			this->num_threads += 1;
 		}
 		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::ACTIVE )
 		{
@@ -496,6 +520,7 @@ namespace dhtt
 				// spin up the thread for working and detach so that it destructs after it finishes
 				this->work_thread = std::make_shared<std::thread>(&Node::activate, this, goal_handle);
 				this->work_thread->detach();
+				this->num_threads += 1;
 			}
 			else
 			{
@@ -513,6 +538,7 @@ namespace dhtt
 
 					this->fail_thread = std::make_shared<std::thread>(&Node::propogate_failure_down, this);
 					this->fail_thread->detach();
+					this->num_threads += 1;
 				}
 
 				goal_handle->succeed(blank_result);
@@ -554,6 +580,7 @@ namespace dhtt
 		{
 			this->condition_thread = std::make_shared<std::thread>(&Node::combine_child_conditions, this, goal_handle);
 			this->condition_thread->detach();
+			this->num_threads += 1;
 		}
 		else if ( type == dhtt_msgs::action::Condition::Goal::GET )
 		{
@@ -595,6 +622,9 @@ namespace dhtt
 			this->request_conditions_from_children();
 
 			this->block_for_conditions_from_children();
+
+			if (this->collect_threads)
+				return;
 		}
 
 		this->logic->maintain_conditions(this);
@@ -618,6 +648,8 @@ namespace dhtt
 		this->update_status(this->status.state);
 
 		goal_handle->succeed(to_ret);
+
+		this->num_threads -= 1;
 
 		// RCLCPP_INFO(this->get_logger(), "%s", this->name.c_str());
 	}
@@ -658,7 +690,7 @@ namespace dhtt
 
 		RCLCPP_INFO(this->get_logger(), "Activation received from parent...");
 
-		// this->block_for_responses_from_failed_children();
+		this->block_for_responses_from_children();
 
 		// if ( this->has_goitr )
 		// 	this->replanner->block_for_thread();
@@ -746,12 +778,11 @@ namespace dhtt
 			}
 		}
 
-		to_ret->activation_potential = this->logic->get_perceived_efficiency();
-		// this->calculate_activation_potential();
-
 		// then send result back to parent
 		RCLCPP_INFO(this->get_logger(), "Sending request back up the tree...");
 		goal_handle->succeed(to_ret);
+
+		this->num_threads -= 1;
 	}
 
 	void Node::register_child_callback(std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Request> request, std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Response> response)
@@ -873,7 +904,7 @@ namespace dhtt
 
 	void Node::resource_availability_callback( const dhtt_msgs::msg::Resources::SharedPtr canonical_list )
 	{
-		RCLCPP_INFO(this->get_logger(), "Resources updated");
+		RCLCPP_DEBUG(this->get_logger(), "Resources updated");
 		this->available_resources = canonical_list->resource_state;
 
 		this->resource_status_updated = true;
@@ -912,10 +943,14 @@ namespace dhtt
 		// TODO occasionally causes a segfault, not sure if this is the right solution
 		if (not this->active_child_name.empty())
 		{
-			this->async_activate_child_failed(this->active_child_name);
-			this->block_for_responses_from_failed_children();
+			dhtt_msgs::action::Activation::Goal n_goal;
+			n_goal.success = false;
+
+			this->async_activate_child(this->active_child_name, n_goal);
+			this->block_for_responses_from_children();
 		}
 
 		this->active_child_name = "";
+		this->num_threads -= 1;
 	}
 }

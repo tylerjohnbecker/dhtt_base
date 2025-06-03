@@ -110,6 +110,7 @@ namespace dhtt_plugins
 		if ( this->is_done() )
 		{
 			RCLCPP_INFO(container->get_logger(), "All children done. Task successfully completed!\n\n\n");
+			container->update_status(dhtt_msgs::msg::NodeStatus::DONE);
 		}
 		else
 		{

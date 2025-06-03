@@ -159,7 +159,8 @@ namespace dhtt
 					return;
 				}
 
-				this->start_maintain(*iter);
+				int id = this->start_maintain(*iter);
+				this->wait_for_maintain(id);
 			}
 
 			remove_modify(request->to_modify);
@@ -812,6 +813,7 @@ namespace dhtt
 		auto find_name = [&]( dhtt_msgs::msg::Node to_check ) { return not strcmp(parent_name.c_str(), to_check.node_name.c_str()); };
 
 		int iter = std::distance(this->node_list.tree_nodes.begin(), std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), find_name));
+
 		int prev_index = this->node_list.tree_nodes[iter].children[child_index];
 
 		auto find_index = [&]( int to_check ) { return prev_index == to_check; };
@@ -957,7 +959,11 @@ namespace dhtt
 
 	bool MainServer::can_add(dhtt_msgs::msg::Node to_add, int index)
 	{
-		// this all relies on the to_add node being in the internal representation of the tree already ( not actually created tho )
+		if (to_add.parent_name == "ROOT_0")
+			return true;
+
+		// this all relies on the to_add node being in the internal representation of the tree
+		// already ( not actually created tho )
 		auto name_match = [&]( dhtt_msgs::msg::Node check ) { return not strcmp(to_add.parent_name.c_str(), check.node_name.c_str()); };
 
 		int name_index = std::distance(this->node_list.tree_nodes.begin(), std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), name_match));
@@ -966,7 +972,8 @@ namespace dhtt
 		auto postconditions = this->node_map[to_add.node_name]->logic->get_postconditions();
 
 		// collect previous postconditions to get the world state before this new behavior
-		auto prev_postconditions = this->collect_previous_postconditions(to_add.parent_name, index - 1);
+		auto prev_postconditions =
+			this->collect_previous_postconditions(to_add.parent_name, index - 1);
 
 		// check the new preconditions against the expected world state
 		if ( dhtt_utils::violates_predicates(prev_postconditions, preconditions) )

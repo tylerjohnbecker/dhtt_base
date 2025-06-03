@@ -4,19 +4,8 @@ namespace dhtt_plugins
 {
 double CookingExecuteBehavior::get_perceived_efficiency()
 {
-	double activation_check = CookingBehavior::get_perceived_efficiency();
-
-	if (activation_check != 0)
-	{
-		// High activation if we're right next to the object. No activation otherwise.
-		double to_ret = this->agent_point_distance(this->destination_point) == 1.0 ? 1.0 : 0.0;
-		RCLCPP_INFO(this->pub_node_ptr->get_logger(), "I report %f efficiency", to_ret);
-
-		this->activation_potential = to_ret; // TODO is this necessary?
-		return to_ret;
-	}
-
-	return 0;
+	this->activation_potential = CookingBehavior::get_perceived_efficiency();
+	return this->activation_potential;
 }
 
 void CookingExecuteBehavior::do_work(dhtt::Node *container)
@@ -27,6 +16,8 @@ void CookingExecuteBehavior::do_work(dhtt::Node *container)
 	{
 		return;
 	}
+
+	const auto prev_dest_obj = this->destination_object;
 
 	/* move_to */
 	auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
@@ -69,6 +60,27 @@ void CookingExecuteBehavior::do_work(dhtt::Node *container)
 	this->executor->spin_until_future_complete(res);
 	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "execute request completed");
 
+	// unmark everything at the object
+	if (this->should_unmark)
+	{
+		// unmark everything at destination location (before it gets changed by observation
+		// callback)
+		this->executor->spin_all(std::chrono::nanoseconds(0));
+
+		for (const auto &world_obj : this->last_obs->objects)
+		{
+			if (world_obj.location == prev_dest_obj.location)
+			{
+				if (not CookingBehavior::unmark_object(world_obj.world_id))
+				{
+					// suc = false; not actually an error when unmarking an unmarked object
+					RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+								 ("Error unmarking object " + prev_dest_obj.object_type).c_str());
+				}
+			}
+		}
+	}
+
 	suc = res.get()->success;
 	if (not suc)
 	{
@@ -82,14 +94,34 @@ void CookingExecuteBehavior::do_work(dhtt::Node *container)
 std::vector<dhtt_msgs::msg::Resource>
 CookingExecuteBehavior::get_retained_resources(dhtt::Node *container)
 {
-	(void)container;
-	return std::vector<dhtt_msgs::msg::Resource>{};
+	if (this->should_unmark)
+	{
+		// keep the move base
+		dhtt_msgs::msg::Resource to_keep;
+		for (auto iter : container->get_owned_resources())
+			if (iter.type == dhtt_msgs::msg::Resource::BASE)
+				to_keep = iter;
+
+		return {to_keep};
+	}
+	return container->get_owned_resources();
 }
 
 std::vector<dhtt_msgs::msg::Resource>
 CookingExecuteBehavior::get_released_resources(dhtt::Node *container)
 {
-	return container->get_owned_resources();
+	// release the gripper
+	if (this->should_unmark)
+	{
+		dhtt_msgs::msg::Resource to_release;
+		for (auto iter : container->get_owned_resources())
+			if (iter.type == dhtt_msgs::msg::Resource::GRIPPER)
+				to_release = iter;
+
+		return {to_release};
+	}
+
+	return {};
 }
 std::vector<dhtt_msgs::msg::Resource> CookingExecuteBehavior::get_necessary_resources()
 {

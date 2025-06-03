@@ -37,10 +37,10 @@ void CookingBehavior::parse_params(std::vector<std::string> params)
 	};
 
 	// Copied from move_behavior.cc
-	if (static_cast<int>(params.size()) > 3)
+	if (static_cast<int>(params.size()) > 4)
 		throw std::invalid_argument(
 			"Too many parameters passed to node. Coord or object required and "
-			"optionally object conditions and mark.");
+			"optionally object conditions and mark and unmark.");
 
 	if (static_cast<int>(params.size()) == 0)
 	{
@@ -90,12 +90,17 @@ void CookingBehavior::parse_params(std::vector<std::string> params)
 				{
 					this->destination_mark = value;
 				}
+				else if (key == CookingBehavior::PARAM_UNMARK)
+				{
+					this->should_unmark = true;
+				}
 				else
 				{
 					throw std::invalid_argument(
 						"Expected parameter " +
 						std::string(CookingBehavior::PARAM_OBJECT_CONDITIONS) + " or " +
-						std::string(CookingBehavior::PARAM_MARK_OBJECTS) + ", but received " + key);
+						std::string(CookingBehavior::PARAM_MARK_OBJECTS) + "or" +
+						std::string(CookingBehavior::PARAM_UNMARK) + ", but received " + key);
 				}
 			}
 		}
@@ -228,10 +233,22 @@ void CookingBehavior::initialize(std::vector<std::string> params)
 		RCLCPP_FATAL(this->pub_node_ptr->get_logger(),
 					 "Did not get first observation. This node may not behave properly.");
 	}
+
+	// initialize message types to more obvious bad values
+	this->destination_point.x = -1;
+	this->destination_point.y = -1;
+	this->destination_object.world_id = -1;
+	this->destination_object.location.x = -1;
+	this->destination_object.location.y = -1;
 }
 
 void CookingBehavior::observation_callback(std::shared_ptr<dhtt_msgs::msg::CookingObservation> msg)
 {
+	if (this->done)
+	{
+		return; // exit early
+	}
+
 	RCLCPP_DEBUG(this->pub_node_ptr->get_logger(), "Inside observation callback");
 	this->last_obs = msg;
 
@@ -278,13 +295,7 @@ void CookingBehavior::set_destination_to_closest_object()
 				return false;
 			}
 
-			// // Check marks
-			// if (not this->destination_mark.empty() and this->check_mark(obj) == false)
-			// {
-			// 	return false;
-			// }
-
-			return true; // Correct type, conditions and mark
+			return true; // Correct type and conditions
 		}
 		return false; // Not correct type
 	};
@@ -316,29 +327,29 @@ void CookingBehavior::set_destination_to_closest_object()
 	// fail. If because at least one of them is not marked at all, return that one.
 	if (not this->destination_mark.empty())
 	{
-		std::vector<char> mark_rets;
+		std::vector<std::vector<dhtt_msgs::msg::CookingObject>::const_iterator> found_with_no_mark;
+
 		for (auto iter : found_typeconds_iters)
 		{
-			mark_rets.push_back(this->check_mark(*iter));
-		}
+			char mark = this->check_mark(*iter);
 
-		for (auto i = 0; i < mark_rets.size(); ++i)
-		{
-			if (mark_rets[i] == '1') // our taint
+			if (mark == '1')
 			{
-				found_typecondsmark_iters.push_back(found_typeconds_iters[i]);
+				found_typecondsmark_iters.push_back(iter);
+			}
+			else if (mark == '2')
+			{
+				found_with_no_mark.push_back(iter);
+			}
+			else
+			{
+				continue;
 			}
 		}
 		if (found_typecondsmark_iters
 				.empty()) // none of our taints found, reconsider with unmarked objects
 		{
-			for (auto i = 0; i < mark_rets.size(); ++i)
-			{
-				if (mark_rets[i] == '2')
-				{
-					found_typecondsmark_iters.push_back(found_typeconds_iters[i]);
-				}
-			}
+			found_typecondsmark_iters = found_with_no_mark;
 		}
 
 		if (found_typecondsmark_iters.empty())
@@ -388,15 +399,6 @@ std::string CookingBehavior::which_arm(dhtt::Node *container)
 
 bool CookingBehavior::can_work() const
 {
-	// TODO check good floating point comparisons
-	// if (this->activation_potential <= DBL_EPSILON)
-	// {
-	// 	RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
-	// 				 "We set activation potential to 0 but the node still ran, skipping work. "
-	// 				 "Complain to Tyler.");
-	// 	return false;
-	// }
-
 	if (not this->destination_is_good)
 	{
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
@@ -426,6 +428,9 @@ bool CookingBehavior::mark_object(unsigned long object_id, const std::string &ma
 	auto existing_marked_objects_taints =
 		this->params_client_ptr->get_parameter<std::vector<std::string>>(
 			CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, {});
+	auto existing_marked_objects_types =
+		this->params_client_ptr->get_parameter<std::vector<std::string>>(
+			CookingBehavior::PARAM_MARK_OBJECTS_TYPES, {});
 
 	if (existing_marked_objects.size() != existing_marked_objects_taints.size())
 	{
@@ -437,6 +442,14 @@ bool CookingBehavior::mark_object(unsigned long object_id, const std::string &ma
 	if (std::find(existing_marked_objects.cbegin(), existing_marked_objects.cend(), object_id) !=
 		existing_marked_objects.cend())
 	{
+		int index = std::distance(
+			existing_marked_objects.cbegin(),
+			std::find(existing_marked_objects.cbegin(), existing_marked_objects.cend(), object_id));
+
+		// if the object already has our mark that's fine too
+		if (existing_marked_objects_taints[index] == mark)
+			return true;
+
 		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
 					 "Tried to mark object %lu but it is already marked", object_id);
 		return false;
@@ -444,31 +457,20 @@ bool CookingBehavior::mark_object(unsigned long object_id, const std::string &ma
 
 	existing_marked_objects.push_back(object_id);
 	existing_marked_objects_taints.push_back(mark);
+	existing_marked_objects_types.push_back(this->destination_object.object_type);
 
 	this->params_client_ptr->set_parameters(
 		{rclcpp::Parameter(CookingBehavior::PARAM_MARK_OBJECTS, existing_marked_objects),
 		 rclcpp::Parameter(CookingBehavior::PARAM_MARK_OBJECTS_TAINTS,
-						   existing_marked_objects_taints)});
+						   existing_marked_objects_taints),
+		 rclcpp::Parameter(CookingBehavior::PARAM_MARK_OBJECTS_TYPES,
+						   existing_marked_objects_types)});
 
 	return true;
 }
 
 bool CookingBehavior::unmark_static_object_under_obj(const dhtt_msgs::msg::CookingObject &obj) const
 {
-	// TODO remove this!
-	size_t foo = 0;
-	for (const auto &world_obj : this->last_obs->objects)
-	{
-		if (world_obj.is_static and world_obj.location == obj.location)
-		{
-			foo++;
-		}
-	}
-	if (foo > 1)
-	{
-		throw std::runtime_error("Look at me!");
-	}
-
 	for (const auto &world_obj : this->last_obs->objects)
 	{
 		if (world_obj.is_static and world_obj.location == obj.location)
@@ -494,9 +496,12 @@ bool CookingBehavior::unmark_object(unsigned long object_id) const
 		this->params_client_ptr->get_parameter<std::vector<std::string>>(
 			CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, {});
 
-	auto found_marked_id_it =
-		std::find_if(marked_object_ids.cbegin(), marked_object_ids.cend(),
-					 [object_id](const int64_t& other_obj_id) { return other_obj_id == object_id; });
+	auto marked_objects_types = this->params_client_ptr->get_parameter<std::vector<std::string>>(
+		CookingBehavior::PARAM_MARK_OBJECTS_TYPES, {});
+
+	auto found_marked_id_it = std::find_if(marked_object_ids.cbegin(), marked_object_ids.cend(),
+										   [object_id](const int64_t &other_obj_id)
+										   { return other_obj_id == object_id; });
 
 	if (found_marked_id_it == marked_object_ids.cend())
 	{
@@ -516,10 +521,12 @@ bool CookingBehavior::unmark_object(unsigned long object_id) const
 
 	marked_object_ids.erase(found_marked_id_it);
 	marked_object_taints.erase(marked_object_taints.begin() + found_index);
+	marked_objects_types.erase(marked_objects_types.begin() + found_index);
 
 	this->params_client_ptr->set_parameters(
 		{rclcpp::Parameter(CookingBehavior::PARAM_MARK_OBJECTS, marked_object_ids),
-		 rclcpp::Parameter(CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, marked_object_taints)});
+		 rclcpp::Parameter(CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, marked_object_taints),
+		 rclcpp::Parameter(CookingBehavior::PARAM_MARK_OBJECTS_TYPES, marked_objects_types)});
 
 	return true;
 }
