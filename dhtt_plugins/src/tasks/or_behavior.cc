@@ -115,6 +115,7 @@ namespace dhtt_plugins
 		}
 
 		this->activation_potential = child_req->activation_potential;
+		to_ret->activation_potential = activation_potential;
 
 		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation which is done [%d]...", this->activated_child_name.c_str(), child_req->done) ;
 

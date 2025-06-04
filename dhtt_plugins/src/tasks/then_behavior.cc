@@ -105,6 +105,7 @@ namespace dhtt_plugins
 		to_ret->possible = results[first_child_in_queue]->possible;
 
 		this->activation_potential = results[first_child_in_queue]->activation_potential;// / total_num_children;
+		to_ret->activation_potential = activation_potential;
 
 		// make sure to send back failure to all if nothing is possible
 		// if ( not to_ret->possible )

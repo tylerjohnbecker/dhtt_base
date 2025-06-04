@@ -123,6 +123,7 @@ CookingExecuteBehavior::get_released_resources(dhtt::Node *container)
 
 	return {};
 }
+
 std::vector<dhtt_msgs::msg::Resource> CookingExecuteBehavior::get_necessary_resources()
 {
 	std::vector<dhtt_msgs::msg::Resource> to_ret;
