@@ -4,7 +4,7 @@
   <name>dhtt</name>
   <version>0.0.0</version>
   <description>This package contains the implementation of dynamic Hierarchical Task Trees (dHTTs). This is meant to be a server which is communicated with in order to make the robot perform tasks, or provide updates about the tasks.</description>
-  <maintainer email="tbecker@nevada.unr.edu">Tyler J Becker</maintainer>
+  <maintainer email="tbecker@unr.edu">Tyler J Becker</maintainer>
   <license>TODO: License declaration</license>
 
   <depend>rclcpp</depend>

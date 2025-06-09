@@ -1,4 +1,12 @@
 <library path="dhtt_plugins">
+
+	<!-- BRANCH TYPES -->
+	<class type="dhtt_plugins::PtrBranchSocket" base_class_type="dhtt::BranchSocketType">
+		<description>Branch type which enables the nodes to communicate through ptr relationships. The Socket is basically empty in this case.</description>
+	</class>
+	<class type="dhtt_plugins::PtrBranchPlug" base_class_type="dhtt::BranchPlugType">
+		<description>Branch type which enables the nodes to communicate through ptr relationships. The Plug here just calls the public methods in the socket from an internally saved ptr.</description>
+	</class>
 	
 	<!-- SUBTASK NODES -->
 	<class type="dhtt_plugins::RootBehavior" base_class_type="dhtt::NodeType">

@@ -65,7 +65,7 @@ void CookingExecuteBehavior::do_work(dhtt::Node *container)
 	{
 		// unmark everything at destination location (before it gets changed by observation
 		// callback)
-		this->executor->spin_all(std::chrono::nanoseconds(0));
+		this->executor->spin_some(std::chrono::nanoseconds(0));
 
 		for (const auto &world_obj : this->last_obs->objects)
 		{

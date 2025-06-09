@@ -65,7 +65,7 @@ void CookingPlatePlaceBehavior::do_work(dhtt::Node *container)
 	if (this->destination_object.object_type.find("Deliversquare") != std::string::npos)
 	{
 		// make sure we're up to date with observations
-		this->executor->spin_all(std::chrono::nanoseconds(0));
+		this->executor->spin_some(std::chrono::nanoseconds(0));
 
 		// unmark everything on the deliversquare, including the deliversquare
 		// need to do this before the objects are deleted by the nop...

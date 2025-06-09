@@ -6,11 +6,18 @@ import rclpy.node
 import pathlib
 import yaml
 import copy
+import contextlib
+import os
 
+import filelock
+
+from functools import partial
 from threading import Lock
 
-from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest
-from dhtt_msgs.msg import Subtree, Node, NodeStatus 
+from std_msgs.msg import String
+
+from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest, GoitrRequest
+from dhtt_msgs.msg import Subtree, Node, NodeStatus, Result  
 
 class ServerNode (rclpy.node.Node):
 

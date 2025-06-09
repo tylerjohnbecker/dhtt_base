@@ -49,11 +49,11 @@ namespace dhtt
 		this->node_list.task_completion_percent = 0.0f;
 
 		// initialize physical Root Node. loaded a yaml file as a part of the constructor so we don't catch it and make the program fail to load if that happens
-		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>("ROOT_0", "dhtt_plugins::RootBehavior", root_node->params, "NONE", "");
+		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>("ROOT_0", "dhtt_plugins::RootBehavior", root_node->params, "NONE", "dhtt_plugins::PtrBranchSocket");
 		this->spinner_cp->add_node(this->node_map["ROOT_0"]);
 		this->node_map["ROOT_0"]->register_servers();
 		this->node_map["ROOT_0"]->set_resource_status_updated(true);
-		this->node_map["ROOT_0"]->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
+		// this->node_map["ROOT_0"]->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
 		/// initialize external services
 		this->modify_server = this->create_service<dhtt_msgs::srv::ModifyRequest>("/modify_service", std::bind(&MainServer::modify_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->conc_group);
@@ -61,8 +61,8 @@ namespace dhtt
 		this->fetch_server = this->create_service<dhtt_msgs::srv::FetchRequest>("/fetch_service", std::bind(&MainServer::fetch_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->conc_group);
 		this->history_server = this->create_service<dhtt_msgs::srv::HistoryRequest>("/history_service", std::bind(&MainServer::history_callback, this,std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->conc_group);
 
-		this->client_ptr = rclcpp_action::create_client<dhtt_msgs::action::Activation>( this, "/dhtt/ROOT_0/activate", this->conc_group);
-		this->maintenance_client_ptrs["ROOT_0"] = rclcpp_action::create_client<dhtt_msgs::action::Condition>(this, "/dhtt/ROOT_0/condition", this->conc_group);
+		// this->client_ptr = rclcpp_action::create_client<dhtt_msgs::action::Activation>( this, "/dhtt/ROOT_0/activate", this->conc_group);
+		// this->maintenance_client_ptrs["ROOT_0"] = rclcpp_action::create_client<dhtt_msgs::action::Condition>(this, "/dhtt/ROOT_0/condition", this->conc_group);
 		this->internal_control_client = this->create_client<dhtt_msgs::srv::InternalControlRequest>("/dhtt/control");
 
 		// initialize and start maintenance thread
@@ -276,7 +276,7 @@ namespace dhtt
 				// response->error_msg = res->error_msg;
 				response->success = not strcmp(response->error_msg.c_str(), "");
 
-				RCLCPP_FATAL(this->get_logger(), "Done modifying [%s]", (*iter).c_str());
+				// RCLCPP_FATAL(this->get_logger(), "Done modifying [%s]", (*iter).c_str());
 
 				// exit early if modification fails
 				if ( not response->success )
@@ -542,7 +542,7 @@ namespace dhtt
 			goitr_type = to_add.goitr_name;
 
 		// create a physical node from the message and add to physical list
-		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(to_add.node_name, to_add.plugin_name, to_add.params, parent_name, goitr_type);
+		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(to_add.node_name, to_add.plugin_name, to_add.params, parent_name, "dhtt_plugins::PtrBranchSocket", goitr_type);
 
 		if (this->node_map[to_add.node_name]->loaded_successfully() == false)
 		{
@@ -569,11 +569,11 @@ namespace dhtt
 			this->node_map.erase(to_add.node_name);
 
 			// sometimes get_error_msg() is empty, which is misinterpreted later as success.
-			return err + "Force not set and failed pre- post-conditions check";
+			return err + " Force not set and failed pre/postconditions check";
 		}
 
 		this->spinner_cp->add_node(this->node_map[to_add.node_name]);
-		this->node_map[to_add.node_name]->register_with_parent(index);
+		// this->node_map[to_add.node_name]->register_with_parent(index);
 		this->node_map[to_add.node_name]->register_servers();
 
 		if (this->node_map[to_add.node_name]->loaded_successfully() == false)
@@ -585,8 +585,10 @@ namespace dhtt
 			return err;
 		}
 
-		std::string condition_topic = std::string(TREE_PREFIX) + "/" + to_add.node_name + CONDITION_POSTFIX;
-		this->maintenance_client_ptrs[to_add.node_name] = rclcpp_action::create_client<dhtt_msgs::action::Condition>(this, condition_topic, this->conc_group);
+		this->node_map[to_add.parent_name]->add_child(this->node_map[to_add.node_name]->get_socket_ptr(), to_add.node_name, "dhtt_plugins::PtrBranchPlug", index);
+
+		// std::string condition_topic = std::string(TREE_PREFIX) + "/" + to_add.node_name + CONDITION_POSTFIX;
+		// this->maintenance_client_ptrs[to_add.node_name] = rclcpp_action::create_client<dhtt_msgs::action::Condition>(this, condition_topic, this->conc_group);
 
 		// update the parent
 		auto index_iter = (index == -1)? (*found_parent).children.end() : (*found_parent).children.begin() + index;
@@ -831,7 +833,7 @@ namespace dhtt
 				// take all the subsequent children
 				dhtt_msgs::msg::Node ancestor = this->node_list.tree_nodes[iter];
 				int my_child_index = std::distance(ancestor.children.begin(), std::find_if(ancestor.children.begin(), ancestor.children.end(), find_index));
-				RCLCPP_WARN(this->get_logger(), "Found Ancestor %s", ancestor.node_name.c_str());
+				// RCLCPP_WARN(this->get_logger(), "Found Ancestor %s", ancestor.node_name.c_str());
 
 				if ( not first )
 					my_child_index -= 1;
@@ -841,7 +843,7 @@ namespace dhtt
 				// push the left behaviors onto the stack
 				for ( int i = my_child_index; i >= 0; i-- )
 				{
-					RCLCPP_ERROR(this->get_logger(), "Pushing child [%s] onto the stack", this->node_list.tree_nodes[ancestor.children[i]].node_name.c_str());
+					// RCLCPP_ERROR(this->get_logger(), "Pushing child [%s] onto the stack", this->node_list.tree_nodes[ancestor.children[i]].node_name.c_str());
 					pred_stack.push(this->get_postconditions(ancestor.children[i]));
 				}
 
@@ -858,7 +860,7 @@ namespace dhtt
 
 			dhtt_utils::append_predicate_conjunction(to_ret, popped_pred);
 			dhtt_utils::remove_predicate_partial_duplicates(to_ret);
-			RCLCPP_WARN(this->get_logger(), "%s -----------> %s", dhtt_utils::to_string(popped_pred).c_str(),dhtt_utils::to_string(to_ret).c_str() );
+			// RCLCPP_WARN(this->get_logger(), "%s -----------> %s", dhtt_utils::to_string(popped_pred).c_str(),dhtt_utils::to_string(to_ret).c_str() );
 
 			pred_stack.pop();
 		}
@@ -936,7 +938,7 @@ namespace dhtt
 			auto subsequent_preconditions = this->get_preconditions(iter);
 			auto subsequent_postconditions = this->get_postconditions(iter);
 
-			RCLCPP_WARN(this->get_logger(), "Check predicate %s for %s", dhtt_utils::to_string(postconditions).c_str(), this->node_list.tree_nodes[iter].node_name.c_str());
+			RCLCPP_DEBUG(this->get_logger(), "Check predicate %s for %s", dhtt_utils::to_string(postconditions).c_str(), this->node_list.tree_nodes[iter].node_name.c_str());
 
 			if ( dhtt_utils::violates_predicates(postconditions, subsequent_preconditions) )
 				return false; 
@@ -988,7 +990,7 @@ namespace dhtt
 			auto subsequent_preconditions = this->get_preconditions(iter);
 			auto subsequent_postconditions = this->get_postconditions(iter);
 
-			RCLCPP_WARN(this->get_logger(), "Check predicate %s for %s", dhtt_utils::to_string(postconditions).c_str(), this->node_list.tree_nodes[iter].node_name.c_str());
+			RCLCPP_DEBUG(this->get_logger(), "Check predicate %s for %s", dhtt_utils::to_string(postconditions).c_str(), this->node_list.tree_nodes[iter].node_name.c_str());
 
 			if ( dhtt_utils::violates_predicates(postconditions, subsequent_preconditions) )
 				return false; 
@@ -1040,7 +1042,7 @@ namespace dhtt
 				auto subsequent_preconditions = this->get_preconditions(iter);
 				auto subsequent_postconditions = this->get_postconditions(iter);
 
-				RCLCPP_WARN(this->get_logger(), "Check predicate %s for %s", dhtt_utils::to_string(postconditions).c_str(), this->node_list.tree_nodes[iter].node_name.c_str());
+				RCLCPP_DEBUG(this->get_logger(), "Check predicate %s for %s", dhtt_utils::to_string(postconditions).c_str(), this->node_list.tree_nodes[iter].node_name.c_str());
 
 				if ( dhtt_utils::violates_predicates(postconditions, subsequent_preconditions) )
 					return false; 
@@ -1086,7 +1088,7 @@ namespace dhtt
 						 std::find_if(this->node_list.tree_nodes[this->node_list.tree_nodes[name_index].parent].child_name.begin(), 
 						 				this->node_list.tree_nodes[this->node_list.tree_nodes[name_index].parent].child_name.end(), name_match_strings));
 
-		RCLCPP_ERROR(this->get_logger(), "%d", index);
+		// RCLCPP_ERROR(this->get_logger(), "%d", index);
 
 		// now check those postconditions going up the tree
 		std::vector<int> forward_temporal_dependencies = this->get_next_behaviors(this->node_list.tree_nodes[this->node_list.tree_nodes[name_index].parent].node_name, index, 1);
@@ -1098,11 +1100,11 @@ namespace dhtt
 			auto subsequent_preconditions = this->get_preconditions(iter);
 			auto subsequent_postconditions = this->get_postconditions(iter);
 
-			RCLCPP_WARN(this->get_logger(), "Check predicate %s for %s", dhtt_utils::to_string(postconditions).c_str(), this->node_list.tree_nodes[iter].node_name.c_str());
+			RCLCPP_DEBUG(this->get_logger(), "Check predicate %s for %s", dhtt_utils::to_string(postconditions).c_str(), this->node_list.tree_nodes[iter].node_name.c_str());
 
 			if ( dhtt_utils::violates_predicates(postconditions, subsequent_preconditions) )
 			{
-				RCLCPP_INFO(this->get_logger(), "Hello paul im here too");
+				// RCLCPP_INFO(this->get_logger(), "Hello paul im here too");
 				return false; 
 			}
 
@@ -1274,13 +1276,10 @@ namespace dhtt
 
 	void MainServer::maintainer_thread_cb()
 	{
-		std::shared_future<std::shared_ptr<rclcpp_action::Client<dhtt_msgs::action::Condition>::GoalHandle>> goal_handle;
-		bool waiting = false;
-		dhtt_msgs::action::Condition::Result::SharedPtr result;
+		dhtt_msgs::action::Condition::Result result;
 
 		// condition from which to wake up this thread ( does this thread clean up? )
 		auto check_queue_size = [&](){ return this->maintenance_queue.size() > 0 or this->end; };
-		auto result_cb = [&](const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Condition>::WrappedResult& res){ waiting = false; result = res.result; };
 
 		// useful example of using condition variables here: https://en.cppreference.com/w/cpp/thread/condition_variable
 		while ( rclcpp::ok() )
@@ -1302,29 +1301,15 @@ namespace dhtt
 
 			RCLCPP_INFO(this->get_logger(), "Sending maintenance request to %s...", node_name.c_str());
 
-			if ( not this->maintenance_client_ptrs[node_name]->wait_for_action_server(std::chrono::seconds(10)) )
-			{
-				RCLCPP_ERROR(this->get_logger(), "Cannot reach action server to request maintenance for %s!", node_name.c_str());
-
-				return;
-			}
-
 			auto condition_goal = dhtt_msgs::action::Condition::Goal();
 			condition_goal.type = dhtt_msgs::action::Condition::Goal::MAINTAIN;
 
-			auto send_goal_options = rclcpp_action::Client<dhtt_msgs::action::Condition>::SendGoalOptions();
-			send_goal_options.result_callback = result_cb;
-
-			waiting = true;
-
-			goal_handle = this->maintenance_client_ptrs[node_name]->async_send_goal(condition_goal, send_goal_options);
-
-			while ( waiting and rclcpp::ok() );
+			auto result = this->node_map[node_name]->combine_child_conditions(condition_goal);
 
 			RCLCPP_INFO(this->get_logger(), "Received condition response from %s.", node_name.c_str());
 
-			if ( not result->success )
-				RCLCPP_ERROR(this->get_logger(), "Maintenance request for %s failed with error_msg: %s", node_name.c_str(), result->error_msg.c_str());
+			if ( not result.success )
+				RCLCPP_ERROR(this->get_logger(), "Maintenance request for %s failed with error_msg: %s", node_name.c_str(), result.error_msg.c_str());
 
 			// change finished id to the id that was just performed then return
 			this->last_finished_id = this->maintenance_dict[node_name];
@@ -1499,25 +1484,17 @@ namespace dhtt
 	void MainServer::run_tree()
 	{	
 		// need to allow for interruptions soon but for now assume we run until the task finishes
-		this->running_mut.lock();
+		std::lock_guard<std::mutex> lock(this->running_mut);
 		this->running = true;
+
+		dhtt_msgs::action::Activation::Goal g;
 
 		RCLCPP_INFO(this->get_logger(), "Activating the root node...");
 
-		if ( not this->client_ptr->wait_for_action_server(std::chrono::seconds(10)) )
-		{
-			RCLCPP_ERROR(this->get_logger(), "Cannot reach action server to activate root 0!");
+		this->node_map["ROOT_0"]->activate(g);
 
-			return;
-		}
-
-		auto send_goal_options = rclcpp_action::Client<dhtt_msgs::action::Activation>::SendGoalOptions();
-
-		send_goal_options.result_callback = std::bind(&MainServer::tree_result_callback, this, std::placeholders::_1);
-
-		auto activation_goal = dhtt_msgs::action::Activation::Goal();
-
-		client_ptr->async_send_goal(activation_goal, send_goal_options);
+		RCLCPP_INFO(this->get_logger(), "Tree finished running...");
+		this->running = false;
 	}
 	
 	void MainServer::tree_result_callback(const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result)
@@ -1525,10 +1502,8 @@ namespace dhtt
 		// empty for now, this is where we can get information about the tree once it finishes the task
 		(void) result;
 
-		RCLCPP_INFO(this->get_logger(), "Tree finished running...");
 
-		this->running = false;
-		this->running_mut.unlock();
+		// this->running_mut.unlock();
 	}
 
 	void MainServer::publish_root_status()

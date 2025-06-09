@@ -21,6 +21,7 @@ namespace dhtt_plugins
 		this->children_allowed = true;
 		this->interrupted = false;
 
+		this->params = params;
 		this->parse_params(params);
 		this->load_resources_from_yaml();
 
@@ -56,22 +57,22 @@ namespace dhtt_plugins
 			RCLCPP_FATAL(container->get_logger(), "\tWaiting for response...\n");
 
 			// get responses
-			container->block_for_responses_from_children();
+			container->block_for_activation_from_children();
 
 			auto result = container->get_activation_results();
 
 			if ( result.empty() )
 				RCLCPP_ERROR(container->get_logger(), "Empty response received!!!");
 			
-			if ( (*result.begin()).second->done )
+			if ( (*result.begin()).second.done )
 			{
 				RCLCPP_FATAL(container->get_logger(), "\tChildren done early!");
 
-				this->children_done = (*result.begin()).second->done;
+				this->children_done = (*result.begin()).second.done;
 				break;
 			}
 
-			if ( not (*result.begin()).second->possible )
+			if ( not (*result.begin()).second.possible )
 			{
 				RCLCPP_FATAL(container->get_logger(), "Children not possible, trying again...");
 				container->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
@@ -80,7 +81,7 @@ namespace dhtt_plugins
 			}
 
 			// update resources
-			n_goal.granted_resources = this->give_resources( (*result.begin()).second->requested_resources );
+			n_goal.granted_resources = this->give_resources( (*result.begin()).second.requested_resources );
 			n_goal.success = true; 
 
 			RCLCPP_FATAL(container->get_logger(), "\tRequest accepted!\n");
@@ -88,17 +89,17 @@ namespace dhtt_plugins
 			// activate children
 			container->activate_all_children(n_goal);
 			// get responses
-			container->block_for_responses_from_children();
+			container->block_for_activation_from_children();
 
 			result = container->get_activation_results();
 
 			// update resources (release the ones in passed resources because if they make it to root then they have to be released anyway)
 			RCLCPP_FATAL(container->get_logger(), "\tRequest complete, releasing resources!\n\n --- --- ---");
 
-			this->release_resources( (*result.begin()).second->released_resources );
-			this->release_resources( (*result.begin()).second->passed_resources );
+			this->release_resources( (*result.begin()).second.released_resources );
+			this->release_resources( (*result.begin()).second.passed_resources );
 
-			this->children_done = (*result.begin()).second->done;
+			this->children_done = (*result.begin()).second.done;
 
 			// if (this->slow)
 			rclcpp::sleep_for(std::chrono::milliseconds(100));

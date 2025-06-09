@@ -42,7 +42,7 @@ namespace dhtt_plugins
 		if ( not this->child_has_run )
 			this->has_chosen_child = false;
 
-		std::shared_ptr<dhtt_msgs::action::Activation::Result> child_req;
+		dhtt_msgs::action::Activation::Result child_req;
 
 		dhtt_msgs::action::Activation::Goal n_goal;
 		n_goal.passed_resources = container->get_owned_resources();
@@ -53,7 +53,7 @@ namespace dhtt_plugins
 			container->activate_all_children(n_goal);
 
 			// wait for result
-			container->block_for_responses_from_children();
+			container->block_for_activation_from_children();
 
 			RCLCPP_DEBUG(container->get_logger(), "Responses received...");
 
@@ -64,14 +64,14 @@ namespace dhtt_plugins
 
 			for ( auto const& x : results )
 			{
-				if ( x.second->activation_potential > current_max and x.second->possible and not x.second->done )
+				if ( x.second.activation_potential > current_max and x.second.possible and not x.second.done )
 				{
-					current_max = x.second->activation_potential;
+					current_max = x.second.activation_potential;
 					this->activated_child_name = x.first;
 				}
 
 				// if we for some reason already have a finished child then we have to pass that up and we are also done
-				if ( x.second->done )
+				if ( x.second.done )
 				{
 					current_max = 1;
 					this->activated_child_name = x.first;
@@ -94,17 +94,18 @@ namespace dhtt_plugins
 			n_goal.success = false;
 
 			for ( auto iter : container->get_child_names() )
-				if ( strcmp( iter.c_str(), this->activated_child_name.c_str() ) and results[iter]->possible )
+				if ( strcmp( iter.c_str(), this->activated_child_name.c_str() ) and results[iter].possible )
 					container->async_activate_child(iter, n_goal);
 				
-			container->block_for_responses_from_children();
+			container->block_for_activation_from_children();
+			(void) container->get_activation_results();
 		}
 		else
 		{
 			// activate chosen child
 			container->async_activate_child(this->activated_child_name, n_goal);
 
-			container->block_for_responses_from_children();
+			container->block_for_activation_from_children();
 
 			RCLCPP_DEBUG(container->get_logger(), "Responses received...");
 
@@ -114,15 +115,15 @@ namespace dhtt_plugins
 			child_req = result[this->activated_child_name];
 		}
 
-		this->activation_potential = child_req->activation_potential;
+		this->activation_potential = child_req.activation_potential;
 
-		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation which is done [%d]...", this->activated_child_name.c_str(), child_req->done) ;
+		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation which is done [%d]...", this->activated_child_name.c_str(), child_req.done) ;
 
 		to_ret->local_best_node = this->activated_child_name;
-		to_ret->requested_resources = child_req->requested_resources;
-		to_ret->owned_resources = child_req->owned_resources;
-		to_ret->done = child_req->done;
-		to_ret->possible = child_req->possible;
+		to_ret->requested_resources = child_req.requested_resources;
+		to_ret->owned_resources = child_req.owned_resources;
+		to_ret->done = child_req.done;
+		to_ret->possible = child_req.possible;
 
 		if ( to_ret->done )
 			this->child_done = true;
@@ -145,7 +146,7 @@ namespace dhtt_plugins
 		container->async_activate_child(active, n_goal);
 
 		// block until the child is done
-		container->block_for_responses_from_children();
+		container->block_for_activation_from_children();
 
 		// get result
 		auto result = container->get_activation_results()[active];
@@ -154,15 +155,15 @@ namespace dhtt_plugins
 		this->child_has_run = true;
 
 		// if they are done then so are we
-		if ( result->done )
+		if ( result.done )
 			this->child_done = true;
 
 		// change hands of resources and pass up
-		to_ret->passed_resources = result->passed_resources;
-		to_ret->released_resources = result->released_resources;
-		to_ret->last_behavior = result->last_behavior;
+		to_ret->passed_resources = result.passed_resources;
+		to_ret->released_resources = result.released_resources;
+		to_ret->last_behavior = result.last_behavior;
 		to_ret->done = this->is_done();
-		to_ret->success = result->success;
+		to_ret->success = result.success;
 
 		return to_ret;
 	}
@@ -180,8 +181,8 @@ namespace dhtt_plugins
 
 		for ( auto const& child_response : response_cp )
 		{
-			auto precon_struct = dhtt_utils::convert_to_struct(child_response.second->preconditions);
-			auto postcon_struct = dhtt_utils::convert_to_struct(child_response.second->postconditions);
+			auto precon_struct = dhtt_utils::convert_to_struct(child_response.second.preconditions);
+			auto postcon_struct = dhtt_utils::convert_to_struct(child_response.second.postconditions);
 
 			// first grab the preconditions
 			if ( precon_struct.logical_operator == dhtt_utils::LOGICAL_OR or precon_struct.logical_operator == dhtt_utils::LOGICAL_OTHER )

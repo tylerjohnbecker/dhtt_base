@@ -28,7 +28,7 @@ namespace dhtt_plugins
 		container->activate_all_children(n_goal);
 
 		// wait for responses
-		container->block_for_responses_from_children();
+		container->block_for_activation_from_children();
 
 		RCLCPP_DEBUG(container->get_logger(), "\tResponses received...");
 
@@ -45,15 +45,15 @@ namespace dhtt_plugins
 
 		for ( auto const& x : results )
 		{
-			if ( not x.second->done )
+			if ( not x.second.done )
 			{
-				RCLCPP_DEBUG(container->get_logger(), "Evaluating child [%s] with activation potential %f...", x.first.c_str(), x.second->activation_potential);
+				RCLCPP_DEBUG(container->get_logger(), "Evaluating child [%s] with activation potential %f...", x.first.c_str(), x.second.activation_potential);
 				num_children++;
-				activation_potential_sum += x.second->activation_potential;
+				activation_potential_sum += x.second.activation_potential;
 
-				if ( x.second->activation_potential > current_max_activation_potential and x.second->possible )
+				if ( x.second.activation_potential > current_max_activation_potential and x.second.possible )
 				{
-					current_max_activation_potential = x.second->activation_potential;
+					current_max_activation_potential = x.second.activation_potential;
 
 					// this wasn't pushed onto active children the first time so do it now
 					active_children.push_back(x.first);
@@ -72,16 +72,17 @@ namespace dhtt_plugins
 
 		// check if a possible child exists
 		if ( strcmp( "", local_best_child.c_str() ) )
-			to_ret->possible = results[local_best_child]->possible;
+			to_ret->possible = results[local_best_child].possible;
 
 		// send stop back to the rest
 		n_goal.success = false;
 
 		for ( std::string active_children_iter : active_children )
-			if (strcmp(active_children_iter.c_str(), local_best_child.c_str()) and results[active_children_iter]->possible )
+			if (strcmp(active_children_iter.c_str(), local_best_child.c_str()) and results[active_children_iter].possible )
 				container->async_activate_child(active_children_iter, n_goal);
 	
-		container->block_for_responses_from_children();
+		container->block_for_activation_from_children();
+		container->get_activation_results();
 
 		// return winner
 		to_ret->local_best_node = local_best_child;
@@ -90,8 +91,8 @@ namespace dhtt_plugins
 
 		if ( to_ret->possible )
 		{
-			to_ret->requested_resources = results[local_best_child]->requested_resources;
-			to_ret->owned_resources = results[local_best_child]->owned_resources;
+			to_ret->requested_resources = results[local_best_child].requested_resources;
+			to_ret->owned_resources = results[local_best_child].owned_resources;
 		}
 
 		to_ret->done = this->is_done();
@@ -116,21 +117,21 @@ namespace dhtt_plugins
 		container->async_activate_child(active_child, n_goal);
 
 		// wait for response
-		container->block_for_responses_from_children();
+		container->block_for_activation_from_children();
 
 		auto result = container->get_activation_results()[active_child];
 
-		if (result->done)
+		if (result.done)
 			this->num_active_children--;
 
 		RCLCPP_INFO(container->get_logger(), "Child finished running, %d active children left.", this->num_active_children);
 
 		// copy and return message with this node as the local node
-		to_ret->released_resources = result->released_resources;
-		to_ret->passed_resources = result->passed_resources;
-		to_ret->last_behavior = result->last_behavior;
+		to_ret->released_resources = result.released_resources;
+		to_ret->passed_resources = result.passed_resources;
+		to_ret->last_behavior = result.last_behavior;
 		to_ret->done = this->is_done();
-		to_ret->success = result->success;
+		to_ret->success = result.success;
 
 		return to_ret;
 	}
@@ -148,8 +149,8 @@ namespace dhtt_plugins
 
 		for ( auto const& child_response : response_cp )
 		{
-			auto precon_struct = dhtt_utils::convert_to_struct(child_response.second->preconditions);
-			auto postcon_struct = dhtt_utils::convert_to_struct(child_response.second->postconditions);
+			auto precon_struct = dhtt_utils::convert_to_struct(child_response.second.preconditions);
+			auto postcon_struct = dhtt_utils::convert_to_struct(child_response.second.postconditions);
 
 			// first grab the preconditions
 			if ( precon_struct.logical_operator == dhtt_utils::LOGICAL_AND or precon_struct.logical_operator == dhtt_utils::LOGICAL_OTHER )

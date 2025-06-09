@@ -5,9 +5,33 @@ import rclpy
 import rclpy.node
 import pathlib
 import yaml
+import copy
+import contextlib
+import os
 
-from dhtt_msgs.srv import ModifyRequest, FetchRequest
-from dhtt_msgs.msg import Subtree, Node
+import filelock
+
+from functools import partial
+from threading import Lock
+
+from std_msgs.msg import String
+
+from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest, GoitrRequest
+from dhtt_msgs.msg import Subtree, Node, NodeStatus, Result  
+
+@pytest.fixture(scope='session')
+def lock(tmp_path_factory):
+    base_temp = tmp_path_factory.getbasetemp()
+    lock_file = base_temp.parent / 'serial.lock'
+    yield filelock.FileLock(lock_file=str(lock_file))
+    with contextlib.suppress(OSError):
+        os.remove(path=lock_file)
+
+
+@pytest.fixture()
+def serial(lock):
+    with lock.acquire(poll_interval=0.1):
+        yield
 
 class ServerNode (rclpy.node.Node):
 
@@ -148,7 +172,7 @@ class TestServerAddRemove:
 
 		return modify_future.result()
 
-	def test_remove_behavior(self):
+	def test_remove_behavior(self, serial):
 		self.initialize()
 		self.reset_tree()
 
@@ -184,7 +208,7 @@ class TestServerAddRemove:
 
 		assert not to_remove.node_name in node_names_left  
 
-	def test_remove_subtree(self):
+	def test_remove_subtree(self, serial):
 		self.initialize()
 		self.reset_tree()
 
@@ -222,7 +246,7 @@ class TestServerAddRemove:
 		assert not to_remove.node_name in node_names_left 
 		assert not to_remove.node_name in parent_names_left
 
-	def test_remove_root(self):
+	def test_remove_root(self, serial):
 		self.initialize()
 		self.reset_tree()
 
@@ -240,7 +264,7 @@ class TestServerAddRemove:
 		assert not 'ROOT_0' in modify_rs.removed_nodes
 		assert modify_rs.error_msg != ""
 
-	def test_remove_bad_params(self):
+	def test_remove_bad_params(self, serial):
 		self.initialize()
 		self.reset_tree()
 
@@ -302,7 +326,7 @@ class TestServerAddRemove:
 		assert to_remove.node_name in modify_rs.removed_nodes
 		assert modify_rs.error_msg != ""
 
-	def test_add_manually(self):
+	def test_add_manually(self, serial):
 		self.initialize()
 		self.reset_tree()
 
@@ -323,7 +347,7 @@ class TestServerAddRemove:
 		assert 'ParentAnd' in modify_rs.added_nodes[0]
 		assert modify_rs.error_msg == ''
 
-	def test_add_parent_dne(self):
+	def test_add_parent_dne(self, serial):
 		self.initialize()
 		self.reset_tree()
 
@@ -344,13 +368,13 @@ class TestServerAddRemove:
 		assert len(modify_rs.added_nodes) == 0
 		assert modify_rs.error_msg != ''
 
-	def test_add_bad_params(self):
+	def test_add_bad_params(self, serial):
 		self.initialize()
 		self.reset_tree()
 
 		# will fill this in when I get to the class structure and plugins
 
-	def test_add_malformed_node(self):
+	def test_add_malformed_node(self, serial):
 		self.initialize()
 		self.reset_tree()
 
@@ -374,7 +398,7 @@ class TestServerAddRemove:
 
 		# check when the plugin is nonexistant (easier once I make the class structure)
 
-	def test_add_node_mismatch_typeplugin(self):
+	def test_add_node_mismatch_typeplugin(self, serial):
 		self.initialize()
 		self.reset_tree()
 
@@ -397,7 +421,7 @@ class TestServerAddRemove:
 		assert len(modify_rs.added_nodes) == 0
 		assert modify_rs.error_msg != ''
 
-	def test_add_to_behavior(self):
+	def test_add_to_behavior(self, serial):
 		self.initialize()
 		self.reset_tree()
 
@@ -431,13 +455,13 @@ class TestServerAddRemove:
 		assert len(modify_rs.added_nodes) == 0
 		assert modify_rs.error_msg != ''
 
-	def test_huge_add(self):
+	def test_huge_add(self, serial):
 		self.initialize()
 		self.reset_tree()
 
 		# gonna leave blank and passing for now
 
-	def test_add_new_root(self):
+	def test_add_new_root(self, serial):
 		self.initialize()
 		self.reset_tree()
 
@@ -458,7 +482,7 @@ class TestServerAddRemove:
 		assert len(modify_rs.added_nodes) == 0
 		assert modify_rs.error_msg != ''
 
-	def test_add_from_file(self):
+	def test_add_from_file(self, serial):
 		self.initialize()
 		self.reset_tree()
 

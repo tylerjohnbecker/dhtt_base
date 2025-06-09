@@ -21,6 +21,7 @@
 #include "dhtt_msgs/action/condition.hpp"
 
 #include "dhtt/tree/node_type.hpp"
+#include "dhtt/tree/branch_type.hpp"
 #include "dhtt/planning/goitr_type.hpp"
 
 #define TREE_PREFIX "/dhtt"
@@ -47,17 +48,21 @@ namespace dhtt
 		/**
 		 * \brief Constructor for the node class
 		 * 
-		 * Initializes all values simply. If the given plugin name cannot be loaded for some reason does not construct. Errors are flagged through successful_load and error messages are stored in error_msg.
+		 * Initializes all values simply. If the given plugin names cannot be loaded for some reason does not construct. Errors are flagged through successful_load and error messages are stored in error_msg.
 		 * 
 		 * \param name name of the node being created (should be unique)
 		 * \param type exact name of the plugin to load (ex. dhtt_plugins::AndBehavior) 
 		 * \param params parameter list for the given plugin (a list of string parameters)
 		 * \param parent_name name of this nodes parent (parent is notified of new child through dhtt::MainServer)
+		 * \param socket_type name of the plugin to use for this node's parent socket
+		 * \param goitr_type name of the goitr plugin to load for this node (if empty no goitr is loaded)
 		 * 
 		 * \return void
 		 */
-		Node(std::string name, std::string type, std::vector<std::string> params, std::string parent_name, std::string goitr_type="");
+		Node(std::string name, std::string type, std::vector<std::string> params, std::string parent_name, std::string socket_type="dhtt_plugins::PtrBranchSocket", std::string goitr_type="");
 		~Node();
+
+		// Node(Node const&)=delete;// deleting copy constructor to debug
 
 		friend class MainServer;
 
@@ -107,6 +112,15 @@ namespace dhtt
 		std::vector<dhtt_msgs::msg::Resource> get_resource_state();
 
 		/**
+		 * \brief returns a shared ptr to the socket_ptr of this node
+		 * 
+		 * Mostly used for constructing the corresponding plug but could be useful outside of this case.
+		 * 
+		 * \return shared_ptr to this node's parent socket
+		 */
+		std::shared_ptr<BranchSocketType> get_socket_ptr();
+
+		/**
 		 * \brief setter method for passsed resources
 		 * 
 		 * meant to be utilized by plugins in order to pass the resources that should be held. THEN nodes will clear this list, and behavior nodes will set this to owned resources that should be
@@ -126,7 +140,7 @@ namespace dhtt
 		 * 
 		 * \return void
 		 */
-		void register_with_parent(int index=-1);
+		// void register_with_parent(int index=-1);
 
 		/**
 		 * \brief registers the necessary servers, publishers, action servers, etc. of this node.
@@ -136,6 +150,17 @@ namespace dhtt
 		 * \return void
 		 */
 		void register_servers();
+
+		/**
+		 * \brief registers a new child with this node
+		 * 
+		 * Adds child at the end of the child name list (or at the given index), and attempts to create a branch plug for the child. If the plugin fails to load the function will return false and
+		 * 	an error message will be place in the error_msg member.
+		 * 
+		 * 
+		 * \return true if the operation worked false if a failure occured 
+		 */
+		bool add_child(std::shared_ptr<BranchSocketType> socket_ptr, std::string child_name, std::string plug_type="dhtt_plugins::PtrBranchPlug", int index=-1);
 
 		/**
 		 * \brief removes a child from this node's list of children
@@ -157,18 +182,9 @@ namespace dhtt
 		 * \param child_name name of child to activate
 		 * \param activation_goal goal to send to child
 		 * 
-		 * \return void
+		 * \return true if child was activated successfully 
 		 */
-		void async_activate_child(std::string child_name, dhtt_msgs::action::Activation::Goal activation_goal);
-
-		/**
-		 * \brief spreads failed child activation
-		 *
-		 * \param child_name name of child to activate
-		 *
-		 * \return void
-		 */
-		void async_activate_child_failed(std::string child_name);
+		bool async_activate_child(std::string child_name, dhtt_msgs::action::Activation::Goal activation_goal);
 
 		/**
 		 * \brief propogates maintain conditions request to given child
@@ -176,9 +192,9 @@ namespace dhtt
 		 * \param child_name name of child to request
 		 * \param condition_goal goal to send child
 		 * 
-		 * \return void
+		 * \return true if maintenance request was sent correctly
 		 */
-		void async_request_conditions(std::string child_name, dhtt_msgs::action::Condition::Goal condition_goal);
+		bool async_request_conditions(std::string child_name, dhtt_msgs::action::Condition::Goal condition_goal);
 
 		/**
 		 * \brief spreads activation to all children
@@ -207,14 +223,7 @@ namespace dhtt
 		 * 
 		 * \return void
 		 */
-		bool block_for_responses_from_children();
-
-		/**
-		 * \brief busy waits until the number of failed responses equals the number of expected responses
-		 *
-		 * \return void
-		 */
-		bool block_for_responses_from_failed_children();
+		bool block_for_activation_from_children();
 
 		/**
 		 * \brief busy waits until all condition responses are received from children
@@ -230,14 +239,14 @@ namespace dhtt
 		 * 
 		 * \return map of child_names to the response they sent back after activating
 		 */
-		std::map<std::string, dhtt_msgs::action::Activation::Result::SharedPtr> get_activation_results(); 
+		std::map<std::string, dhtt_msgs::action::Activation::Result> get_activation_results(); 
 
 		/**
 		 * \brief getter for the condition responses from children
 		 * 
 		 * \return map of child_names to their corresponding pre and post conditions
 		 */
-		std::map<std::string, dhtt_msgs::action::Condition::Result::SharedPtr> get_condition_results();
+		std::map<std::string, dhtt_msgs::action::Condition::Result> get_condition_results();
 
 		/**
 		 * \brief getter for the list of child_names
@@ -305,6 +314,25 @@ namespace dhtt
 		 */
 		void set_resource_status_updated(bool to_set);
 
+		/**
+		 * \brief activates the auction mechanism of task nodes and behavior nodes
+		 * 
+		 * The major functionality of the activate function is described in the paper on dHTT's extensively. Essentially, this function runs the internal logic of the NodeType plugin for this 
+		 * 	node. It performs the following steps:
+		 * - if the node is active it runs the auction_callback of the NodeType plugin and then collects and sends back the request 
+		 * - if the node is working it runs the work_callback of the NodeType plugin and then releases and passes the appropriate resources
+		 * 
+		 * \param goal_handle internal action_server representation of the current goal
+		 * 
+		 * \return void
+		 */
+		dhtt_msgs::action::Activation::Result activate(dhtt_msgs::action::Activation::Goal goal);
+
+		/**
+		 * \brief Sends a request to the children to get pre and postconditions, then combines them based on logic in the node_type and saves and returns the result
+		 */
+		dhtt_msgs::action::Condition::Result combine_child_conditions(dhtt_msgs::action::Condition::Goal goal);
+
 	protected:
 
 		// activation action server callbacks
@@ -319,7 +347,7 @@ namespace dhtt
 		 * 
 		 * \return always accept the goal right now
 		 */
-		rclcpp_action::GoalResponse goal_activation_callback(const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const dhtt_msgs::action::Activation::Goal> goal);
+		// rclcpp_action::GoalResponse goal_activation_callback(const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const dhtt_msgs::action::Activation::Goal> goal);
 
 		/**
 		 * \brief cancel callback for activation action server
@@ -331,7 +359,7 @@ namespace dhtt
 		 * 
 		 * \return always accepts the cancel request for now
 		 */
-		rclcpp_action::CancelResponse cancel_activation_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Activation>> goal_handle);
+		// rclcpp_action::CancelResponse cancel_activation_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Activation>> goal_handle);
 
 		/**
 		 * \brief maintains the finite state machine status of the node after activation is received
@@ -349,27 +377,23 @@ namespace dhtt
 		 * 
 		 * \return void
 		 */
-		void activation_accepted_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Activation>> goal_handle);
+		// void activation_accepted_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Activation>> goal_handle);
 
 		/**
 		 * \brief accepts any goal for now
 		 */
-		rclcpp_action::GoalResponse condition_goal_activation_callback(const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const dhtt_msgs::action::Condition::Goal> goal);
+		// rclcpp_action::GoalResponse condition_goal_activation_callback(const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const dhtt_msgs::action::Condition::Goal> goal);
 
 		/**
 		 * \brief cancels any goal for now
 		 */
-		rclcpp_action::CancelResponse condition_cancel_activation_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Condition>> goal_handle);
+		// rclcpp_action::CancelResponse condition_cancel_activation_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Condition>> goal_handle);
 
 		/**
 		 * \brief if the request is just a GET returns the pre and postconditions, if it is a maintain request this spins up a thread to run the combine_child_contions function instead.
 		 */
-		void condition_activation_accepted_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Condition>> goal_handle);
+		// void condition_activation_accepted_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Condition>> goal_handle);
 
-		/**
-		 * \brief Sends a request to the children to get pre and postconditions, then combines them based on logic in the node_type and saves and returns the result
-		 */
-		void combine_child_conditions(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Condition>> goal_handle);
 
 		/**
 		 * \brief stores results received from activating children
@@ -381,7 +405,7 @@ namespace dhtt
 		 * 
 		 * \return void
 		 */
-		void store_result_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name );
+		// void store_result_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name );
 
 		/**
 		 * \brief stores results received from activating children
@@ -393,7 +417,7 @@ namespace dhtt
 		 *
 		 * \return void
 		 */
-		void store_failed_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name );
+		// void store_failed_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name );
 
 		/**
 		 * \brief stores the conditions of the given child
@@ -403,34 +427,10 @@ namespace dhtt
 		 * 
 		 * \return void
 		 */
-		void store_condition_callback ( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Condition>::WrappedResult & result, std::string node_name );
+		// void store_condition_callback ( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Condition>::WrappedResult & result, std::string node_name );
 
-		/**
-		 * \brief activates the auction mechanism of task nodes and behavior nodes
-		 * 
-		 * The major functionality of the activate function is described in the paper on dHTT's extensively. Essentially, this function runs the internal logic of the NodeType plugin for this 
-		 * 	node. It performs the following steps:
-		 * - if the node is active it runs the auction_callback of the NodeType plugin and then collects and sends back the request 
-		 * - if the node is working it runs the work_callback of the NodeType plugin and then releases and passes the appropriate resources
-		 * 
-		 * \param goal_handle internal action_server representation of the current goal
-		 * 
-		 * \return void
-		 */
-		void activate(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Activation>> goal_handle);
 
 		// service callbacks
-		/**
-		 * \brief registers a new child with this node
-		 * 
-		 * Adds the name of the child to the list and creates an ActionClient to activate that child (the topic is constructed from the child's name)
-		 * 
-		 * \param request the InternalServiceRegistration request
-		 * \param response the InternalServiceRegistration response
-		 * 
-		 * \return void
-		 */
-		void register_child_callback(std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Request> request, std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Response> response);
 
 		/**
 		 * \brief callback to modify the parameters or nodetype of this node
@@ -488,61 +488,37 @@ namespace dhtt
 		 */
 		double calculate_activation_potential();
 
-		/**
-		 * \brief sends failure to the currently active child
-		 * 
-		 * Essentially just build a failure activation goal, sends it down to the active child, and blocks for a response.
-		 * 
-		 * \return void
-		 */
-		void propogate_failure_down();
 
 		// callback group
 		rclcpp::CallbackGroup::SharedPtr conc_group;
-		rclcpp::CallbackGroup::SharedPtr exclusive_group;
-		rclcpp::CallbackGroup::SharedPtr exclusive_maintenance_group;
 		rclcpp::SubscriptionOptions sub_opts;
 		rclcpp::PublisherOptions pub_opts;
 
-		// activation server
-		rclcpp_action::Server<dhtt_msgs::action::Activation>::SharedPtr activation_server;
-
-		// activation clients
-		std::vector<rclcpp_action::Client<dhtt_msgs::action::Activation>::SharedPtr> activation_clients;
-		std::map<std::string, dhtt_msgs::action::Activation::Result::SharedPtr> responses;
-
-		// condition maintenance server
-		rclcpp_action::Server<dhtt_msgs::action::Condition>::SharedPtr condition_server;
-
-		// condition maintenance clients
-		std::vector<rclcpp_action::Client<dhtt_msgs::action::Condition>::SharedPtr> conditions_clients;
-		std::map<std::string, dhtt_msgs::action::Condition::Result::SharedPtr> child_conditions;
-
-		// services
-		rclcpp::Service<dhtt_msgs::srv::InternalServiceRegistration>::SharedPtr register_server;
-
-		// members
-		pluginlib::ClassLoader<NodeType> node_type_loader;
-		std::shared_ptr<NodeType> logic;
-
-		pluginlib::ClassLoader<GoitrType> goitr_type_loader;
-		std::shared_ptr<GoitrType> replanner;
-
-		dhtt_msgs::msg::NodeStatus status;
+		// publishers 
 		rclcpp::Publisher<dhtt_msgs::msg::Node>::SharedPtr status_pub;
 
 		rclcpp::Publisher<std_msgs::msg::String>::SharedPtr knowledge_pub;
 
+		// subscribers
 		rclcpp::Subscription<dhtt_msgs::msg::Resources>::SharedPtr resources_sub;
 
-		std::shared_ptr<std::thread> work_thread;
-		std::shared_ptr<std::thread> fail_thread;
-		std::shared_ptr<std::thread> condition_thread;
+		// members
+		pluginlib::ClassLoader<NodeType> node_type_loader;
+		pluginlib::ClassLoader<GoitrType> goitr_type_loader;
+		pluginlib::ClassLoader<BranchSocketType> branch_socket_type_loader;
+		pluginlib::ClassLoader<BranchPlugType> branch_plug_type_loader;
+
+		std::shared_ptr<NodeType> logic;
+		std::shared_ptr<GoitrType> replanner;
+		std::shared_ptr<BranchSocketType> parent_communication_socket;
+		std::map<std::string, std::pair<bool, std::shared_ptr<BranchPlugType>>> child_communication_plugs;
+
+		dhtt_msgs::msg::NodeStatus status;
+		std::map<std::string, dhtt_msgs::action::Activation::Result::SharedPtr> responses;
+		std::map<std::string, dhtt_msgs::action::Condition::Result::SharedPtr> child_conditions;
 
 		std::mutex logic_mut;
 		std::mutex maintenance_mut;
-
-		std::map<std::string, bool> server_ready;
 
 		std::vector<dhtt_msgs::msg::Resource> owned_resources;
 		std::vector<dhtt_msgs::msg::Resource> available_resources;
@@ -552,21 +528,12 @@ namespace dhtt
 		std::string name;
 		std::string parent_name;
 		std::string plugin_name;
+		std::string socket_name;
 		std::string goitr_name;
 
 		std::string active_child_name;
 
 		double activation_potential;
-
-		// not sure if i need this
-		int activation_level;		
-		int stored_responses;
-		int expected_responses;
-		int stored_failed_responses;
-		int expected_failed_responses;
-		int stored_conditions;
-		int expected_conditions;
-		int num_threads;
 
 		int priority;
 
@@ -574,7 +541,6 @@ namespace dhtt
 		bool has_goitr;
 		bool first_activation;
 		bool active;
-		bool collect_threads;
 
 		bool successful_load;
 		std::string error_msg;

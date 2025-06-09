@@ -72,11 +72,11 @@ namespace dhtt_plugins
 
 			container->async_activate_child(first_child_in_queue, n_goal);
 
-			container->block_for_responses_from_children();
+			container->block_for_activation_from_children();
 
 			results = container->get_activation_results();
 
-			if (results[first_child_in_queue] == nullptr or not results[first_child_in_queue]->done)
+			if (not results[first_child_in_queue].done)
 				break;
 		}
 
@@ -99,12 +99,12 @@ namespace dhtt_plugins
 
 		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation in queue position %d..", first_child_in_queue.c_str(), this->child_queue_index) ;
 
-		to_ret->requested_resources = results[first_child_in_queue]->requested_resources;
-		to_ret->owned_resources = results[first_child_in_queue]->owned_resources;
-		to_ret->done = results[first_child_in_queue]->done;
-		to_ret->possible = results[first_child_in_queue]->possible;
+		to_ret->requested_resources = results[first_child_in_queue].requested_resources;
+		to_ret->owned_resources = results[first_child_in_queue].owned_resources;
+		to_ret->done = results[first_child_in_queue].done;
+		to_ret->possible = results[first_child_in_queue].possible;
 
-		this->activation_potential = results[first_child_in_queue]->activation_potential;// / total_num_children;
+		this->activation_potential = results[first_child_in_queue].activation_potential;// / total_num_children;
 
 		// make sure to send back failure to all if nothing is possible
 		// if ( not to_ret->possible )
@@ -149,13 +149,13 @@ namespace dhtt_plugins
 		container->async_activate_child(active, n_goal);
 
 		// block until the child is done
-		container->block_for_responses_from_children();
+		container->block_for_activation_from_children();
 
 		// get result
 		auto result = container->get_activation_results()[active];
 
 		// increment queue if the child is done
-		if ( result->done )
+		if ( result.done )
 		{
 			// RCLCPP_INFO(container->get_logger(), "Child done incrementing queue index!");
 
@@ -167,20 +167,20 @@ namespace dhtt_plugins
 		// change hands of resources and pass up
 		if ( not this->is_done() )
 		{
-			container->set_passed_resources(result->passed_resources);
+			container->set_passed_resources(result.passed_resources);
 		}
 		else
 		{
-			to_ret->passed_resources = result->passed_resources;
+			to_ret->passed_resources = result.passed_resources;
 			container->set_passed_resources(std::vector<dhtt_msgs::msg::Resource>());
 		}
 
 		// RCLCPP_INFO(container->get_logger(), "Queue index %d and Queue size %d and is done %d", this->child_queue_index, this->child_queue_size, this->is_done());
 
-		to_ret->released_resources = result->released_resources;
-		to_ret->last_behavior = result->last_behavior;
+		to_ret->released_resources = result.released_resources;
+		to_ret->last_behavior = result.last_behavior;
 		to_ret->done = this->is_done();
-		to_ret->success = result->success;
+		to_ret->success = result.success;
 
 		return to_ret;
 	}
@@ -203,8 +203,8 @@ namespace dhtt_plugins
 		// loop through strictly in the order of the children list from the container and generate the preconditions list
 		for ( auto const& child_name : container->get_child_names() )
 		{
-			auto inc_preconditions = dhtt_utils::convert_to_struct(response_cp[child_name]->preconditions);
-			auto inc_postconditions = dhtt_utils::convert_to_struct(response_cp[child_name]->postconditions);
+			auto inc_preconditions = dhtt_utils::convert_to_struct(response_cp[child_name].preconditions);
+			auto inc_postconditions = dhtt_utils::convert_to_struct(response_cp[child_name].postconditions);
 			
 			dhtt_utils::PredicateConjunction adjusted_preconditions;
 
