@@ -491,41 +491,12 @@ class TestCookingZooTree:
     #                            add_to=true_name)
     #         self.add_from_yaml("/experiment_descriptions/recipe_lettucesalad.yaml", force=True,
     #                            add_to=true_name)
+    #         self.add_from_yaml("/experiment_descriptions/recipe_lettucesalad.yaml", force=True,
+    #                            add_to=true_name)
+    #
     #         self.start_tree()
     #         self.wait_for_finished_execution()
     #         # self.reset_tree()
-    #
-    # # thise one is alsao broken because of the new parameters that are required for marking and other special behaviors
-    # # I'm not sure what changes need to be made but again stosh can help
-    # def test_tomatotoast_experiment(self):
-    #     with TestCookingZooTree.lock:
-    #         self.initialize()
-    #         self.reset_level()
-    #         self.reset_tree()
-    #         self.wait_for_waiting()
-    #
-    #         req = ModifyRequest.Request()
-    #         req.type = ModifyRequest.Request.ADD
-    #         req.to_modify.append('ROOT_0')
-    #         req.add_node = Node()
-    #         req.add_node.type = Node.AND
-    #         req.add_node.node_name = 'AllOrdersAnd'
-    #         req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
-    #         fut = self.node.modifysrv.call_async(req)
-    #         rclpy.spin_until_future_complete(self.node, fut)
-    #         true_name = fut.result().added_nodes[0]
-    #
-    #         nodes = self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
-    #         self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
-    #         self.start_tree()
-    #
-    #         # TestCookingZooTree.node.wait_for_node_in_state("TomatoToastBreadChoppedBreadExists_67", NodeStatus.WORKING)
-    #         #
-    #         # TestCookingZooTree.node.interrupt_tree()
-    #
-    #         self.wait_for_finished_execution()
-    #         self.reset_tree()
-
     def test_tomatotoast_experiment(self):
         with TestCookingZooTree.lock:
             self.initialize()
@@ -546,7 +517,7 @@ class TestCookingZooTree:
 
             nodes = self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
             self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
-            self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
+            # self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
             self.start_tree()
 
             # TestCookingZooTree.node.wait_for_node_in_state("TomatoToastBreadChoppedBreadExists_67", NodeStatus.WORKING)
@@ -554,5 +525,6 @@ class TestCookingZooTree:
             # TestCookingZooTree.node.interrupt_tree()
 
             self.wait_for_finished_execution()
+            self.reset_tree()
 
     # TODO negative tests

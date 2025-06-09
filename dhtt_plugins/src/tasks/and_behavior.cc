@@ -69,6 +69,7 @@ namespace dhtt_plugins
 
 		this->num_active_children = num_children;
 		this->activation_potential = activation_potential_sum / num_children;
+		to_ret->activation_potential = activation_potential;
 
 		// check if a possible child exists
 		if ( strcmp( "", local_best_child.c_str() ) )
