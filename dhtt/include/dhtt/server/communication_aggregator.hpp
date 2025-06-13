@@ -5,7 +5,6 @@
 #include <any>
 #include <thread>
 #include <future>
-// #include <concepts>
 
 #include "rclcpp/rclcpp.hpp"
 
@@ -13,14 +12,6 @@
 
 namespace dhtt
 {
-
-	// create a requirement for service like types from templates
-	// template <typename service_type>
-	// concept service_like = requires
-	// {
-	// 	typename service_type::Request;
-	// 	typename service_type::Result;
-	// };
 
 	/**
 	 * \brief Communication Aggregator for subscription and service calls coming from behaviors in the tree
@@ -129,7 +120,82 @@ namespace dhtt
 		}
 
 		/**
+		 * \brief registers a publisher with the given topic name
+		 * 
+		 * If the publisher already is registered then this increments the number of times this publisher was registered
+		 * 
+		 * \tparam msg_type ROS message for the publisher type
+		 * 
+		 * \param topic_name string name of the topic to register a publisher on
+		 * 
+		 * \return true. Currently there is no fail state
+		 */
+		template<typename msg_type>
+		bool register_publisher(std::string topic_name)
+		{
+			if ( this->publisher_ptrs.find(topic_name) != this->publisher_ptrs.end() )
+			{
+				this->publisher_ptrs[topic_name].first += 1;
+
+				return true;
+			}
+
+			auto n_publisher = this->create_publisher<msg_type>(topic_name, this->sub_qos);
+			this->publisher_ptrs[topic_name] = {1, n_publisher};
+
+			return true;
+		}
+
+		/**
+		 * \brief ungregisters the publisher at the given topic_name
+		 * 
+		 * The publisher must be unregistered the same number of times that it was registered in order to actually be deleted.
+		 * 
+		 * \param topic_name string name of the topic to unregister the publisher on.
+		 * 
+		 * \return true if the publisher existed and was unregistered. False otherwise.
+		 */
+		bool unregister_publisher(std::string topic_name)
+		{
+			if ( this->publisher_ptrs.find(topic_name) == this->publisher_ptrs.end() )
+				return false;
+
+			this->publisher_ptrs[topic_name].first -= 1;
+
+			// if there is no longer someone that needs the publisher destruct it to save space
+			if ( this->publisher_ptrs[topic_name].first == 0 )
+				this->publisher_ptrs.erase(topic_name);
+
+			return true;
+		}
+
+		/**
+		 * \brief a simple wrapper on the publisher->publish function
+		 * 
+		 * \tparam msg_type ROS message type of the publisher
+		 * 
+		 * \param topic_name string name of the topic for the publisher
+		 * \param msg data to publish
+		 * 
+		 * \return true if the data was published. False if no publisher was found.
+		 */
+		template<typename msg_type>
+		bool publish_msg(std::string topic_name, msg_type msg)
+		{
+			if ( this->publisher_ptrs.find(topic_name) == this->publisher_ptrs.end() )
+				return false;
+
+			auto tmp_publisher = std::any_cast< std::shared_ptr < rclcpp::Publisher<msg_type> > >(this->publisher_ptrs[topic_name].second);
+
+			tmp_publisher->publish(msg);
+
+			return true;
+		}
+
+		/**
 		 * \brief registers service client unless it's already registered
+		 * 
+		 * This functions similarly to registering a publisher in terms of registering and unregistering
 		 * 
 		 * \tparam service_type name of the message type used by the server (requires service_like)
 		 * 
@@ -140,27 +206,33 @@ namespace dhtt
 		template <typename service_type>
 		bool register_service_client(std::string service_topic_name)
 		{
-			// if it doesn't already exist
-			if ( this->service_client_ptrs.find(service_topic_name) == this->service_client_ptrs.end() )
+			// if it already exists
+			if ( this->service_client_ptrs.find(service_topic_name) != this->service_client_ptrs.end() )
 			{
-				auto n_client = this->create_client<service_type>(service_topic_name);
+				this->service_client_ptrs[service_topic_name].first += 1;
 
-				{// new scope to prevent the using statement from leaking out
-					using namespace std::chrono_literals;
-
-					if ( not n_client->wait_for_service(10s) )
-						return false;
-				}
-
-				this->service_client_ptrs[service_topic_name] = n_client;
+				return true;
 			}
 
 			// else we don't need to do anything
+			auto n_client = this->create_client<service_type>(service_topic_name);
+
+			{// new scope to prevent the using statement from leaking out
+				using namespace std::chrono_literals;
+
+				if ( not n_client->wait_for_service(10s) )
+					return false;
+			}
+
+			this->service_client_ptrs[service_topic_name] = {1, n_client};
+
 			return true;
 		}
 
 		/**
 		 * \brief ungregisters service client with given topic name.
+		 * 
+		 * See unregister_publisher for a description of when the service client is actually deconstructed.
 		 * 
 		 * \param std::string service_topic_name name of the service client to unregister
 		 * 
@@ -171,7 +243,11 @@ namespace dhtt
 			if ( this->service_client_ptrs.find(service_topic_name) == this->service_client_ptrs.end() )
 				return false;
 
-			this->service_client_ptrs.erase(service_topic_name);
+			this->service_client_ptrs[service_topic_name].first -= 1;
+
+			if ( this->service_client_ptrs[service_topic_name].first == 0 )
+				this->service_client_ptrs.erase(service_topic_name);
+
 			return true;
 		}
 
@@ -195,7 +271,7 @@ namespace dhtt
 				return std::future<typename service_type::Result>();
 
 			// otherwise we do the cast and return the future like normal
-			auto tmp_client = std::any_cast< std::shared_ptr < rclcpp::Client < service_type > > >(this->service_client_ptrs[service_topic_name]);
+			auto tmp_client = std::any_cast< std::shared_ptr < rclcpp::Client < service_type > > >(this->service_client_ptrs[service_topic_name].second);
 
 			return tmp_client->async_send_request(to_send);
 		}
@@ -246,7 +322,9 @@ namespace dhtt
 		// private members
 		std::map<std::string, std::any> function_tables; // std::any = std::map < std::string,  std::function< void( std::shared_ptr< msg_type > ) > >
 
-		std::map<std::string, std::any> service_client_ptrs; // std::any = std::shared_ptr < rclcpp::Client < service_type > >
+		std::map<std::string, std::pair<int, std::any>> service_client_ptrs; // std::any = std::shared_ptr < rclcpp::Client < service_type > >
+		std::map<std::string, std::pair<int, std::any>> publisher_ptrs; // std::any = std::shared_ptr < rclcpp::Publisher < msg_type > > 
+
 		std::map<std::string, std::any> subscription_ptrs; // std::any = std::shared_ptr < rclcpp::Subscription < msg_type > > 
 
 		rclcpp::QoS sub_qos;
