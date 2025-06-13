@@ -21,6 +21,7 @@
 
 // dhtt includes
 #include "dhtt/tree/node.hpp"
+#include "dhtt/server/communication_aggregator.hpp"
 
 // dhtt message includes
 #include "dhtt_msgs/msg/node.hpp"

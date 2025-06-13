@@ -6,9 +6,11 @@ if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
 endif()
 
-# Default to C++14
+# Default to C++20 ( for reasons )
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
+  # set(CMAKE_CXX_COMPILER g++-10)
+  # set(CMAKE_CXX_FLAGS "-static-libstdc++")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -24,6 +26,8 @@ find_package(rcl_yaml_param_parser REQUIRED)
 find_package(pluginlib REQUIRED)
 
 find_package(yaml-cpp REQUIRED)
+
+find_library(LIBSTDCXX_10 libstdc++.so.6 PATHS)
 
 # make nodes
 add_library(dhtt_lib SHARED src/utils.cc src/tree/node.cc src/server/main_server.cc src/planning/goitr_type.cc src/server/sub_server.cc)
