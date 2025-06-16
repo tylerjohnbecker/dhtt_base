@@ -48,6 +48,10 @@ class ServerNode (rclpy.node.Node):
 		node_name = data.node_name.split('_')[0]
 
 		self.node_states[node_name] = data
+
+	def reset(self):
+		self.root_state = 0
+		self.node_states = {}
 		
 @pytest.mark.serial
 class TestDynamicChanges:
@@ -82,7 +86,7 @@ class TestDynamicChanges:
 
 	def reset_tree(self):
 
-		TestDynamicChanges.node.node_states = {}
+		TestDynamicChanges.node.reset()
 
 		fetch_rs = self.get_tree()
 

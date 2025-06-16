@@ -492,6 +492,9 @@ namespace dhtt
 		rclcpp_action::Client<dhtt_msgs::action::Activation>::SharedPtr client_ptr;
 		rclcpp::Client<dhtt_msgs::srv::InternalControlRequest>::SharedPtr internal_control_client;
 
+		// dhtt::Node ROS communication handler
+		std::shared_ptr<CommunicationAggregator> global_com;
+
 		std::unordered_map<std::string, rclcpp_action::Client<dhtt_msgs::action::Condition>::SharedPtr> maintenance_client_ptrs;
 
 		// mutexes

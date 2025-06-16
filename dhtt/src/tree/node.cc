@@ -2,7 +2,7 @@
 
 namespace dhtt
 {
-	Node::Node(std::string name, std::string type, std::vector<std::string> params, std::string p_name, std::string branch_socket_type, std::string goitr_type) : rclcpp::Node( name ), conc_group(nullptr), 
+	Node::Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string p_name, std::string branch_socket_type, std::string goitr_type) : rclcpp::Node( name ), conc_group(nullptr), 
 			node_type_loader("dhtt", "dhtt::NodeType"), goitr_type_loader("dhtt", "dhtt::GoitrType"), 
 			branch_socket_type_loader("dhtt", "dhtt::BranchSocketType"), branch_plug_type_loader("dhtt", "dhtt::BranchPlugType"),
 			name(name), parent_name(p_name), priority(1), resource_status_updated(false), first_activation(true), active(false)
@@ -15,6 +15,8 @@ namespace dhtt
 		this->active_child_name = "";
 		this->error_msg = "";
 		this->successful_load = true;
+
+		this->global_com = com_agg;
 
 		try
 		{
@@ -85,6 +87,11 @@ namespace dhtt
 
 		for ( const auto& pair : this->child_communication_plugs ) // std::pair< std::string, std::pair< bool , std::shared_ptr<BranchPlugType>>>
 			pair.second.second->destruct();
+
+		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
+
+		this->global_com->unregister_subscription<dhtt_msgs::msg::Resources>(resources_topic, this->name);
+		this->global_com->unregister_publisher("/status");
 	}
 
 	bool Node::loaded_successfully()
@@ -112,9 +119,14 @@ namespace dhtt
 		return this->available_resources;
 	}
 
-	std::shared_ptr<dhtt::BranchSocketType> Node::get_socket_ptr()
+	std::shared_ptr<BranchSocketType> Node::get_socket_ptr()
 	{
 		return this->parent_communication_socket;
+	}
+
+	std::shared_ptr<CommunicationAggregator> Node::get_com_agg()
+	{
+		return this->global_com;
 	}
 
 	void Node::set_passed_resources(std::vector<dhtt_msgs::msg::Resource> set_to)
@@ -130,10 +142,12 @@ namespace dhtt
 		// set up services and action servers
 		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
 
-		this->status_pub = this->create_publisher<dhtt_msgs::msg::Node>("/status", 10, this->pub_opts);
+		this->global_com->register_publisher<dhtt_msgs::msg::Node>("/status");
+		// this->status_pub = this->create_publisher<dhtt_msgs::msg::Node>("/status", 10, this->pub_opts);
 		// this->knowledge_pub = this->create_publisher<std_msgs::msg::String>("/updated_knowledge", 10);
 
-		this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1), this->sub_opts);
+		this->global_com->register_subscription<dhtt_msgs::msg::Resources>(resources_topic, this->name, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1) );
+		// this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1), this->sub_opts);
 
 		this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
@@ -367,14 +381,14 @@ namespace dhtt
 		full_status.preconditions = dhtt_utils::to_string(tmp1);
 		full_status.postconditions = dhtt_utils::to_string(tmp2);
 
-		this->status_pub->publish(full_status);
+		this->global_com->publish_msg<dhtt_msgs::msg::Node>("/status", full_status);
 	}
 
 	void Node::fire_knowledge_updated()
 	{
-		std_msgs::msg::String n_msg;
+		// std_msgs::msg::String n_msg;
 
-		this->knowledge_pub->publish(n_msg);
+		// this->knowledge_pub->publish(n_msg);
 	}
 
 	void Node::set_resource_status_updated(bool to_set)
@@ -395,6 +409,9 @@ namespace dhtt
 
 		// I think this is messing with the fsm related to the branch_types
 		// this->block_for_activation_from_children();
+
+		// we should get one resource update per message up the tree at least
+		// while (not this->resource_status_updated);
 
 		std::lock_guard<std::mutex> guard(this->logic_mut);
 
@@ -483,6 +500,8 @@ namespace dhtt
 		{
 			to_ret.done = true;
 		}
+
+		this->resource_status_updated = false;
 
 		// then send result back to parent
 		RCLCPP_INFO(this->get_logger(), "Sending request back up the tree...");
@@ -624,9 +643,6 @@ namespace dhtt
 
 			int8_t state = dhtt_msgs::msg::NodeStatus::WAITING;
 
-			// if ( state == dhtt_msgs::msg::NodeStatus::DONE )
-				
-
 			this->update_status(state);
 
 			return;
@@ -636,7 +652,7 @@ namespace dhtt
 
 	void Node::resource_availability_callback( const dhtt_msgs::msg::Resources::SharedPtr canonical_list )
 	{
-		RCLCPP_DEBUG(this->get_logger(), "Resources updated");
+		RCLCPP_FATAL(this->get_logger(), "Resources updated");
 		this->available_resources = canonical_list->resource_state;
 
 		this->resource_status_updated = true;

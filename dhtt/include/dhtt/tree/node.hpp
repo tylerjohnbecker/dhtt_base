@@ -20,9 +20,13 @@
 #include "dhtt_msgs/action/activation.hpp"
 #include "dhtt_msgs/action/condition.hpp"
 
+// interfaces
 #include "dhtt/tree/node_type.hpp"
 #include "dhtt/tree/branch_type.hpp"
 #include "dhtt/planning/goitr_type.hpp"
+
+// dhtt includes
+#include "dhtt/server/communication_aggregator.hpp"
 
 #define TREE_PREFIX "/dhtt"
 #define REGISTER_CHILD_POSTFIX "/register_child"
@@ -59,7 +63,7 @@ namespace dhtt
 		 * 
 		 * \return void
 		 */
-		Node(std::string name, std::string type, std::vector<std::string> params, std::string parent_name, std::string socket_type="dhtt_plugins::PtrBranchSocket", std::string goitr_type="");
+		Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string parent_name, std::string socket_type="dhtt_plugins::PtrBranchSocket", std::string goitr_type="");
 		~Node();
 
 		// Node(Node const&)=delete;// deleting copy constructor to debug
@@ -119,6 +123,16 @@ namespace dhtt
 		 * \return shared_ptr to this node's parent socket
 		 */
 		std::shared_ptr<BranchSocketType> get_socket_ptr();
+
+		/**
+		 * \brief returns a shared ptr to the global communication aggregator for the tree
+		 * 
+		 * This is meant so that the logic and other plugins can create publishers and subscribers in a way that is scalable with respect to the DDS ROS uses. Otherwise
+		 * 	there is a hard upper limit on the amount of subscriptions allowed per node for example.
+		 * 
+		 * \return shared ptr to the global communication aggregator
+		 */
+		std::shared_ptr<CommunicationAggregator> get_com_agg();
 
 		/**
 		 * \brief setter method for passsed resources
@@ -495,12 +509,15 @@ namespace dhtt
 		rclcpp::PublisherOptions pub_opts;
 
 		// publishers 
-		rclcpp::Publisher<dhtt_msgs::msg::Node>::SharedPtr status_pub;
+		// rclcpp::Publisher<dhtt_msgs::msg::Node>::SharedPtr status_pub;
 
-		rclcpp::Publisher<std_msgs::msg::String>::SharedPtr knowledge_pub;
+		// rclcpp::Publisher<std_msgs::msg::String>::SharedPtr knowledge_pub;
 
 		// subscribers
 		rclcpp::Subscription<dhtt_msgs::msg::Resources>::SharedPtr resources_sub;
+
+		// communication_aggregator_ptr
+		std::shared_ptr<CommunicationAggregator> global_com;
 
 		// members
 		pluginlib::ClassLoader<NodeType> node_type_loader;

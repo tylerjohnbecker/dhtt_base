@@ -78,8 +78,8 @@ if(BUILD_TESTING)
     tests/test_add_remove.py
     tests/test_behavior_order.py
     tests/test_dynamic_changes.py
-    # tests/test_goitr_basic.py
     tests/test_pre_post.py
+    # tests/test_goitr_basic.py
     )
 
   foreach(_test_path ${_pytest_tests})

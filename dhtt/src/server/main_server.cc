@@ -17,7 +17,9 @@ namespace dhtt
 		/// initialize publishers
 		this->root_status_pub = this->create_publisher<dhtt_msgs::msg::NodeStatus>("/root_status", 10, this->pub_opts);
 
-		/// initialize internal services
+		/// initialize Global CommunicationAggregator
+		this->global_com = std::make_shared<CommunicationAggregator>();
+		this->spinner_cp->add_node(this->global_com);
 
 		/// make root node (before external services because they will not work without an active root)
 		// make local representation
@@ -49,7 +51,7 @@ namespace dhtt
 		this->node_list.task_completion_percent = 0.0f;
 
 		// initialize physical Root Node. loaded a yaml file as a part of the constructor so we don't catch it and make the program fail to load if that happens
-		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>("ROOT_0", "dhtt_plugins::RootBehavior", root_node->params, "NONE", "dhtt_plugins::PtrBranchSocket");
+		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>(this->global_com, "ROOT_0", "dhtt_plugins::RootBehavior", root_node->params, "NONE", "dhtt_plugins::PtrBranchSocket");
 		this->spinner_cp->add_node(this->node_map["ROOT_0"]);
 		this->node_map["ROOT_0"]->register_servers();
 		this->node_map["ROOT_0"]->set_resource_status_updated(true);
@@ -542,7 +544,7 @@ namespace dhtt
 			goitr_type = to_add.goitr_name;
 
 		// create a physical node from the message and add to physical list
-		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(to_add.node_name, to_add.plugin_name, to_add.params, parent_name, "dhtt_plugins::PtrBranchSocket", goitr_type);
+		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(this->global_com, to_add.node_name, to_add.plugin_name, to_add.params, parent_name, "dhtt_plugins::PtrBranchSocket", goitr_type);
 
 		if (this->node_map[to_add.node_name]->loaded_successfully() == false)
 		{
@@ -1072,7 +1074,7 @@ namespace dhtt
 		}
 
 		// now make a dummy node of the new type to generate the postconditions list
-		dhtt::Node dummy("dummy", n_type, std::vector<std::string>(), "NONE");
+		dhtt::Node dummy(this->global_com, "dummy", n_type, std::vector<std::string>(), "NONE");
 
 		// if it doesn't load most likely the plugin does not exist or requires some parameters
 		if ( not dummy.successful_load )

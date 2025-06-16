@@ -5,6 +5,7 @@
 #include <any>
 #include <thread>
 #include <future>
+#include <mutex>
 
 #include "rclcpp/rclcpp.hpp"
 
@@ -47,10 +48,13 @@ namespace dhtt
 		template <typename msg_type>
 		bool register_subscription(std::string topic_name, std::string subscriber_name, std::function<void(std::shared_ptr<msg_type>)> to_register)
 		{
+			// grab the mutex first
+			std::lock_guard<std::mutex> lock(this->register_mutex);
+			
 			// we have not yet registered a subscriber to this topic
 			if ( this->function_tables.find(topic_name) == this->function_tables.end() )
 			{
-				std::map<std::string, std::function<void(std::shared_ptr<msg_type>)>> n_function_table{subscriber_name, to_register};
+				std::map<std::string, std::function<void(std::shared_ptr<msg_type>)>> n_function_table{{subscriber_name, to_register}};
 				this->function_tables[topic_name] = n_function_table;
 
 				std::function<void(std::shared_ptr<msg_type>)> n_cb = std::bind(&CommunicationAggregator::generic_subscriber_callback<msg_type>, this, topic_name, std::placeholders::_1);
@@ -76,13 +80,19 @@ namespace dhtt
 		 * This method either unregisters a single callback under topic_name and subscriber name, or unregisters all callbacks on a given topic if the 
 		 * 	subscriber name is left blank.
 		 * 
+		 * \tparam msg_type The message type of the subscriber topic
+		 * 
 		 * \param topic_name string name of the subscriber's topic
 		 * \param subscriber_name string given to the callback to delete (if blank completely clears the list of callbacks)
 		 * 
 		 * \return true if callback was removed, false if not
 		 */
+		template <typename msg_type>
 		bool unregister_subscription(std::string topic_name, std::string subscriber_name = "")
 		{
+			// grab the mutex first
+			std::lock_guard<std::mutex> lock(this->register_mutex);
+			
 			if ( this->function_tables.find(topic_name) == this->function_tables.end() )
 				return false;
 
@@ -96,7 +106,7 @@ namespace dhtt
 			}
 
 			// I think that this casting is ok since we don't care about using the function here (otherwise this function needs a template)
-			auto tmp = std::any_cast< std::map<std::string, std::any> >(this->function_tables[topic_name]);
+			auto tmp = std::any_cast< std::map<std::string, std::function< void( std::shared_ptr< msg_type > ) >> >(this->function_tables[topic_name]);
 
 			if ( tmp.find(subscriber_name) == tmp.end() )
 				return false;
@@ -133,6 +143,9 @@ namespace dhtt
 		template<typename msg_type>
 		bool register_publisher(std::string topic_name)
 		{
+			// grab the mutex first
+			std::lock_guard<std::mutex> lock(this->register_mutex);
+			
 			if ( this->publisher_ptrs.find(topic_name) != this->publisher_ptrs.end() )
 			{
 				this->publisher_ptrs[topic_name].first += 1;
@@ -157,6 +170,9 @@ namespace dhtt
 		 */
 		bool unregister_publisher(std::string topic_name)
 		{
+			// grab the mutex first
+			std::lock_guard<std::mutex> lock(this->register_mutex);
+			
 			if ( this->publisher_ptrs.find(topic_name) == this->publisher_ptrs.end() )
 				return false;
 
@@ -182,6 +198,9 @@ namespace dhtt
 		template<typename msg_type>
 		bool publish_msg(std::string topic_name, msg_type msg)
 		{
+			// grab the mutex first
+			std::lock_guard<std::mutex> lock(this->register_mutex);
+			
 			if ( this->publisher_ptrs.find(topic_name) == this->publisher_ptrs.end() )
 				return false;
 
@@ -206,6 +225,9 @@ namespace dhtt
 		template <typename service_type>
 		bool register_service_client(std::string service_topic_name)
 		{
+			// grab the mutex first
+			std::lock_guard<std::mutex> lock(this->register_mutex);
+
 			// if it already exists
 			if ( this->service_client_ptrs.find(service_topic_name) != this->service_client_ptrs.end() )
 			{
@@ -240,6 +262,9 @@ namespace dhtt
 		 */
 		bool ungregister_service_client(std::string service_topic_name)
 		{
+			// grab the mutex first
+			std::lock_guard<std::mutex> lock(this->register_mutex);
+
 			if ( this->service_client_ptrs.find(service_topic_name) == this->service_client_ptrs.end() )
 				return false;
 
@@ -266,6 +291,9 @@ namespace dhtt
 		template <typename service_type>
 		std::future<typename service_type::Result> async_request_from_client(std::string service_topic_name, std::shared_ptr<typename service_type::Request> to_send)
 		{
+			// grab the mutex first
+			std::lock_guard<std::mutex> lock(this->register_mutex);
+			
 			// if we can't find the client then we have to return a blank future
 			if ( this->service_client_ptrs.find(service_topic_name) == this->service_client_ptrs.end() )
 				return std::future<typename service_type::Result>();
@@ -313,7 +341,7 @@ namespace dhtt
 
 				thread_list.push_back(thread_ptr);
 			}
-
+			
 			// join all threads before returning
 			for ( auto iter : thread_list )
 				iter->join();
@@ -326,6 +354,8 @@ namespace dhtt
 		std::map<std::string, std::pair<int, std::any>> publisher_ptrs; // std::any = std::shared_ptr < rclcpp::Publisher < msg_type > > 
 
 		std::map<std::string, std::any> subscription_ptrs; // std::any = std::shared_ptr < rclcpp::Subscription < msg_type > > 
+
+		std::mutex register_mutex;
 
 		rclcpp::QoS sub_qos;
 	};
