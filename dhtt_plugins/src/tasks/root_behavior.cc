@@ -9,7 +9,8 @@ namespace dhtt_plugins
 		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
 		std::string control_topic = std::string(TREE_PREFIX) + CONTROL_POSTFIX;	
 
-		this->status_pub = this->pub_node_ptr->create_publisher<dhtt_msgs::msg::Resources>(resources_topic, 10);
+		this->com_agg->register_publisher<dhtt_msgs::msg::Resources>(resources_topic);
+		// this->status_pub = this->pub_node_ptr->create_publisher<dhtt_msgs::msg::Resources>(resources_topic, 10);//
 
 		this->control_server = this->pub_node_ptr->create_service<dhtt_msgs::srv::InternalControlRequest>(control_topic, std::bind(&RootBehavior::control_callback, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -77,7 +78,11 @@ namespace dhtt_plugins
 				RCLCPP_FATAL(container->get_logger(), "Children not possible, trying again...");
 				container->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
-				continue;
+				to_ret->done = false;
+
+				return to_ret;
+
+				// continue;
 			}
 
 			// update resources
@@ -205,11 +210,13 @@ namespace dhtt_plugins
 
 	void RootBehavior::publish_resources()
 	{
+		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
 		dhtt_msgs::msg::Resources n_msg;
 
 		n_msg.resource_state = this->canonical_resources_list;
 
-		this->status_pub->publish(n_msg);
+		// this->status_pub->publish(n_msg);
+		this->com_agg->publish_msg<dhtt_msgs::msg::Resources>(resources_topic, n_msg);
 	}
 
 	std::vector<dhtt_msgs::msg::Resource> RootBehavior::give_resources(std::vector<dhtt_msgs::msg::Resource> to_give)

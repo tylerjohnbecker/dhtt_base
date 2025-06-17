@@ -7,6 +7,7 @@
 
 // #include "dhtt/tree/node.hpp"
 #include "dhtt/utils.hpp"
+#include "dhtt/server/communication_aggregator.hpp"
 
 namespace dhtt
 {
@@ -148,6 +149,9 @@ namespace dhtt
 		std::vector<dhtt_msgs::msg::Resource> necessary_resources;
 
 		std::vector<std::string> params;
+
+		// I don't know if I want to leave it like this, but... This parameter is set shortly after the factory in dhtt::Node build this NodeType
+		std::shared_ptr<CommunicationAggregator> com_agg;
 
 	protected:
 		dhtt_utils::PredicateConjunction preconditions;

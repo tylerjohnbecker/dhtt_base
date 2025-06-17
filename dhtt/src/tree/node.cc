@@ -74,6 +74,7 @@ namespace dhtt
 		this->socket_name = branch_socket_type;
 		this->goitr_name = goitr_type;
 
+		this->logic->com_agg = this->global_com;
 		this->logic->initialize(params);
 	}
 
@@ -411,7 +412,7 @@ namespace dhtt
 		// this->block_for_activation_from_children();
 
 		// we should get one resource update per message up the tree at least
-		// while (not this->resource_status_updated);
+		while (not this->resource_status_updated);
 
 		std::lock_guard<std::mutex> guard(this->logic_mut);
 
@@ -501,7 +502,7 @@ namespace dhtt
 			to_ret.done = true;
 		}
 
-		this->resource_status_updated = false;
+		// this->resource_status_updated = false;
 
 		// then send result back to parent
 		RCLCPP_INFO(this->get_logger(), "Sending request back up the tree...");
@@ -579,6 +580,7 @@ namespace dhtt
 			{
 				temp_logic = node_type_loader.createSharedInstance(request->mutate_type);
 
+				temp_logic->com_agg = this->global_com;
 				temp_logic->initialize(request->params);
 			}
 			catch (std::exception& ex)

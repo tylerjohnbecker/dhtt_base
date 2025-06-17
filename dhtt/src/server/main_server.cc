@@ -140,40 +140,40 @@ namespace dhtt
 
 		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::ADD)
 		{
-			std::lock_guard<std::mutex> guard(this->modify_mut);
-
-			add_modify(request->to_modify);
-
-			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
 			{
-				if ( request->index < 0 )
-					request->index = -1;
+				std::lock_guard<std::mutex> guard(this->modify_mut);
 
-				response->error_msg = this->add_node(response, *iter, request->add_node, force, request->index);
-				response->success = not strcmp(response->error_msg.c_str(), "");
+				add_modify(request->to_modify);
 
-				// exit early if modification fails
-				if ( not response->success )
+				for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
 				{
-					RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
-					remove_modify(request->to_modify);
+					if ( request->index < 0 )
+						request->index = -1;
 
-					return;
+					response->error_msg = this->add_node(response, *iter, request->add_node, force, request->index);
+					response->success = not strcmp(response->error_msg.c_str(), "");
+
+					// exit early if modification fails
+					if ( not response->success )
+					{
+						RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+						remove_modify(request->to_modify);
+
+						return;
+					}
 				}
 
-				int id = this->start_maintain(*iter);
-				this->wait_for_maintain(id);
+				remove_modify(request->to_modify);
 			}
 
-			remove_modify(request->to_modify);
+			int id = this->start_maintain("ROOT_0");
+			this->wait_for_maintain(id);
 
 			return;
 		}
 
 		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::ADD_FROM_FILE)
 		{
-			std::lock_guard<std::mutex> guard(this->modify_mut);
-
 			add_modify(request->to_modify);
 
 			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
@@ -201,100 +201,107 @@ namespace dhtt
 
 		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::REMOVE )
 		{
-			std::lock_guard<std::mutex> guard(this->modify_mut);
-
-			add_modify(request->to_modify);
-
-			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
 			{
-				if ( not force and not this->can_remove(*iter) )
-				{
-					RCLCPP_ERROR(this->get_logger(), "Cannot remove node %s due to precondition violation later in the tree. Try again or force removal!");
-					remove_modify(request->to_modify);
+				std::lock_guard<std::mutex> guard(this->modify_mut);
 
-					return;
+				add_modify(request->to_modify);
+
+				for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
+				{
+					if ( not force and not this->can_remove(*iter) )
+					{
+						RCLCPP_ERROR(this->get_logger(), "Cannot remove node %s due to precondition violation later in the tree. Try again or force removal!");
+						remove_modify(request->to_modify);
+
+						return;
+					}
+
+					response->error_msg = this->remove_node(response, *iter);
+					response->success = not strcmp(response->error_msg.c_str(), "");
+
+					// exit early if modification fails
+					if ( not response->success )
+					{
+						RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+						remove_modify(request->to_modify);
+
+						return;
+					}
 				}
 
-				response->error_msg = this->remove_node(response, *iter);
-				response->success = not strcmp(response->error_msg.c_str(), "");
-
-				// exit early if modification fails
-				if ( not response->success )
-				{
-					RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
-					remove_modify(request->to_modify);
-
-					return;
-				}
+				remove_modify(request->to_modify);
 			}
 
-			remove_modify(request->to_modify);
+			int id = this->start_maintain("ROOT_0");
+			this->wait_for_maintain(id);
 
 			return;
 		}
 
 		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::MUTATE or request->type == dhtt_msgs::srv::ModifyRequest::Request::PARAM_UPDATE )
 		{
-			std::lock_guard<std::mutex> guard(this->modify_mut);
-
-			add_modify(request->to_modify);
-
-			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
 			{
+				std::lock_guard<std::mutex> guard(this->modify_mut);
 
-				dhtt_msgs::msg::Subtree tmp = this->fetch_subtree_by_name(*iter);
+				add_modify(request->to_modify);
 
-				if ( tmp.tree_status == -1)
+				for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
 				{
-					response->error_msg = "Node with name " + (*iter) + " not found. Returning in error!";
-					response->success = false;
 
-					remove_modify(request->to_modify);
+					dhtt_msgs::msg::Subtree tmp = this->fetch_subtree_by_name(*iter);
 
-					return;
-				}
-
-				if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::MUTATE )
-				{
-					if ( not force and not this->can_mutate(*iter, request->mutate_type) )
+					if ( tmp.tree_status == -1)
 					{
-						RCLCPP_ERROR(this->get_logger(), "Cannot mutate [%s] to requested type [%s] without violation occuring. Returning in error!", (*iter).c_str(), request->mutate_type.c_str());
-
+						response->error_msg = "Node with name " + (*iter) + " not found. Returning in error!";
 						response->success = false;
-						response->error_msg = "Cannot mutate to requested type without violation occuring. Returning in error!";
 
 						remove_modify(request->to_modify);
 
 						return;
 					}
 
-					RCLCPP_INFO(this->get_logger(), "Mutating node [%s] to type %s", (*iter).c_str(), request->mutate_type.c_str());
+					if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::MUTATE )
+					{
+						if ( not force and not this->can_mutate(*iter, request->mutate_type) )
+						{
+							RCLCPP_ERROR(this->get_logger(), "Cannot mutate [%s] to requested type [%s] without violation occuring. Returning in error!", (*iter).c_str(), request->mutate_type.c_str());
+
+							response->success = false;
+							response->error_msg = "Cannot mutate to requested type without violation occuring. Returning in error!";
+
+							remove_modify(request->to_modify);
+
+							return;
+						}
+
+						RCLCPP_INFO(this->get_logger(), "Mutating node [%s] to type %s", (*iter).c_str(), request->mutate_type.c_str());
+					}
+					else 
+						RCLCPP_INFO(this->get_logger(), "Changing params of node [%s]", (*iter).c_str());
+
+					this->node_map[(*iter)]->modify(request, response);
+
+					// response->error_msg = res->error_msg;
+					response->success = not strcmp(response->error_msg.c_str(), "");
+
+					// RCLCPP_FATAL(this->get_logger(), "Done modifying [%s]", (*iter).c_str());
+
+					// exit early if modification fails
+					if ( not response->success )
+					{
+						RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+
+						remove_modify(request->to_modify);
+
+						return;
+					}
 				}
-				else 
-					RCLCPP_INFO(this->get_logger(), "Changing params of node [%s]", (*iter).c_str());
 
-				this->node_map[(*iter)]->modify(request, response);
-
-				// response->error_msg = res->error_msg;
-				response->success = not strcmp(response->error_msg.c_str(), "");
-
-				// RCLCPP_FATAL(this->get_logger(), "Done modifying [%s]", (*iter).c_str());
-
-				// exit early if modification fails
-				if ( not response->success )
-				{
-					RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
-
-					remove_modify(request->to_modify);
-
-					return;
-				}
-
-				int id = this->start_maintain("ROOT_0");
-				this->wait_for_maintain(id);
+				remove_modify(request->to_modify);
 			}
 
-			remove_modify(request->to_modify);
+			int id = this->start_maintain("ROOT_0");
+			this->wait_for_maintain(id);
 
 			return;
 		}
@@ -690,27 +697,32 @@ namespace dhtt
 			return std::string();
 		};
 
-		// first load all of the yaml nodes into the message format
-		if (this->verbose)
-			RCLCPP_INFO(this->get_logger(), "Adding subtree loaded from file %s", file_name.c_str());
+		{ // placement here should be in the modify_cb where it was, but if we do it that way we don't have the lock for the status callback.
+			// therefore I grab the mutex here which should be equivalent, just less clean.
+			std::lock_guard<std::mutex> guard(this->modify_mut);
 
-		dhtt_msgs::msg::Subtree nodes_to_add;
+			// first load all of the yaml nodes into the message format
+			if (this->verbose)
+				RCLCPP_INFO(this->get_logger(), "Adding subtree loaded from file %s", file_name.c_str());
 
-		std::string err_msg = this->construct_subtree_from_yaml(nodes_to_add, file_name, file_args);
-		nodes_to_add.tree_nodes[0].parent_name = parent_name;
+			dhtt_msgs::msg::Subtree nodes_to_add;
 
-		if ( strcmp(err_msg.c_str(), "") )
-			return err_msg;
+			std::string err_msg = this->construct_subtree_from_yaml(nodes_to_add, file_name, file_args);
+			nodes_to_add.tree_nodes[0].parent_name = parent_name;
 
-		// add nodes post order
-		std::string error_msg = add_post_order(nodes_to_add, 0);
+			if ( strcmp(err_msg.c_str(), "") )
+				return err_msg;
 
-		// make sure to pass the error through if anything fails
-		if ( strcmp(error_msg.c_str(), "") )
-		{// additional cleanup necessary?
-			this->remove_node(std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>(), nodes_to_add.tree_nodes[0].node_name);
+			// add nodes post order
+			std::string error_msg = add_post_order(nodes_to_add, 0);
 
-			return error_msg;
+			// make sure to pass the error through if anything fails
+			if ( strcmp(error_msg.c_str(), "") )
+			{// additional cleanup necessary?
+				this->remove_node(std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>(), nodes_to_add.tree_nodes[0].node_name);
+
+				return error_msg;
+			}
 		}
 
 		// then maintain the pre and post conditions
@@ -1361,6 +1373,9 @@ namespace dhtt
 	// subscriber callbacks
 	void MainServer::status_callback( const std::shared_ptr<dhtt_msgs::msg::Node> data )
 	{
+		// pick up the modify_mut lock so that nothing invalidates our iterator as we go
+		std::lock_guard<std::mutex> guard(this->modify_mut);
+		
 		// unary lambda function for find_if which takes advantage of the scope inside this function. This function is not useful elsewhere
 		auto same_name = [&](dhtt_msgs::msg::Node check) { return not strcmp(data->node_name.c_str(), check.node_name.c_str()); };
 
