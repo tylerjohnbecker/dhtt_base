@@ -92,7 +92,6 @@ namespace dhtt
 		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
 
 		this->global_com->unregister_subscription<dhtt_msgs::msg::Resources>(resources_topic, this->name);
-		this->global_com->unregister_publisher("/status");
 	}
 
 	bool Node::loaded_successfully()
@@ -142,8 +141,9 @@ namespace dhtt
 	{
 		// set up services and action servers
 		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
+		
+		this->status_pub = this->global_com->register_publisher<dhtt_msgs::msg::Node>("/status");
 
-		this->global_com->register_publisher<dhtt_msgs::msg::Node>("/status");
 		// this->status_pub = this->create_publisher<dhtt_msgs::msg::Node>("/status", 10, this->pub_opts);
 		// this->knowledge_pub = this->create_publisher<std_msgs::msg::String>("/updated_knowledge", 10);
 
@@ -382,7 +382,7 @@ namespace dhtt
 		full_status.preconditions = dhtt_utils::to_string(tmp1);
 		full_status.postconditions = dhtt_utils::to_string(tmp2);
 
-		this->global_com->publish_msg<dhtt_msgs::msg::Node>("/status", full_status);
+		this->status_pub->publish(full_status);
 	}
 
 	void Node::fire_knowledge_updated()

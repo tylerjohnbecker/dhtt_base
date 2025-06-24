@@ -9,7 +9,7 @@ namespace dhtt_plugins
 		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
 		std::string control_topic = std::string(TREE_PREFIX) + CONTROL_POSTFIX;	
 
-		this->com_agg->register_publisher<dhtt_msgs::msg::Resources>(resources_topic);
+		this->status_pub = this->com_agg->register_publisher<dhtt_msgs::msg::Resources>(resources_topic);
 		// this->status_pub = this->pub_node_ptr->create_publisher<dhtt_msgs::msg::Resources>(resources_topic, 10);//
 
 		this->control_server = this->pub_node_ptr->create_service<dhtt_msgs::srv::InternalControlRequest>(control_topic, std::bind(&RootBehavior::control_callback, this, std::placeholders::_1, std::placeholders::_2));
@@ -215,8 +215,8 @@ namespace dhtt_plugins
 
 		n_msg.resource_state = this->canonical_resources_list;
 
-		// this->status_pub->publish(n_msg);
-		this->com_agg->publish_msg<dhtt_msgs::msg::Resources>(resources_topic, n_msg);
+		this->status_pub->publish(n_msg);
+		// this->com_agg->publish_msg<dhtt_msgs::msg::Resources>(resources_topic, n_msg);
 	}
 
 	std::vector<dhtt_msgs::msg::Resource> RootBehavior::give_resources(std::vector<dhtt_msgs::msg::Resource> to_give)

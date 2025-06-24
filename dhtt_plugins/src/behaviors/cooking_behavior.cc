@@ -198,12 +198,17 @@ void CookingBehavior::initialize(std::vector<std::string> params)
 	ActionType::initialize(params);
 
 	// subscribers
+	// this->cooking_observation_subscriber_name = this->com_agg->register_subscription<dhtt_msgs::msg::CookingObservation>("Cooking_Observations", "", 
+	// 												std::bind(&CookingBehavior::observation_callback, this, std::placeholders::_1));
+
 	this->cooking_observation_subscriber =
 		this->pub_node_ptr->create_subscription<dhtt_msgs::msg::CookingObservation>(
 			"Cooking_Observations", 10,
 			std::bind(&CookingBehavior::observation_callback, this, std::placeholders::_1));
 
 	// clients
+	// this->com_agg->register_service_client<dhtt_msgs::srv::CookingRequest>("Cooking_Server");
+
 	this->cooking_request_client =
 		this->pub_node_ptr->create_client<dhtt_msgs::srv::CookingRequest>("Cooking_Server");
 

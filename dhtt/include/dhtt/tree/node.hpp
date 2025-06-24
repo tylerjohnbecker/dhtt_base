@@ -509,9 +509,9 @@ namespace dhtt
 		rclcpp::PublisherOptions pub_opts;
 
 		// publishers 
-		// rclcpp::Publisher<dhtt_msgs::msg::Node>::SharedPtr status_pub;
+		rclcpp::Publisher<dhtt_msgs::msg::Node>::SharedPtr status_pub;
 
-		// rclcpp::Publisher<std_msgs::msg::String>::SharedPtr knowledge_pub;
+		rclcpp::Publisher<std_msgs::msg::String>::SharedPtr knowledge_pub;
 
 		// subscribers
 		rclcpp::Subscription<dhtt_msgs::msg::Resources>::SharedPtr resources_sub;

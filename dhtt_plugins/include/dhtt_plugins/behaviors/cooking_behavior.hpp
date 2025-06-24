@@ -97,6 +97,8 @@ class CookingBehavior : public ActionType
 	rclcpp::Subscription<dhtt_msgs::msg::CookingObservation>::SharedPtr
 		cooking_observation_subscriber;
 
+	std::string cooking_observation_subscriber_name;
+
 	rclcpp::Client<dhtt_msgs::srv::CookingRequest>::SharedPtr cooking_request_client;
 
 	std::shared_ptr<rclcpp::Node> param_node_ptr;
