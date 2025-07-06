@@ -11,7 +11,7 @@ class CookingExecuteBehavior : public CookingBehavior
 	/**
 	 * @return 1.0 if agent is right next to the object. 0.0 otherwise.
 	 */
-	double get_perceived_efficiency() override;
+	double get_perceived_efficiency(dhtt::Node* container) override;
 
 	/**
 	 * First move_to the target location (to set the orientation), then execute

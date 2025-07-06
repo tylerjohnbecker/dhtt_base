@@ -84,10 +84,10 @@ namespace dhtt
 		if ( this->has_goitr )	
 			this->replanner->destruct();
 
-		this->parent_communication_socket->destruct();
-
-		for ( const auto& pair : this->child_communication_plugs ) // std::pair< std::string, std::pair< bool , std::shared_ptr<BranchPlugType>>>
+		for ( auto& pair : this->child_communication_plugs ) // std::pair< std::string, std::pair< bool , std::shared_ptr<BranchPlugType>>>
 			pair.second.second->destruct();
+
+		this->parent_communication_socket->destruct();
 
 		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
 
@@ -223,7 +223,7 @@ namespace dhtt
 
 	bool Node::async_request_conditions(std::string child_name, dhtt_msgs::action::Condition::Goal condition_goal)
 	{
-		RCLCPP_INFO(this->get_logger(), "Requesting conditions from [%s]", child_name.c_str());
+		RCLCPP_DEBUG(this->get_logger(), "Requesting conditions from [%s]", child_name.c_str());
 
 		return this->child_communication_plugs[child_name].second->async_send_maintain(condition_goal);
 	}
@@ -411,13 +411,17 @@ namespace dhtt
 		// I think this is messing with the fsm related to the branch_types
 		// this->block_for_activation_from_children();
 
-		// we should get one resource update per message up the tree at least
-		while (not this->resource_status_updated);
+		// use a condition variable to only grab the logic_mut once the resources have been updated
+		auto check_resources_updated = [&](){ return this->resource_status_updated; };
 
-		std::lock_guard<std::mutex> guard(this->logic_mut);
+		std::unique_lock<std::mutex> lock(this->logic_mut);
 
 		if ( this->status.state == dhtt_msgs::msg::NodeStatus::WAITING )
 		{
+
+			if ( not this->resource_status_updated )
+				this->resource_condition.wait(lock, check_resources_updated);
+				
 			this->update_status(dhtt_msgs::msg::NodeStatus::ACTIVE);
 
 			// deal with any passed resources
@@ -431,7 +435,7 @@ namespace dhtt
 
 			// check preconditions before moving request up
 			to_ret.possible = to_ret.possible and this->check_preconditions();
-			to_ret.activation_potential = this->logic->get_perceived_efficiency();
+			to_ret.activation_potential = this->logic->get_perceived_efficiency(this);
 
 			if ( to_ret.possible )
 				this->active = true;
@@ -462,8 +466,6 @@ namespace dhtt
 				else
 					RCLCPP_ERROR(this->get_logger(), "Preconditions not met, restarting auction!");
 
-				this->resource_status_updated = false;
-
 				if (this->logic->is_done())
 					this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
 				else
@@ -484,8 +486,6 @@ namespace dhtt
 
 				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
-				this->resource_status_updated = false;
-
 				// propogate failure down the tree
 				if ( (int) this->child_names.size() > 0 )
 				{
@@ -495,6 +495,9 @@ namespace dhtt
 				}
 			}
 
+			this->resource_status_updated = false;
+			lock.unlock();
+
 			return to_ret; 
 		}
 		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::DONE )
@@ -502,10 +505,11 @@ namespace dhtt
 			to_ret.done = true;
 		}
 
-		// this->resource_status_updated = false;
+		this->resource_status_updated = false;
 
 		// then send result back to parent
 		RCLCPP_INFO(this->get_logger(), "Sending request back up the tree...");
+		lock.unlock();
 		return to_ret;
 	}
 
@@ -658,6 +662,7 @@ namespace dhtt
 		this->available_resources = canonical_list->resource_state;
 
 		this->resource_status_updated = true;
+		this->resource_condition.notify_one();
 	}
 
 	bool Node::check_preconditions()
@@ -683,6 +688,6 @@ namespace dhtt
 
 	double Node::calculate_activation_potential()
 	{
-		return this->logic->get_perceived_efficiency() * (this->priority + (int) this->owned_resources.size());
+		return this->logic->get_perceived_efficiency(this) * (this->priority + (int) this->owned_resources.size());
 	}
 }

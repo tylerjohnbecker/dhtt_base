@@ -46,7 +46,7 @@ namespace dhtt_plugins
 		 * 
 		 * \return activation potential of the behavior
 		 */
-		double get_perceived_efficiency() override;
+		double get_perceived_efficiency(dhtt::Node* container) override;
 
 		/**
 		 * \brief returns a list with only the gripper resource granted to this behavior

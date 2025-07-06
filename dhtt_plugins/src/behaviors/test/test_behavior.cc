@@ -211,8 +211,10 @@ namespace dhtt_plugins
 		this->params = params;
 	}
 
-	double TestBehavior::get_perceived_efficiency()
+	double TestBehavior::get_perceived_efficiency(dhtt::Node* container)
 	{
+		(void) container; 
+		
 		// just give random perceived efficiency
 		return this->activation_potential;
 	}

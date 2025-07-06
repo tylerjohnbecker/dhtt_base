@@ -113,34 +113,43 @@ void CookingBehavior::parse_params(std::vector<std::string> params)
 	}
 
 	this->params = params;
+	this->updated = true;
 }
 
-double CookingBehavior::get_perceived_efficiency()
+double CookingBehavior::get_perceived_efficiency(dhtt::Node* container)
 {
 	// Make sure we're up to date with observations
-	this->executor->spin_some(std::chrono::nanoseconds(0));
+	// this->com_agg->spin_some();
+
+	(void) container; 
+	RCLCPP_WARN(container->get_logger(), "Waiting for update...");
+
+	while ( not this->updated );// hopefully doesn't block forever
+
+	RCLCPP_WARN(container->get_logger(), "Update received");
 
 	if (not this->last_obs)
 	{
-		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
+		RCLCPP_WARN(this->com_agg->get_logger(),
 					"No observation yet. This node probably won't behave as intended. Making "
 					"Observe request");
 
 		// Make sure we get an initial observation
 		auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
 		req->super_action = dhtt_msgs::srv::CookingRequest::Request::OBSERVE;
-		auto res = this->cooking_request_client->async_send_request(req);
-		RCLCPP_DEBUG(this->pub_node_ptr->get_logger(), "Sent initial observation request");
-		this->executor->spin_until_future_complete(res, std::chrono::seconds(1));
+		auto res = this->send_request_and_update(req);
+		// auto res = this->cooking_request_client->async_send_request(req);
+		// RCLCPP_DEBUG(this->com_agg->get_logger(), "Sent initial observation request");
+		// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res, std::chrono::seconds(1));
 
 		if (res.valid())
 		{
-			RCLCPP_DEBUG(this->pub_node_ptr->get_logger(),
+			RCLCPP_DEBUG(this->com_agg->get_logger(),
 						 "Received initial observation request: We're good to go.");
 		}
 		else
 		{
-			RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "BUG, observation request timed out");
+			RCLCPP_ERROR(this->com_agg->get_logger(), "BUG, observation request timed out");
 		}
 
 		while (not this->last_obs)
@@ -151,24 +160,31 @@ double CookingBehavior::get_perceived_efficiency()
 
 	if (this->destination_point.x == 0 and this->destination_point.y == 0)
 	{
-		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
+		RCLCPP_WARN(this->com_agg->get_logger(),
 					"Destination location is (0,0), are you sure this is correct?");
 	}
 
 	if (this->last_obs->agents.empty())
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+		RCLCPP_ERROR(this->com_agg->get_logger(),
 					 "No agents in observation yet. Setting activation_potential to 0");
+		// maybe we need to get a new observation once per activation
+		this->updated = false;
 		return 0;
 	}
 
 	if (not this->destination_is_good)
 	{
-		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
+		RCLCPP_WARN(this->com_agg->get_logger(),
 					"Don't have a good destination (is the object in the right state?). Setting "
 					"activation_potential to 0.");
+		// maybe we need to get a new observation once per activation
+		this->updated = false;
 		return 0;
 	}
+
+	// maybe we need to get a new observation once per activation
+	this->updated = false;
 
 	return 1; // return something other than 0
 
@@ -198,44 +214,38 @@ void CookingBehavior::initialize(std::vector<std::string> params)
 	ActionType::initialize(params);
 
 	// subscribers
-	// this->cooking_observation_subscriber_name = this->com_agg->register_subscription<dhtt_msgs::msg::CookingObservation>("Cooking_Observations", "", 
-	// 												std::bind(&CookingBehavior::observation_callback, this, std::placeholders::_1));
+	this->cooking_observation_subscriber = this->com_agg->register_subscription<dhtt_msgs::msg::CookingObservation>("Cooking_Observations", "", 
+													std::bind(&CookingBehavior::observation_callback, this, std::placeholders::_1));
 
-	this->cooking_observation_subscriber =
-		this->pub_node_ptr->create_subscription<dhtt_msgs::msg::CookingObservation>(
-			"Cooking_Observations", 10,
-			std::bind(&CookingBehavior::observation_callback, this, std::placeholders::_1));
 
 	// clients
-	// this->com_agg->register_service_client<dhtt_msgs::srv::CookingRequest>("Cooking_Server");
+	this->cooking_request_client = this->com_agg->register_service_client<dhtt_msgs::srv::CookingRequest>("Cooking_Server");
 
-	this->cooking_request_client =
-		this->pub_node_ptr->create_client<dhtt_msgs::srv::CookingRequest>("Cooking_Server");
+	// this->param_node_ptr =
+	// 	std::make_shared<rclcpp::Node>(std::string(this->com_agg->get_name()) + "_params",
+	// 								   rclcpp::NodeOptions()
+	// 									   .allow_undeclared_parameters(true)
+	// 									   .automatically_declare_parameters_from_overrides(true));
 
-	this->param_node_ptr =
-		std::make_shared<rclcpp::Node>(std::string(this->pub_node_ptr->get_name()) + "_params",
-									   rclcpp::NodeOptions()
-										   .allow_undeclared_parameters(true)
-										   .automatically_declare_parameters_from_overrides(true));
-	this->params_client_ptr =
-		std::make_shared<rclcpp::SyncParametersClient>(this->param_node_ptr, "/param_node");
+
+	this->params_client_ptr = this->com_agg->register_param_client("/param_node");
 
 	// checks
 	if (not this->cooking_request_client->wait_for_service(std::chrono::seconds(1)))
 	{
-		RCLCPP_FATAL(this->pub_node_ptr->get_logger(), "Could not contact dhtt_cooking service");
+		RCLCPP_FATAL(this->com_agg->get_logger(), "Could not contact dhtt_cooking service");
 		throw std::runtime_error("Could not contact dhtt_cooking service");
 	}
 
 	if (not this->params_client_ptr->wait_for_service(std::chrono::seconds(1)))
 	{
-		RCLCPP_FATAL(this->pub_node_ptr->get_logger(), "Could not contact param node");
+		RCLCPP_FATAL(this->com_agg->get_logger(), "Could not contact param node");
 		throw std::runtime_error("Could not contact param node");
 	}
 
 	if (not this->last_obs)
 	{
-		RCLCPP_FATAL(this->pub_node_ptr->get_logger(),
+		RCLCPP_DEBUG(this->com_agg->get_logger(),
 					 "Did not get first observation. This node may not behave properly.");
 	}
 
@@ -254,7 +264,7 @@ void CookingBehavior::observation_callback(std::shared_ptr<dhtt_msgs::msg::Cooki
 		return; // exit early
 	}
 
-	RCLCPP_DEBUG(this->pub_node_ptr->get_logger(), "Inside observation callback");
+	RCLCPP_FATAL(this->com_agg->get_logger(), "Inside observation callback");
 	this->last_obs = msg;
 
 	// Chicken-egg, This may be called before parse_params() has set destination_* members, which
@@ -264,6 +274,8 @@ void CookingBehavior::observation_callback(std::shared_ptr<dhtt_msgs::msg::Cooki
 	{
 		this->set_destination_to_closest_object();
 	}
+
+	this->updated = true;
 }
 
 void CookingBehavior::set_destination_to_closest_object()
@@ -280,7 +292,7 @@ void CookingBehavior::set_destination_to_closest_object()
 		throw std::runtime_error("Empty destination_value");
 	}
 
-	RCLCPP_DEBUG(this->pub_node_ptr->get_logger(), "Setting destination to val: %s, with conds: %s",
+	RCLCPP_DEBUG(this->com_agg->get_logger(), "Setting destination to val: %s, with conds: %s",
 				 this->destination_value.c_str(), this->destination_conditions.c_str());
 
 	auto pred_typeandconds = [this](const dhtt_msgs::msg::CookingObject &obj)
@@ -319,7 +331,7 @@ void CookingBehavior::set_destination_to_closest_object()
 
 	if (found_typeconds_iters.empty())
 	{
-		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
+		RCLCPP_WARN(this->com_agg->get_logger(),
 					("Could not find object of type and conds: " + this->destination_value + " " +
 					 this->destination_conditions)
 						.c_str());
@@ -359,7 +371,7 @@ void CookingBehavior::set_destination_to_closest_object()
 
 		if (found_typecondsmark_iters.empty())
 		{
-			RCLCPP_WARN(this->pub_node_ptr->get_logger(),
+			RCLCPP_WARN(this->com_agg->get_logger(),
 						("Found object of correct type and cond, but incorrect mark: " +
 						 this->destination_mark)
 							.c_str());
@@ -406,7 +418,7 @@ bool CookingBehavior::can_work() const
 {
 	if (not this->destination_is_good)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+		RCLCPP_ERROR(this->com_agg->get_logger(),
 					 "Destination is not good but the node still ran. Skipping work.");
 		return false;
 	}
@@ -423,23 +435,23 @@ bool CookingBehavior::mark_object(unsigned long object_id, const std::string &ma
 
 	if (object_exists_it == this->last_obs->objects.cend())
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+		RCLCPP_ERROR(this->com_agg->get_logger(),
 					 "Tried to mark object %lu but it doesn't exist", object_id);
 		return false;
 	}
 
-	auto existing_marked_objects = this->params_client_ptr->get_parameter<std::vector<long int>>(
-		CookingBehavior::PARAM_MARK_OBJECTS, {});
+	auto existing_marked_objects = this->com_agg->sync_send_param_request_safe<std::vector<long int>>(
+		"/param_node", CookingBehavior::PARAM_MARK_OBJECTS, {});
 	auto existing_marked_objects_taints =
-		this->params_client_ptr->get_parameter<std::vector<std::string>>(
-			CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, {});
+		this->com_agg->sync_send_param_request_safe<std::vector<std::string>>(
+			"/param_node", CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, {});
 	auto existing_marked_objects_types =
-		this->params_client_ptr->get_parameter<std::vector<std::string>>(
-			CookingBehavior::PARAM_MARK_OBJECTS_TYPES, {});
+		this->com_agg->sync_send_param_request_safe<std::vector<std::string>>(
+			"/param_node", CookingBehavior::PARAM_MARK_OBJECTS_TYPES, {});
 
 	if (existing_marked_objects.size() != existing_marked_objects_taints.size())
 	{
-		RCLCPP_FATAL(this->pub_node_ptr->get_logger(),
+		RCLCPP_FATAL(this->com_agg->get_logger(),
 					 "Marked object IDs and their Taints do not match up");
 		return false;
 	}
@@ -455,7 +467,7 @@ bool CookingBehavior::mark_object(unsigned long object_id, const std::string &ma
 		if (existing_marked_objects_taints[index] == mark)
 			return true;
 
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+		RCLCPP_ERROR(this->com_agg->get_logger(),
 					 "Tried to mark object %lu but it is already marked", object_id);
 		return false;
 	}
@@ -486,23 +498,22 @@ bool CookingBehavior::unmark_static_object_under_obj(const dhtt_msgs::msg::Cooki
 	}
 
 	RCLCPP_ERROR(
-		this->pub_node_ptr->get_logger(),
+		this->com_agg->get_logger(),
 		("Tried to unmark static object but none under object " + obj.object_type).c_str());
 	return false;
 }
 
 bool CookingBehavior::unmark_object(unsigned long object_id) const
 {
-	std::vector<long int> marked_object_ids =
-		this->params_client_ptr->get_parameter<std::vector<long int>>(
-			CookingBehavior::PARAM_MARK_OBJECTS, {});
 
-	std::vector<std::string> marked_object_taints =
-		this->params_client_ptr->get_parameter<std::vector<std::string>>(
-			CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, {});
-
-	auto marked_objects_types = this->params_client_ptr->get_parameter<std::vector<std::string>>(
-		CookingBehavior::PARAM_MARK_OBJECTS_TYPES, {});
+	auto marked_object_ids = this->com_agg->sync_send_param_request_safe<std::vector<long int>>(
+		"/param_node", CookingBehavior::PARAM_MARK_OBJECTS, {});
+	auto marked_object_taints =
+		this->com_agg->sync_send_param_request_safe<std::vector<std::string>>(
+			"/param_node", CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, {});
+	auto marked_objects_types =
+		this->com_agg->sync_send_param_request_safe<std::vector<std::string>>(
+			"/param_node", CookingBehavior::PARAM_MARK_OBJECTS_TYPES, {});
 
 	auto found_marked_id_it = std::find_if(marked_object_ids.cbegin(), marked_object_ids.cend(),
 										   [object_id](const int64_t &other_obj_id)
@@ -510,7 +521,7 @@ bool CookingBehavior::unmark_object(unsigned long object_id) const
 
 	if (found_marked_id_it == marked_object_ids.cend())
 	{
-		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
+		RCLCPP_WARN(this->com_agg->get_logger(),
 					"Tried to unmark object %lu but it is not marked", object_id);
 		return false;
 	}
@@ -519,7 +530,7 @@ bool CookingBehavior::unmark_object(unsigned long object_id) const
 	const auto &found_taint = marked_object_taints[found_index];
 	if (this->destination_mark != found_taint)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+		RCLCPP_ERROR(this->com_agg->get_logger(),
 					 "Tried to unmark object %lu but it is not marked with our taint", object_id);
 		return false;
 	}
@@ -760,12 +771,12 @@ bool CookingBehavior::check_conds(const std::vector<std::string> &conds,
 char CookingBehavior::check_mark(const dhtt_msgs::msg::CookingObject &obj) const
 {
 	const std::vector<long int> marked_object_ids =
-		this->params_client_ptr->get_parameter<std::vector<long int>>(
-			CookingBehavior::PARAM_MARK_OBJECTS, {});
+		this->com_agg->sync_send_param_request_safe<std::vector<long int>>(
+			"/param_node", CookingBehavior::PARAM_MARK_OBJECTS, {});
 
 	const std::vector<std::string> marked_object_taints =
-		this->params_client_ptr->get_parameter<std::vector<std::string>>(
-			CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, {});
+		this->com_agg->sync_send_param_request_safe<std::vector<std::string>>(
+			"/param_node", CookingBehavior::PARAM_MARK_OBJECTS_TAINTS, {});
 
 	// three cases: 0. object is marked but with another taint; 1. object is marked with our
 	// taint; 2. object not marked at all;
@@ -799,6 +810,20 @@ std::pair<std::string, std::string> CookingBehavior::extract_keyval(const std::s
 	std::string key = param_string.substr(0, separator_pos);
 	std::string value = param_string.substr(separator_pos + 2, param_string.size() - separator_pos);
 	return std::make_pair(key, value);
+}
+
+std::shared_future<dhtt_msgs::srv::CookingRequest::Response::SharedPtr> CookingBehavior::send_request_and_update(dhtt_msgs::srv::CookingRequest::Request::SharedPtr to_send)
+{
+	auto res = this->cooking_request_client->async_send_request(to_send);
+	this->updated = false;// this timing is probably still not guaranteed to work but fingers crossed
+
+	// first wait for the response
+	res.wait();	
+
+	// now wait for the udpate from the server
+	while ( not this->updated );
+
+	return res;
 }
 
 } // namespace dhtt_plugins

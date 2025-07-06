@@ -186,7 +186,7 @@ namespace dhtt_plugins
 		(void) params;
 	}
 
-	double AndBehavior::get_perceived_efficiency() 
+	double AndBehavior::get_perceived_efficiency(dhtt::Node* container) 
 	{
 		return this->activation_potential;
 	}

@@ -125,8 +125,6 @@ namespace dhtt_plugins
 		double activation_potential;
 		std::vector<dhtt_msgs::msg::Resource> necessary_resources; 
 
-		std::shared_ptr<rclcpp::Node> pub_node_ptr;
-		std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
 		rclcpp::Publisher<std_msgs::msg::String>::SharedPtr knowledge_pub;
 
 	private:

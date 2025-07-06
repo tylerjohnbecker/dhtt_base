@@ -103,7 +103,7 @@ namespace dhtt
 		 * 
 		 * \return activation potential value (0 -> 1 by convention) 
 		 */
-		virtual double get_perceived_efficiency() = 0;
+		virtual double get_perceived_efficiency(dhtt::Node* container) = 0;
 		
 		/**
 		 * \brief check for if the node is finished running

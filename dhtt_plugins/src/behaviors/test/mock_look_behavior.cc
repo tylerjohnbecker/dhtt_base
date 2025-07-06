@@ -126,8 +126,10 @@ namespace dhtt_plugins
 		return to_ret;
 	}
 
-	double MockLookBehavior::get_perceived_efficiency() 
+	double MockLookBehavior::get_perceived_efficiency(dhtt::Node* container) 
 	{
+		(void) container; 
+		
 		return this->activation_potential;
 	}
 }

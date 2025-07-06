@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <chrono>
+#include <condition_variable>
+#include <mutex>
 
 #include "pluginlib/class_loader.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -536,6 +538,8 @@ namespace dhtt
 
 		std::mutex logic_mut;
 		std::mutex maintenance_mut;
+
+		std::condition_variable resource_condition;
 
 		std::vector<dhtt_msgs::msg::Resource> owned_resources;
 		std::vector<dhtt_msgs::msg::Resource> available_resources;

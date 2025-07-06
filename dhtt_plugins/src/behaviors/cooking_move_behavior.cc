@@ -2,14 +2,13 @@
 
 namespace dhtt_plugins
 {
-double CookingMoveBehavior::get_perceived_efficiency()
+double CookingMoveBehavior::get_perceived_efficiency(dhtt::Node* container)
 {
-	double activation_check = CookingBehavior::get_perceived_efficiency();
+	double activation_check = CookingBehavior::get_perceived_efficiency(container);
 
 	if (activation_check != 0)
 	{
 		double to_ret = pow(1.0 + this->agent_point_distance(this->destination_point), -1);
-		RCLCPP_INFO(this->pub_node_ptr->get_logger(), "I report %f efficiency", to_ret);
 
 		if (this->should_unmark)
 		{
@@ -45,15 +44,16 @@ void CookingMoveBehavior::do_work(dhtt::Node *container)
 
 	req->action.params = dest_point_str;
 
-	auto res = this->cooking_request_client->async_send_request(req);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending move_to request");
-	this->executor->spin_until_future_complete(res);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "move_to request completed");
+	auto res = this->send_request_and_update(req);
+	// auto res = this->cooking_request_client->async_send_request(req);
+	// RCLCPP_INFO(container->get_logger(), "Sending move_to request");
+	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
+	// RCLCPP_INFO(container->get_logger(), "move_to request completed");
 
 	bool suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "move_to request did not succeed: %s",
+		RCLCPP_ERROR(container->get_logger(), "move_to request did not succeed: %s",
 					 res.get()->error_msg.c_str());
 		return;
 	}
@@ -61,12 +61,12 @@ void CookingMoveBehavior::do_work(dhtt::Node *container)
 	// if object is not marked for anyone
 	if (not this->destination_mark.empty() and this->check_mark(this->destination_object) == '2')
 	{
-		RCLCPP_INFO(this->pub_node_ptr->get_logger(),
+		RCLCPP_INFO(container->get_logger(),
 					("Marking object as " + this->destination_mark).c_str());
 		suc = this->mark_object(this->destination_object.world_id, this->destination_mark);
 		if (not suc)
 		{
-			RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "Marking object failed: %s",
+			RCLCPP_ERROR(container->get_logger(), "Marking object failed: %s",
 						 res.get()->error_msg.c_str());
 		}
 	}

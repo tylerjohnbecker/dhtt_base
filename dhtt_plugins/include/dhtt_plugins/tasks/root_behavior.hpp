@@ -88,7 +88,7 @@ namespace dhtt_plugins
 		 * 
 		 * \return 1.0
 		 */
-		double get_perceived_efficiency() override;
+		double get_perceived_efficiency(dhtt::Node* container) override;
 
 		/**
 		 * \brief gets whether the root node is done
@@ -182,9 +182,10 @@ namespace dhtt_plugins
 		bool children_done;
 		bool interrupted;
 		bool slow;
-
+		
 		std::shared_ptr<rclcpp::Node> pub_node_ptr;
 		std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> resource_executor;
+		
 		rclcpp::Publisher<dhtt_msgs::msg::Resources>::SharedPtr status_pub;
 		rclcpp::Service<dhtt_msgs::srv::InternalControlRequest>::SharedPtr control_server;
 

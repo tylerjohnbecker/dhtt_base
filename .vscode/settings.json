@@ -1,0 +1,17 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/tylerjbecker/ros2_ws/install/dhtt_cooking/lib/python3.8/site-packages",
+        "/home/tylerjbecker/ros2_ws/install/dhtt/lib/python3.8/site-packages",
+        "/home/tylerjbecker/ros2_ws/install/dhtt_msgs/lib/python3.8/site-packages",
+        "/opt/ros/foxy/lib/python3.8/site-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/tylerjbecker/ros2_ws/install/dhtt_cooking/lib/python3.8/site-packages",
+        "/home/tylerjbecker/ros2_ws/install/dhtt/lib/python3.8/site-packages",
+        "/home/tylerjbecker/ros2_ws/install/dhtt_msgs/lib/python3.8/site-packages",
+        "/opt/ros/foxy/lib/python3.8/site-packages"
+    ],
+    "files.associations": {
+        "future": "cpp"
+    }
+}

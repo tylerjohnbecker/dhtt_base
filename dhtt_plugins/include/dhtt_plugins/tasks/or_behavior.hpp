@@ -67,7 +67,7 @@ namespace dhtt_plugins
 		 * 
 		 * \return activation potential of this subtask 
 		 */
-		double get_perceived_efficiency() override;
+		double get_perceived_efficiency(dhtt::Node* container) override;
 
 		/**
 		 * \brief this behavior is done when a child is done.

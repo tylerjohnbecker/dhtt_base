@@ -29,7 +29,8 @@ namespace dhtt
 	class CommunicationAggregator : public rclcpp::Node
 	{
 	public:
-		CommunicationAggregator(int queue_size = 10) : Node("CommunicationAggregator"), sub_qos(queue_size), unique_id(0) {};
+		CommunicationAggregator(std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> exec_ptr, int queue_size = 10) : 
+								Node("CommunicationAggregator"), sub_qos(queue_size), unique_id(0), local_ex_ptr(exec_ptr) {};
 
 		/**
 		 * \brief registers a subscriber callback 
@@ -143,7 +144,7 @@ namespace dhtt
 		 * \brief registers a publisher with the given topic name and returns a ptr to the publisher for outside use
 		 * 
 		 * After creating the publisher a weak_ptr will be kept locally which means that when the last ptr falls out of scope outside of this class it will destruct
-		 * 	the publisher automatically and the weak_ptr here will be considered expired.
+		 * 	the publisher automatically and the weak_ptr here will be considered expired. This will only ever create a single publisher per topic name.
 		 * 
 		 * \tparam msg_type ROS message for the publisher type
 		 * 
@@ -172,33 +173,6 @@ namespace dhtt
 			return tmp.lock();
 		}
 
-		// /**
-		//  * \brief ungregisters the publisher at the given topic_name
-		//  * 
-		//  * When the reference count of the local shared_ptr to the publisher becomes 1 (the local shared_ptr is unique) we erase it locally. 
-		//  * 
-		//  * \param topic_name string name of the topic to unregister the publisher on.
-		//  * \param to_unregister passed in shared_ptr to the publisher which will be reset
-		//  * 
-		//  * \return true if the publisher existed and was unregistered. False otherwise.
-		//  */
-		// bool unregister_publisher(std::string topic_name, std::shared_ptr<std::any>& to_unregister)
-		// {
-		// 	// grab the mutex first
-		// 	std::lock_guard<std::mutex> lock(this->register_mutex);
-			
-		// 	if ( this->publisher_ptrs.find(topic_name) == this->publisher_ptrs.end() )
-		// 		return false;
-
-		// 	to_unregister.reset();
-
-		// 	// if there is no longer someone that needs the publisher destruct it to save space
-		// 	if ( this->publisher_ptrs[topic_name].unique() )
-		// 		this->publisher_ptrs.erase(topic_name);
-
-		// 	return true;
-		// }
-
 		/**
 		 * \brief registers service client unless it's already registered and returns a shared_ptr to that publisher
 		 * 
@@ -216,7 +190,7 @@ namespace dhtt
 
 			// if it doesn't exist
 			if ( this->service_client_ptrs.find(service_topic_name) == this->service_client_ptrs.end() or 
-					std::any_cast< std::weak_ptr < rclcpp::Publisher < service_type > > >(this->service_client_ptrs[service_topic_name]).expired() )
+					std::any_cast< std::weak_ptr < rclcpp::Client < service_type > > >(this->service_client_ptrs[service_topic_name]).expired() )
 			{
 				auto n_client = this->create_client<service_type>(service_topic_name);
 
@@ -238,41 +212,63 @@ namespace dhtt
 			return tmp.lock();
 		}
 
-		// /**
-		//  * \brief ungregisters service client with given topic name.
-		//  * 
-		//  * If the local service client shared_ptr is unique then we erase it as well.
-		//  * 
-		//  * \param std::string service_topic_name name of the service client to unregister
-		//  * \param std::shared_ptr<std::any> client ptr to reset while unregistering 
-		//  * 
-		//  * \return true if service client removed. False if the given name was not already registered
-		//  */
-		// bool ungregister_service_client(std::string service_topic_name, std::shared_ptr<std::any>& to_unregister)
-		// {
-		// 	// grab the mutex first
-		// 	std::lock_guard<std::mutex> lock(this->register_mutex);
-
-		// 	if ( this->service_client_ptrs.find(service_topic_name) == this->service_client_ptrs.end() )
-		// 		return false;
-
-		// 	to_unregister.reset();
-
-		// 	if ( this->service_client_ptrs[service_topic_name].unique() )
-		// 		this->service_client_ptrs.erase(service_topic_name);
-
-		// 	return true;
-		// }
-
 		/**
-		 * \brief makes a usable synchronous params client so that multiple are not necessary
+		 * \brief Returns a syncParametersClient ptr to the given node_name
 		 * 
-		 * This will do nothing if a param client at the specified node name already exists
+		 * This method only creates a new SyncParametersClient if one does not already exist for the given node_name. Otherwise
+		 * 	it will return a shared_ptr to the existing one. It will also return nullptr if the node cannot be reached.
 		 * 
 		 * \param node_name string name of the node which we are grabbing params from
 		 * 
-		 * \return true if connection was made successfully. False otherwise
+		 * \return std::shared_ptr to the request param client. If the node could not be reached returns nullptr instead.
 		 */
+		std::shared_ptr<rclcpp::SyncParametersClient> register_param_client(std::string node_name)
+		{
+			if ( not this->param_node_ptr )
+				this->param_node_ptr = std::make_shared<rclcpp::Node>("dhtt_param_node");
+
+			// if it doesn't exist already or has been deleted
+			if ( this->param_client_ptrs.find(node_name) == this->param_client_ptrs.end() or
+					this->param_client_ptrs[node_name].expired() )
+			{
+				auto n_param_client = std::make_shared<rclcpp::SyncParametersClient>(this->param_node_ptr, node_name);
+
+				{// new scope to prevent the using statement from annoying me later
+					using namespace std::chrono_literals;
+
+					if ( not n_param_client->wait_for_service(1s) )
+						return nullptr;
+				}
+
+				this->param_client_ptrs[node_name] = std::weak_ptr<rclcpp::SyncParametersClient>(n_param_client);
+
+				return n_param_client;
+			}
+
+			// otherwise just return a ptr to the params client
+			return this->param_client_ptrs[node_name].lock();
+		}
+
+		/**
+		 * \brief thread safe function for making a param client request
+		 * 
+		 * This is useful since so many of the different behaviors need to make param requests simultaneously. Literally, just picks up a mutex before the
+		 * 	call.
+		 * 
+		 * \param request_from the param client ptr to make a thread safe request on
+		 * 
+		 * \return std::shared_future to the response efrom the server
+		 */
+		template <typename parameter_type>
+		parameter_type sync_send_param_request_safe(std::string param_client_name, std::string param_name, const parameter_type& default_value)
+		{
+			// pick up the mutex to ensure thread safety
+			std::lock_guard<std::mutex> lock(this->param_mutex);
+
+			parameter_type to_ret = this->param_client_ptrs[param_client_name].lock()->get_parameter<parameter_type>(param_name, default_value);
+		
+			return to_ret;
+		}
 
 	private:
 
@@ -317,19 +313,30 @@ namespace dhtt
 				iter->join();
 		}
 
-		// private members
+		//// private members
+		// subscriber members
 		std::map<std::string, std::any> function_tables; // std::any = std::map < std::string,  std::function< void( std::shared_ptr< msg_type > ) > >
-
-		std::map<std::string, std::any> service_client_ptrs; // std::any = std::weak_ptr < rclcpp::Client < service_type > >
-		std::map<std::string, std::any> publisher_ptrs; // std::any = std::weak_ptr < rclcpp::Publisher < msg_type > >
-
 		std::map<std::string, std::any> subscription_ptrs; // std::any = std::shared_ptr < rclcpp::Subscription < msg_type > > 
 
-		std::mutex register_mutex;
-
 		rclcpp::QoS sub_qos;
-
 		int unique_id;
+
+		// publisher members
+		std::map<std::string, std::any> service_client_ptrs; // std::any = std::weak_ptr < rclcpp::Client < service_type > >
+		
+		// service client members
+		std::map<std::string, std::any> publisher_ptrs; // std::any = std::weak_ptr < rclcpp::Publisher < msg_type > >
+
+		// param client members
+		std::map<std::string, std::weak_ptr<rclcpp::SyncParametersClient>> param_client_ptrs; 
+		std::shared_ptr<rclcpp::Node> param_node_ptr = nullptr; // need these for the internals of syncparametersclient
+				
+		// general thread safety
+		std::mutex register_mutex;
+		std::mutex param_mutex;
+
+		// executor ptr
+		std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> local_ex_ptr;
 	};
 
 }

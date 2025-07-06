@@ -41,7 +41,7 @@ class CookingBehavior : public ActionType
 	 * their own metric.
 	 * @return 0 if the checks failed, 1 otherwise.
 	 */
-	virtual double get_perceived_efficiency() override;
+	virtual double get_perceived_efficiency(dhtt::Node* container) override;
 
   protected:
 	std::string destination_type;  // key: coordinate or closest object
@@ -52,6 +52,8 @@ class CookingBehavior : public ActionType
 	dhtt_msgs::msg::CookingObject destination_object; // closest object
 	bool destination_is_good = false;
 	bool should_unmark = false;
+
+	bool updated = false;
 
 	static double point_distance(const geometry_msgs::msg::Point &point1,
 								 const geometry_msgs::msg::Point &point2);
@@ -93,11 +95,18 @@ class CookingBehavior : public ActionType
 
 	// TODO clear all on tree reset
 	bool unmark_object(unsigned long object_id) const;
+	
+	/**
+	 * \brief sends a client request to the cooking server and blocks for a response update message
+	 * 
+	 * \param to_send request for the server
+	 * 
+	 * \return response from the server
+	 * 
+	 */
+	std::shared_future<dhtt_msgs::srv::CookingRequest::Response::SharedPtr> send_request_and_update(dhtt_msgs::srv::CookingRequest::Request::SharedPtr to_send);
 
-	rclcpp::Subscription<dhtt_msgs::msg::CookingObservation>::SharedPtr
-		cooking_observation_subscriber;
-
-	std::string cooking_observation_subscriber_name;
+  std::string cooking_observation_subscriber;
 
 	rclcpp::Client<dhtt_msgs::srv::CookingRequest>::SharedPtr cooking_request_client;
 

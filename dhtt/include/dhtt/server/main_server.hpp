@@ -68,7 +68,7 @@ namespace dhtt
 		 * \param node_name name of the node created by this class
 		 * \param spinner outside multithreaded executor which new nodes that are created in the dHTT will be added to
 		 */
-		MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner);
+		MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner, bool slow=false);
 		~MainServer();
 
 	private:

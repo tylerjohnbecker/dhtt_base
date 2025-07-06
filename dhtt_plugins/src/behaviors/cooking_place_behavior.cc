@@ -2,15 +2,14 @@
 
 namespace dhtt_plugins
 {
-double CookingPlaceBehavior::get_perceived_efficiency()
+double CookingPlaceBehavior::get_perceived_efficiency(dhtt::Node* container)
 {
-	double activation_check = CookingBehavior::get_perceived_efficiency();
+	double activation_check = CookingBehavior::get_perceived_efficiency(container);
 
 	if (activation_check != 0)
 	{
 		// High activation if we're right next to the object. No activation otherwise.
 		double to_ret = this->agent_point_distance(this->destination_point) == 1.0 ? 1.0 : 0.0;
-		RCLCPP_INFO(this->pub_node_ptr->get_logger(), "I report %f efficiency", to_ret);
 
 		this->activation_potential = to_ret; // TODO is this necessary?
 		return to_ret;
@@ -41,15 +40,16 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 
 	req->action.params = dest_point_str;
 
-	auto res = this->cooking_request_client->async_send_request(req);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending move_to request");
-	this->executor->spin_until_future_complete(res);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "move_to request completed");
+	auto res = this->send_request_and_update(req);
+	// auto res = this->cooking_request_client->async_send_request(req);
+	// RCLCPP_INFO(container->get_logger(), "Sending move_to request");
+	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
+	// RCLCPP_INFO(container->get_logger(), "move_to request completed");
 
 	bool suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+		RCLCPP_ERROR(container->get_logger(),
 					 "move_to request did not succeed, returning early: %s",
 					 res.get()->error_msg.c_str());
 		this->done = false;
@@ -66,15 +66,16 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 								  ? dhtt_msgs::msg::CookingAction::INTERACT_PRIMARY_ARM1
 								  : dhtt_msgs::msg::CookingAction::INTERACT_PRIMARY_ARM2;
 
-	res = this->cooking_request_client->async_send_request(req);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending interact request");
-	this->executor->spin_until_future_complete(res);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "execute interact completed");
+	res = this->send_request_and_update(req);
+	// res = this->cooking_request_client->async_send_request(req);
+	// RCLCPP_INFO(container->get_logger(), "Sending interact request");
+	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
+	// RCLCPP_INFO(container->get_logger(), "execute interact completed");
 
 	suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+		RCLCPP_ERROR(container->get_logger(),
 					 "interact_primary request did not succeed: %s", res.get()->error_msg.c_str());
 		return;
 	}
@@ -90,15 +91,17 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 		// see pr2.yaml
 		req->action.action_type = dhtt_msgs::msg::CookingAction::NO_OP;
 
-		res = this->cooking_request_client->async_send_request(req);
-		RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending NOP request");
-		this->executor->spin_until_future_complete(res);
-		RCLCPP_INFO(this->pub_node_ptr->get_logger(), "NOP interact completed");
+		// res = this->cooking_request_client->async_send_request(req);
+		// RCLCPP_INFO(container->get_logger(), "Sending NOP request");
+		// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
+		// RCLCPP_INFO(container->get_logger(), "NOP interact completed");
+
+		res = this->send_request_and_update(req);
 
 		suc = res.get()->success;
 		if (not suc)
 		{
-			RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "NOP request did not succeed: %s",
+			RCLCPP_ERROR(container->get_logger(), "NOP request did not succeed: %s",
 						 res.get()->error_msg.c_str());
 			return;
 		}
@@ -107,7 +110,7 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 		if (not this->destination_mark.empty() and
 			this->check_mark(this->destination_object) == '1')
 		{
-			RCLCPP_INFO(this->pub_node_ptr->get_logger(),
+			RCLCPP_INFO(container->get_logger(),
 						("Unmarking object that was marked as " + this->destination_mark +
 						 " under " + this->destination_object.object_type)
 							.c_str());
@@ -115,7 +118,7 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 			if (not suc)
 			{
 				RCLCPP_ERROR(
-					this->pub_node_ptr->get_logger(),
+					container->get_logger(),
 					("Error unmarking static object under " + this->destination_object.object_type)
 						.c_str());
 			}
@@ -126,7 +129,7 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 	{
 		// unmark everything at destination location (before it gets changed by observation
 		// callback), which should now include the placed object
-		this->executor->spin_some(std::chrono::nanoseconds(0));
+		// this->com_agg->spin_some();
 
 		for (const auto &world_obj : this->last_obs->objects)
 		{
@@ -135,7 +138,7 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 				if (not CookingBehavior::unmark_object(world_obj.world_id))
 				{
 					// suc = false; not actually an error when unmarking an unmarked object
-					RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+					RCLCPP_ERROR(container->get_logger(),
 								 ("Error unmarking object " + prev_dest_obj.object_type).c_str());
 				}
 			}

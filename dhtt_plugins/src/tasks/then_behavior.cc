@@ -287,7 +287,7 @@ namespace dhtt_plugins
 		}
 	}
 
-	double ThenBehavior::get_perceived_efficiency()
+	double ThenBehavior::get_perceived_efficiency(dhtt::Node* container)
 	{
 		// just give random perceived efficiency
 		return this->activation_potential;

@@ -23,13 +23,12 @@ namespace dhtt_plugins
 		this->interrupted = false;
 
 		this->params = params;
+		this->slow = false;
 		this->parse_params(params);
 		this->load_resources_from_yaml();
 
 		this->spin_thread = std::make_shared<std::thread>(&RootBehavior::async_spin, this);
 		this->spin_thread->detach();
-
-		this->slow = true;
 	}
 
 	std::shared_ptr<dhtt_msgs::action::Activation::Result> RootBehavior::auction_callback( dhtt::Node* container ) 
@@ -106,8 +105,8 @@ namespace dhtt_plugins
 
 			this->children_done = (*result.begin()).second.done;
 
-			// if (this->slow)
-			rclcpp::sleep_for(std::chrono::milliseconds(100));
+			if (this->slow)
+				rclcpp::sleep_for(std::chrono::milliseconds(100));
 		}
 		
 		this->release_all_resources();
@@ -142,7 +141,7 @@ namespace dhtt_plugins
 
 	void RootBehavior::parse_params( std::vector<std::string> params ) 
 	{
-		if ( (int) params.size() > 1 )
+		if ( (int) params.size() > 2 )
 			throw std::invalid_argument("Too many parameters passed to node. Root Behavior only needs path parameter to load the robot resources.");
 
 		if ( (int) params.size() == 0 )
@@ -172,9 +171,15 @@ namespace dhtt_plugins
 		}
 
 		this->robot_resources_file_path = value;
+
+		if ( (int) params.size() == 2 )
+		{
+			this->slow = true;
+		}
+
 	}
 
-	double RootBehavior::get_perceived_efficiency() 
+	double RootBehavior::get_perceived_efficiency(dhtt::Node* container) 
 	{
 		return 1.0;
 	}

@@ -2,7 +2,7 @@
 
 namespace dhtt
 {
-	MainServer::MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner) : 
+	MainServer::MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner, bool slow) : 
 									rclcpp::Node(node_name),//, rclcpp::NodeOptions().allow_undeclared_parameters(true).automatically_declare_parameters_from_overrides(true)), 
 									conc_group(nullptr), spinner_cp(spinner), total_nodes_added(1), verbose(true), running(false)
 	{
@@ -18,7 +18,7 @@ namespace dhtt
 		this->root_status_pub = this->create_publisher<dhtt_msgs::msg::NodeStatus>("/root_status", 10, this->pub_opts);
 
 		/// initialize Global CommunicationAggregator
-		this->global_com = std::make_shared<CommunicationAggregator>();
+		this->global_com = std::make_shared<CommunicationAggregator>(spinner);
 		this->spinner_cp->add_node(this->global_com);
 
 		/// make root node (before external services because they will not work without an active root)
@@ -38,6 +38,12 @@ namespace dhtt
 		dhtt_folder_path = dhtt_folder_path.parent_path().parent_path().parent_path();
 
 		root_node->params.push_back( std::string("path: ") + dhtt_folder_path.native() + "/robots/pr2.yaml" );
+
+		if ( slow )
+		{
+			root_node->params.push_back("GoSlow");
+			RCLCPP_WARN(this->get_logger(), "Starting in testing mode...");
+		}
 
 		root_node->type = dhtt_msgs::msg::Node::ROOT;
 
@@ -786,9 +792,10 @@ namespace dhtt
 			response->removed_nodes.push_back(look_for);
 
 			// now remove the node and it's reference from the parent from the real node map, also remove from the spinner
+			this->node_map[parent_name]->remove_child(look_for);
+
 			this->spinner_cp->remove_node(this->node_map[look_for]);
 			this->node_map.erase(look_for);
-			this->node_map[parent_name]->remove_child(look_for);
 		}
 
 		if ( (int) this->node_list.tree_nodes.size() == 0 )
@@ -1213,7 +1220,7 @@ namespace dhtt
 	std::string MainServer::reset_tree()
 	{
 
-		if ( this->node_list.tree_status == dhtt_msgs::msg::NodeStatus::ACTIVE or this->node_list.tree_status == dhtt_msgs::msg::NodeStatus::WORKING )
+		if ( this->node_list.tree_status == dhtt_msgs::msg::NodeStatus::ACTIVE or this->node_list.tree_status == dhtt_msgs::msg::NodeStatus::WORKING or this->running )
 		{
 			return "Can\'t reset the tree while it is active. Returning in error.";
 		}
@@ -1508,6 +1515,8 @@ namespace dhtt
 
 		RCLCPP_INFO(this->get_logger(), "Activating the root node...");
 
+		// make sure that the root node is not waiting on resources before running the tree
+		this->node_map["ROOT_0"]->set_resource_status_updated(true);
 		this->node_map["ROOT_0"]->activate(g);
 
 		RCLCPP_INFO(this->get_logger(), "Tree finished running...");

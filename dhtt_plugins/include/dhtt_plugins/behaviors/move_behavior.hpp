@@ -43,7 +43,7 @@ namespace dhtt_plugins
 		 * 
 		 * \return activation_potential of the node
 		 */
-		double get_perceived_efficiency() override;
+		double get_perceived_efficiency(dhtt::Node* container) override;
 
 		/**
 		 * \brief retains all resources

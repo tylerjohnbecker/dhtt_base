@@ -57,8 +57,8 @@ namespace dhtt_plugins
 			}
 		}
 
-		auto pub_ptr = this->pub_node_ptr->create_publisher<std_msgs::msg::String>((left)? "/dhtt/left_arm" : "/dhtt/right_arm", 10);
-		auto sub_ptr = this->pub_node_ptr->create_subscription<std_msgs::msg::String>("/dhtt/result", 10, std::bind(&PickBehavior::done_callback, this, std::placeholders::_1));
+		auto pub_ptr = this->com_agg->register_publisher<std_msgs::msg::String>((left)? "/dhtt/left_arm" : "/dhtt/right_arm");
+		this->com_agg->register_subscription<std_msgs::msg::String>("/dhtt/result", container->get_node_name(), std::bind(&PickBehavior::done_callback, this, std::placeholders::_1));
 
 		std_msgs::msg::String go;
 
@@ -68,16 +68,20 @@ namespace dhtt_plugins
 
 		this->work_done = false;
 
-		while ( not this->work_done )
-			this->executor->spin_once();
+		// while ( not this->work_done )
+		// 	this->com_agg->spin_some();
 
 		this->done = true;
+
+		this->com_agg->unregister_subscription<std_msgs::msg::String>("/dhtt/result", container->get_node_name());
 
 		return;
 	}
 
-	double PickBehavior::get_perceived_efficiency() 
+	double PickBehavior::get_perceived_efficiency(dhtt::Node* container) 
 	{
+		(void) container; 
+		
 		return this->activation_potential;
 	}
 

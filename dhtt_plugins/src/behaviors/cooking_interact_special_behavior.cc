@@ -3,15 +3,14 @@
 namespace dhtt_plugins
 {
 
-double CookingInteractSpecialBehavior::get_perceived_efficiency()
+double CookingInteractSpecialBehavior::get_perceived_efficiency(dhtt::Node* container)
 {
-	double activation_check = CookingBehavior::get_perceived_efficiency();
+	double activation_check = CookingBehavior::get_perceived_efficiency(container);
 
 	if (activation_check != 0)
 	{
 		// High activation if we're right next to the object. No activation otherwise.
 		double to_ret = this->agent_point_distance(this->destination_point) == 1.0 ? 1.0 : 0.0;
-		RCLCPP_INFO(this->pub_node_ptr->get_logger(), "I report %f efficiency", to_ret);
 
 		this->activation_potential = to_ret; // TODO is this necessary?
 		return to_ret;
@@ -40,15 +39,16 @@ void CookingInteractSpecialBehavior::do_work(dhtt::Node *container)
 
 	req->action.params = dest_point_str;
 
-	auto res = this->cooking_request_client->async_send_request(req);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending move_to request");
-	this->executor->spin_until_future_complete(res);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "move_to request completed");
+	auto res = this->send_request_and_update(req);
+	// auto res = this->cooking_request_client->async_send_request(req);
+	// RCLCPP_INFO(container->get_logger(), "Sending move_to request");
+	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
+	// RCLCPP_INFO(container->get_logger(), "move_to request completed");
 
 	bool suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+		RCLCPP_ERROR(container->get_logger(),
 					 "move_to request did not succeed, returning early: %s",
 					 res.get()->error_msg.c_str());
 		this->done = false;
@@ -65,15 +65,16 @@ void CookingInteractSpecialBehavior::do_work(dhtt::Node *container)
 								  ? dhtt_msgs::msg::CookingAction::INTERACT_PICK_UP_SPECIAL_ARM1
 								  : dhtt_msgs::msg::CookingAction::INTERACT_PICK_UP_SPECIAL_ARM2;
 
-	res = this->cooking_request_client->async_send_request(req);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending interact_special request");
-	this->executor->spin_until_future_complete(res);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "execute interact_special completed");
+	res = this->send_request_and_update(req);
+	// res = this->cooking_request_client->async_send_request(req);
+	// RCLCPP_INFO(container->get_logger(), "Sending interact_special request");
+	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
+	// RCLCPP_INFO(container->get_logger(), "execute interact_special completed");
 
 	suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+		RCLCPP_ERROR(container->get_logger(),
 					 "interact_special request did not succeed: %s", res.get()->error_msg.c_str());
 	}
 

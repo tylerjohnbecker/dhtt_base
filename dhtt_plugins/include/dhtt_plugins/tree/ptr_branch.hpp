@@ -35,6 +35,13 @@ namespace dhtt_plugins
 		 */
 		void initialize(dhtt::Node* constructor_ptr, std::shared_ptr<dhtt::BranchSocketType> socket_ptr, std::string child_name) override;
 
+		/**
+		 * \brief overloaded destructor to kill the socket_ptr
+		 * 
+		 * \return void
+		 */
+		void destruct() override;
+
 	protected:
 		/**
 		 * \brief just runs the activation_received_callback in the Socket pair

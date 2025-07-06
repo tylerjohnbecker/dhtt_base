@@ -39,7 +39,7 @@ def generate_launch_description():
 
 	debug_group = GroupAction(
 							condition= LaunchConfigurationEquals('debug', 'true'),
-							actions=get_main_node('gdbserver localhost:2159')
+							actions=get_main_node('gdbserver localhost:3111')
 						  )
 
 	no_debug_group = GroupAction(

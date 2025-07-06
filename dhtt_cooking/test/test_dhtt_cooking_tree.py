@@ -516,7 +516,7 @@ class TestCookingZooTree:
             true_name = fut.result().added_nodes[0]
 
             nodes = self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
-            self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
+            # self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
             # self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
             self.start_tree()
 

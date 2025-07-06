@@ -2,9 +2,9 @@
 
 namespace dhtt_plugins
 {
-double CookingObjectExistsBehavior::get_perceived_efficiency()
+double CookingObjectExistsBehavior::get_perceived_efficiency(dhtt::Node* container)
 {
-	this->activation_potential = CookingBehavior::get_perceived_efficiency();
+	this->activation_potential = CookingBehavior::get_perceived_efficiency(container);
 
 	// TODO dbl_epsilon
 	if (this->activation_potential < .0001 and this->should_unmark)
@@ -24,15 +24,16 @@ void CookingObjectExistsBehavior::do_work(dhtt::Node *container)
 	req->action.player_name = dhtt_msgs::msg::CookingAction::DEFAULT_PLAYER_NAME;
 	req->action.action_type = dhtt_msgs::msg::CookingAction::NO_OP;
 
-	auto res = this->cooking_request_client->async_send_request(req);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending nop request");
-	this->executor->spin_until_future_complete(res);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "nop request completed");
+	auto res = this->send_request_and_update(req);
+	// auto res = this->cooking_request_client->async_send_request(req);
+	// RCLCPP_INFO(container->get_logger(), "Sending nop request");
+	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
+	// RCLCPP_INFO(container->get_logger(), "nop request completed");
 
 	bool suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "nop request did not succeed: %s",
+		RCLCPP_ERROR(container->get_logger(), "nop request did not succeed: %s",
 					 res.get()->error_msg.c_str());
 	}
 
@@ -40,7 +41,7 @@ void CookingObjectExistsBehavior::do_work(dhtt::Node *container)
 	{
 		if (not this->mark_object(this->destination_object.world_id, this->destination_mark))
 		{
-			RCLCPP_ERROR_STREAM(this->pub_node_ptr->get_logger(),
+			RCLCPP_ERROR_STREAM(container->get_logger(),
 								"Marking object " << this->destination_object.world_id << " with "
 												  << this->destination_mark << " failed.");
 			this->done = false;

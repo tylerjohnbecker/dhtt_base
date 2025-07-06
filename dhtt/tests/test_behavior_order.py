@@ -19,6 +19,20 @@ from std_msgs.msg import String
 from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest, GoitrRequest
 from dhtt_msgs.msg import Subtree, Node, NodeStatus, Result  
 
+@pytest.fixture(scope='session')
+def lock(tmp_path_factory):
+    base_temp = tmp_path_factory.getbasetemp()
+    lock_file = base_temp.parent / 'serial.lock'
+    yield filelock.FileLock(lock_file=str(lock_file))
+    with contextlib.suppress(OSError):
+        os.remove(path=lock_file)
+
+
+@pytest.fixture()
+def serial(lock):
+    with lock.acquire(poll_interval=0.1):
+        yield
+
 class ServerNode (rclpy.node.Node):
 
 	def __init__(self):
@@ -251,33 +265,33 @@ class TestServerBehaviorOrder:
 
 			self.compare_history_to_expected(history, expected)
 
-	def test_simple_and(self):
+	def test_simple_and(self, serial):
 		self.order_from_file_test("/test_descriptions/simple_and.yaml")
 
-	def test_simple_or(self):
+	def test_simple_or(self, serial):
 		self.order_from_file_test("/test_descriptions/simple_or.yaml")
 
-	def test_simple_then(self):
+	def test_simple_then(self, serial):
 		self.order_from_file_test("/test_descriptions/simple_then.yaml")
 
-	def test_then_parent_or(self):
+	def test_then_parent_or(self, serial):
 		self.order_from_file_test("/test_descriptions/then_parent_or.yaml")
 
-	def test_then_parent_and(self):
+	def test_then_parent_and(self, serial):
 		self.order_from_file_test("/test_descriptions/then_parent_and.yaml")
 
-	def test_and_parent_or(self):
+	def test_and_parent_or(self, serial):
 		self.order_from_file_test("/test_descriptions/and_parent_or.yaml")
 
-	def test_and_parent_then(self):
+	def test_and_parent_then(self, serial):
 		self.order_from_file_test("/test_descriptions/and_parent_then.yaml")
 
-	def test_or_parent_then(self):
+	def test_or_parent_then(self, serial):
 		self.order_from_file_test("/test_descriptions/or_parent_then.yaml")
 
-	def test_or_parent_and(self):
+	def test_or_parent_and(self, serial):
 		self.order_from_file_test("/test_descriptions/or_parent_and.yaml")
 
-	def test_complex_tree(self):
+	def test_complex_tree(self, serial):
 		self.order_from_file_test("/test_descriptions/complex_tree.yaml")
 

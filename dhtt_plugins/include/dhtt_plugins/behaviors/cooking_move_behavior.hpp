@@ -15,7 +15,7 @@ class CookingMoveBehavior : public CookingBehavior
 	 * TODO Tyler uses parameter this->should_unmark to set priority for certain move_to behaviors
 	 *  (doubles activation).
 	 */
-	double get_perceived_efficiency() override;
+	double get_perceived_efficiency(dhtt::Node* container) override;
 
 	/**
 	 * Makes a move_to request to the target destination.

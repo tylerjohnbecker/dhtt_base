@@ -48,13 +48,14 @@ namespace dhtt_plugins
 
 	void MoveBehavior::do_work( dhtt::Node* container ) 
 	{
-		auto sub_ptr = this->pub_node_ptr->create_subscription<std_msgs::msg::String>("/dhtt/result", 10, std::bind(&MoveBehavior::done_callback, this, std::placeholders::_1));
+		this->com_agg->register_subscription<std_msgs::msg::String>("/dhtt/result", container->get_node_name(), std::bind(&MoveBehavior::done_callback, this, std::placeholders::_1));
 
 		(void) container;
 
 		// for ( int i = 0; i < 10 ; i++ )
 		{
-			auto pub_ptr = this->pub_node_ptr->create_publisher<std_msgs::msg::String>("/dhtt/move_base", 10);
+			// create publisher in scope to save space
+			auto pub_ptr = this->com_agg->register_publisher<std_msgs::msg::String>("/dhtt/move_base");
 
 			std_msgs::msg::String go;
 
@@ -65,17 +66,23 @@ namespace dhtt_plugins
 
 		this->work_done = false;
 
-		while ( not this->work_done )
-			this->executor->spin_once();
+		// needs a refactor anyways so just commenting out for now
+		// while ( not this->work_done )
+		// 	this->com_agg->spin_some();
 
 		this->done = true;
+
+		// unregister subscriber after we no longer need it
+		this->com_agg->unregister_subscription<std_msgs::msg::String>("/dhtt/result", container->get_node_name());
 
 		return;
 
 	}
 
-	double MoveBehavior::get_perceived_efficiency() 
+	double MoveBehavior::get_perceived_efficiency(dhtt::Node* container) 
 	{
+		(void) container; 
+		
 		return this->activation_potential;
 	}
 

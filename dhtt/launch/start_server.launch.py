@@ -8,11 +8,26 @@ from launch_ros.actions import Node
 
 def get_main_node(debug_text=''):
 
+	group_test = GroupAction(
+								condition = LaunchConfigurationEquals('test', 'true'),
+								actions= [
+									Node( package='dhtt', executable='start_server', output='log', prefix=[debug_text], emulate_tty=True, arguments=['test'] ),
+								]
+							)
+
+	group_no_test = GroupAction(
+								condition = LaunchConfigurationEquals('test', 'false'),
+								actions= [
+									Node( package='dhtt', executable='start_server', output='log', prefix=[debug_text], emulate_tty=True, arguments=[] ),
+								]
+							)
+
 	### GROUP IF WITH_WORLD_PARAMS
 	group_if = GroupAction( 
 							condition = LaunchConfigurationEquals('with_world_params', 'true'),
 							actions= [
-								Node( package='dhtt', executable='start_server', output='log', prefix=[debug_text], emulate_tty=True ),
+								group_test,
+								group_no_test,
 								Node( package='dhtt', executable='param_node', output='log', emulate_tty=True, parameters=[LaunchConfiguration('params_file')]),
 							]
 	 					  )
@@ -21,7 +36,8 @@ def get_main_node(debug_text=''):
 	group_unless = GroupAction( 
 							condition = LaunchConfigurationEquals('with_world_params', 'false'),
 							actions= [
-								Node( package='dhtt', executable='start_server', output='log', prefix=[debug_text], emulate_tty=True ),
+								group_test,
+								group_no_test,
 								Node( package='dhtt', executable='param_node', output='log', emulate_tty=True),
 							]
 	 					  )
@@ -34,6 +50,7 @@ def generate_launch_description():
 	with_world_params_arg = DeclareLaunchArgument( 'with_world_params', default_value=TextSubstitution(text='false') )
 	params_file_arg = DeclareLaunchArgument( 'params_file' , default_value=TextSubstitution(text='') )
 	debug_arg = DeclareLaunchArgument( 'debug', default_value=TextSubstitution(text='false') )
+	test_arg = DeclareLaunchArgument( 'test', default_value=TextSubstitution(text='false'))
 
 	debug_group = GroupAction(
 							condition= LaunchConfigurationEquals('debug', 'true'),
@@ -49,6 +66,7 @@ def generate_launch_description():
 			with_world_params_arg,
 			params_file_arg, 
 			debug_arg, 
+			test_arg, 
 			debug_group, 
 			no_debug_group
 		])

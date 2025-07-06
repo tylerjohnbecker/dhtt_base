@@ -14,14 +14,9 @@ namespace dhtt_plugins
 		std::stringstream ss;
 		ss << "action_" << address;
 
-		this->pub_node_ptr = std::make_shared<rclcpp::Node>(ss.str().c_str());
-
 		// only allowed for now until the task logic is implemented
 		this->children_allowed = false;
 		this->done = false;
-
-		this->executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
-		this->executor->add_node(this->pub_node_ptr);
 
 		this->necessary_resources = this->get_necessary_resources();
 
@@ -56,7 +51,7 @@ namespace dhtt_plugins
 				necessary_resources_cp.erase(found);
 		}
 
-		to_ret->activation_potential = this->get_perceived_efficiency();
+		// to_ret->activation_potential = this->get_perceived_efficiency(container);
 		to_ret->requested_resources = necessary_resources_cp;
 		to_ret->owned_resources = container->get_owned_resources();
 		to_ret->done = this->is_done();

@@ -15,7 +15,7 @@ class CookingObjectExistsBehavior : public CookingBehavior
 	/**
 	 * @return 1 if the object exists, 0 otherwise.
 	 */
-	double get_perceived_efficiency() override;
+	double get_perceived_efficiency(dhtt::Node* container) override;
 
 	/**
 	 * Fail if the object does not exist. Succeed if it does.

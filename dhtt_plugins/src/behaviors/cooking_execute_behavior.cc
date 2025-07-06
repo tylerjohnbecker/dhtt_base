@@ -2,9 +2,9 @@
 
 namespace dhtt_plugins
 {
-double CookingExecuteBehavior::get_perceived_efficiency()
+double CookingExecuteBehavior::get_perceived_efficiency(dhtt::Node* container)
 {
-	this->activation_potential = CookingBehavior::get_perceived_efficiency();
+	this->activation_potential = CookingBehavior::get_perceived_efficiency(container);
 	return this->activation_potential;
 }
 
@@ -30,15 +30,16 @@ void CookingExecuteBehavior::do_work(dhtt::Node *container)
 
 	req->action.params = dest_point_str;
 
-	auto res = this->cooking_request_client->async_send_request(req);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending move_to request");
-	this->executor->spin_until_future_complete(res);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "move_to request completed");
+	auto res = this->send_request_and_update(req);
+	// auto res = this->cooking_request_client->async_send_request(req);
+	// RCLCPP_INFO(container->get_logger(), "Sending move_to request");
+	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
+	// RCLCPP_INFO(container->get_logger(), "move_to request completed");
 
 	bool suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+		RCLCPP_ERROR(container->get_logger(),
 					 "move_to request did not succeed, returning early: %s",
 					 res.get()->error_msg.c_str());
 		this->done = false;
@@ -55,17 +56,19 @@ void CookingExecuteBehavior::do_work(dhtt::Node *container)
 								  ? dhtt_msgs::msg::CookingAction::EXECUTE_ACTION_ARM1
 								  : dhtt_msgs::msg::CookingAction::EXECUTE_ACTION_ARM2;
 
-	res = this->cooking_request_client->async_send_request(req);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending execute request");
-	this->executor->spin_until_future_complete(res);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "execute request completed");
+	res = this->send_request_and_update(req);
+
+	// res = this->cooking_request_client->async_send_request(req);
+	// RCLCPP_INFO(container->get_logger(), "Sending execute request");
+	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
+	// RCLCPP_INFO(container->get_logger(), "execute request completed");
 
 	// unmark everything at the object
 	if (this->should_unmark)
 	{
 		// unmark everything at destination location (before it gets changed by observation
 		// callback)
-		this->executor->spin_some(std::chrono::nanoseconds(0));
+		// this->com_agg->spin_some();
 
 		for (const auto &world_obj : this->last_obs->objects)
 		{
@@ -74,7 +77,7 @@ void CookingExecuteBehavior::do_work(dhtt::Node *container)
 				if (not CookingBehavior::unmark_object(world_obj.world_id))
 				{
 					// suc = false; not actually an error when unmarking an unmarked object
-					RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+					RCLCPP_ERROR(container->get_logger(),
 								 ("Error unmarking object " + prev_dest_obj.object_type).c_str());
 				}
 			}
@@ -84,7 +87,7 @@ void CookingExecuteBehavior::do_work(dhtt::Node *container)
 	suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "execute_action request did not succeed: %s",
+		RCLCPP_ERROR(container->get_logger(), "execute_action request did not succeed: %s",
 					 res.get()->error_msg.c_str());
 	}
 
@@ -139,4 +142,5 @@ std::vector<dhtt_msgs::msg::Resource> CookingExecuteBehavior::get_necessary_reso
 
 	return to_ret;
 }
+
 } // namespace dhtt_plugins

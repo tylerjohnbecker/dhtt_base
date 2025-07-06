@@ -172,7 +172,7 @@ class TestServerAddRemove:
 
 		return modify_future.result()
 
-	def test_remove_behavior(self, serial):
+	def test_remove_behavior(self):
 		self.initialize()
 		self.reset_tree()
 
@@ -208,7 +208,7 @@ class TestServerAddRemove:
 
 		assert not to_remove.node_name in node_names_left  
 
-	def test_remove_subtree(self, serial):
+	def test_remove_subtree(self):
 		self.initialize()
 		self.reset_tree()
 
@@ -246,7 +246,7 @@ class TestServerAddRemove:
 		assert not to_remove.node_name in node_names_left 
 		assert not to_remove.node_name in parent_names_left
 
-	def test_remove_root(self, serial):
+	def test_remove_root(self):
 		self.initialize()
 		self.reset_tree()
 
@@ -264,7 +264,7 @@ class TestServerAddRemove:
 		assert not 'ROOT_0' in modify_rs.removed_nodes
 		assert modify_rs.error_msg != ""
 
-	def test_remove_bad_params(self, serial):
+	def test_remove_bad_params(self):
 		self.initialize()
 		self.reset_tree()
 
@@ -326,7 +326,7 @@ class TestServerAddRemove:
 		assert to_remove.node_name in modify_rs.removed_nodes
 		assert modify_rs.error_msg != ""
 
-	def test_add_manually(self, serial):
+	def test_add_manually(self):
 		self.initialize()
 		self.reset_tree()
 
@@ -347,7 +347,7 @@ class TestServerAddRemove:
 		assert 'ParentAnd' in modify_rs.added_nodes[0]
 		assert modify_rs.error_msg == ''
 
-	def test_add_parent_dne(self, serial):
+	def test_add_parent_dne(self):
 		self.initialize()
 		self.reset_tree()
 
@@ -368,13 +368,13 @@ class TestServerAddRemove:
 		assert len(modify_rs.added_nodes) == 0
 		assert modify_rs.error_msg != ''
 
-	def test_add_bad_params(self, serial):
+	def test_add_bad_params(self):
 		self.initialize()
 		self.reset_tree()
 
 		# will fill this in when I get to the class structure and plugins
 
-	def test_add_malformed_node(self, serial):
+	def test_add_malformed_node(self):
 		self.initialize()
 		self.reset_tree()
 
@@ -398,7 +398,7 @@ class TestServerAddRemove:
 
 		# check when the plugin is nonexistant (easier once I make the class structure)
 
-	def test_add_node_mismatch_typeplugin(self, serial):
+	def test_add_node_mismatch_typeplugin(self):
 		self.initialize()
 		self.reset_tree()
 
@@ -421,7 +421,7 @@ class TestServerAddRemove:
 		assert len(modify_rs.added_nodes) == 0
 		assert modify_rs.error_msg != ''
 
-	def test_add_to_behavior(self, serial):
+	def test_add_to_behavior(self):
 		self.initialize()
 		self.reset_tree()
 
@@ -455,13 +455,13 @@ class TestServerAddRemove:
 		assert len(modify_rs.added_nodes) == 0
 		assert modify_rs.error_msg != ''
 
-	def test_huge_add(self, serial):
+	def test_huge_add(self):
 		self.initialize()
 		self.reset_tree()
 
 		# gonna leave blank and passing for now
 
-	def test_add_new_root(self, serial):
+	def test_add_new_root(self):
 		self.initialize()
 		self.reset_tree()
 
@@ -482,7 +482,7 @@ class TestServerAddRemove:
 		assert len(modify_rs.added_nodes) == 0
 		assert modify_rs.error_msg != ''
 
-	def test_add_from_file(self, serial):
+	def test_add_from_file(self):
 		self.initialize()
 		self.reset_tree()
 

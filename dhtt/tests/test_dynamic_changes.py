@@ -19,6 +19,20 @@ from std_msgs.msg import String
 from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest, GoitrRequest
 from dhtt_msgs.msg import Subtree, Node, NodeStatus, Result  
 
+@pytest.fixture(scope='session')
+def lock(tmp_path_factory):
+    base_temp = tmp_path_factory.getbasetemp()
+    lock_file = base_temp.parent / 'serial.lock'
+    yield filelock.FileLock(lock_file=str(lock_file))
+    with contextlib.suppress(OSError):
+        os.remove(path=lock_file)
+
+
+@pytest.fixture()
+def serial(lock):
+    with lock.acquire(poll_interval=0.1):
+        yield
+
 class ServerNode (rclpy.node.Node):
 
 	def __init__(self):
@@ -53,7 +67,6 @@ class ServerNode (rclpy.node.Node):
 		self.root_state = 0
 		self.node_states = {}
 		
-@pytest.mark.serial
 class TestDynamicChanges:
 
 	first = True
@@ -322,7 +335,7 @@ class TestDynamicChanges:
 			rclpy.spin_once(TestDynamicChanges.node)
 			assert rclpy.ok()
 
-	def test_interrupt(self):
+	def test_interrupt(self, serial):
 
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -355,7 +368,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-	def test_static_mutate(self):
+	def test_static_mutate(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -388,7 +401,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-	def test_static_param_change(self):
+	def test_static_param_change(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -414,7 +427,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-	def test_dynamic_add(self):
+	def test_dynamic_add(self, serial):
 
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -455,7 +468,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-	def test_dynamic_remove(self):
+	def test_dynamic_remove(self, serial):
 		with TestDynamicChanges.lock:
 			self.initialize()
 			self.reset_tree()
@@ -488,7 +501,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-	def test_dynamic_and_to_or(self):
+	def test_dynamic_and_to_or(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -530,9 +543,8 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-		pass
 
-	def test_dynamic_then_to_and(self):
+	def test_dynamic_then_to_and(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -574,9 +586,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-		pass
-
-	def test_dynamic_then_to_or(self):
+	def test_dynamic_then_to_or(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -618,9 +628,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-		pass
-
-	def test_dynamic_or_to_and(self):
+	def test_dynamic_or_to_and(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -664,9 +672,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-		pass
-
-	def test_dynamic_or_to_then(self):
+	def test_dynamic_or_to_then(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -710,14 +716,11 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-		pass
 
-	def test_complex_dynamic_tree(self):
+	def test_complex_dynamic_tree(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
 			self.reset_tree()
 
 			# run experiment 3 and verify that it works
-
-		pass

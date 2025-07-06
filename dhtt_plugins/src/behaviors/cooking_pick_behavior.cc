@@ -2,15 +2,14 @@
 
 namespace dhtt_plugins
 {
-double CookingPickBehavior::get_perceived_efficiency()
+double CookingPickBehavior::get_perceived_efficiency(dhtt::Node* container)
 {
-	double activation_check = CookingBehavior::get_perceived_efficiency();
+	double activation_check = CookingBehavior::get_perceived_efficiency(container);
 
 	if (activation_check != 0)
 	{
 		// High activation if we're right next to the object. No activation otherwise.
 		double to_ret = this->agent_point_distance(this->destination_point) == 1.0 ? 1.0 : 0.0;
-		RCLCPP_INFO(this->pub_node_ptr->get_logger(), "I report %f efficiency", to_ret);
 
 		this->activation_potential = to_ret; // TODO is this necessary?
 		return to_ret;
@@ -41,15 +40,16 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 
 	req->action.params = dest_point_str;
 
-	auto res = this->cooking_request_client->async_send_request(req);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending move_to request");
-	this->executor->spin_until_future_complete(res);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "move_to request completed");
+	auto res = this->send_request_and_update(req);
+	// auto res = this->cooking_request_client->async_send_request(req);
+	// RCLCPP_INFO(container->get_logger(), "Sending move_to request");
+	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
+	// RCLCPP_INFO(container->get_logger(), "move_to request completed");
 
 	bool suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+		RCLCPP_ERROR(container->get_logger(),
 					 "move_to request did not succeed, returning early: %s",
 					 res.get()->error_msg.c_str());
 		this->done = false;
@@ -57,13 +57,13 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 	}
 
 	// Equivalent of get_released_resources() but for "resources" on the paramserver
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(),
+	RCLCPP_INFO(container->get_logger(),
 				("Unmarking object that was marked as " + this->destination_mark + " under " +
 				 this->destination_object.object_type)
 					.c_str());
 	if (not this->unmark_static_object_under_obj(this->destination_object))
 	{
-		RCLCPP_WARN(this->pub_node_ptr->get_logger(),
+		RCLCPP_WARN(container->get_logger(),
 					("Error unmarking static object under " + this->destination_object.object_type)
 						.c_str());
 	}
@@ -78,15 +78,16 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 								  ? dhtt_msgs::msg::CookingAction::INTERACT_PRIMARY_ARM1
 								  : dhtt_msgs::msg::CookingAction::INTERACT_PRIMARY_ARM2;
 
-	res = this->cooking_request_client->async_send_request(req);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "Sending interact request");
-	this->executor->spin_until_future_complete(res);
-	RCLCPP_INFO(this->pub_node_ptr->get_logger(), "execute interact completed");
+	res = this->send_request_and_update(req);
+	// res = this->cooking_request_client->async_send_request(req);
+	// RCLCPP_INFO(container->get_logger(), "Sending interact request");
+	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
+	// RCLCPP_INFO(container->get_logger(), "execute interact completed");
 
 	suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(this->pub_node_ptr->get_logger(),
+		RCLCPP_ERROR(container->get_logger(),
 					 "interact_primary request did not succeed: %s", res.get()->error_msg.c_str());
 		return;
 	}
@@ -106,12 +107,12 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 	// if picked object is not marked for anyone
 	if (not this->destination_mark.empty() and this->check_mark(picked_obj) == '2')
 	{
-		RCLCPP_INFO(this->pub_node_ptr->get_logger(),
+		RCLCPP_INFO(container->get_logger(),
 					("Marking object as " + this->destination_mark).c_str());
 		suc = this->mark_object(picked_obj.world_id, this->destination_mark);
 		if (not suc)
 		{
-			RCLCPP_ERROR(this->pub_node_ptr->get_logger(), "Marking object failed: %s",
+			RCLCPP_ERROR(container->get_logger(), "Marking object failed: %s",
 						 res.get()->error_msg.c_str());
 		}
 	}

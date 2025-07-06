@@ -25,6 +25,14 @@ namespace dhtt_plugins
 		(void) child_name;
 	}
 
+	void PtrBranchPlug::destruct()
+	{
+		// call the super destructor so that we don't miss anything
+		BranchPlugType::destruct();
+
+		this->paired_socket.reset();
+	}
+
 	dhtt_msgs::action::Activation::Result PtrBranchPlug::send_activate(dhtt_msgs::action::Activation::Goal to_send)
 	{
 		return this->paired_socket->activation_received_callback(to_send);

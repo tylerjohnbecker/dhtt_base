@@ -27,7 +27,7 @@ namespace dhtt_plugins
 
 		void parse_params( std::vector<std::string> params ) override;
 
-		double get_perceived_efficiency() override;
+		double get_perceived_efficiency(dhtt::Node* container) override;
 
 		bool is_done() override;
 
