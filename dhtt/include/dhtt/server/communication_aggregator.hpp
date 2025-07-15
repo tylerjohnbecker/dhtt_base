@@ -9,11 +9,12 @@
 
 #include "rclcpp/rclcpp.hpp"
 
+#define SUBSCRIBER_CB_MAX 64
+
 // this file also includes the implementation due to templating shenanigans being frustrating to deal with
 
 namespace dhtt
 {
-
 	/**
 	 * \brief Communication Aggregator for subscription and service calls coming from behaviors in the tree
 	 * 
@@ -52,35 +53,60 @@ namespace dhtt
 			// grab the mutex first
 			std::lock_guard<std::mutex> lock(this->register_mutex);
 
+			// if it's an empty name then assign it a unique identifier
 			std::string local_subscriber_name = subscriber_name;
 
-			// if it's an empty name then assign it a unique identifier
 			if ( not strcmp(local_subscriber_name.c_str(), "") )
 			{
 				local_subscriber_name = topic_name + "_subscriber_" + std::to_string(this->unique_id);
 				this->unique_id++;
 			}
-
 			
-			// we have not yet registered a subscriber to this topic
+			// we have not yet registered a subscriber to this topic so we initialize the first one
 			if ( this->function_tables.find(topic_name) == this->function_tables.end() )
 			{
-				std::map<std::string, std::function<void(std::shared_ptr<msg_type>)>> n_function_table{{local_subscriber_name, to_register}};
-				this->function_tables[topic_name] = n_function_table;
+				std::vector<std::map<std::string, std::function<void(std::shared_ptr<msg_type>)>>> n_function_table{{{local_subscriber_name, to_register}}};
+				this->function_tables[topic_name] = n_function_table;// realistically we should statically size this to the max to avoid copy constructor slow downs ( for now it should be fine )
 
-				std::function<void(std::shared_ptr<msg_type>)> n_cb = std::bind(&CommunicationAggregator::generic_subscriber_callback<msg_type>, this, topic_name, std::placeholders::_1);
-				std::shared_ptr<rclcpp::Subscription<msg_type>> n_subscription = this->create_subscription<msg_type>(topic_name, this->sub_qos, n_cb);
+				std::function<void(std::shared_ptr<msg_type>)> n_cb = std::bind(&CommunicationAggregator::generic_subscriber_callback<msg_type>, this, topic_name, std::placeholders::_1, 0);
+				std::vector<std::shared_ptr<rclcpp::Subscription<msg_type>>> n_subscription = {this->create_subscription<msg_type>(topic_name, this->sub_qos, n_cb)};
 
 				this->subscription_ptrs[topic_name] = n_subscription;
 
 				return local_subscriber_name;
 			}
 
-			// topic already has a function table so just add to it (or overwrite in the case of a preexisting function with the same subscriber name)
-			auto tmp = std::any_cast< std::map<std::string, std::function<void(std::shared_ptr<msg_type>)>> >(this->function_tables[topic_name]);
-			tmp[local_subscriber_name] = to_register;
+			//// we already have a subscriber in the dictionary so we check the number of callbacks assigned to it
+															// std::map<std::string, std::function<void(std::shared_ptr<msg_type>)>>
+			auto tmp_func_vector = std::any_cast< std::vector< std::map< std::string, std::function< void( std::shared_ptr<msg_type> ) > > > > ( this->function_tables[topic_name] );
 
-			this->function_tables[topic_name] = tmp;
+			// find the first available index
+			int n_index = 0;
+
+			for ( ; n_index < (int) tmp_func_vector.size() ; n_index++ )
+				if ( (int) tmp_func_vector[n_index].size() < SUBSCRIBER_CB_MAX )
+					break;
+
+			// found an existing subscriber with room
+			if ( n_index < (int) tmp_func_vector.size() )
+			{
+				tmp_func_vector[n_index][local_subscriber_name] = to_register;
+			}
+			else // have to create a new one
+			{
+				std::function<void(std::shared_ptr<msg_type>)> n_cb = std::bind(&CommunicationAggregator::generic_subscriber_callback<msg_type>, this, topic_name, std::placeholders::_1, n_index);
+				std::shared_ptr<rclcpp::Subscription<msg_type>> n_subscription = this->create_subscription<msg_type>(topic_name, this->sub_qos, n_cb);
+
+				// register the new subscription
+				auto tmp_sub_vector = std::any_cast< std::vector< std::shared_ptr< rclcpp::Subscription< msg_type > > > > (this->subscription_ptrs[topic_name]);
+				tmp_sub_vector.push_back(n_subscription);
+
+				this->subscription_ptrs[topic_name] = tmp_sub_vector;
+
+				tmp_func_vector.push_back({{local_subscriber_name, to_register}});
+			}
+
+			this->function_tables[topic_name] = tmp_func_vector;
 
 			return local_subscriber_name;
 		}
@@ -107,35 +133,72 @@ namespace dhtt
 			if ( this->function_tables.find(topic_name) == this->function_tables.end() )
 				return false;
 
+			auto tmp_func_vector = std::any_cast< std::vector < std::map < std::string,  std::function< void( std::shared_ptr< msg_type > ) > > > > (this->function_tables[topic_name]);
+			auto tmp_sub_vector = std::any_cast< std::vector< std::shared_ptr< rclcpp::Subscription< msg_type > > > > (this->subscription_ptrs[topic_name]);
+
 			if ( not strcmp(subscriber_name.c_str(), "") )
 			{
-				// deleting everything is easy
+				// deleting everything is easy doing the any cast first to ensure that destructors are called
+				tmp_func_vector.clear();
 				this->function_tables.erase(topic_name);
+
+				tmp_sub_vector.clear();
 				this->subscription_ptrs.erase(topic_name);
 
 				return true;
 			}
 
-			// I think that this casting is ok since we don't care about using the function here (otherwise this function needs a template)
-			auto tmp = std::any_cast< std::map<std::string, std::function< void( std::shared_ptr< msg_type > ) >> >(this->function_tables[topic_name]);
+			// look in each of the different dictionaries for the guy
+			typename std::vector<std::map<std::string, std::function< void( std::shared_ptr<msg_type> ) > > >::iterator to_delete = tmp_func_vector.begin(); 
 
-			if ( tmp.find(subscriber_name) == tmp.end() )
+			for ( ; to_delete != tmp_func_vector.end() ; to_delete++ )
+			{
+				if ( (*to_delete).find(subscriber_name) != (*to_delete).end() )
+				{
+					(*to_delete).erase(subscriber_name);
+					break;
+				}
+			}
+
+			// if we didn't find the subscriber_name just return
+			if ( to_delete == tmp_func_vector.end() )
 				return false;
 
-			// erase in tmp variable and then save back to internal data structure
-			tmp.erase(subscriber_name);
-
-			// if its empty tho don't save it and delete the subscriber
-			if ( tmp.empty() )
+			// if the resulting function table is empty free the memory from the subscriber
+			if ( (*to_delete).empty() )
 			{
-				// deleting everything is easy
-				this->function_tables.erase(topic_name);
-				this->subscription_ptrs.erase(topic_name);
+				int index = (int) std::distance(tmp_func_vector.begin(), to_delete);
 
-				return true;
+				tmp_func_vector.erase(to_delete);
+				tmp_sub_vector.erase(tmp_sub_vector.begin() + index);
 			}
+			
+			// finally save the changes
+			this->function_tables[topic_name] = tmp_func_vector;
+			this->subscription_ptrs[topic_name] = tmp_sub_vector;
 
-			this->function_tables[topic_name] = tmp;
+			return true;
+
+			// // I think that this casting is ok since we don't care about using the function here (otherwise this function needs a template)
+			// auto tmp = std::any_cast< std::map<std::string, std::function< void( std::shared_ptr< msg_type > ) >> >(this->function_tables[topic_name]);
+
+			// if ( tmp.find(subscriber_name) == tmp.end() )
+			// 	return false;
+
+			// // erase in tmp variable and then save back to internal data structure
+			// tmp.erase(subscriber_name);
+
+			// // if its empty tho don't save it and delete the subscriber
+			// if ( tmp.empty() )
+			// {
+			// 	// deleting everything is easy
+			// 	this->function_tables.erase(topic_name);
+			// 	this->subscription_ptrs.erase(topic_name);
+
+			// 	return true;
+			// }
+
+			// this->function_tables[topic_name] = tmp;
 
 			return true;
 		}
@@ -290,14 +353,14 @@ namespace dhtt
 		 * \return void
 		 */
 		template <typename msg_type>
-		void generic_subscriber_callback(std::string topic_name, std::shared_ptr<msg_type> msg)
+		void generic_subscriber_callback(std::string topic_name, std::shared_ptr<msg_type> msg, int function_table_index)
 		{
 			// in case we unregister the subscriber during this callback being called (Not perfect but this should be safe enough)
 			if ( this->function_tables.find(topic_name) == this->function_tables.end() )
 				return;
 
 			// now cast the function table to the correct type
-			auto table = std::any_cast< std::map < std::string , std::function < void(std::shared_ptr< msg_type > ) > > > (this->function_tables[topic_name]); 
+			auto table = std::any_cast< std::vector < std::map < std::string , std::function < void(std::shared_ptr< msg_type > ) > > > > (this->function_tables[topic_name])[function_table_index]; 
 
 			// initialize and start a thread for every registered callback of this subscriber
 			std::list<std::shared_ptr<std::thread>> thread_list;
@@ -315,8 +378,8 @@ namespace dhtt
 
 		//// private members
 		// subscriber members
-		std::map<std::string, std::any> function_tables; // std::any = std::map < std::string,  std::function< void( std::shared_ptr< msg_type > ) > >
-		std::map<std::string, std::any> subscription_ptrs; // std::any = std::shared_ptr < rclcpp::Subscription < msg_type > > 
+		std::map<std::string, std::any> function_tables; // std::any = std::vector < std::map < std::string,  std::function< void( std::shared_ptr< msg_type > ) > > >
+		std::map<std::string, std::any> subscription_ptrs; // std::any = std::vector < std::shared_ptr < rclcpp::Subscription < msg_type > > >
 
 		rclcpp::QoS sub_qos;
 		int unique_id;

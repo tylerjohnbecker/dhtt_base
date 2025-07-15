@@ -4,28 +4,30 @@ namespace dhtt_plugins
 {
 double CookingPlaceBehavior::get_perceived_efficiency(dhtt::Node* container)
 {
-	double activation_check = CookingBehavior::get_perceived_efficiency(container);
+	// double activation_check = CookingBehavior::get_perceived_efficiency(container);
 
-	if (activation_check != 0)
-	{
-		// High activation if we're right next to the object. No activation otherwise.
-		double to_ret = this->agent_point_distance(this->destination_point) == 1.0 ? 1.0 : 0.0;
+	// if (activation_check != 0)
+	// {
+	// 	// High activation if we're right next to the object. No activation otherwise.
+	// 	double to_ret = abs(this->agent_point_distance(this->destination_point) - 1.0) < DBL_EPSILON ? 1.0 : 0.0;
 
-		this->activation_potential = to_ret; // TODO is this necessary?
-		return to_ret;
-	}
+	// 	this->activation_potential = to_ret; // TODO is this necessary?
+	// 	return to_ret;
+	// }
 
-	return 0;
+	(void) container;
+
+	return 1.0;
 }
 
 void CookingPlaceBehavior::do_work(dhtt::Node *container)
 {
 	(void)container; // Unused
 
-	if (not CookingBehavior::can_work())
-	{
-		return;
-	}
+	// if (not CookingBehavior::can_work())
+	// {
+	// 	return;
+	// }
 
 	const auto prev_dest_obj = this->destination_object;
 
@@ -87,41 +89,23 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 		req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
 		req->super_action = dhtt_msgs::srv::CookingRequest::Request::ACTION;
 		req->action.player_name = dhtt_msgs::msg::CookingAction::DEFAULT_PLAYER_NAME;
-
-		// see pr2.yaml
 		req->action.action_type = dhtt_msgs::msg::CookingAction::NO_OP;
 
-		// res = this->cooking_request_client->async_send_request(req);
-		// RCLCPP_INFO(container->get_logger(), "Sending NOP request");
-		// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
-		// RCLCPP_INFO(container->get_logger(), "NOP interact completed");
+		// First unmark everything on the deliver square
+		this->unmark_at_location(prev_dest_obj.location);
 
+		// then send the NOP which should delete the objects on the deliver square
 		res = this->send_request_and_update(req);
 
 		suc = res.get()->success;
+
+		this->unmark_all_nonexistant();
+
 		if (not suc)
 		{
 			RCLCPP_ERROR(container->get_logger(), "NOP request did not succeed: %s",
 						 res.get()->error_msg.c_str());
 			return;
-		}
-
-		// Equivalent of get_released_resources() but for "resources" on the paramserver
-		if (not this->destination_mark.empty() and
-			this->check_mark(this->destination_object) == '1')
-		{
-			RCLCPP_INFO(container->get_logger(),
-						("Unmarking object that was marked as " + this->destination_mark +
-						 " under " + this->destination_object.object_type)
-							.c_str());
-			suc = this->unmark_static_object_under_obj(this->destination_object);
-			if (not suc)
-			{
-				RCLCPP_ERROR(
-					container->get_logger(),
-					("Error unmarking static object under " + this->destination_object.object_type)
-						.c_str());
-			}
 		}
 	}
 
@@ -151,6 +135,9 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 std::vector<dhtt_msgs::msg::Resource>
 CookingPlaceBehavior::get_retained_resources(dhtt::Node *container)
 {
+	if ( this->should_keep )
+		return container->get_owned_resources();
+
 	(void)container;
 	return std::vector<dhtt_msgs::msg::Resource>{};
 }
@@ -158,6 +145,9 @@ CookingPlaceBehavior::get_retained_resources(dhtt::Node *container)
 std::vector<dhtt_msgs::msg::Resource>
 CookingPlaceBehavior::get_released_resources(dhtt::Node *container)
 {
+	if ( this->should_keep )
+		return std::vector<dhtt_msgs::msg::Resource>{};
+
 	return container->get_owned_resources();
 }
 

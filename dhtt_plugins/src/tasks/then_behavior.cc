@@ -60,7 +60,7 @@ namespace dhtt_plugins
 		for (auto resource: container->get_owned_resources())
 			n_goal.passed_resources.push_back(resource);
 
-		auto results = container->get_activation_results();
+		std::map<std::string, dhtt_msgs::action::Activation::Result> results;
 		std::string first_child_in_queue;
 
 		for ( this->next = 0 ; ( this->child_queue_index + this->next ) < this->child_queue_size ; this->next++ )
@@ -69,15 +69,22 @@ namespace dhtt_plugins
 
 			// for (auto resource : n_goal.passed_resources)
 			// 	RCLCPP_FATAL(container->get_logger(), "type: %d, owned: %d", resource.type, resource.locked);
+			n_goal.success = true;
 
 			container->async_activate_child(first_child_in_queue, n_goal);
 
 			container->block_for_activation_from_children();
-
 			results = container->get_activation_results();
 
 			if (not results[first_child_in_queue].done)
 				break;
+
+			n_goal.success = false;
+
+			container->async_activate_child(first_child_in_queue, n_goal);
+
+			container->block_for_activation_from_children();
+			results = container->get_activation_results();
 		}
 
 		RCLCPP_INFO(container->get_logger(), "Responses received...");
@@ -88,7 +95,19 @@ namespace dhtt_plugins
 		// 	first_child_in_queue = children[this->child_queue_index];
 		// }
 
-		to_ret->local_best_node = first_child_in_queue;
+		to_ret->done = results[first_child_in_queue].done;
+		to_ret->possible = results[first_child_in_queue].possible;
+
+		if ( not to_ret->possible )
+		{
+			to_ret->local_best_node = "";
+		}
+		else
+		{
+			to_ret->local_best_node = first_child_in_queue;
+			to_ret->requested_resources = results[first_child_in_queue].requested_resources;
+			to_ret->owned_resources = results[first_child_in_queue].owned_resources;
+		}
 
 		// calculate activation potential
 		// double total_sum = 0;
@@ -97,29 +116,22 @@ namespace dhtt_plugins
 		// for (auto const& x  : results)
 		// 	total_sum += x.second->activation_potential;
 
-		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation in queue position %d..", first_child_in_queue.c_str(), this->child_queue_index) ;
-
-		to_ret->requested_resources = results[first_child_in_queue].requested_resources;
-		to_ret->owned_resources = results[first_child_in_queue].owned_resources;
-		to_ret->done = results[first_child_in_queue].done;
-		to_ret->possible = results[first_child_in_queue].possible;
+		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation in queue position %d with potential %f...", first_child_in_queue.c_str(), this->child_queue_index, 
+								results[first_child_in_queue].activation_potential) ;
 
 		this->activation_potential = results[first_child_in_queue].activation_potential;// / total_num_children;
 
-		// make sure to send back failure to all if nothing is possible
-		// if ( not to_ret->possible )
-		// {
-		// 	n_goal.success = false;
-		//
-		// 	container->async_activate_child(first_child_in_queue, n_goal);
-		// 	container->block_for_responses_from_children();
-		// }
+		// RCLCPP_WARN(container->get_logger(), "Child %s possible with activation potential %f", (to_ret->possible)? "is" : "isn\'t", results[first_child_in_queue].activation_potential);
+		n_goal.success = false;
 
-		// for (std::vector<std::string>::iterator name_iter = children.begin() + next ; name_iter != children.end() ; name_iter++)
-		// 	if (results[*name_iter]->possible)
-		// 		container->async_activate_child(*name_iter, n_goal);
-		//
-		// container->block_for_responses_from_children();
+		// deactivate the child if it's not possible ( it automatically returns to waiting actually )
+		// if ( not to_ret->possible )
+		// {		
+		// 	container->async_activate_child(first_child_in_queue, n_goal);
+			
+		// 	container->block_for_activation_from_children();
+		// 	container->get_activation_results();
+		// }
 		
 		// return the result
 		return to_ret;
@@ -289,7 +301,7 @@ namespace dhtt_plugins
 
 	double ThenBehavior::get_perceived_efficiency(dhtt::Node* container)
 	{
-		// just give random perceived efficiency
+		(void) container;
 		return this->activation_potential;
 	}
 

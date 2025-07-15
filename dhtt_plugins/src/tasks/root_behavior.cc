@@ -14,6 +14,8 @@ namespace dhtt_plugins
 
 		this->control_server = this->pub_node_ptr->create_service<dhtt_msgs::srv::InternalControlRequest>(control_topic, std::bind(&RootBehavior::control_callback, this, std::placeholders::_1, std::placeholders::_2));
 
+		this->param_client_ptr = this->com_agg->register_param_client("/param_node");
+
 		this->resource_executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 		this->resource_executor->add_node(this->pub_node_ptr);
 
@@ -33,6 +35,17 @@ namespace dhtt_plugins
 
 	std::shared_ptr<dhtt_msgs::action::Activation::Result> RootBehavior::auction_callback( dhtt::Node* container ) 
 	{
+		auto print_resource_state = [&]()
+		{
+			RCLCPP_FATAL(this->get_logger(), "\tCurrent state of resources:");
+
+			for ( auto iter : this->canonical_resources_list )
+			{
+				RCLCPP_FATAL(this->get_logger(), "\t\t%s - type: %d, locked: %d, owners: %d, channel: %d",
+								iter.name.c_str(), iter.type, iter.locked, iter.owners, iter.channel);
+			}
+		};
+
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> to_ret = std::make_shared<dhtt_msgs::action::Activation::Result>();
 
 		RCLCPP_INFO(container->get_logger(), "\n\n\n\tActivation received starting task execution...");
@@ -45,7 +58,8 @@ namespace dhtt_plugins
 		{
 
 			// publish state of resources to all nodes in the tree
-			this->publish_resources();
+			// this->publish_resources();
+			this->push_resources(); 
 
 			// activate children
 			dhtt_msgs::action::Activation::Goal n_goal;
@@ -102,6 +116,7 @@ namespace dhtt_plugins
 
 			this->release_resources( (*result.begin()).second.released_resources );
 			this->release_resources( (*result.begin()).second.passed_resources );
+			// print_resource_state();
 
 			this->children_done = (*result.begin()).second.done;
 
@@ -181,6 +196,7 @@ namespace dhtt_plugins
 
 	double RootBehavior::get_perceived_efficiency(dhtt::Node* container) 
 	{
+		(void) container;
 		return 1.0;
 	}
 
@@ -224,6 +240,33 @@ namespace dhtt_plugins
 		// this->com_agg->publish_msg<dhtt_msgs::msg::Resources>(resources_topic, n_msg);
 	}
 
+	void RootBehavior::push_resources()
+	{
+		std::vector<rclcpp::Parameter> to_push;
+
+		std::vector<std::string> names;
+		std::vector<int> types;
+		std::vector<int> channels;
+		std::vector<bool> locks;
+		std::vector<int> owners;
+
+		//use the internal param server to update resources
+		for ( auto iter : this->canonical_resources_list )
+		{
+			names.push_back(iter.name);
+			types.push_back(iter.type);
+			channels.push_back(iter.channel);
+			locks.push_back(iter.locked);
+			owners.push_back(iter.owners);
+		}
+
+		this->param_client_ptr->set_parameters({rclcpp::Parameter("dhtt_resources.names", names), 
+												rclcpp::Parameter("dhtt_resources.types", types),
+												rclcpp::Parameter("dhtt_resources.channels", channels),
+												rclcpp::Parameter("dhtt_resources.locks", locks),
+												rclcpp::Parameter("dhtt_resources.owners", owners)});
+	}
+
 	std::vector<dhtt_msgs::msg::Resource> RootBehavior::give_resources(std::vector<dhtt_msgs::msg::Resource> to_give)
 	{
 		dhtt_msgs::msg::Resource to_find;
@@ -242,12 +285,17 @@ namespace dhtt_plugins
 			auto found_iter = std::find_if(this->canonical_resources_list.begin(), this->canonical_resources_list.end(), find_first_compatible_resource);
 
 			if ( found_iter == this->canonical_resources_list.end() )
-				throw std::invalid_argument("Could not find resorce of type " + std::to_string(resource.type) + ". This should have been marked impossible. Returning in error.");
+				throw std::invalid_argument("Could not find resource of type " + std::to_string(resource.type) + ". This should have been marked impossible. Returning in error.");
+
+			RCLCPP_DEBUG(this->get_logger(), "%s given to behavior", found_iter->name.c_str());
 
 			(*found_iter).locked = true;
 
 			to_ret.push_back(*found_iter);
 		}
+
+		if ( to_ret.size() != to_give.size() )
+			throw std::runtime_error("Did not find all the required resources!");
 
 		return to_ret;
 	}
@@ -273,6 +321,7 @@ namespace dhtt_plugins
 			(*found_iter).locked = false;
 		} 
 	}
+	
 	void RootBehavior::release_all_resources()
 	{
 		for (std::vector<dhtt_msgs::msg::Resource>::iterator resource_iter = this->canonical_resources_list.begin(); resource_iter != this->canonical_resources_list.end(); resource_iter++)

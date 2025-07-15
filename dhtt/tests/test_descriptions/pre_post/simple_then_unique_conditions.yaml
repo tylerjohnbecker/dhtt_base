@@ -27,7 +27,7 @@ Nodes:
     behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
     parent: 'ParentThen'
-    params: ["activation_potential: 0.0", "c: d"]
+    params: ["activation_potential: 1.0", "c: d"]
   ThirdTask:
     type: 4
     behavior_type: 'dhtt_plugins::TestBehavior'

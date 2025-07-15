@@ -24,6 +24,17 @@ void CookingObjectExistsBehavior::do_work(dhtt::Node *container)
 	req->action.player_name = dhtt_msgs::msg::CookingAction::DEFAULT_PLAYER_NAME;
 	req->action.action_type = dhtt_msgs::msg::CookingAction::NO_OP;
 
+	if (this->destination_is_good)
+	{
+		if (not this->mark_object(this->destination_object.world_id, this->destination_mark))
+		{
+			RCLCPP_ERROR_STREAM(container->get_logger(),
+								"Marking object " << this->destination_object.world_id << " with "
+												  << this->destination_mark << " failed.");
+			this->done = false;
+		}
+	}
+
 	auto res = this->send_request_and_update(req);
 	// auto res = this->cooking_request_client->async_send_request(req);
 	// RCLCPP_INFO(container->get_logger(), "Sending nop request");
@@ -35,17 +46,6 @@ void CookingObjectExistsBehavior::do_work(dhtt::Node *container)
 	{
 		RCLCPP_ERROR(container->get_logger(), "nop request did not succeed: %s",
 					 res.get()->error_msg.c_str());
-	}
-
-	if (this->destination_is_good)
-	{
-		if (not this->mark_object(this->destination_object.world_id, this->destination_mark))
-		{
-			RCLCPP_ERROR_STREAM(container->get_logger(),
-								"Marking object " << this->destination_object.world_id << " with "
-												  << this->destination_mark << " failed.");
-			this->done = false;
-		}
 	}
 
 	this->done &= suc;
@@ -65,6 +65,13 @@ CookingObjectExistsBehavior::get_released_resources(dhtt::Node *container)
 
 std::vector<dhtt_msgs::msg::Resource> CookingObjectExistsBehavior::get_necessary_resources()
 {
-	return {};
+	std::vector<dhtt_msgs::msg::Resource> to_ret;
+
+	dhtt_msgs::msg::Resource base;
+	base.type = dhtt_msgs::msg::Resource::BASE;
+
+	to_ret.push_back(base);
+
+	return to_ret;
 }
 } // namespace dhtt_plugins

@@ -135,6 +135,7 @@ namespace dhtt_plugins
 
 		to_ret->passed_resources = passed;
 		to_ret->released_resources = released;
+		
 		return to_ret;
 	}
 

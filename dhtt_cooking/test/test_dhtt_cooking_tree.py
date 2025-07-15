@@ -515,9 +515,9 @@ class TestCookingZooTree:
             rclpy.spin_until_future_complete(self.node, fut)
             true_name = fut.result().added_nodes[0]
 
-            nodes = self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
-            # self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
-            # self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast.yaml", force=True, add_to=true_name)
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast_cp.yaml", force=True, add_to=true_name)
+            self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast_cp.yaml", force=True, add_to=true_name)
+            self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast_cp.yaml", force=True, add_to=true_name)
             self.start_tree()
 
             # TestCookingZooTree.node.wait_for_node_in_state("TomatoToastBreadChoppedBreadExists_67", NodeStatus.WORKING)
@@ -525,6 +525,6 @@ class TestCookingZooTree:
             # TestCookingZooTree.node.interrupt_tree()
 
             self.wait_for_finished_execution()
-            self.reset_tree()
+            # self.reset_tree()
 
     # TODO negative tests

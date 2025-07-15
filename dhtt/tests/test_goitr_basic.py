@@ -429,7 +429,7 @@ class TestGoitrSimple:
 
 		node_to_add.node_name = 'TestNode'
 		node_to_add.plugin_name = 'dhtt_plugins::TestBehavior'
-		node_to_add.params = ['activation_potential: 0.0']
+		node_to_add.params = ['activation_potential: 0.1']
 
 		self.send_add_node(added_goitrs[1], 'NONE', node_to_add)
 

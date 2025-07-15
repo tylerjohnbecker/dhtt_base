@@ -4,10 +4,11 @@ namespace dhtt_plugins
 {
 void CookingPlatePlaceBehavior::do_work(dhtt::Node *container)
 {
-	if (not CookingBehavior::can_work())
-	{
-		return;
-	}
+	// if (not CookingBehavior::can_work())
+	// {
+	// 	return;
+	// }
+	const auto prev_dest_obj = this->destination_object;
 
 	/* move_to */
 	auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
@@ -64,39 +65,21 @@ void CookingPlatePlaceBehavior::do_work(dhtt::Node *container)
 	 * needed*/
 	if (this->destination_object.object_type.find("Deliversquare") != std::string::npos)
 	{
-		// make sure we're up to date with observations
-		// this->com_agg->spin_some();
-
-		// unmark everything on the deliversquare, including the deliversquare
-		// need to do this before the objects are deleted by the nop...
-		for (auto &world_obj : this->last_obs->objects)
-		{
-			// TODO if object type is lettuce or tomato or something, debug point
-
-			if (world_obj.location == this->destination_object.location)
-			{
-				if (not CookingBehavior::unmark_object(world_obj.world_id))
-				{
-					RCLCPP_ERROR_STREAM(container->get_logger(),
-										"Error unmarking object" << world_obj.world_id);
-				}
-			}
-		}
-
 		req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
 		req->super_action = dhtt_msgs::srv::CookingRequest::Request::ACTION;
 		req->action.player_name = dhtt_msgs::msg::CookingAction::DEFAULT_PLAYER_NAME;
-
-		// see pr2.yaml
 		req->action.action_type = dhtt_msgs::msg::CookingAction::NO_OP;
 
+		// First unmark everything on the deliver square
+		this->unmark_at_location(prev_dest_obj.location);
+
+		// then send the NOP which should delete the objects on the deliver square
 		res = this->send_request_and_update(req);
-		// res = this->cooking_request_client->async_send_request(req);
-		// RCLCPP_INFO(container->get_logger(), "Sending NOP request");
-		// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
-		// RCLCPP_INFO(container->get_logger(), "NOP interact completed");
 
 		suc = res.get()->success;
+
+		// this->unmark_all_nonexistant();
+
 		if (not suc)
 		{
 			RCLCPP_ERROR(container->get_logger(), "NOP request did not succeed: %s",

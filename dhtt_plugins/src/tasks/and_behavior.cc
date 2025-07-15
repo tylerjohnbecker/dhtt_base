@@ -73,7 +73,9 @@ namespace dhtt_plugins
 
 		// check if a possible child exists
 		if ( strcmp( "", local_best_child.c_str() ) )
+		{
 			to_ret->possible = results[local_best_child].possible;
+		}
 
 		// send stop back to the rest
 		n_goal.success = false;
@@ -88,7 +90,7 @@ namespace dhtt_plugins
 		// return winner
 		to_ret->local_best_node = local_best_child;
 
-		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation..", local_best_child.c_str()) ;
+		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation with potential %f...", local_best_child.c_str(), results[local_best_child].activation_potential);
 
 		if ( to_ret->possible )
 		{
@@ -129,7 +131,8 @@ namespace dhtt_plugins
 
 		// copy and return message with this node as the local node
 		to_ret->released_resources = result.released_resources;
-		to_ret->passed_resources = result.passed_resources;
+		to_ret->released_resources.insert(to_ret->released_resources.end(),  result.passed_resources.begin(), result.passed_resources.end());
+		// to_ret->passed_resources = result.passed_resources;
 		to_ret->last_behavior = result.last_behavior;
 		to_ret->done = this->is_done();
 		to_ret->success = result.success;
@@ -188,6 +191,7 @@ namespace dhtt_plugins
 
 	double AndBehavior::get_perceived_efficiency(dhtt::Node* container) 
 	{
+		(void) container;
 		return this->activation_potential;
 	}
 

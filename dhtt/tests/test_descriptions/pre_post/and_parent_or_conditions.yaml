@@ -24,7 +24,7 @@ Nodes:
     behavior_type: 'dhtt_plugins::TestBehavior'
     robot: 0
     parent: 'ParentAnd'
-    params: ["activation_potential: 0.0", "a: b"]
+    params: ["activation_potential: 1.0", "a: b"]
   MidParentOr:
     type: 3
     behavior_type: 'dhtt_plugins::OrBehavior'

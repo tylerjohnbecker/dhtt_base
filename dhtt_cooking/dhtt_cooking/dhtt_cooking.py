@@ -1,6 +1,7 @@
 import re
 
 import rclpy
+import rclpy.executors
 import rclpy.logging
 import rclpy.node
 import geometry_msgs.msg
@@ -68,7 +69,7 @@ class CookingNode(rclpy.node.Node):
                 self.get_logger().error('Bad action request: No player name')
                 to_ret = "Bad action request: No player name"
             else:
-                self.get_logger().debug(
+                self.get_logger().info (
                     f'Resolving action request with: player {request.action.player_name}, action_type {request.action.action_type}, params {request.action.params}')
                 self.cooking_environment.resolve_dhtt_action(request, response)
 
@@ -76,18 +77,16 @@ class CookingNode(rclpy.node.Node):
                     self.actions_taken.append(request.action)
         elif request.super_action == CookingRequest.Request.OBSERVE:
             self.get_logger().info('Got observe request')
-            obs = self._prepare_observation_msg()
-            self.cooking_observation_publisher.publish(obs)
-            self.get_logger().info('Published observation')
-            self.get_logger().debug(f'Published observation, header: {obs.head}')
+            # self.get_logger().info('Published observation')
+            # self.get_logger().debug(f'Published observation, header: {obs.head}')
         else:
             to_ret = "No valid super_action"
 
-        if self.cooking_environment:
-            obs = self._prepare_observation_msg()
-            self.cooking_observation_publisher.publish(obs)
-            self.get_logger().debug(f'Published observation, header: {obs.head}')
+        # if self.cooking_environment:
+        #     self.get_logger().debug(f'Published observation, header: {obs.head}')
 
+        obs = self._prepare_observation_msg()
+        self.cooking_observation_publisher.publish(obs)
         response.error_msg += to_ret
         response.success = response.error_msg == ""
 
@@ -370,7 +369,11 @@ def main():
     rclpy.init()
 
     node = CookingNode()
-    rclpy.spin(node)
+    my_ex = rclpy.executors.MultiThreadedExecutor()
+
+    my_ex.add_node(node)
+
+    my_ex.spin()
 
     rclpy.shutdown()
 

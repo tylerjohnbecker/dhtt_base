@@ -75,11 +75,16 @@ namespace dhtt
 		this->goitr_name = goitr_type;
 
 		this->logic->com_agg = this->global_com;
+		this->logic->set_name(name);
 		this->logic->initialize(params);
 	}
 
 	Node::~Node()
 	{
+		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
+
+		this->global_com->unregister_subscription<dhtt_msgs::msg::Resources>(resources_topic, this->name);
+
 		// empty for now
 		if ( this->has_goitr )	
 			this->replanner->destruct();
@@ -88,10 +93,7 @@ namespace dhtt
 			pair.second.second->destruct();
 
 		this->parent_communication_socket->destruct();
-
-		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
-
-		this->global_com->unregister_subscription<dhtt_msgs::msg::Resources>(resources_topic, this->name);
+		this->logic->destruct();
 	}
 
 	bool Node::loaded_successfully()
@@ -147,7 +149,7 @@ namespace dhtt
 		// this->status_pub = this->create_publisher<dhtt_msgs::msg::Node>("/status", 10, this->pub_opts);
 		// this->knowledge_pub = this->create_publisher<std_msgs::msg::String>("/updated_knowledge", 10);
 
-		this->global_com->register_subscription<dhtt_msgs::msg::Resources>(resources_topic, this->name, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1) );
+		// this->global_com->register_subscription<dhtt_msgs::msg::Resources>(resources_topic, this->name, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1) );
 		// this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1), this->sub_opts);
 
 		this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
@@ -412,15 +414,15 @@ namespace dhtt
 		// this->block_for_activation_from_children();
 
 		// use a condition variable to only grab the logic_mut once the resources have been updated
-		auto check_resources_updated = [&](){ return this->resource_status_updated; };
+		// auto check_resources_updated = [&](){ return (bool) this->resource_status_updated; };
 
-		std::unique_lock<std::mutex> lock(this->logic_mut);
+		// std::unique_lock<std::mutex> lock(this->logic_mut);
 
 		if ( this->status.state == dhtt_msgs::msg::NodeStatus::WAITING )
 		{
-
-			if ( not this->resource_status_updated )
-				this->resource_condition.wait(lock, check_resources_updated);
+			// if ( not this->resource_status_updated )
+			// 	this->resource_condition.wait(lock, check_resources_updated);
+			this->pull_resources();
 				
 			this->update_status(dhtt_msgs::msg::NodeStatus::ACTIVE);
 
@@ -434,8 +436,8 @@ namespace dhtt
 			this->active_child_name = to_ret.local_best_node;
 
 			// check preconditions before moving request up
-			to_ret.possible = to_ret.possible and this->check_preconditions();
 			to_ret.activation_potential = this->logic->get_perceived_efficiency(this);
+			to_ret.possible = to_ret.possible and this->check_preconditions() and (to_ret.activation_potential > 0);
 
 			if ( to_ret.possible )
 				this->active = true;
@@ -496,7 +498,6 @@ namespace dhtt
 			}
 
 			this->resource_status_updated = false;
-			lock.unlock();
 
 			return to_ret; 
 		}
@@ -505,11 +506,11 @@ namespace dhtt
 			to_ret.done = true;
 		}
 
-		this->resource_status_updated = false;
+		// this->resource_status_updated = false;
 
 		// then send result back to parent
 		RCLCPP_INFO(this->get_logger(), "Sending request back up the tree...");
-		lock.unlock();
+
 		return to_ret;
 	}
 
@@ -569,6 +570,26 @@ namespace dhtt
 
 		return to_ret; 
 	}
+
+	void Node::print_resources(std::vector<dhtt_msgs::msg::Resource> compare)
+	{
+		RCLCPP_FATAL(this->get_logger(), "\tCurrent state of resources:");
+
+		for ( auto iter : this->available_resources )
+		{
+			RCLCPP_FATAL(this->get_logger(), "\t\t%s - type: %d, locked: %d, owners: %d, channel: %d",
+							iter.name.c_str(), iter.type, iter.locked, iter.owners, iter.channel);
+		}
+		
+		RCLCPP_FATAL(this->get_logger(), "\tCompared to:");
+
+		for ( auto iter : compare )
+		{
+			RCLCPP_FATAL(this->get_logger(), "\t\t%s - type: %d, locked: %d, owners: %d, channel: %d",
+							iter.name.c_str(), iter.type, iter.locked, iter.owners, iter.channel);
+		}
+		
+	}
 	
 	void Node::modify(std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response)
 	{
@@ -585,6 +606,7 @@ namespace dhtt
 				temp_logic = node_type_loader.createSharedInstance(request->mutate_type);
 
 				temp_logic->com_agg = this->global_com;
+				temp_logic->set_name(this->name);
 				temp_logic->initialize(request->params);
 			}
 			catch (std::exception& ex)
@@ -658,10 +680,15 @@ namespace dhtt
 
 	void Node::resource_availability_callback( const dhtt_msgs::msg::Resources::SharedPtr canonical_list )
 	{
-		RCLCPP_FATAL(this->get_logger(), "Resources updated");
-		this->available_resources = canonical_list->resource_state;
+		{
+			// std::lock_guard<std::mutex> lock(this->logic_mut);
+		
+			RCLCPP_FATAL(this->get_logger(), "Resources updated");
+			this->available_resources = canonical_list->resource_state;
 
-		this->resource_status_updated = true;
+			this->resource_status_updated = true;
+		}
+
 		this->resource_condition.notify_one();
 	}
 
@@ -689,5 +716,34 @@ namespace dhtt
 	double Node::calculate_activation_potential()
 	{
 		return this->logic->get_perceived_efficiency(this) * (this->priority + (int) this->owned_resources.size());
+	}
+
+	void Node::pull_resources()
+	{
+		std::vector<std::string> names = this->global_com->sync_send_param_request_safe<std::vector<std::string>>(
+			"/param_node", "dhtt_resources.names", {});
+		std::vector<long int> types = this->global_com->sync_send_param_request_safe<std::vector<long int>>(
+			"/param_node", "dhtt_resources.types", {});
+		std::vector<long int> channels = this->global_com->sync_send_param_request_safe<std::vector<long int>>(
+			"/param_node", "dhtt_resources.channels", {});
+		std::vector<bool> locks = this->global_com->sync_send_param_request_safe<std::vector<bool>>(
+			"/param_node", "dhtt_resources.locks", {});
+		std::vector<long int> owners = this->global_com->sync_send_param_request_safe<std::vector<long int>>(
+			"/param_node", "dhtt_resources.owners", {});
+		
+		this->available_resources.clear();
+
+		for ( int index = 0 ; index < (int) names.size() ; index++ )
+		{
+			dhtt_msgs::msg::Resource to_add;
+
+			to_add.name = names[index];
+			to_add.type = types[index];
+			to_add.channel = channels[index];
+			to_add.locked = locks[index];
+			to_add.owners = owners[index];
+
+			this->available_resources.push_back(to_add);
+		}
 	}
 }

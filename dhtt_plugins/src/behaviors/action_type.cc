@@ -56,7 +56,14 @@ namespace dhtt_plugins
 		to_ret->owned_resources = container->get_owned_resources();
 		to_ret->done = this->is_done();
 		to_ret->possible = container->is_request_possible(to_ret->requested_resources);
-		to_ret->possible &= to_ret->activation_potential > 0;
+		// to_ret->possible &= to_ret->activation_potential > 0;
+
+		// if ( not to_ret->possible )
+		// {
+		// 	RCLCPP_WARN(container->get_logger(), "I am not possible");
+
+		// 	container->print_resources(to_ret->owned_resources);
+		// }
 
 		return to_ret;
 	}

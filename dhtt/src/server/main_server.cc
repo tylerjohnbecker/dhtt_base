@@ -83,8 +83,15 @@ namespace dhtt
 		// just manually cleaning up the data structure here
 		this->verbose = false;
 
-		// not functioning at the moment, will have to revisit this when I get to the proper node structure
-		// this->remove_node(std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>(), this->node_list.tree_nodes[0]);
+		// remove everyone's knowledge of their children first to avoid the severe warning from pluginlib
+		for ( auto& pair : this->node_map )
+		{
+			auto children = pair.second->get_child_names();
+
+			for ( auto name : children )
+				pair.second->remove_child(name);
+		}
+
 		this->node_list.tree_nodes.clear();
 		this->node_map.clear();
 
@@ -1227,14 +1234,37 @@ namespace dhtt
 
 		std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> blank_rs = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
 
+		// remove the nodes after
 		for ( std::string iter : this->node_list.tree_nodes[0].child_name )
 			std::string blank = this->remove_node( blank_rs, iter );
+			
+		// reset all resources and params 
+		this->node_map["ROOT_0"]->logic->release_all_resources();
+		this->reset_param_server();
 
 		this->history.clear();
 
 		this->node_map["ROOT_0"]->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
 		return "";
+	}
+
+	void MainServer::reset_param_server()
+	{
+		// get a sync param client ptr from the communication_aggregator
+		auto local_param_client = this->global_com->register_param_client("/param_node");
+
+		if ( not local_param_client )
+			throw std::runtime_error("Cannot reach param node.");
+
+		auto param_name_list = local_param_client->list_parameters({}, 2).names;
+		std::vector<rclcpp::Parameter> param_list = {};
+
+		// put empty parameter values for each of the retrieved parameter names
+		for ( auto iter : param_name_list )
+			param_list.push_back(rclcpp::Parameter(iter, rclcpp::ParameterValue()));
+
+		local_param_client->set_parameters(param_list);
 	}
 
 	// fetch helpers

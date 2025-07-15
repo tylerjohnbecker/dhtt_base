@@ -16,6 +16,13 @@ class CookingBehavior : public ActionType
 	// void do_work(...)
 
 	/**
+	 * \brief unregisters the observation subscriber from the communication aggregator
+	 * 
+	 * \return void
+	 */
+	void destruct() override;
+
+	/**
 	 * \brief parses activation_potential and destination parameters for the move behavior
 	 *
 	 * The meaning of each parameter is as follows:
@@ -41,7 +48,7 @@ class CookingBehavior : public ActionType
 	 * their own metric.
 	 * @return 0 if the checks failed, 1 otherwise.
 	 */
-	virtual double get_perceived_efficiency(dhtt::Node* container) override;
+	virtual double get_perceived_efficiency(dhtt::Node* containenr) override;
 
   protected:
 	std::string destination_type;  // key: coordinate or closest object
@@ -52,8 +59,11 @@ class CookingBehavior : public ActionType
 	dhtt_msgs::msg::CookingObject destination_object; // closest object
 	bool destination_is_good = false;
 	bool should_unmark = false;
+	bool should_keep = false;
 
-	bool updated = false;
+	std::atomic_bool updated;
+	std::condition_variable update_condition;
+	std::mutex observation_mut;
 
 	static double point_distance(const geometry_msgs::msg::Point &point1,
 								 const geometry_msgs::msg::Point &point2);
@@ -91,10 +101,36 @@ class CookingBehavior : public ActionType
 	bool mark_object(unsigned long object_id, const std::string &mark) const;
 
 	// Assumes static object and this->destination_object have the same mark
-	bool unmark_static_object_under_obj(const dhtt_msgs::msg::CookingObject &obj) const;
+	bool unmark_static_object_under_obj(const dhtt_msgs::msg::CookingObject &obj, bool force=false) const;
+
+	/**
+	 * \brief Indiscriminately unmarks all objects at a given location
+	 * 
+	 * \param loc location to unmark at
+	 * 
+	 * \return true if all unmarks are successful, false otherwise
+	 */
+	bool unmark_at_location(const geometry_msgs::msg::Point& loc); 
+
+	/**
+	 * \brief removes any non-existant ids from the marked objects list
+	 * 
+	 * \return void
+	 */
+	void unmark_all_nonexistant();
 
 	// TODO clear all on tree reset
-	bool unmark_object(unsigned long object_id) const;
+	bool unmark_object(unsigned long object_id, bool force=false) const;
+
+	/**
+	 * \brief unmarks all objects of a certain type at a given location
+	 * 
+	 * \param loc location to unmark
+	 * \param type string name of type of object to unmark
+	 * 
+	 * \return true if unmark successful false otherwise
+	 */
+	bool unmark_given_type(const geometry_msgs::msg::Point& loc, std::string type);
 	
 	/**
 	 * \brief sends a client request to the cooking server and blocks for a response update message
@@ -120,10 +156,12 @@ class CookingBehavior : public ActionType
 	static constexpr auto PARAM_OBJECT_TYPE = "object";
 	static constexpr auto PARAM_OBJECT_CONDITIONS = "conditions";
 	static constexpr auto PARAM_OBJECT_MARK = "mark";
+	static constexpr auto PARAM_KEEP = "keep";
 	static constexpr auto PARAM_MARK_OBJECTS = "world.marked_objects_ids";
 	static constexpr auto PARAM_MARK_OBJECTS_TAINTS = "world.marked_objects_taints";
 	static constexpr auto PARAM_MARK_OBJECTS_TYPES = "world.marked_objects_types";
 	static constexpr auto PARAM_UNMARK = "unmark";
+	static constexpr auto SPECIAL_MARK = "ZH";
 	const int LEVEL_SIZE = 6;
 
   private:

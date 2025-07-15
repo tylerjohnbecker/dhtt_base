@@ -55,6 +55,9 @@
 	</class>
 
     <!-- COOKING BEHAVIORS -->
+	<class type="dhtt_plugins::DeferBehavior" base_class_type="dhtt::NodeType">
+		<description>This is an empty behavior with low activation potential that serves as a spacer for the tree.</description>
+	</class>
     <class type="dhtt_plugins::CookingExecuteBehavior" base_class_type="dhtt::NodeType">
         <description>TODO</description>
     </class>

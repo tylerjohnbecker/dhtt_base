@@ -339,8 +339,6 @@ namespace dhtt
 		 * - if the node is working it runs the work_callback of the NodeType plugin and then releases and passes the appropriate resources
 		 * 
 		 * \param goal_handle internal action_server representation of the current goal
-		 * 
-		 * \return void
 		 */
 		dhtt_msgs::action::Activation::Result activate(dhtt_msgs::action::Activation::Goal goal);
 
@@ -348,6 +346,15 @@ namespace dhtt
 		 * \brief Sends a request to the children to get pre and postconditions, then combines them based on logic in the node_type and saves and returns the result
 		 */
 		dhtt_msgs::action::Condition::Result combine_child_conditions(dhtt_msgs::action::Condition::Goal goal);
+
+		/**
+		 * \brief debugging tool to print the resources that this tree thinks are canonical
+		 * 
+		 * \param compare vector to print alongside the available resources for comparison
+		 * 
+		 * \return void
+		 */
+		void print_resources(std::vector<dhtt_msgs::msg::Resource> compare);
 
 	protected:
 
@@ -504,6 +511,12 @@ namespace dhtt
 		 */
 		double calculate_activation_potential();
 
+		/**
+		 * \brief update the currently available resources with the resources list on the parameter server
+		 * 
+		 * \return void
+		 */
+		void pull_resources();
 
 		// callback group
 		rclcpp::CallbackGroup::SharedPtr conc_group;
@@ -558,7 +571,7 @@ namespace dhtt
 
 		int priority;
 
-		bool resource_status_updated;
+		std::atomic_bool resource_status_updated;
 		bool has_goitr;
 		bool first_activation;
 		bool active;

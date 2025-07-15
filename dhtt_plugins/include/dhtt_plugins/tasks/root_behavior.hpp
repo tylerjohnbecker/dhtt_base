@@ -99,6 +99,15 @@ namespace dhtt_plugins
 		 */
 		bool is_done() override;
 
+		/**
+		 * \brief releases all resources
+		 * 
+		 * This method serves to clean up in case there are resources still in use after the tree has stopped running. Just goes resource by resource and releases them.
+		 * 
+		 * \return void
+		 */
+		void release_all_resources() override;
+
 	protected:
 
 		/**
@@ -119,6 +128,13 @@ namespace dhtt_plugins
 		 * \return void
 		 */
 		void publish_resources();
+
+		/**
+		 * \brief pushes canonical resources list to the param server
+		 * 
+		 * \return void 
+		 */
+		void push_resources();
 
 		/**
 		 * \brief fullfills a request from the child
@@ -143,15 +159,6 @@ namespace dhtt_plugins
 		 * \return void
 		 */
 		void release_resources(std::vector<dhtt_msgs::msg::Resource> to_release);
-
-		/**
-		 * \brief releases all resources
-		 * 
-		 * This method serves to clean up in case there are resources still in use after the tree has stopped running. Just goes resource by resource and releases them.
-		 * 
-		 * \return void
-		 */
-		void release_all_resources();
 
 		/**
 		 * \brief callback to handle stop requests from MainServer
@@ -185,6 +192,8 @@ namespace dhtt_plugins
 		
 		std::shared_ptr<rclcpp::Node> pub_node_ptr;
 		std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> resource_executor;
+
+		std::shared_ptr<rclcpp::SyncParametersClient> param_client_ptr;
 		
 		rclcpp::Publisher<dhtt_msgs::msg::Resources>::SharedPtr status_pub;
 		rclcpp::Service<dhtt_msgs::srv::InternalControlRequest>::SharedPtr control_server;

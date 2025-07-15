@@ -270,6 +270,13 @@ namespace dhtt
 		 */
 		std::string reset_tree();
 
+		/**
+		 * \brief resets all parameters in param_node to default values
+		 * 
+		 * \return void
+		 */
+		void reset_param_server();
+
 		// fetch helpers
 
 		/**

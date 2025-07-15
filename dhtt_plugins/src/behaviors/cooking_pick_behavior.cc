@@ -4,18 +4,20 @@ namespace dhtt_plugins
 {
 double CookingPickBehavior::get_perceived_efficiency(dhtt::Node* container)
 {
-	double activation_check = CookingBehavior::get_perceived_efficiency(container);
+	// double activation_check = CookingBehavior::get_perceived_efficiency(container);
 
-	if (activation_check != 0)
-	{
-		// High activation if we're right next to the object. No activation otherwise.
-		double to_ret = this->agent_point_distance(this->destination_point) == 1.0 ? 1.0 : 0.0;
+	// if (activation_check != 0)
+	// {
+	// 	// High activation if we're right next to the object. No activation otherwise.
+	// 	double to_ret = abs(this->agent_point_distance(this->destination_point) - 1.0) < DBL_EPSILON ? 1.0 : 0.0;
 
-		this->activation_potential = to_ret; // TODO is this necessary?
-		return to_ret;
-	}
+	// 	this->activation_potential = to_ret; // TODO is this necessary?
+	// 	return to_ret;
+	// }
 
-	return 0;
+	(void) container;
+
+	return 0.8;
 }
 
 void CookingPickBehavior::do_work(dhtt::Node *container)
@@ -24,10 +26,10 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 
 	std::vector<dhtt_msgs::msg::CookingObject> prev_held = this->last_obs->agents[0].holding;
 
-	if (not CookingBehavior::can_work())
-	{
-		return;
-	}
+	// if (not CookingBehavior::can_work())
+	// {
+	// 	return;
+	// }
 
 	/* move_to */
 	auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
@@ -58,10 +60,10 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 
 	// Equivalent of get_released_resources() but for "resources" on the paramserver
 	RCLCPP_INFO(container->get_logger(),
-				("Unmarking object that was marked as " + this->destination_mark + " under " +
+				("Unmarking object that was under " +
 				 this->destination_object.object_type)
 					.c_str());
-	if (not this->unmark_static_object_under_obj(this->destination_object))
+	if (this->should_unmark and not this->unmark_static_object_under_obj(this->destination_object, true))
 	{
 		RCLCPP_WARN(container->get_logger(),
 					("Error unmarking static object under " + this->destination_object.object_type)
@@ -79,10 +81,6 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 								  : dhtt_msgs::msg::CookingAction::INTERACT_PRIMARY_ARM2;
 
 	res = this->send_request_and_update(req);
-	// res = this->cooking_request_client->async_send_request(req);
-	// RCLCPP_INFO(container->get_logger(), "Sending interact request");
-	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
-	// RCLCPP_INFO(container->get_logger(), "execute interact completed");
 
 	suc = res.get()->success;
 	if (not suc)
@@ -123,7 +121,7 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 std::vector<dhtt_msgs::msg::Resource>
 CookingPickBehavior::get_retained_resources(dhtt::Node *container)
 {
-	if (this->should_unmark)
+	if (this->should_keep)
 	{
 		return container->get_owned_resources();
 	}
@@ -146,7 +144,7 @@ CookingPickBehavior::get_retained_resources(dhtt::Node *container)
 std::vector<dhtt_msgs::msg::Resource>
 CookingPickBehavior::get_released_resources(dhtt::Node *container)
 {
-	if (this->should_unmark)
+	if (this->should_keep)
 	{
 		return std::vector<dhtt_msgs::msg::Resource>();
 	}

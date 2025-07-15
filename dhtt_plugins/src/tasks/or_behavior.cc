@@ -220,6 +220,7 @@ namespace dhtt_plugins
 
 	double OrBehavior::get_perceived_efficiency(dhtt::Node* container) 
 	{
+		(void) container;
 		return this->activation_potential;
 	}
 

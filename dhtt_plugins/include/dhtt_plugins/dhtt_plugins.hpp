@@ -11,6 +11,7 @@
 #include "dhtt_plugins/behaviors/move_behavior.hpp"
 #include "dhtt_plugins/behaviors/pick_behavior.hpp"
 #include "dhtt_plugins/behaviors/place_behavior.hpp"
+#include "dhtt_plugins/behaviors/defer_behavior.hpp"
 #include "dhtt_plugins/behaviors/cooking_execute_behavior.hpp"
 #include "dhtt_plugins/behaviors/cooking_interact_special_behavior.hpp"
 #include "dhtt_plugins/behaviors/cooking_move_behavior.hpp"
@@ -38,6 +39,7 @@ PLUGINLIB_EXPORT_CLASS(dhtt_plugins::MockLookBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::MoveBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::PickBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::PlaceBehavior, dhtt::NodeType)
+PLUGINLIB_EXPORT_CLASS(dhtt_plugins::DeferBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::CookingExecuteBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::CookingInteractSpecialBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::CookingMoveBehavior, dhtt::NodeType)

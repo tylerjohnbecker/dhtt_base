@@ -8,7 +8,7 @@
             "name": "ROS: Attach",
             "type": "ros",
             "request": "attach",
-            "sudo": true
+            // "miDebuggerPath": "/home/tylerjbecker/gdb_sudo",
         }
     ]
 }

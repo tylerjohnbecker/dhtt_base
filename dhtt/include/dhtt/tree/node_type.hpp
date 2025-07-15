@@ -49,6 +49,13 @@ namespace dhtt
 		virtual void initialize(std::vector<std::string> params) = 0;
 
 		/**
+		 * \brief just available in case there are any non-trivial resource cleanups in any nodetypes
+		 * 
+		 * \return void
+		 */
+		virtual void destruct() {};
+
+		/**
 		 * \brief functionality for completing an auction
 		 * 
 		 * This describes what the node should consider when it is first activated (i.e. when it starts an auction). Behavior nodes should request any resources that they need to begin working,
@@ -144,6 +151,25 @@ namespace dhtt
 		 */
 		virtual dhtt_utils::PredicateConjunction get_postconditions() {return this->postconditions;};
 
+		/**
+		 * \brief releases all node resources
+		 * 
+		 * This is mostly for the root node to release resources on a request from the main server although there might be other uses for it in the future
+		 * 
+		 * \return void
+		 */
+		virtual void release_all_resources() {};
+
+		virtual void set_name(std::string name)
+		{
+			this->name = name;
+		};
+
+		virtual rclcpp::Logger get_logger() const
+		{
+			return rclcpp::get_logger(this->name);
+		};
+
 		goal_t goal_type = PERSISTENT;
 
 		std::vector<dhtt_msgs::msg::Resource> necessary_resources;
@@ -157,6 +183,8 @@ namespace dhtt
 		dhtt_utils::PredicateConjunction preconditions;
 		dhtt_utils::PredicateConjunction postconditions;
 		bool children_allowed;
+
+		std::string name;
 	};
 
 }

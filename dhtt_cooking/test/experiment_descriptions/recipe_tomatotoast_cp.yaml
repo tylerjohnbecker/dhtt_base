@@ -22,43 +22,43 @@ NodeList:
   - TomatoToastBreadChoppedBreadPickTwo
   - TomatoToastBreadChoppedBreadMoveToCounterTwo
   - TomatoToastBreadChoppedBreadPlaceCounterTwo   # END COUNTER BREAD # END NEW TOAST
-  - TomatoToastBreadChoppedBreadMoveTo
-  - TomatoToastBreadChoppedBreadPick
-  - TomatoToastBreadChoppedBreadMoveToToaster
-  - TomatoToastBreadChoppedBreadPlaceToaster
-  - TomatoToastBreadChoppedBreadExecuteToaster
-  - TomatoToastToastExists
-  - TomatoToastToastMoveToToast
-  - TomatoToastToastPick
-  - TomatoToastToastMoveToCounter
-  - TomatoToastToastPlaceCounter                  # END TOAST
-  - TomatoToastTomatoThen                         # BEGIN TOMATO
-  - TomatoToastTomatoMoveToDispenser
-  - TomatoToastTomatoExecuteDispenser
-  - TomatoToastTomatoPick
-  - TomatoToastTomatoMoveToCutboard
-  - TomatoToastTomatoPlaceCutboard
-  - TomatoToastTomatoExecuteCutboard
-  - TomatoToastChoppedTomatoPick
-  - TomatoToastChoppedTomatoMoveToCounter
-  - TomatoToastChoppedTomatoPlaceCounter          # END TOMATO
-  - TomatoToastPlateThen                       # BEGIN LOWER PLATE
-  - TomatoToastPlateMoveToDispenser
-  - TomatoToastPlateExecuteDispenser
-  - TomatoToastPlatePick
-  - TomatoToastPlateMoveToCounter
-  - TomatoToastPlatePlaceCounter               # END LOWER PLATE
-  - TomatoToastPlateMoveTo                     # BEGIN HIGHER PLATE
-  - TomatoToastPlatePickTwo
-  - TomatoToastPlateMoveToToast
-  - TomatoToastPlatePlaceToast
-  - TomatoToastPlateToastPick
-  - TomatoToastPlateToastMoveToTomato
-  - TomatoToastPlatePlaceTomato
-  - TomatoToastPlateMoveToPlateStack
-  - TomatoToastPlateStackPick
-  - TomatoToastPlateDeliversquareMoveTo
-  - TomatoToastPlateDeliversquarePlace        # END HIGHER PLATE
+  # - TomatoToastBreadChoppedBreadMoveTo
+  # - TomatoToastBreadChoppedBreadPick
+  # - TomatoToastBreadChoppedBreadMoveToToaster
+  # - TomatoToastBreadChoppedBreadPlaceToaster
+  # - TomatoToastBreadChoppedBreadExecuteToaster
+  # - TomatoToastToastExists
+  # - TomatoToastToastMoveToToast
+  # - TomatoToastToastPick
+  # - TomatoToastToastMoveToCounter
+  # - TomatoToastToastPlaceCounter                  # END TOAST
+  # - TomatoToastTomatoThen                         # BEGIN TOMATO
+  # - TomatoToastTomatoMoveToDispenser
+  # - TomatoToastTomatoExecuteDispenser
+  # - TomatoToastTomatoPick
+  # - TomatoToastTomatoMoveToCutboard
+  # - TomatoToastTomatoPlaceCutboard
+  # - TomatoToastTomatoExecuteCutboard
+  # - TomatoToastChoppedTomatoPick
+  # - TomatoToastChoppedTomatoMoveToCounter
+  # - TomatoToastChoppedTomatoPlaceCounter          # END TOMATO
+  # - TomatoToastPlateThen                       # BEGIN LOWER PLATE
+  # - TomatoToastPlateMoveToDispenser
+  # - TomatoToastPlateExecuteDispenser
+  # - TomatoToastPlatePick
+  # - TomatoToastPlateMoveToCounter
+  # - TomatoToastPlatePlaceCounter               # END LOWER PLATE
+  # - TomatoToastPlateMoveTo                     # BEGIN HIGHER PLATE
+  # - TomatoToastPlatePickTwo
+  # - TomatoToastPlateMoveToToast
+  # - TomatoToastPlatePlaceToast
+  # - TomatoToastPlateToastPick
+  # - TomatoToastPlateToastMoveToTomato
+  # - TomatoToastPlatePlaceTomato
+  # - TomatoToastPlateMoveToPlateStack
+  # - TomatoToastPlateStackPick
+  # - TomatoToastPlateDeliversquareMoveTo
+  # - TomatoToastPlateDeliversquarePlace        # END HIGHER PLATE
 
 Nodes:
   TomatoToastThen:
@@ -200,7 +200,7 @@ Nodes:
     behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'TomatoToastBreadNewBreadThen'
-    params: [ 'object: Counter', 'conditions: Free', 'unmark: foo' ]
+    params: [ 'object: Counter', 'conditions: Free', 'mark: ZH', 'unmark: foo' ]
   TomatoToastBreadChoppedBreadMoveTo:
     type: 4
     behavior_type: 'dhtt_plugins::CookingMoveBehavior'
