@@ -26,52 +26,19 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 
 	std::vector<dhtt_msgs::msg::CookingObject> prev_held = this->last_obs->agents[0].holding;
 
-	// if (not CookingBehavior::can_work())
-	// {
-	// 	return;
-	// }
-
-	/* move_to */
-	auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
-	req->super_action = dhtt_msgs::srv::CookingRequest::Request::ACTION;
-	req->action.player_name = dhtt_msgs::msg::CookingAction::DEFAULT_PLAYER_NAME;
-	req->action.action_type = dhtt_msgs::msg::CookingAction::MOVE_TO;
-
-	std::string dest_point_str = std::to_string(this->destination_point.x) + ", " +
-								 std::to_string(this->destination_point.y);
-
-	req->action.params = dest_point_str;
-
-	auto res = this->send_request_and_update(req);
-	// auto res = this->cooking_request_client->async_send_request(req);
-	// RCLCPP_INFO(container->get_logger(), "Sending move_to request");
-	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
-	// RCLCPP_INFO(container->get_logger(), "move_to request completed");
-
-	bool suc = res.get()->success;
-	if (not suc)
-	{
-		RCLCPP_ERROR(container->get_logger(),
-					 "move_to request did not succeed, returning early: %s",
-					 res.get()->error_msg.c_str());
-		this->done = false;
-		return;
-	}
-
 	// Equivalent of get_released_resources() but for "resources" on the paramserver
-	RCLCPP_INFO(container->get_logger(),
-				("Unmarking object that was under " +
-				 this->destination_object.object_type)
-					.c_str());
+	DHTT_LOG_INFO(this->com_agg, 
+				"Unmarking object that was under " <<
+				 this->destination_object.object_type
+					);
 	if (this->should_unmark and not this->unmark_static_object_under_obj(this->destination_object, true))
 	{
-		RCLCPP_WARN(container->get_logger(),
-					("Error unmarking static object under " + this->destination_object.object_type)
-						.c_str());
+		DHTT_LOG_WARN(this->com_agg, 
+					"Error unmarking static object under " << this->destination_object.object_type);
 	}
 
 	/* interact_primary */
-	req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
+	auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
 	req->super_action = dhtt_msgs::srv::CookingRequest::Request::ACTION;
 	req->action.player_name = dhtt_msgs::msg::CookingAction::DEFAULT_PLAYER_NAME;
 
@@ -80,13 +47,13 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 								  ? dhtt_msgs::msg::CookingAction::INTERACT_PRIMARY_ARM1
 								  : dhtt_msgs::msg::CookingAction::INTERACT_PRIMARY_ARM2;
 
-	res = this->send_request_and_update(req);
+	auto res = this->send_request_and_update(req);
 
-	suc = res.get()->success;
+	bool suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(container->get_logger(),
-					 "interact_primary request did not succeed: %s", res.get()->error_msg.c_str());
+		DHTT_LOG_ERROR(this->com_agg,
+			"interact_primary request did not succeed: " << res.get()->error_msg);
 		return;
 	}
 
@@ -105,13 +72,12 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 	// if picked object is not marked for anyone
 	if (not this->destination_mark.empty() and this->check_mark(picked_obj) == '2')
 	{
-		RCLCPP_INFO(container->get_logger(),
-					("Marking object as " + this->destination_mark).c_str());
+		DHTT_LOG_INFO(this->com_agg, "Marking object as " << this->destination_mark);
 		suc = this->mark_object(picked_obj.world_id, this->destination_mark);
 		if (not suc)
 		{
-			RCLCPP_ERROR(container->get_logger(), "Marking object failed: %s",
-						 res.get()->error_msg.c_str());
+			DHTT_LOG_ERROR(this->com_agg,  "Marking object failed: " <<
+						 res.get()->error_msg);
 		}
 	}
 

@@ -23,14 +23,14 @@ namespace dhtt_plugins
 		dhtt_msgs::action::Activation::Goal n_goal;
 		n_goal.passed_resources = container->get_owned_resources();
 
-		RCLCPP_INFO(container->get_logger(), "\tAuction callback started activating children...");
+		DHTT_LOG_INFO(this->com_agg, "\tAuction callback started activating children...");
 
 		container->activate_all_children(n_goal);
 
 		// wait for responses
 		container->block_for_activation_from_children();
 
-		RCLCPP_DEBUG(container->get_logger(), "\tResponses received...");
+		DHTT_LOG_DEBUG(this->com_agg, "\tResponses received...");
 
 		auto results = container->get_activation_results();
 
@@ -47,7 +47,7 @@ namespace dhtt_plugins
 		{
 			if ( not x.second.done )
 			{
-				RCLCPP_DEBUG(container->get_logger(), "Evaluating child [%s] with activation potential %f...", x.first.c_str(), x.second.activation_potential);
+				DHTT_LOG_DEBUG(this->com_agg, "Evaluating child [" << x.first << "] with activation potential " << x.second.activation_potential << "...");
 				num_children++;
 				activation_potential_sum += x.second.activation_potential;
 
@@ -90,7 +90,7 @@ namespace dhtt_plugins
 		// return winner
 		to_ret->local_best_node = local_best_child;
 
-		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation with potential %f...", local_best_child.c_str(), results[local_best_child].activation_potential);
+		DHTT_LOG_WARN(this->com_agg, "\tRecommending child [" << local_best_child << "] for activation with potential " << results[local_best_child].activation_potential << "...");
 
 		if ( to_ret->possible )
 		{
@@ -112,9 +112,6 @@ namespace dhtt_plugins
 		n_goal.granted_resources = container->get_owned_resources();
 		n_goal.success = true;
 
-		// for (auto resource : n_goal.passed_resources)
-		// 	RCLCPP_ERROR(container->get_logger(), "[%s]", resource.name.c_str());
-
 		std::string active_child = container->get_active_child_name();
 
 		container->async_activate_child(active_child, n_goal);
@@ -127,7 +124,7 @@ namespace dhtt_plugins
 		if (result.done)
 			this->num_active_children--;
 
-		RCLCPP_INFO(container->get_logger(), "Child finished running, %d active children left.", this->num_active_children);
+		DHTT_LOG_INFO(this->com_agg, "Child finished running, " << this->num_active_children << " active children left.");
 
 		// copy and return message with this node as the local node
 		to_ret->released_resources = result.released_resources;
@@ -176,9 +173,6 @@ namespace dhtt_plugins
 		
 		dhtt_utils::flatten_predicates(this->preconditions);
 		dhtt_utils::flatten_predicates(this->postconditions);
-
-		// RCLCPP_ERROR(container->get_logger(), "%s", dhtt_utils::to_string(this->preconditions).c_str());
-		// RCLCPP_ERROR(container->get_logger(), "%s", dhtt_utils::to_string(this->postconditions).c_str());
 	}
 
 	void AndBehavior::parse_params( std::vector<std::string> params ) 

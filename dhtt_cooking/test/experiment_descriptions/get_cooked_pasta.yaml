@@ -1,0 +1,87 @@
+NodeList:
+  - PastaThen                         # BEGIN TOMATO
+  - PastaMoveToDispenser
+  - PastaExecuteDispenser
+  - PastaPick
+  - PastaMoveToPot
+  - PastaPlacePot
+  - PastaExecutePot
+  - CookedPastaExists
+  - CookedPastaMoveTo
+  - CookedPastaPick
+  - CookedPastaMoveToCounter
+  - CookedPastaPlaceCounter          # END TOMATO
+
+Nodes:
+  PastaThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: [ ]
+  PastaMoveToDispenser:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'PastaThen'
+    params: [ 'object: PastaDispenser', 'mark: $mark' ]
+  PastaExecuteDispenser:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'PastaThen'
+    params: [ 'object: PastaDispenser', 'mark: $mark' ]
+  PastaPick:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'PastaThen'
+    params: [ 'object: Pasta', 'mark: $mark', 'unmark: foo' ]
+  PastaMoveToPot:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'PastaThen'
+    params: [ 'object: Pot', 'mark: $mark' ]
+  PastaPlacePot:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'PastaThen'
+    params: [ 'object: Pot', 'mark: $mark' ]
+  PastaExecutePot:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'PastaThen'
+    params: [ 'object: Pot', 'mark: $mark' ]
+  CookedPastaExists:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingObjectExistsBehavior'
+    robot: 0
+    parent: 'PastaThen'
+    params: [ 'object: Pasta', 'conditions: Cooked', 'mark: $mark', 'unmark: foo' ]
+  CookedPastaMoveTo:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: "PastaThen"
+    params: [ 'object: Pasta', "conditions: Cooked", "mark: $mark"]
+  CookedPastaPick:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'PastaThen'
+    params: [ 'object: Pasta', 'conditions: Cooked', 'mark: $mark', 'unmark: foo' ]
+  CookedPastaMoveToCounter:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'PastaThen'
+    params: [ 'object: Counter', 'conditions: Free', 'mark: $mark', ]
+  CookedPastaPlaceCounter:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'PastaThen'
+    params: [ 'object: Counter', 'conditions: Free', 'mark: $mark' ]

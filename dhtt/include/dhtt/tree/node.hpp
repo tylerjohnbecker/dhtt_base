@@ -37,8 +37,29 @@
 #define RESOURCES_POSTFIX "/resource"
 #define CONTROL_POSTFIX "/control"
 
+#define ACTIVATION_POTENTIAL_HIGHEST 2.0
+
+
+// #define DHTT_LOG_INFO(com_ptr, string_stream) com_ptr->log_stream(1, std::stringstream() << "[" << this->name << "]: " << string_stream)
+// #define DHTT_LOG_WARN(com_ptr, string_stream) com_ptr->log_stream(2, std::stringstream() << "[" << this->name << "]: " << string_stream)
+// #define DHTT_LOG_ERROR(com_ptr, string_stream) com_ptr->log_stream(3, std::stringstream() << "[" << this->name << "]: " << string_stream)
+// #define DHTT_LOG_FATAL(com_ptr, string_stream) com_ptr->log_stream(4, std::stringstream() << "[" << this->name << "]: " << string_stream)
+
 namespace dhtt
 {
+
+#define DHTT_LOG(severity, com_ptr, out) \
+	{ \
+	std::stringstream ss; \
+	ss <<  "[" << this->name << "]: " << out; \
+	com_ptr->log_stream(severity,  ss); \
+	}
+
+#define DHTT_LOG_DEBUG(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::DEBUG, com_ptr, out)
+#define DHTT_LOG_INFO(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::INFO, com_ptr, out)
+#define DHTT_LOG_WARN(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::WARN, com_ptr, out)
+#define DHTT_LOG_ERROR(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::ERROR, com_ptr, out)
+#define DHTT_LOG_FATAL(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::FATAL, com_ptr, out)
 
 	/**
 	 * \brief dHTT Node class for all nodes on the tree
@@ -47,7 +68,7 @@ namespace dhtt
 	 * 	All node specific logic is kept as a private plugin member that is loaded when the object is created (dhtt::NodeType). All node communication mechanisms are also kept as a private plugin member so that it can
 	 * 	be modularized.
 	 */
-	class Node : public rclcpp::Node
+	class Node
 	{
 	public:
 
@@ -356,6 +377,26 @@ namespace dhtt
 		 */
 		void print_resources(std::vector<dhtt_msgs::msg::Resource> compare);
 
+		/**
+		 * \brief Sets the changed flag to maintain on the next call to maintain pre/postconditions
+		 * 
+		 * \param n_val value to the set the internal flag to
+		 * 
+		 * \return void
+		 * 
+		 */
+		void set_changed_flag(bool n_val);
+
+		/**
+		 * \brief sets internal flag to maint pre/postconditions on child on next call
+		 * 
+		 * \param child name of child to change flag for
+		 * \param n_val value to set the internal flag to
+		 * 
+		 * \return void
+		 */
+		void set_child_changed(std::string child, bool n_val);
+
 	protected:
 
 		// activation action server callbacks
@@ -558,6 +599,7 @@ namespace dhtt
 		std::vector<dhtt_msgs::msg::Resource> available_resources;
 		std::vector<dhtt_msgs::msg::Resource> passed_resources;
 		std::vector<std::string> child_names;
+		std::map<std::string, bool> child_changed;
 
 		std::string name;
 		std::string parent_name;
@@ -575,6 +617,7 @@ namespace dhtt
 		bool has_goitr;
 		bool first_activation;
 		bool active;
+		bool subtree_has_changed;
 
 		bool successful_load;
 		std::string error_msg;

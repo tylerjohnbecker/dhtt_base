@@ -27,7 +27,7 @@ namespace dhtt_plugins
 
 		std::vector<std::string> children = container->get_child_names();
 
-		RCLCPP_INFO(container->get_logger(), "\tAuction callback started activating children...");
+		DHTT_LOG_INFO(this->com_agg, "\tAuction callback started activating children...");
 
 		if ( (int) children.size() == 0 )
 		{
@@ -55,7 +55,7 @@ namespace dhtt_plugins
 			// wait for result
 			container->block_for_activation_from_children();
 
-			RCLCPP_DEBUG(container->get_logger(), "Responses received...");
+			DHTT_LOG_DEBUG(this->com_agg, "Responses received...");
 
 			auto results = container->get_activation_results();
 
@@ -107,7 +107,7 @@ namespace dhtt_plugins
 
 			container->block_for_activation_from_children();
 
-			RCLCPP_DEBUG(container->get_logger(), "Responses received...");
+			DHTT_LOG_DEBUG(this->com_agg, "Responses received...");
 
 			auto result = container->get_activation_results();
 
@@ -117,7 +117,7 @@ namespace dhtt_plugins
 
 		this->activation_potential = child_req.activation_potential;
 
-		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation which is done [%d]...", this->activated_child_name.c_str(), child_req.done) ;
+		DHTT_LOG_WARN(this->com_agg, "\tRecommending child [" << this->activated_child_name << "] for activation which is done [" << child_req.done << "]...") ;
 
 		to_ret->local_best_node = this->activated_child_name;
 		to_ret->requested_resources = child_req.requested_resources;
@@ -204,9 +204,6 @@ namespace dhtt_plugins
 
 		dhtt_utils::flatten_predicates(this->preconditions);
 		dhtt_utils::flatten_predicates(this->postconditions);
-
-		// RCLCPP_ERROR(container->get_logger(), "%s", dhtt_utils::to_string(this->preconditions).c_str());
-		// RCLCPP_ERROR(container->get_logger(), "%s", dhtt_utils::to_string(this->postconditions).c_str());
 	}
 
 

@@ -437,6 +437,15 @@ namespace dhtt
 		std::vector<dhtt_msgs::msg::Node> get_active_nodes();
 
 		/**
+		 * \brief sets changed flag for given node and all parent nodes up the tree
+		 * 
+		 * \param node iterator to the node we start setting the flags at
+		 * 
+		 * \return void
+		 */
+		void set_changed_up_tree(std::vector<dhtt_msgs::msg::Node>::iterator node);
+
+		/**
 		 * \brief internal function which constructs a subtree message from a given node iter
 		 * 
 		 * Helpful function which will create a subtree message which represents the subtree of a given node. Generally, this is used for fetch requests.
@@ -455,7 +464,7 @@ namespace dhtt
 		 * 
 		 * \return empty string if successfully loaded, otherwise contains an error message
 		 */
-		std::string construct_subtree_from_yaml( dhtt_msgs::msg::Subtree& to_construct, std::string file_name, std::vector<std::string> file_args );
+		std::string construct_subtree_from_yaml( dhtt_msgs::msg::Subtree& to_construct, std::string file_name, std::vector<std::string> file_args, std::string parent_name="" );
 
 		/**
 		 * \brief internal check for if the given node can be modified

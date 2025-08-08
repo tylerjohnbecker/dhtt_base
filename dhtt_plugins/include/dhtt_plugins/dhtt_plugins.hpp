@@ -33,8 +33,8 @@
 
 // NodeTypes
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::TestBehavior, dhtt::NodeType)
-PLUGINLIB_EXPORT_CLASS(dhtt_plugins::MockMoveBehavior, dhtt::NodeType)
-PLUGINLIB_EXPORT_CLASS(dhtt_plugins::MockLookBehavior, dhtt::NodeType)
+// PLUGINLIB_EXPORT_CLASS(dhtt_plugins::MockMoveBehavior, dhtt::NodeType)
+// PLUGINLIB_EXPORT_CLASS(dhtt_plugins::MockLookBehavior, dhtt::NodeType)
 
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::MoveBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::PickBehavior, dhtt::NodeType)
@@ -53,8 +53,8 @@ PLUGINLIB_EXPORT_CLASS(dhtt_plugins::AndBehavior, dhtt::NodeType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::OrBehavior, dhtt::NodeType)
 
 // GoitrTypes
-PLUGINLIB_EXPORT_CLASS(dhtt_plugins::GoitrTest, dhtt::GoitrType)
-PLUGINLIB_EXPORT_CLASS(dhtt_plugins::FindGoitr, dhtt::GoitrType)
+// PLUGINLIB_EXPORT_CLASS(dhtt_plugins::GoitrTest, dhtt::GoitrType)
+// PLUGINLIB_EXPORT_CLASS(dhtt_plugins::FindGoitr, dhtt::GoitrType)
 
 // BranchTypes
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::PtrBranchSocket, dhtt::BranchSocketType)

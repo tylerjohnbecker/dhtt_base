@@ -11,6 +11,10 @@ int main (int argc, char** argv)
 
 	RCLCPP_INFO(param_ptr->get_logger(), "Listening for parameters...");
 
+	param_ptr->declare_parameter("world.marked_objects_taints", std::vector<std::string>());
+	param_ptr->declare_parameter("world.marked_objects_types", std::vector<std::string>());
+	param_ptr->declare_parameter("world.marked_objects_ids", std::vector<long int>());
+
 	rclcpp::spin(param_ptr);
 	rclcpp::shutdown();
 

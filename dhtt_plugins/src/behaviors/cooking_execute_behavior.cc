@@ -31,17 +31,13 @@ void CookingExecuteBehavior::do_work(dhtt::Node *container)
 	req->action.params = dest_point_str;
 
 	auto res = this->send_request_and_update(req);
-	// auto res = this->cooking_request_client->async_send_request(req);
-	// RCLCPP_INFO(container->get_logger(), "Sending move_to request");
-	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
-	// RCLCPP_INFO(container->get_logger(), "move_to request completed");
 
 	bool suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(container->get_logger(),
-					 "move_to request did not succeed, returning early: %s",
-					 res.get()->error_msg.c_str());
+		DHTT_LOG_ERROR(this->com_agg, 
+					 "move_to request did not succeed, returning early: " <<
+					 res.get()->error_msg);
 		this->done = false;
 		return;
 	}
@@ -58,11 +54,6 @@ void CookingExecuteBehavior::do_work(dhtt::Node *container)
 
 	res = this->send_request_and_update(req);
 
-	// res = this->cooking_request_client->async_send_request(req);
-	// RCLCPP_INFO(container->get_logger(), "Sending execute request");
-	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
-	// RCLCPP_INFO(container->get_logger(), "execute request completed");
-
 	this->mark_object(this->destination_object.world_id, this->destination_mark);
 
 	// unmark everything at the object
@@ -72,8 +63,8 @@ void CookingExecuteBehavior::do_work(dhtt::Node *container)
 	suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(container->get_logger(), "execute_action request did not succeed: %s",
-					 res.get()->error_msg.c_str());
+		DHTT_LOG_ERROR(this->com_agg, "execute_action request did not succeed: " << 
+					 res.get()->error_msg);
 	}
 
 	this->done = suc;
@@ -82,34 +73,41 @@ void CookingExecuteBehavior::do_work(dhtt::Node *container)
 std::vector<dhtt_msgs::msg::Resource>
 CookingExecuteBehavior::get_retained_resources(dhtt::Node *container)
 {
-	// if (this->should_unmark)
-	// {
-	// 	// keep the move base
-	// 	dhtt_msgs::msg::Resource to_keep;
-	// 	for (auto iter : container->get_owned_resources())
-	// 		if (iter.type == dhtt_msgs::msg::Resource::BASE)
-	// 			to_keep = iter;
 
-	// 	return {to_keep};
-	// }
-	return container->get_owned_resources();
+	std::vector<dhtt_msgs::msg::Resource> to_ret;
+
+	// just keep access to the first gripper found (shouldn't matter for now)
+	for (auto resource_iter : container->get_owned_resources())
+	{
+		if (resource_iter.type == dhtt_msgs::msg::Resource::GRIPPER)
+		{
+			to_ret.push_back(resource_iter);
+			break;
+		}
+	}
+
+	return to_ret;
 }
 
 std::vector<dhtt_msgs::msg::Resource>
 CookingExecuteBehavior::get_released_resources(dhtt::Node *container)
 {
-	// release the gripper
-	// if (this->should_unmark)
-	// {
-	// 	dhtt_msgs::msg::Resource to_release;
-	// 	for (auto iter : container->get_owned_resources())
-	// 		if (iter.type == dhtt_msgs::msg::Resource::GRIPPER)
-	// 			to_release = iter;
+	std::vector<dhtt_msgs::msg::Resource> to_ret;
+	bool first = true;
 
-	// 	return {to_release};
-	// }
+	for (auto resource_iter : container->get_owned_resources())
+	{
+		if (resource_iter.type != dhtt_msgs::msg::Resource::GRIPPER or not first)
+		{
+			to_ret.push_back(resource_iter);
+		}
+		else
+		{ // skip the first gripper but not the rest
+			first = false;
+		}
+	}
 
-	return {};
+	return to_ret;
 }
 
 std::vector<dhtt_msgs::msg::Resource> CookingExecuteBehavior::get_necessary_resources()

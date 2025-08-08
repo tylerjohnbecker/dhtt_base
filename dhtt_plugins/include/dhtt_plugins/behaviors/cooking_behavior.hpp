@@ -131,6 +131,15 @@ class CookingBehavior : public ActionType
 	 * \return true if unmark successful false otherwise
 	 */
 	bool unmark_given_type(const geometry_msgs::msg::Point& loc, std::string type);
+
+	/**
+	 * \brief unmarks any nonexistant objects of this behaviors mark
+	 * 
+	 * Just allows us to clean up any leftover marks that the behaviors may have left behind.
+	 * 
+	 * \return void
+	 */
+	void clean_marks();
 	
 	/**
 	 * \brief sends a client request to the cooking server and blocks for a response update message
@@ -162,7 +171,7 @@ class CookingBehavior : public ActionType
 	static constexpr auto PARAM_MARK_OBJECTS_TYPES = "world.marked_objects_types";
 	static constexpr auto PARAM_UNMARK = "unmark";
 	static constexpr auto SPECIAL_MARK = "ZH";
-	const int LEVEL_SIZE = 6;
+	const int LEVEL_SIZE = 8;// todo stosh: this should be calculated at runtime (0 indexed)
 
   private:
 	/**

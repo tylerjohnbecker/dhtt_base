@@ -1,0 +1,94 @@
+NodeList:
+  - FriedEggThen
+  - MoveToEggDispenser
+  - ExecuteEggDispenser
+  - MoveToEgg
+  - PickEgg
+  - MoveToPan
+  - PlaceEggInPan
+  - ExecutePan
+  - FriedEggExists
+  - MoveToFriedEgg
+  - PickFriedEgg
+  - MoveEggToCounter
+  - PlaceFriedEgg
+
+Nodes:
+  FriedEggThen:
+    type: 2
+    behavior_type: "dhtt_plugins::ThenBehavior"
+    robot: 0
+    parent: 'NONE'
+    params: [ ]
+  MoveToEggDispenser:
+    type: 4
+    behavior_type: "dhtt_plugins::CookingMoveBehavior"
+    robot: 0
+    parent: 'FriedEggThen'
+    params: [ "object: EggDispenser", "mark: $mark" ]
+  ExecuteEggDispenser:
+    type: 4
+    behavior_type: "dhtt_plugins::CookingExecuteBehavior"
+    robot: 0
+    parent: 'FriedEggThen'
+    params: [ "object: EggDispenser", "mark: $mark"]
+  MoveToEgg:
+    type: 4
+    behavior_type: "dhtt_plugins::CookingMoveBehavior"
+    robot: 0
+    parent: "FriedEggThen"
+    params: [ "object: Egg", "mark: $mark" ]
+  PickEgg:
+    type: 4
+    behavior_type: "dhtt_plugins::CookingPickBehavior"
+    robot: 0
+    parent: 'FriedEggThen'
+    params: [ "object: Egg", "mark: $mark", "unmark: foo" ]
+  MoveToPan:
+    type: 4
+    behavior_type: "dhtt_plugins::CookingMoveBehavior"
+    robot: 0
+    parent: "FriedEggThen"
+    params: [ "object: Pan", "mark: $mark"]
+  PlaceEggInPan:
+    type: 4
+    behavior_type: "dhtt_plugins::CookingPlaceBehavior"
+    robot: 0
+    parent: "FriedEggThen"
+    params: [ "object: Pan", "mark: $mark" ]
+  ExecutePan:
+    type: 4
+    behavior_type: "dhtt_plugins::CookingExecuteBehavior"
+    robot: 0
+    parent: "FriedEggThen"
+    params: [ "object: Pan", "mark: $mark" ]
+  FriedEggExists:
+    type: 4
+    behavior_type: "dhtt_plugins::CookingObjectExistsBehavior"
+    robot: 0
+    parent: "FriedEggThen"
+    params: [ "object: Egg", 'conditions: Fried', "mark: $mark", "unmark: foo" ]
+  MoveToFriedEgg:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: "FriedEggThen"
+    params: [ 'object: Egg', 'conditions: Fried', "mark: $mark"]
+  PickFriedEgg:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'FriedEggThen'
+    params: [ 'object: Egg', 'conditions: Fried', 'mark: $mark', 'unmark: foo' ]
+  MoveEggToCounter:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'FriedEggThen'
+    params: [ 'object: Counter', 'conditions: Free', 'mark: $mark', ]
+  PlaceFriedEgg:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'FriedEggThen'
+    params: [ 'object: Counter', 'conditions: Free', 'mark: $mark' ]

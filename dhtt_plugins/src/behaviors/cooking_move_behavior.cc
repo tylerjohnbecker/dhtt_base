@@ -43,31 +43,26 @@ void CookingMoveBehavior::do_work(dhtt::Node *container)
 								 std::to_string(this->destination_point.y);
 
 	req->action.params = dest_point_str;
-
 	auto res = this->send_request_and_update(req);
-	// auto res = this->cooking_request_client->async_send_request(req);
-	// RCLCPP_INFO(container->get_logger(), "Sending move_to request");
-	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
-	// RCLCPP_INFO(container->get_logger(), "move_to request completed");
 
 	bool suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(container->get_logger(), "move_to request did not succeed: %s",
-					 res.get()->error_msg.c_str());
+		DHTT_LOG_ERROR(this->com_agg, "move_to request did not succeed: " <<
+					 res.get()->error_msg);
 		return;
 	}
 
 	// if object is not marked for anyone
 	if (not this->destination_mark.empty() and this->check_mark(this->destination_object) == '2')
 	{
-		RCLCPP_INFO(container->get_logger(),
-					("Marking object as " + this->destination_mark).c_str());
+		DHTT_LOG_INFO(this->com_agg, 
+					"Marking object as " << this->destination_mark);
 		suc = this->mark_object(this->destination_object.world_id, this->destination_mark);
 		if (not suc)
 		{
-			RCLCPP_ERROR(container->get_logger(), "Marking object failed: %s",
-						 res.get()->error_msg.c_str());
+			DHTT_LOG_ERROR(this->com_agg, "Marking object failed: " <<
+						 res.get()->error_msg);
 		}
 	}
 

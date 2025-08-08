@@ -14,7 +14,7 @@ namespace dhtt_plugins
 
 		this->control_server = this->pub_node_ptr->create_service<dhtt_msgs::srv::InternalControlRequest>(control_topic, std::bind(&RootBehavior::control_callback, this, std::placeholders::_1, std::placeholders::_2));
 
-		this->param_client_ptr = this->com_agg->register_param_client("/param_node");
+		// this->param_client_ptr = this->com_agg->register_param_client("/param_node");
 
 		this->resource_executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 		this->resource_executor->add_node(this->pub_node_ptr);
@@ -37,18 +37,18 @@ namespace dhtt_plugins
 	{
 		auto print_resource_state = [&]()
 		{
-			RCLCPP_FATAL(this->get_logger(), "\tCurrent state of resources:");
+			DHTT_LOG_FATAL(this->com_agg, "\tCurrent state of resources:");
 
 			for ( auto iter : this->canonical_resources_list )
 			{
-				RCLCPP_FATAL(this->get_logger(), "\t\t%s - type: %d, locked: %d, owners: %d, channel: %d",
-								iter.name.c_str(), iter.type, iter.locked, iter.owners, iter.channel);
+				DHTT_LOG_FATAL(this->com_agg, "\t\t" << iter.name << " - type: " << iter.type << ", locked: " << iter.locked 
+					<< ", owners: " << iter.owners << ", channel: " << iter.channel);
 			}
 		};
 
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> to_ret = std::make_shared<dhtt_msgs::action::Activation::Result>();
 
-		RCLCPP_INFO(container->get_logger(), "\n\n\n\tActivation received starting task execution...");
+		DHTT_LOG_INFO(this->com_agg, "\n\n\n\tActivation received starting task execution...");
 
 		this->children_done = false;
 		this->interrupted = false;
@@ -64,11 +64,11 @@ namespace dhtt_plugins
 			// activate children
 			dhtt_msgs::action::Activation::Goal n_goal;
 
-			RCLCPP_FATAL(container->get_logger(), "\tSpreading activation from root...");
+			DHTT_LOG_FATAL(this->com_agg, "\tSpreading activation from root...");
 
 			container->activate_all_children(n_goal);
 
-			RCLCPP_FATAL(container->get_logger(), "\tWaiting for response...\n");
+			DHTT_LOG_FATAL(this->com_agg, "\tWaiting for response...\n");
 
 			// get responses
 			container->block_for_activation_from_children();
@@ -76,11 +76,11 @@ namespace dhtt_plugins
 			auto result = container->get_activation_results();
 
 			if ( result.empty() )
-				RCLCPP_ERROR(container->get_logger(), "Empty response received!!!");
+				DHTT_LOG_ERROR(this->com_agg, "Empty response received!!!");
 			
 			if ( (*result.begin()).second.done )
 			{
-				RCLCPP_FATAL(container->get_logger(), "\tChildren done early!");
+				DHTT_LOG_FATAL(this->com_agg, "\tChildren done early!");
 
 				this->children_done = (*result.begin()).second.done;
 				break;
@@ -88,7 +88,7 @@ namespace dhtt_plugins
 
 			if ( not (*result.begin()).second.possible )
 			{
-				RCLCPP_FATAL(container->get_logger(), "Children not possible, trying again...");
+				DHTT_LOG_FATAL(this->com_agg, "Children not possible, trying again...");
 				container->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
 				to_ret->done = false;
@@ -102,7 +102,7 @@ namespace dhtt_plugins
 			n_goal.granted_resources = this->give_resources( (*result.begin()).second.requested_resources );
 			n_goal.success = true; 
 
-			RCLCPP_FATAL(container->get_logger(), "\tRequest accepted!\n");
+			DHTT_LOG_FATAL(this->com_agg, "\tRequest accepted!\n");
 
 			// activate children
 			container->activate_all_children(n_goal);
@@ -112,7 +112,7 @@ namespace dhtt_plugins
 			result = container->get_activation_results();
 
 			// update resources (release the ones in passed resources because if they make it to root then they have to be released anyway)
-			RCLCPP_FATAL(container->get_logger(), "\tRequest complete, releasing resources!\n\n --- --- ---");
+			DHTT_LOG_FATAL(this->com_agg, "\tRequest complete, releasing resources!\n\n --- --- ---");
 
 			this->release_resources( (*result.begin()).second.released_resources );
 			this->release_resources( (*result.begin()).second.passed_resources );
@@ -129,12 +129,12 @@ namespace dhtt_plugins
 		// ensure that resources are released before next activation
 		if ( this->is_done() )
 		{
-			RCLCPP_INFO(container->get_logger(), "All children done. Task successfully completed!\n\n\n");
+			DHTT_LOG_INFO(this->com_agg, "All children done. Task successfully completed!\n\n\n");
 			container->update_status(dhtt_msgs::msg::NodeStatus::DONE);
 		}
 		else
 		{
-			RCLCPP_INFO(container->get_logger(), "Task interrupted. Returning to state WAITING.\n\n\n");
+			DHTT_LOG_INFO(this->com_agg, "Task interrupted. Returning to state WAITING.\n\n\n");
 
 			container->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 		}
@@ -227,6 +227,8 @@ namespace dhtt_plugins
 
 			this->canonical_resources_list.push_back(n_resource);
 		}
+
+		this->push_resources();
 	}
 
 	void RootBehavior::publish_resources()
@@ -260,7 +262,7 @@ namespace dhtt_plugins
 			owners.push_back(iter.owners);
 		}
 
-		this->param_client_ptr->set_parameters({rclcpp::Parameter("dhtt_resources.names", names), 
+		this->com_agg->set_parameters_sync({rclcpp::Parameter("dhtt_resources.names", names), 
 												rclcpp::Parameter("dhtt_resources.types", types),
 												rclcpp::Parameter("dhtt_resources.channels", channels),
 												rclcpp::Parameter("dhtt_resources.locks", locks),
@@ -287,7 +289,7 @@ namespace dhtt_plugins
 			if ( found_iter == this->canonical_resources_list.end() )
 				throw std::invalid_argument("Could not find resource of type " + std::to_string(resource.type) + ". This should have been marked impossible. Returning in error.");
 
-			RCLCPP_DEBUG(this->get_logger(), "%s given to behavior", found_iter->name.c_str());
+			DHTT_LOG_DEBUG(this->com_agg, found_iter->name << " given to behavior");
 
 			(*found_iter).locked = true;
 

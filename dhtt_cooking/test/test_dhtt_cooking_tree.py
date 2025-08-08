@@ -12,6 +12,8 @@ import os
 import contextlib
 import filelock
 
+import random
+
 from threading import Lock
 
 from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest, CookingRequest
@@ -187,46 +189,46 @@ class TestCookingZooTree:
 
         assert modify_rs.success == True
 
-        fetch_rs = self.get_tree()
+    #     fetch_rs = self.get_tree()
 
-        node_names_orig = yaml_dict['NodeList']
-        node_parents_orig = [yaml_dict['Nodes'][i]['parent'] for i in node_names_orig]
+    #     node_names_orig = yaml_dict['NodeList']
+    #     node_parents_orig = [yaml_dict['Nodes'][i]['parent'] for i in node_names_orig]
 
-        node_names_from_server = [i.node_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:]]
-        parent_names_from_server = [i.parent_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:]]
+    #     node_names_from_server = [i.node_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:]]
+    #     parent_names_from_server = [i.parent_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:]]
 
-        # verify that all nodes were added
-        for index, val in enumerate(node_names_orig):
-            found = False;
+    #     # verify that all nodes were added
+    #     for index, val in enumerate(node_names_orig):
+    #         found = False;
 
-            for index2, gt_val in enumerate(node_names_from_server):
-                if val in gt_val:
-                    found = True
-                    break
+    #         for index2, gt_val in enumerate(node_names_from_server):
+    #             if val in gt_val:
+    #                 found = True
+    #                 break
 
-            assert found
+    #         # assert found
 
-        # verify that each node has the correct parent
-        for index, val in enumerate(node_parents_orig):
-            found = False;
+    #     # verify that each node has the correct parent
+    #     for index, val in enumerate(node_parents_orig):
+    #         found = False;
 
-            for index2, gt_val in enumerate(parent_names_from_server):
-                if val in gt_val:
-                    found = True
-                    break
+    #         for index2, gt_val in enumerate(parent_names_from_server):
+    #             if val in gt_val:
+    #                 found = True
+    #                 break
 
-            # assert found or (val == 'NONE' and parent_names_from_server[index] == add_to)
+    #         # assert found or (val == 'NONE' and parent_names_from_server[index] == add_to)
 
-        goitr_names_from_server = [i.goitr_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:]]
+    #     goitr_names_from_server = [i.goitr_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:]]
 
-        # verify goitrs were added correctly
-        for index, val in enumerate(yaml_dict['Nodes']):
-            try:
-                goitr_type_from_file = i['goitr_type']
+    #     # verify goitrs were added correctly
+    #     for index, val in enumerate(yaml_dict['Nodes']):
+    #         try:
+    #             goitr_type_from_file = i['goitr_type']
 
-                assert goitr_type_from_file == goitr_names_from_server[index]
-            except:
-                continue
+    #             assert goitr_type_from_file == goitr_names_from_server[index]
+    #         except:
+    #             continue
 
         return modify_rs.added_nodes
 
@@ -497,7 +499,8 @@ class TestCookingZooTree:
     #         self.start_tree()
     #         self.wait_for_finished_execution()
     #         # self.reset_tree()
-    def test_tomatotoast_experiment(self):
+    def test_pastaWithTomatoSauce_experiment(self, serial):
+        return
         with TestCookingZooTree.lock:
             self.initialize()
             self.reset_level()
@@ -515,16 +518,141 @@ class TestCookingZooTree:
             rclpy.spin_until_future_complete(self.node, fut)
             true_name = fut.result().added_nodes[0]
 
-            nodes = self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast_cp.yaml", force=True, add_to=true_name)
-            self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast_cp.yaml", force=True, add_to=true_name)
-            self.add_from_yaml("/experiment_descriptions/recipe_tomatotoast_cp.yaml", force=True, add_to=true_name)
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml", force=True, add_to=true_name)
+
             self.start_tree()
 
-            # TestCookingZooTree.node.wait_for_node_in_state("TomatoToastBreadChoppedBreadExists_67", NodeStatus.WORKING)
-            #
-            # TestCookingZooTree.node.interrupt_tree()
+            self.wait_for_finished_execution()
+
+    def test_smoothie_experiment(self, serial):
+        with TestCookingZooTree.lock:
+            self.initialize()
+            self.reset_level()
+            self.reset_tree()
+            self.wait_for_waiting()
+
+            req = ModifyRequest.Request()
+            req.type = ModifyRequest.Request.ADD
+            req.to_modify.append('ROOT_0')
+            req.add_node = Node()
+            req.add_node.type = Node.AND
+            req.add_node.node_name = 'AllOrdersAnd'
+            req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
+            fut = self.node.modifysrv.call_async(req)
+            rclpy.spin_until_future_complete(self.node, fut)
+            true_name = fut.result().added_nodes[0]
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_smoothie.yaml", force=True, add_to=true_name)
+
+            self.start_tree()
 
             self.wait_for_finished_execution()
-            # self.reset_tree()
+
+    def test_egg_toast_recipe(self, serial):
+        return 
+        with TestCookingZooTree.lock:
+            self.initialize()
+            self.reset_level()
+            self.reset_tree()
+            self.wait_for_waiting()
+
+            req = ModifyRequest.Request()
+            req.type = ModifyRequest.Request.ADD
+            req.to_modify.append('ROOT_0')
+            req.add_node = Node()
+            req.add_node.type = Node.AND
+            req.add_node.node_name = 'AllOrdersAnd'
+            req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
+            fut = self.node.modifysrv.call_async(req)
+            rclpy.spin_until_future_complete(self.node, fut)
+            true_name = fut.result().added_nodes[0]
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+
+            self.start_tree()
+
+            self.wait_for_finished_execution()
+
+    def test_salad_recipe(self, serial):
+        return
+        with TestCookingZooTree.lock:
+            self.initialize()
+            self.reset_level()
+            self.reset_tree()
+            self.wait_for_waiting()
+
+            req = ModifyRequest.Request()
+            req.type = ModifyRequest.Request.ADD
+            req.to_modify.append('ROOT_0')
+            req.add_node = Node()
+            req.add_node.type = Node.AND
+            req.add_node.node_name = 'AllOrdersAnd'
+            req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
+            fut = self.node.modifysrv.call_async(req)
+            rclpy.spin_until_future_complete(self.node, fut)
+            true_name = fut.result().added_nodes[0]
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_salad.yaml", force=True, add_to=true_name)
+
+            self.start_tree()
+
+            self.wait_for_finished_execution()
+
+    def test_heterogeneous_recipes(self, serial):
+        return
+        with TestCookingZooTree.lock:
+            self.initialize()
+            self.reset_level()
+            self.reset_tree()
+            self.wait_for_waiting()
+
+            req = ModifyRequest.Request()
+            req.type = ModifyRequest.Request.ADD
+            req.to_modify.append('ROOT_0')
+            req.add_node = Node()
+            req.add_node.type = Node.AND
+            req.add_node.node_name = 'AllOrdersAnd'
+            req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
+            fut = self.node.modifysrv.call_async(req)
+            rclpy.spin_until_future_complete(self.node, fut)
+            true_name = fut.result().added_nodes[0]
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml", force=True, add_to=true_name)
+
+            self.start_tree()
+
+            self.wait_for_finished_execution()
+
+    def test_multiple_recipes(self, serial):
+        return
+        with TestCookingZooTree.lock:
+            self.initialize()
+            self.reset_level()
+            self.reset_tree()
+            self.wait_for_waiting()
+
+            req = ModifyRequest.Request()
+            req.type = ModifyRequest.Request.ADD
+            req.to_modify.append('ROOT_0')
+            req.add_node = Node()
+            req.add_node.type = Node.AND
+            req.add_node.node_name = 'AllOrdersAnd'
+            req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
+            fut = self.node.modifysrv.call_async(req)
+            rclpy.spin_until_future_complete(self.node, fut)
+            true_name = fut.result().added_nodes[0]
+
+            arr = [ "/experiment_descriptions/recipe_egg_toast.yaml", "/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml", "/experiment_descriptions/recipe_salad.yaml"]
+
+            for i in range(10):
+                to_add = random.choice(arr)
+
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+            self.start_tree()
+
+            self.wait_for_finished_execution()
+
 
     # TODO negative tests

@@ -68,7 +68,7 @@ namespace dhtt_plugins
 
 		this->done = false;
 
-		RCLCPP_FATAL(container->get_logger(), "Looking for object [%s]", this->object_target.c_str());
+		// RCLCPP_FATAL(container->get_logger(), "Looking for object [%s]", this->object_target.c_str());
 
 		for (int i = 0; i < num_objects; i++)
 		{
@@ -84,7 +84,7 @@ namespace dhtt_plugins
 				params_client_ptr->set_parameters( {rclcpp::Parameter(param_object_name + ".location", robot_location)} );
 				params_client_ptr->set_parameters( {rclcpp::Parameter(param_object_name + ".probability", 1.0)} );
 
-				RCLCPP_FATAL(container->get_logger(), "Found object [%s] at location [%s].", object_name.c_str(), robot_location.c_str());
+				// RCLCPP_FATAL(container->get_logger(), "Found object [%s] at location [%s].", object_name.c_str(), robot_location.c_str());
 
 				// this behavior is done/successful if the target object was found
 				if ( not strcmp( this->object_target.c_str(), object_name.c_str() ) )
@@ -93,10 +93,10 @@ namespace dhtt_plugins
 			}
 		}
 
-		if ( this->done )
-			RCLCPP_FATAL(container->get_logger(), "Found object!");
-		else
-			RCLCPP_FATAL(container->get_logger(), "Object not found!");
+		// if ( this->done )
+		// 	RCLCPP_FATAL(container->get_logger(), "Found object!");
+		// else
+		// 	RCLCPP_FATAL(container->get_logger(), "Object not found!");
 
 		// fire a knowledge update message
 		this->send_state_updated();

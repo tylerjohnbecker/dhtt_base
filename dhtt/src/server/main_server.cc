@@ -58,7 +58,7 @@ namespace dhtt
 
 		// initialize physical Root Node. loaded a yaml file as a part of the constructor so we don't catch it and make the program fail to load if that happens
 		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>(this->global_com, "ROOT_0", "dhtt_plugins::RootBehavior", root_node->params, "NONE", "dhtt_plugins::PtrBranchSocket");
-		this->spinner_cp->add_node(this->node_map["ROOT_0"]);
+		// this->spinner_cp->add_node(this->node_map["ROOT_0"]);
 		this->node_map["ROOT_0"]->register_servers();
 		this->node_map["ROOT_0"]->set_resource_status_updated(true);
 		// this->node_map["ROOT_0"]->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
@@ -520,7 +520,7 @@ namespace dhtt
 
 		if ( ( to_add.type < dhtt_msgs::msg::Node::AND ) or ( to_add.type > dhtt_msgs::msg::Node::BEHAVIOR ) )
 		{
-			return "Can\'t add a behavior with type " + std::to_string(to_add.type) + ". Returning in error.";
+			return "Can\'t add a node with type " + std::to_string(to_add.type) + ". Returning in error.";
 		}
 
 		if ( found_parent == this->node_list.tree_nodes.end() )
@@ -586,15 +586,13 @@ namespace dhtt
 
 		if ( not force and not this->can_add(to_add, index) )
 		{
-			std::string err = "Precondition violation found in subsequent behaviors.";
-
 			this->node_map.erase(to_add.node_name);
 
 			// sometimes get_error_msg() is empty, which is misinterpreted later as success.
-			return err + " Force not set and failed pre/postconditions check";
+			return "Precondition violation found in subsequent behaviors. Force not set and failed pre/postconditions check";
 		}
 
-		this->spinner_cp->add_node(this->node_map[to_add.node_name]);
+		// this->spinner_cp->add_node(this->node_map[to_add.node_name]);
 		// this->node_map[to_add.node_name]->register_with_parent(index);
 		this->node_map[to_add.node_name]->register_servers();
 
@@ -633,15 +631,108 @@ namespace dhtt
 	std::string MainServer::add_nodes_from_file(std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, std::string file_name, std::vector<std::string> file_args, bool force )
 	{
 		std::string cur_parent;
-
 		bool first = true;
 
-		auto is_parent = [&]( dhtt_msgs::msg::Node check ) { return check.node_name.find(cur_parent) != std::string::npos; };
+		auto is_parent = [&]( dhtt_msgs::msg::Node check ) { return not strcmp(parent_name.c_str(), check.node_name.c_str()); };
 
 		// TODO remove this when done with cooking_zoo
-		++this->cooking_zoo_counter;
+		this->cooking_zoo_counter++;
 
-		std::function<std::string(dhtt_msgs::msg::Subtree&, int)> add_post_order = [&]( dhtt_msgs::msg::Subtree& to_add, int current )
+		// making local add_node to avoid extra work that the add_node public function has to do for error checking etc. Returns the index to the added node
+		auto local_add_node = [&](int parent_index, dhtt_msgs::msg::Node to_add, bool force, int index)
+		{
+			if ( ( to_add.type < dhtt_msgs::msg::Node::AND ) or ( to_add.type > dhtt_msgs::msg::Node::BEHAVIOR ) )
+			{
+				return -1;
+			}
+
+			if ( not node_map[parent_name]->logic->can_add_child() )
+			{
+				return -1;
+			}
+
+			auto found_parent = this->node_list.tree_nodes.begin() + parent_index;
+			
+			// add to our list of nodes (this should just modify the local copy)
+			// to_add.node_name += "_" + std::to_string(this->total_nodes_added);
+			
+			if (this->verbose)
+				RCLCPP_INFO(this->get_logger(), "\tAdding node %s to the tree with parent %s.", to_add.node_name.c_str(), (*found_parent).node_name.c_str());
+
+			//// cool thing I learned while debugging: push_back seems to cause problems with iterators that are found before it is used. So instead change everything and then push back is the solution!
+			// this should already be set but in the case of the topmost node in a file it won't be for instance
+			to_add.parent_name = std::string((*found_parent).node_name.c_str());
+			to_add.parent = std::distance(this->node_list.tree_nodes.begin(), found_parent);
+			to_add.node_status.state = dhtt_msgs::msg::NodeStatus::WAITING;
+			
+			// ensure that the goitr type is added if it exists
+			std::string goitr_type = "";
+
+			if ( strcmp(to_add.goitr_name.c_str(), ""))
+				goitr_type = to_add.goitr_name;
+
+			// create a physical node from the message and add to physical list
+			this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(this->global_com, to_add.node_name, to_add.plugin_name, to_add.params, parent_name, "dhtt_plugins::PtrBranchSocket", goitr_type);
+
+			if (this->node_map[to_add.node_name]->loaded_successfully() == false)
+			{
+				std::string err = this->node_map[to_add.node_name]->get_error_msg();
+
+				this->node_map.erase(to_add.node_name);
+
+				return -1;
+			}
+
+			std::shared_ptr<dhtt_utils::PredicateConjunction> tmp1 = std::make_shared<dhtt_utils::PredicateConjunction>();
+			std::shared_ptr<dhtt_utils::PredicateConjunction> tmp2 = std::make_shared<dhtt_utils::PredicateConjunction>();
+
+			*tmp1 = this->node_map[to_add.node_name]->logic->get_preconditions();
+			*tmp2 = this->node_map[to_add.node_name]->logic->get_postconditions(); 
+
+			to_add.preconditions = dhtt_utils::to_string(tmp1);
+			to_add.postconditions = dhtt_utils::to_string(tmp2);
+
+			if ( not force and not this->can_add(to_add, index) )
+			{
+				this->node_map.erase(to_add.node_name);
+
+				// sometimes get_error_msg() is empty, which is misinterpreted later as success.
+				return -1;
+			}
+
+			// no longer relevant because they are not rclcpp:Node's
+			// this->spinner_cp->add_node(this->node_map[to_add.node_name]);
+			// this->node_map[to_add.node_name]->register_with_parent(index);
+			this->node_map[to_add.node_name]->register_servers();
+
+			if (this->node_map[to_add.node_name]->loaded_successfully() == false)
+			{
+				this->node_map.erase(to_add.node_name);
+
+				return -1;
+			}
+
+			this->node_map[to_add.parent_name]->add_child(this->node_map[to_add.node_name]->get_socket_ptr(), to_add.node_name, "dhtt_plugins::PtrBranchPlug", index);
+
+			// update the parent
+			auto index_iter = (index == -1)? (*found_parent).children.end() : (*found_parent).children.begin() + index;
+			auto name_index_iter = (index == -1)? (*found_parent).child_name.end() : (*found_parent).child_name.begin() + index;
+
+			(*found_parent).children.insert( index_iter, (int) this->node_list.tree_nodes.size() );
+			(*found_parent).child_name.insert( name_index_iter, to_add.node_name );
+
+			this->node_list.tree_nodes.push_back(to_add);
+
+			// add this node_name to the list of added nodes
+			response->added_nodes.push_back(to_add.node_name);
+
+			// finally add to the counter so that we continue to get unique names (up until 2^64 nodes in which case we should have given up long ago)
+			this->total_nodes_added++;
+
+			return (int) this->node_list.tree_nodes.size() - 1;
+		};
+
+		std::function<std::string(dhtt_msgs::msg::Subtree&, int, int)> add_post_order = [&]( dhtt_msgs::msg::Subtree& to_add, int current, int parent_index )
 		{
 			// RCLCPP_ERROR(this->get_logger(), "Add post order %s", to_add.tree_nodes[current].node_name.c_str());
 
@@ -652,25 +743,15 @@ namespace dhtt
 
 				if ( index != std::string::npos )
 				{
-					param.replace(index, 1, std::to_string(this->cooking_zoo_counter));
-				}
-			}
+					std::string to_rep = std::to_string(this->cooking_zoo_counter);
 
-			// just a sanity check that the # symbols have been replaced
-			for (auto& param : to_add.tree_nodes[current].params)
-			{
-				const auto index = param.find('#'); 
-				if ( index != std::string::npos )
-				{
-					throw std::runtime_error("");
+					param.replace(index, 1, "");
+					param.insert(index, to_rep);
 				}
 			}
 
 			// add node to the tree
 			cur_parent = to_add.tree_nodes[current].parent_name;
-			std::vector<dhtt_msgs::msg::Node>::iterator found_parent = std::find_if( this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), is_parent);
-
-			std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
 
 			// copy and then delete the children list of the node to avoid duplication
 			std::vector<int> children_cp = to_add.tree_nodes[current].children;
@@ -686,13 +767,14 @@ namespace dhtt
 				first = false;
 			}
 
-			std::string err_msg = this->add_node(res, (*found_parent).node_name, to_add.tree_nodes[current], force, index);
+			// err 
+			int n_index = local_add_node(parent_index, to_add.tree_nodes[current], force, index); //(res, (*found_parent).node_name, to_add.tree_nodes[current], force, index);
 
-			if ( strcmp(err_msg.c_str(), "") )
-				return err_msg;
+			if ( n_index == -1 )
+				return "Could not add node " + to_add.tree_nodes[current].node_name + " returning in error.";
 
 			// update own name 
-			std::string new_name = res->added_nodes[0];
+			std::string new_name = this->node_list.tree_nodes.back().node_name;
 			response->added_nodes.push_back(new_name);
 
 			// update children's version of parent name and add children in reverse order
@@ -700,7 +782,7 @@ namespace dhtt
 			{
 				to_add.tree_nodes[*riter].parent_name = new_name;
 
-				err_msg = add_post_order(to_add, *riter);
+				std::string err_msg = add_post_order(to_add, *riter, n_index);
 
 				if ( strcmp(err_msg.c_str(), "") )
 					return err_msg;
@@ -721,13 +803,16 @@ namespace dhtt
 			dhtt_msgs::msg::Subtree nodes_to_add;
 
 			std::string err_msg = this->construct_subtree_from_yaml(nodes_to_add, file_name, file_args);
-			nodes_to_add.tree_nodes[0].parent_name = parent_name;
 
 			if ( strcmp(err_msg.c_str(), "") )
 				return err_msg;
 
+			nodes_to_add.tree_nodes[0].parent_name = parent_name;
+
+			int parent_index = std::distance ( this->node_list.tree_nodes.begin(), std::find_if(this->node_list.tree_nodes.begin(), this->node_list.tree_nodes.end(), is_parent));
+
 			// add nodes post order
-			std::string error_msg = add_post_order(nodes_to_add, 0);
+			std::string error_msg = add_post_order(nodes_to_add, 0, parent_index);
 
 			// make sure to pass the error through if anything fails
 			if ( strcmp(error_msg.c_str(), "") )
@@ -736,10 +821,12 @@ namespace dhtt
 
 				return error_msg;
 			}
+			
+			this->set_changed_up_tree(this->node_list.tree_nodes.end() - 1);
 		}
 
 		// then maintain the pre and post conditions
-		int id = this->start_maintain(parent_name);
+		int id = this->start_maintain("ROOT_0");
 
 		this->wait_for_maintain(id);
 
@@ -801,7 +888,7 @@ namespace dhtt
 			// now remove the node and it's reference from the parent from the real node map, also remove from the spinner
 			this->node_map[parent_name]->remove_child(look_for);
 
-			this->spinner_cp->remove_node(this->node_map[look_for]);
+			// this->spinner_cp->remove_node(this->node_map[look_for]);
 			this->node_map.erase(look_for);
 		}
 
@@ -1252,19 +1339,18 @@ namespace dhtt
 	void MainServer::reset_param_server()
 	{
 		// get a sync param client ptr from the communication_aggregator
-		auto local_param_client = this->global_com->register_param_client("/param_node");
+		// auto param_name_list = this->global_com->list_parameters({}, 2).names;
 
-		if ( not local_param_client )
-			throw std::runtime_error("Cannot reach param node.");
-
-		auto param_name_list = local_param_client->list_parameters({}, 2).names;
-		std::vector<rclcpp::Parameter> param_list = {};
+		// std::vector<rclcpp::Parameter> param_list = {};
 
 		// put empty parameter values for each of the retrieved parameter names
-		for ( auto iter : param_name_list )
-			param_list.push_back(rclcpp::Parameter(iter, rclcpp::ParameterValue()));
+		// for ( auto iter : param_name_list )
+		// 	if ( iter.find("dhtt_resources") == std::string::npos )
+		// 		this->global_com->set_parameter_sync(rclcpp::Parameter(iter, rclcpp::ParameterValue()));
 
-		local_param_client->set_parameters(param_list);
+		this->global_com->set_parameter_sync(rclcpp::Parameter("world.marked_objects_taints", std::vector<std::string>()));
+		this->global_com->set_parameter_sync(rclcpp::Parameter("world.marked_objects_types", std::vector<std::string>()));
+		this->global_com->set_parameter_sync(rclcpp::Parameter("world.marked_objects_ids", std::vector<long int>()));
 	}
 
 	// fetch helpers
@@ -1602,6 +1688,19 @@ namespace dhtt
 		return to_ret;
 	}
 
+	void MainServer::set_changed_up_tree(std::vector<dhtt_msgs::msg::Node>::iterator node)
+	{
+		if ( strcmp(node->parent_name.c_str(), "ROOT_0") )
+		{
+			auto parent = this->node_list.tree_nodes.begin() + node->parent;
+
+			this->node_map[node->parent_name]->set_child_changed(node->node_name, true);
+			this->node_map[node->node_name]->set_changed_flag(true);
+
+			this->set_changed_up_tree(parent);
+		}
+	}
+
 	// for this to work I have to maintain that the children of each node will be next to each other even if they are not next to their parent <-- I don't think this is true. I think as long as the parent and child indices are maintained it should be fine
 	// then this maintains order, and also ensures that that is kept as well. I am concerned for the runtime of this algorithm (looks like O(n^2)).
 	dhtt_msgs::msg::Subtree MainServer::construct_subtree_from_node_iter( std::vector<dhtt_msgs::msg::Node>::iterator top_node )
@@ -1662,91 +1761,143 @@ namespace dhtt
 		return to_ret;
 	}
 
-	std::string MainServer::construct_subtree_from_yaml( dhtt_msgs::msg::Subtree& to_construct, std::string file_name, std::vector<std::string> file_args )
+	std::string MainServer::construct_subtree_from_yaml( dhtt_msgs::msg::Subtree& to_construct, std::string file_name, std::vector<std::string> file_args, std::string parent_name )
 	{
 		std::vector<dhtt_msgs::msg::Node> nodes_to_add;
+		std::unordered_map<std::string, std::string> updated_names;
+
+		int number_of_nodes = this->total_nodes_added;
 
 		// yaml-cpp example code taken from here: https://stackoverflow.com/questions/70072926/yaml-cpp-how-to-read-this-yaml-file-content-using-c-linux-using-yaml-cpp-v
 		try 
 		{
-			// first build vector of nodes from yaml file
-			YAML::Node config = YAML::LoadFile(file_name);
-		
-			std::vector<std::string> nodes = config["NodeList"].as<std::vector<std::string>>();
 
-			for ( std::vector<std::string>::iterator iter = nodes.begin(); iter != nodes.end(); iter++)
+			std::function<std::string ( std::vector<dhtt_msgs::msg::Node>&, std::string, std::vector<std::string>, std::string )> create_nodes_to_add_recursive = 
+			[&]( std::vector<dhtt_msgs::msg::Node>& to_construct, std::string file_name_cur, std::vector<std::string> file_args_cur, std::string parent_name_cur) 
 			{
-				dhtt_msgs::msg::Node to_build;
+				// first build vector of nodes from yaml file
+				YAML::Node config = YAML::LoadFile(file_name_cur);
+			
+				std::vector<std::string> nodes = config["NodeList"].as<std::vector<std::string>>();
 
-				to_build.node_name = *iter;
-				to_build.parent_name = config["Nodes"][(*iter)]["parent"].as<std::string>();
-
-				to_build.type = config["Nodes"][(*iter)]["type"].as<int>();
-				to_build.plugin_name = config["Nodes"][(*iter)]["behavior_type"].as<std::string>();
-
-				// check optional parameter "goitr_type"
-				try 
+				for ( std::vector<std::string>::iterator iter = nodes.begin(); iter != nodes.end(); iter++)
 				{
-					to_build.goitr_name = config["Nodes"][(*iter)]["goitr_type"].as<std::string>();
-				}
-				catch (const std::exception& e)
-				{
-					to_build.goitr_name = "";
-				}
+					dhtt_msgs::msg::Node to_build;
 
-				if (to_build.type > dhtt_msgs::msg::Node::BEHAVIOR)
-					return "Node type for node " + to_build.node_name + " incorrect at value " + std::to_string(to_build.type) + ". Returning in error.";
+					std::string node_name = *iter;
+					std::string parent_name = config["Nodes"][(*iter)]["parent"].as<std::string>();
 
-				// also make some consideration for the plugin type but not necessary until that functions
+					updated_names[node_name] = node_name + "_" + std::to_string(number_of_nodes);
 
-				std::vector<std::string> params = config["Nodes"][(*iter)]["params"].as<std::vector<std::string>>();
+					to_build.node_name = updated_names[node_name];
 
-				for ( auto param_iter = params.begin(); param_iter != params.end(); param_iter++ )
-				{	
-					size_t found_index = (*param_iter).find('$');
-
-					// allow for arguments to be passed with the $ character
-					if ( found_index != std::string::npos )
+					if ( not strcmp(parent_name.c_str(), ROOT_PARENT_NAME) and not strcmp(parent_name_cur.c_str(), "") )
 					{
-						std::string param = (*param_iter).substr(0, found_index - 1);
-						std::string arg_to_find = (*param_iter).substr(found_index + 1, ( (*param_iter).length() - found_index ) + 1);
+						to_build.parent_name = parent_name;
+					}
+					else if ( not strcmp(parent_name.c_str(), ROOT_PARENT_NAME) and strcmp(parent_name_cur.c_str(), "") )
+					{
+						parent_name = parent_name_cur;
 
-						bool found = false;
-
-						for ( auto arg_iter = file_args.begin(); arg_iter != file_args.end(); arg_iter++ )
-						{
-							size_t found_index2 = (*arg_iter).find(arg_to_find);
-
-							if ( found_index2 != std::string::npos )
-							{
-								found = true;
-
-								found_index2 = (*arg_iter).find(':') + 1;
-
-								std::string param_val = (*arg_iter).substr(found_index2, ( (*arg_iter).length() - found_index2 ) + 1);
-								RCLCPP_FATAL(this->get_logger(), "\t\t%s: %s", param.c_str(), param_val.c_str());
-
-								to_build.params.push_back(param + param_val);
-
-								break;
-							}
-						}
-
-						if ( found == false )
-							return "Arg from yaml file not found. " + arg_to_find + " should be given a value in the file_args parameter.";
+						to_build.parent_name = parent_name;
 					}
 					else
 					{
-						to_build.params.push_back(*param_iter);
+						to_build.parent_name = updated_names[parent_name];
 					}
-				}
 
-				nodes_to_add.push_back(to_build);
-			}			
+					to_build.type = config["Nodes"][(*iter)]["type"].as<int>();
+					to_build.plugin_name = config["Nodes"][(*iter)]["behavior_type"].as<std::string>();
+
+					// check optional parameter "goitr_type"
+					try 
+					{
+						to_build.goitr_name = config["Nodes"][(*iter)]["goitr_type"].as<std::string>();
+					}
+					catch (const std::exception& e)
+					{
+						to_build.goitr_name = "";
+					}
+
+					if (to_build.type > dhtt_msgs::msg::Node::SUBTREE)
+						return "Node type for node " + to_build.node_name + " incorrect at value " + std::to_string(to_build.type) + ". Returning in error.";
+
+					// also make some consideration for the plugin type but not necessary until that functions
+
+					std::vector<std::string> params = config["Nodes"][(*iter)]["params"].as<std::vector<std::string>>();
+
+					for ( auto param_iter = params.begin(); param_iter != params.end(); param_iter++ )
+					{	
+						size_t found_index = (*param_iter).find('$');
+
+						// allow for arguments to be passed with the $ character
+						if ( found_index != std::string::npos )
+						{
+							std::string param = (*param_iter).substr(0, found_index - 1);
+							std::string arg_to_find = (*param_iter).substr(found_index + 1, ( (*param_iter).length() - found_index ) + 1);
+
+							bool found = false;
+
+							for ( auto arg_iter = file_args_cur.begin(); arg_iter != file_args_cur.end(); arg_iter++ )
+							{
+								size_t found_index2 = (*arg_iter).find(arg_to_find);
+
+								if ( found_index2 != std::string::npos )
+								{
+									found = true;
+
+									found_index2 = (*arg_iter).find(':') + 1;
+
+									std::string param_val = (*arg_iter).substr(found_index2, ( (*arg_iter).length() - found_index2 ) + 1);
+									// RCLCPP_FATAL(this->get_logger(), "\t\t%s %s", param.c_str(), param_val.c_str());
+
+									to_build.params.push_back(param + param_val);
+
+									break;
+								}
+							}
+
+							if ( found == false )
+								return "Arg from yaml file not found. " + arg_to_find + " should be given a value in the file_args parameter.";
+						}
+						else
+						{
+							to_build.params.push_back(*param_iter);
+						}
+					}
+
+					if ( to_build.type <= dhtt_msgs::msg::Node::BEHAVIOR )
+					{
+						to_construct.push_back(to_build);
+
+						number_of_nodes++;
+					}
+					else
+					{
+						// first extract the file location for the proper path
+						std::experimental::filesystem::path file_path = file_name_cur;
+						file_path.parent_path();
+
+						to_build.plugin_name = file_path.parent_path().native() + "/" + to_build.plugin_name;
+
+						create_nodes_to_add_recursive(to_construct, to_build.plugin_name, to_build.params, to_build.parent_name);
+					}
+				}			
+
+				return std::string();
+			};
+
+			std::string err = create_nodes_to_add_recursive(nodes_to_add, file_name, file_args, parent_name);
+
+			if ( strcmp(err.c_str(), "") )
+				return err;
 		}
 		catch (const std::exception& exception)
 		{
-			return exception.what();
+			if ( (int)nodes_to_add.size() > 0 )
+				return "Exception [" + std::string(exception.what()) + "] occured after parsing node [" + nodes_to_add.back().node_name.c_str() + "].";
+			else
+				return "Exception [" + std::string(exception.what()) + "] occured when parsing the first node.";
 		}
 
 		// now construct subtree
@@ -1755,9 +1906,13 @@ namespace dhtt
 
 		int max_width = -1;
 		int max_depth = -1;
+		int tmp = added_nodes.size();
+
+		int tmp2 = tmp;
 
 		while ( added_nodes.size() < nodes_to_add.size() )
 		{
+
 			// first time we can't use the dictionary
 			if ( added_nodes.size() == 0 )
 			{
@@ -1796,10 +1951,18 @@ namespace dhtt
 						
 						to_construct.tree_nodes.back().parent = parent_index;
 					}
-					else if ( added_nodes.find(iter.parent_name) != added_nodes.end() and added_nodes.find(iter.node_name) != added_nodes.end() )
-						return "Parent " + iter.parent_name + " not found for child " + iter.node_name + " returning in error!";
+					// else if ( added_nodes.find(iter.parent_name) != added_nodes.end() and added_nodes.find(iter.node_name) != added_nodes.end() )
+					// 	return "Parent " + iter.parent_name + " not found for child " + iter.node_name + " returning in error!";
 				}
 			}
+
+			tmp2 = added_nodes.size();
+
+			if ( tmp == tmp2 )
+				return "Node not added during loop. Is the tree connected? Returning in error.";
+
+			tmp = tmp2;
+			
 		}
 
 		to_construct.max_tree_depth = max_depth;

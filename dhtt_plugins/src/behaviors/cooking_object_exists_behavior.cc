@@ -28,7 +28,7 @@ void CookingObjectExistsBehavior::do_work(dhtt::Node *container)
 	{
 		if (not this->mark_object(this->destination_object.world_id, this->destination_mark))
 		{
-			RCLCPP_ERROR_STREAM(container->get_logger(),
+			DHTT_LOG_ERROR(this->com_agg,
 								"Marking object " << this->destination_object.world_id << " with "
 												  << this->destination_mark << " failed.");
 			this->done = false;
@@ -36,16 +36,18 @@ void CookingObjectExistsBehavior::do_work(dhtt::Node *container)
 	}
 
 	auto res = this->send_request_and_update(req);
-	// auto res = this->cooking_request_client->async_send_request(req);
-	// RCLCPP_INFO(container->get_logger(), "Sending nop request");
-	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
-	// RCLCPP_INFO(container->get_logger(), "nop request completed");
 
 	bool suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(container->get_logger(), "nop request did not succeed: %s",
-					 res.get()->error_msg.c_str());
+		DHTT_LOG_ERROR(this->com_agg, "nop request did not succeed: " <<
+					 res.get()->error_msg);
+	}
+
+	// clean up the marks in case an object dissapears as a result of a new object existing (useful for the smoothie check)
+	if ( this->done )
+	{
+		this->clean_marks();
 	}
 
 	this->done &= suc;
@@ -55,12 +57,40 @@ std::vector<dhtt_msgs::msg::Resource>
 CookingObjectExistsBehavior::get_retained_resources(dhtt::Node *container)
 {
 	(void)container;
-	return {};
+
+	std::vector<dhtt_msgs::msg::Resource> to_ret;
+
+	// just keep access to the first gripper found (shouldn't matter for now)
+	for (auto resource_iter : container->get_owned_resources())
+	{
+		if (resource_iter.type == dhtt_msgs::msg::Resource::GRIPPER)
+		{
+			to_ret.push_back(resource_iter);
+			break;
+		}
+	}
+
+	return to_ret;
 }
 std::vector<dhtt_msgs::msg::Resource>
 CookingObjectExistsBehavior::get_released_resources(dhtt::Node *container)
 {
-	return container->get_owned_resources();
+	std::vector<dhtt_msgs::msg::Resource> to_ret;
+	bool first = true;
+
+	for (auto resource_iter : container->get_owned_resources())
+	{
+		if (resource_iter.type != dhtt_msgs::msg::Resource::GRIPPER or not first)
+		{
+			to_ret.push_back(resource_iter);
+		}
+		else
+		{ // skip the first gripper but not the rest
+			first = false;
+		}
+	}
+
+	return to_ret;
 }
 
 std::vector<dhtt_msgs::msg::Resource> CookingObjectExistsBehavior::get_necessary_resources()

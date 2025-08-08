@@ -23,7 +23,7 @@ def get_main_node(debug_text=''):
 							condition = LaunchConfigurationEquals('with_world_params', 'false'),
 							actions= [
 								Node( package='dhtt', executable='start_server', output='log', prefix=[debug_text], emulate_tty=True ),
-								Node( package='dhtt', executable='param_node', output='log', emulate_tty=True),
+								Node( package='dhtt', executable='param_node', output='log', emulate_tty=True, parameters=[]),
                                 Node( package='dhtt_cooking', executable='dhtt_cooking', output='log', prefix=[debug_text], emulate_tty=True ),
 							]
 	 					  )
@@ -33,7 +33,7 @@ def get_main_node(debug_text=''):
 def generate_launch_description():
 
 	### ARGUMENTS
-	with_world_params_arg = DeclareLaunchArgument( 'with_world_params', default_value=TextSubstitution(text='false') )
+	with_world_params_arg = DeclareLaunchArgument( 'with_world_params', default_value=TextSubstitution(text='true') )
 	params_file_arg = DeclareLaunchArgument( 'params_file' , default_value=TextSubstitution(text='') )
 	debug_arg = DeclareLaunchArgument( 'debug', default_value=TextSubstitution(text='false') )
 

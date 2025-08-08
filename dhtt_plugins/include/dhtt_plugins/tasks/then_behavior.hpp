@@ -83,6 +83,7 @@ namespace dhtt_plugins
 		int next;
 		bool started_activation;
 		bool created;
+		bool enforced_sequential;
 	private:
 	};
 }

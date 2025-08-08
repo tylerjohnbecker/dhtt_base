@@ -34,7 +34,7 @@ namespace dhtt_plugins
 
 		std::vector<std::string> children = container->get_child_names();
 
-		RCLCPP_INFO(container->get_logger(), "\tAuction callback started activating children...");
+		DHTT_LOG_INFO(this->com_agg, "\tAuction callback started activating children...");
 
 		if ( not this->started_activation )
 		{
@@ -67,8 +67,6 @@ namespace dhtt_plugins
 		{
 			first_child_in_queue = *(children.begin() + this->child_queue_index + this->next);
 
-			// for (auto resource : n_goal.passed_resources)
-			// 	RCLCPP_FATAL(container->get_logger(), "type: %d, owned: %d", resource.type, resource.locked);
 			n_goal.success = true;
 
 			container->async_activate_child(first_child_in_queue, n_goal);
@@ -87,7 +85,7 @@ namespace dhtt_plugins
 			results = container->get_activation_results();
 		}
 
-		RCLCPP_INFO(container->get_logger(), "Responses received...");
+		DHTT_LOG_INFO(this->com_agg, "Responses received...");
 
 		// while ( results[first_child_in_queue]->done and this->child_queue_index < this->child_queue_size - 1 )
 		// {
@@ -116,23 +114,13 @@ namespace dhtt_plugins
 		// for (auto const& x  : results)
 		// 	total_sum += x.second->activation_potential;
 
-		RCLCPP_WARN(container->get_logger(), "\tRecommending child [%s] for activation in queue position %d with potential %f...", first_child_in_queue.c_str(), this->child_queue_index, 
-								results[first_child_in_queue].activation_potential) ;
+		DHTT_LOG_WARN(this->com_agg, "\tRecommending child [" << first_child_in_queue << "] for activation in queue position " << this->child_queue_index 
+						<< " with potential " << results[first_child_in_queue].activation_potential << "...");
 
 		this->activation_potential = results[first_child_in_queue].activation_potential;// / total_num_children;
 
-		// RCLCPP_WARN(container->get_logger(), "Child %s possible with activation potential %f", (to_ret->possible)? "is" : "isn\'t", results[first_child_in_queue].activation_potential);
 		n_goal.success = false;
 
-		// deactivate the child if it's not possible ( it automatically returns to waiting actually )
-		// if ( not to_ret->possible )
-		// {		
-		// 	container->async_activate_child(first_child_in_queue, n_goal);
-			
-		// 	container->block_for_activation_from_children();
-		// 	container->get_activation_results();
-		// }
-		
 		// return the result
 		return to_ret;
 	}
@@ -156,7 +144,7 @@ namespace dhtt_plugins
 
 		std::string active = container->get_active_child_name();
 
-		RCLCPP_WARN(container->get_logger(), "Telling child %s to work!", active.c_str());
+		DHTT_LOG_WARN(this->com_agg, "Telling child " << active << " to work!");
 
 		container->async_activate_child(active, n_goal);
 
@@ -169,12 +157,10 @@ namespace dhtt_plugins
 		// increment queue if the child is done
 		if ( result.done )
 		{
-			// RCLCPP_INFO(container->get_logger(), "Child done incrementing queue index!");
-
 			this->child_queue_index++;
 		}
 
-		RCLCPP_WARN(container->get_logger(), "Child finished running, %d left!", (this->child_queue_size - this->child_queue_index) );
+		DHTT_LOG_WARN(this->com_agg, "Child finished running, " << (this->child_queue_size - this->child_queue_index) << " left!");
 
 		// change hands of resources and pass up
 		if ( not this->is_done() )
@@ -186,8 +172,6 @@ namespace dhtt_plugins
 			to_ret->passed_resources = result.passed_resources;
 			container->set_passed_resources(std::vector<dhtt_msgs::msg::Resource>());
 		}
-
-		// RCLCPP_INFO(container->get_logger(), "Queue index %d and Queue size %d and is done %d", this->child_queue_index, this->child_queue_size, this->is_done());
 
 		to_ret->released_resources = result.released_resources;
 		to_ret->last_behavior = result.last_behavior;
@@ -245,7 +229,6 @@ namespace dhtt_plugins
 				dhtt_utils::append_predicate_conjunction(this->postconditions, inc_postconditions);
 			else
 				this->postconditions.conjunctions.push_back( tmp );
-			// RCLCPP_WARN(container->get_logger(), "%s", dhtt_utils::to_string(this->postconditions).c_str());
 		}
 
 		// finally remove any repeated predicates from the predicate lists in pre and postconditions
@@ -254,9 +237,6 @@ namespace dhtt_plugins
 
 		dhtt_utils::flatten_predicates(this->preconditions);
 		dhtt_utils::flatten_predicates(this->postconditions);
-
-		// RCLCPP_ERROR(container->get_logger(), "%s", dhtt_utils::to_string(this->preconditions).c_str());
-		// RCLCPP_ERROR(container->get_logger(), "%s", dhtt_utils::to_string(this->postconditions).c_str());
 	}
 
 
@@ -274,34 +254,56 @@ namespace dhtt_plugins
 
 		// parse reorderings after created
 
-		(void) params;
+		// (void) params;
 
-		if (this->created)
-		{
-			std::lock_guard<std::mutex> guard(this->queue_index_mut);
+		// if (this->created)
+		// {
+		// 	std::lock_guard<std::mutex> guard(this->queue_index_mut);
 		
-			if ( (int) params.size() == 0 )
-				throw std::invalid_argument("Need at least one parameter to change, but no params were given...");
+		// 	if ( (int) params.size() == 0 )
+		// 		throw std::invalid_argument("Need at least one parameter to change, but no params were given...");
 
+		// 	auto colon_index = params[0].find(':');
+		// 	std::string key = params[0].substr(0, colon_index);
+		// 	std::string val = params[0].substr(colon_index + 2, params[0].size() - colon_index);
+
+		// 	if ( strcmp(key.c_str(), "child_queue_index") )
+		// 		throw std::invalid_argument("Invalid parameter passed: " + key + " expected \"child_queue_index: int\"");
+
+		// 	this->child_queue_index = atoi(val.c_str());
+
+		// 	if ( this->child_queue_index < 0 or this->child_queue_index > this->child_queue_size )
+		// 		throw std::invalid_argument("Invalid queue index passed " + std::to_string(this->child_queue_index) + "... Returning in error!");
+
+		// 	// throw std::invalid_argument(std::to_string(this->child_queue_index));
+		// }
+
+		if ( (int) params.size() > 1 )
+			throw std::invalid_argument("Too many parameters given to Then type node. Returning in error!");
+
+		this->enforced_sequential = false;
+
+		// optional "enforced_sequential" parameter for enforcing if a then node should fully run before returning control to the rest of the tree
+		if ( (int) params.size() > 0 )
+		{
 			auto colon_index = params[0].find(':');
 			std::string key = params[0].substr(0, colon_index);
 			std::string val = params[0].substr(colon_index + 2, params[0].size() - colon_index);
 
-			if ( strcmp(key.c_str(), "child_queue_index") )
-				throw std::invalid_argument("Invalid parameter passed: " + key + " expected \"child_queue_index: int\"");
+			if ( strcmp(key.c_str(), "enforced_sequential") )
+				throw std::invalid_argument("Invalid parameter passed: " + key + " expected \"enforced_sequential: true|false\"");
 
-			this->child_queue_index = atoi(val.c_str());
-
-			if ( this->child_queue_index < 0 or this->child_queue_index > this->child_queue_size )
-				throw std::invalid_argument("Invalid queue index passed " + std::to_string(this->child_queue_index) + "... Returning in error!");
-
-			// throw std::invalid_argument(std::to_string(this->child_queue_index));
+			// if the val is true then we enforce sequential ordering
+			this->enforced_sequential = not strcmp(val.c_str(), "true");
 		}
 	}
 
 	double ThenBehavior::get_perceived_efficiency(dhtt::Node* container)
 	{
 		(void) container;
+		if ( this->child_queue_index > 0 and this-> enforced_sequential and not ( this->activation_potential < __DBL_EPSILON__ ) )
+			return ACTIVATION_POTENTIAL_HIGHEST;
+
 		return this->activation_potential;
 	}
 

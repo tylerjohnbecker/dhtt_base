@@ -26,12 +26,12 @@
 	<class type="dhtt_plugins::TestBehavior" base_class_type="dhtt::NodeType">
 		<description>Filler behavior for testing the functionality of dhtts</description>
 	</class>
-	<class type="dhtt_plugins::MockMoveBehavior" base_class_type="dhtt::NodeType">
+	<!-- <class type="dhtt_plugins::MockMoveBehavior" base_class_type="dhtt::NodeType">
 		<description>Move behavior which just changes the "location of the robot" on the parameter server. Just for testing!</description>
 	</class>
 	<class type="dhtt_plugins::MockLookBehavior" base_class_type="dhtt::NodeType">
 		<description>Move behavior which updates the known location of objects that are in the same location as the robot. Just for testing!</description>
-	</class>
+	</class> -->
 
 	<!-- REAL BEHAVIORS -->
 	<class type="dhtt_plugins::MoveBehavior" base_class_type="dhtt::NodeType">
@@ -45,14 +45,14 @@
 	</class>
 
 	<!-- TESTING GOiTRS -->
-	<class type="dhtt_plugins::GoitrTest" base_class_type="dhtt::GoitrType">
+	<!-- <class type="dhtt_plugins::GoitrTest" base_class_type="dhtt::GoitrType">
 		<description>GOiTR meant just for testing the functionality of the communication with the mainserver etc.</description>
-	</class>	
+	</class>	 -->
 
 	<!-- REAL GOiTRS -->
-	<class type="dhtt_plugins::FindGoitr" base_class_type="dhtt::GoitrType">
+	<!-- <class type="dhtt_plugins::FindGoitr" base_class_type="dhtt::GoitrType">
 		<description>GOiTR meant for controlling a subtree that finds objects in a list of known locations in the environment.</description>
-	</class>
+	</class> -->
 
     <!-- COOKING BEHAVIORS -->
 	<class type="dhtt_plugins::DeferBehavior" base_class_type="dhtt::NodeType">

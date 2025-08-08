@@ -1,0 +1,73 @@
+NodeList:
+  - OnionThen                         # BEGIN Onion
+  - OnionMoveToDispenser
+  - OnionExecuteDispenser
+  - OnionPick
+  - OnionMoveToCutboard
+  - OnionPlaceCutboard
+  - OnionExecuteCutboard
+  - ChoppedOnionPick
+  - ChoppedOnionMoveToCounter
+  - ChoppedOnionPlaceCounter          # END Onion
+
+Nodes:
+  OnionThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: [ ]
+  OnionMoveToDispenser:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'OnionThen'
+    params: [ 'object: OnionDispenser', 'mark: $mark' ]
+  OnionExecuteDispenser:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'OnionThen'
+    params: [ 'object: OnionDispenser', 'mark: $mark' ]
+  OnionPick:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'OnionThen'
+    params: [ 'object: Onion', 'mark: $mark', 'unmark: foo' ]
+  OnionMoveToCutboard:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'OnionThen'
+    params: [ 'object: Cutboard', 'mark: $mark' ]
+  OnionPlaceCutboard:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'OnionThen'
+    params: [ 'object: Cutboard', 'mark: $mark' ]
+  OnionExecuteCutboard:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'OnionThen'
+    params: [ 'object: Cutboard', 'mark: $mark' ]
+  ChoppedOnionPick:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'OnionThen'
+    params: [ 'object: Onion', 'mark: $mark', 'unmark: foo' ]
+  ChoppedOnionMoveToCounter:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'OnionThen'
+    params: [ 'object: Counter', 'conditions: Free', 'mark: $mark', ]
+  ChoppedOnionPlaceCounter:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'OnionThen'
+    params: [ 'object: Counter', 'conditions: Free', 'mark: $mark' ]

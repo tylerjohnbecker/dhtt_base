@@ -1,10 +1,13 @@
 import re
 
 import rclpy
+import rclpy.qos
 import rclpy.executors
 import rclpy.logging
 import rclpy.node
 import geometry_msgs.msg
+
+import threading
 
 from dhtt_msgs.msg import CookingAction, CookingAgent, CookingObservation, CookingObject, CookingRecipe
 from dhtt_msgs.srv import CookingRequest
@@ -38,8 +41,13 @@ class CookingNode(rclpy.node.Node):
         super().__init__('cooking_zoo')
 
         self.cooking_environment = CookingEnvironment()
-        self.cooking_server = self.create_service(CookingRequest, 'Cooking_Server', self.cooking_request_callback)
+
+        self.qos = rclpy.qos.QoSProfile(history=rclpy.qos.HistoryPolicy.KEEP_ALL)
+
+        self.cooking_server = self.create_service(CookingRequest, 'Cooking_Server', self.cooking_request_callback, qos_profile=self.qos)
         self.cooking_observation_publisher = self.create_publisher(CookingObservation, 'Cooking_Observations', 10)
+
+        self.service_lock = threading.Lock()
 
         self.get_logger().debug('Initialized' + self.get_name())
 
@@ -53,44 +61,48 @@ class CookingNode(rclpy.node.Node):
 
     def cooking_request_callback(self, request: CookingRequest.Request,
                                  response: CookingRequest.Response) -> CookingRequest.Response:
-        to_ret = ""
-        if request.super_action == CookingRequest.Request.START:
-            self.get_logger().info('Got start request')
-            self.cooking_environment.start()
-        elif request.super_action == CookingRequest.Request.STOP:
-            self.get_logger().info('Got stop request')
-            self.cooking_environment.stop()
-        elif request.super_action == CookingRequest.Request.RESET:
-            self.get_logger().info('Got reset request')
-            self.cooking_environment.reset()
-        elif request.super_action == CookingRequest.Request.ACTION:
-            self.get_logger().info('Got action request')
-            if request.action.player_name == "":
-                self.get_logger().error('Bad action request: No player name')
-                to_ret = "Bad action request: No player name"
+        # acquire a lock to prevent multithreading issue with the callback
+        with self.service_lock:
+            
+            to_ret = ""
+            
+            if request.super_action == CookingRequest.Request.START:
+                self.get_logger().info('Got start request')
+                self.cooking_environment.start()
+            elif request.super_action == CookingRequest.Request.STOP:
+                self.get_logger().info('Got stop request')
+                self.cooking_environment.stop()
+            elif request.super_action == CookingRequest.Request.RESET:
+                self.get_logger().info('Got reset request')
+                self.cooking_environment.reset()
+            elif request.super_action == CookingRequest.Request.ACTION:
+                self.get_logger().info('Got action request')
+                if request.action.player_name == "":
+                    self.get_logger().error('Bad action request: No player name')
+                    to_ret = "Bad action request: No player name"
+                else:
+                    self.get_logger().info (
+                        f'Resolving action request with: player {request.action.player_name}, action_type {request.action.action_type}, params {request.action.params}')
+                    self.cooking_environment.resolve_dhtt_action(request, response)
+
+                    if response.error_msg == "":
+                        self.actions_taken.append(request.action)
+            elif request.super_action == CookingRequest.Request.OBSERVE:
+                self.get_logger().info('Got observe request')
+                # self.get_logger().info('Published observation')
+                # self.get_logger().debug(f'Published observation, header: {obs.head}')
             else:
-                self.get_logger().info (
-                    f'Resolving action request with: player {request.action.player_name}, action_type {request.action.action_type}, params {request.action.params}')
-                self.cooking_environment.resolve_dhtt_action(request, response)
+                to_ret = "No valid super_action"
 
-                if response.error_msg == "":
-                    self.actions_taken.append(request.action)
-        elif request.super_action == CookingRequest.Request.OBSERVE:
-            self.get_logger().info('Got observe request')
-            # self.get_logger().info('Published observation')
-            # self.get_logger().debug(f'Published observation, header: {obs.head}')
-        else:
-            to_ret = "No valid super_action"
+            # if self.cooking_environment:
+            #     self.get_logger().debug(f'Published observation, header: {obs.head}')
 
-        # if self.cooking_environment:
-        #     self.get_logger().debug(f'Published observation, header: {obs.head}')
+            obs = self._prepare_observation_msg()
+            self.cooking_observation_publisher.publish(obs)
+            response.error_msg += to_ret
+            response.success = response.error_msg == ""
 
-        obs = self._prepare_observation_msg()
-        self.cooking_observation_publisher.publish(obs)
-        response.error_msg += to_ret
-        response.success = response.error_msg == ""
-
-        return response
+            return response
 
     def _prepare_observation_msg(self) -> CookingObservation:
         obs = self.cooking_environment.get_observation_msg()
@@ -320,12 +332,16 @@ class CookingEnvironment:
             to_ret.content_ids = [x.unique_id for x in obj.content]
 
         attrs = dir(obj)
-        if 'chop_state' in attrs:
-            to_ret.physical_state.append(obj.chop_state.value)
+        if 'fry_state' in attrs:
+            to_ret.physical_state.append(obj.fry_state.value)
         if 'blend_state' in attrs:
             to_ret.physical_state.append(obj.blend_state.value)
+        if 'chop_state' in attrs:
+            to_ret.physical_state.append(obj.chop_state.value)
         if 'toast_state' in attrs:
             to_ret.physical_state.append(obj.toast_state.value)
+        if 'boil_state' in attrs:
+            to_ret.physical_state.append(obj.boil_state.value)
 
         return to_ret
 

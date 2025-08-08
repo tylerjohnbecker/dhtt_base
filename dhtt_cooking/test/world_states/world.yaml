@@ -1,0 +1,6 @@
+/**:
+  ros__parameters:
+    world:
+      marked_objects_taints: []
+      marked_objects_ids: []
+      marked_objects_types: []

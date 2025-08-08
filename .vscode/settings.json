@@ -64,6 +64,15 @@
         "unordered_set": "cpp",
         "hash_map": "cpp",
         "hash_set": "cpp",
-        "rope": "cpp"
+        "rope": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp",
+        "slist": "cpp",
+        "span": "cpp",
+        "regex": "cpp",
+        "valarray": "cpp",
+        "condition_variable": "cpp",
+        "iostream": "cpp",
+        "*.txx": "cpp"
     }
 }

@@ -2,19 +2,20 @@
 
 namespace dhtt
 {
-	Node::Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string p_name, std::string branch_socket_type, std::string goitr_type) : rclcpp::Node( name ), conc_group(nullptr), 
-			node_type_loader("dhtt", "dhtt::NodeType"), goitr_type_loader("dhtt", "dhtt::GoitrType"), 
+	Node::Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string p_name, std::string branch_socket_type, std::string goitr_type) : 
+			conc_group(nullptr), node_type_loader("dhtt", "dhtt::NodeType"), goitr_type_loader("dhtt", "dhtt::GoitrType"), 
 			branch_socket_type_loader("dhtt", "dhtt::BranchSocketType"), branch_plug_type_loader("dhtt", "dhtt::BranchPlugType"),
 			name(name), parent_name(p_name), priority(1), resource_status_updated(false), first_activation(true), active(false)
 	{
 		// create a callback group for parallel ones
-		this->conc_group = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
-		this->sub_opts.callback_group = this->conc_group;
-		this->pub_opts.callback_group = this->conc_group;
+		// this->conc_group = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+		// this->sub_opts.callback_group = this->conc_group;
+		// this->pub_opts.callback_group = this->conc_group;
 
 		this->active_child_name = "";
 		this->error_msg = "";
 		this->successful_load = true;
+		this->has_goitr = false;
 
 		this->global_com = com_agg;
 
@@ -27,7 +28,7 @@ namespace dhtt
 			this->error_msg = "Error when loading plugin " + type + ": " + ex.what();
 			this->successful_load = false;
 
-			RCLCPP_ERROR(this->get_logger(), "%s", this->error_msg.c_str());
+			DHTT_LOG_ERROR(this->global_com, this->error_msg);
 
 			return;
 		}
@@ -43,7 +44,7 @@ namespace dhtt
 			this->error_msg = "Error when loading plugin " + branch_socket_type + ": " + ex.what();
 			this->successful_load = false;
 
-			RCLCPP_ERROR(this->get_logger(), "%s", this->error_msg.c_str());
+			DHTT_LOG_ERROR(this->global_com, this->error_msg);
 
 			return;
 		}
@@ -65,10 +66,6 @@ namespace dhtt
 			this->replanner->initialize(this->name, params);	
 			this->has_goitr = true;
 		}
-		else
-		{
-			this->has_goitr = false;
-		}
 
 		this->plugin_name = type;
 		this->socket_name = branch_socket_type;
@@ -77,6 +74,7 @@ namespace dhtt
 		this->logic->com_agg = this->global_com;
 		this->logic->set_name(name);
 		this->logic->initialize(params);
+		this->subtree_has_changed = true;
 	}
 
 	Node::~Node()
@@ -154,7 +152,7 @@ namespace dhtt
 
 		this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
-		RCLCPP_INFO(this->get_logger(), "\tServers registered for node %s", this->name.c_str());
+		DHTT_LOG_INFO(this->global_com, "\tServers registered for node " << this->name);
 	}
 
 	bool Node::add_child(std::shared_ptr<BranchSocketType> socket_ptr, std::string child_name, std::string plug_type, int index)
@@ -191,6 +189,7 @@ namespace dhtt
 
 		auto name_index_iter = (index == -1)? this->child_names.end() : this->child_names.begin() + index;
 		this->child_names.insert(name_index_iter, child_name);
+		this->child_changed[child_name] = true;
 
 		return true;
 	}
@@ -210,6 +209,7 @@ namespace dhtt
 		this->child_communication_plugs.erase(child_name);
 
 		this->child_names.erase(found_iter);
+		this->child_changed.erase(child_name);
 
 		return true;
 	}
@@ -225,7 +225,7 @@ namespace dhtt
 
 	bool Node::async_request_conditions(std::string child_name, dhtt_msgs::action::Condition::Goal condition_goal)
 	{
-		RCLCPP_DEBUG(this->get_logger(), "Requesting conditions from [%s]", child_name.c_str());
+		DHTT_LOG_DEBUG(this->global_com, "Requesting conditions from [" << child_name << "]");
 
 		return this->child_communication_plugs[child_name].second->async_send_maintain(condition_goal);
 	}
@@ -242,7 +242,8 @@ namespace dhtt
 		n_goal.type = dhtt_msgs::action::Condition::Goal::MAINTAIN;
 
 		for (std::string iter : this->child_names)
-			this->async_request_conditions(iter, n_goal);
+			if ( this->child_changed[iter] )
+				this->async_request_conditions(iter, n_goal);
 	}
 
 	bool Node::block_for_activation_from_children()
@@ -257,8 +258,12 @@ namespace dhtt
 	bool Node::block_for_conditions_from_children()
 	{
 		for ( const auto& pair : this->child_communication_plugs )
+		{
 			pair.second.second->block_for_maintain_response();
 
+			this->child_changed[pair.first] = false;
+		}
+			
 		return true;
 	}
 
@@ -272,9 +277,6 @@ namespace dhtt
 			{
 				dhtt_msgs::action::Activation::Result res = this->child_communication_plugs[iter].second->get_activation_result();
 				this->child_communication_plugs[iter].first = false;
-
-				// if ( res == dhtt_msgs::action::Activation::Result() )
-				// 	RCLCPP_ERROR(this->get_logger(), "Received empty activation message from [%s]", iter.c_str());
 
 				to_ret[iter] = res;
 			}
@@ -355,7 +357,7 @@ namespace dhtt
 		// send update to status topic
 		dhtt_msgs::msg::Node full_status;
 
-		full_status.head.stamp = this->now();
+		full_status.head.stamp = this->global_com->now();
 		full_status.head.frame_id = "";
 
 		full_status.node_name = this->name;
@@ -408,7 +410,7 @@ namespace dhtt
 
 		this->owned_resources.clear();
 
-		RCLCPP_INFO(this->get_logger(), "Activation received from parent...");
+		DHTT_LOG_INFO(this->global_com, "Activation received from parent..." );
 
 		// I think this is messing with the fsm related to the branch_types
 		// this->block_for_activation_from_children();
@@ -451,7 +453,7 @@ namespace dhtt
 		{
 			if ( goal.success )
 			{
-				RCLCPP_WARN(this->get_logger(), "Starting work!");
+				DHTT_LOG_WARN(this->global_com, "Starting work!");
 				this->update_status(dhtt_msgs::msg::NodeStatus::WORKING);
 
 				// add granted resources to the owned resources for the logic
@@ -466,7 +468,7 @@ namespace dhtt
 					this->apply_postconditions();
 				}
 				else
-					RCLCPP_ERROR(this->get_logger(), "Preconditions not met, restarting auction!");
+					DHTT_LOG_ERROR(this->global_com, "Preconditions not met, restarting auction!");
 
 				if (this->logic->is_done())
 					this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
@@ -475,7 +477,7 @@ namespace dhtt
 
 				if ( strcmp("", to_ret.last_behavior.c_str() ) and this->has_goitr )
 				{
-					RCLCPP_DEBUG(this->get_logger(), "Child finished, running fault recovery callback"); 
+					DHTT_LOG_DEBUG(this->global_com, "Child finished, running fault recovery callback"); 
 
 					this->replanner->child_finished_callback(to_ret.last_behavior, to_ret.done);
 
@@ -484,7 +486,7 @@ namespace dhtt
 			}
 			else
 			{
-				RCLCPP_INFO(this->get_logger(), "Request not successful returning to state WAITING.");
+				DHTT_LOG_INFO(this->global_com, "Request not successful returning to state WAITING.");
 
 				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
@@ -509,7 +511,7 @@ namespace dhtt
 		// this->resource_status_updated = false;
 
 		// then send result back to parent
-		RCLCPP_INFO(this->get_logger(), "Sending request back up the tree...");
+		DHTT_LOG_INFO(this->global_com, "Sending request back up the tree...");
 
 		return to_ret;
 	}
@@ -518,23 +520,7 @@ namespace dhtt
 	{
 		dhtt_msgs::action::Condition::Result to_ret;
 	
-		if ( goal.type == dhtt_msgs::action::Condition::Goal::GET )
-		{
-			to_ret.success = true;
-
-			std::shared_ptr<dhtt_utils::PredicateConjunction> tmp1 = std::make_shared<dhtt_utils::PredicateConjunction>();
-			std::shared_ptr<dhtt_utils::PredicateConjunction> tmp2 = std::make_shared<dhtt_utils::PredicateConjunction>();
-
-			*tmp1 = this->logic->get_preconditions();
-			*tmp2 = this->logic->get_postconditions(); 
-
-			to_ret.preconditions = dhtt_utils::to_string(tmp1);
-			to_ret.postconditions = dhtt_utils::to_string(tmp2);
-
-			return to_ret;
-		}
-
-		else if ( goal.type == dhtt_msgs::action::Condition::Goal::MAINTAIN)
+		if ( goal.type == dhtt_msgs::action::Condition::Goal::MAINTAIN and this->subtree_has_changed )
 		{
 
 			std::lock_guard<std::mutex> guard(this->maintenance_mut);
@@ -562,33 +548,59 @@ namespace dhtt
 			// outputing updated preconditions on status pub
 			this->update_status(this->status.state);
 
+			this->subtree_has_changed = false;
+
 			return to_ret;
 		}
 
-		to_ret.success = false;
-		to_ret.error_msg = "Unknown action " + std::to_string(goal.type) + " requested... returning in error.";
+		to_ret.success = true;
 
-		return to_ret; 
+		std::shared_ptr<dhtt_utils::PredicateConjunction> tmp1 = std::make_shared<dhtt_utils::PredicateConjunction>();
+		std::shared_ptr<dhtt_utils::PredicateConjunction> tmp2 = std::make_shared<dhtt_utils::PredicateConjunction>();
+
+		*tmp1 = this->logic->get_preconditions();
+		*tmp2 = this->logic->get_postconditions(); 
+
+		to_ret.preconditions = dhtt_utils::to_string(tmp1);
+		to_ret.postconditions = dhtt_utils::to_string(tmp2);
+
+		return to_ret;
 	}
 
 	void Node::print_resources(std::vector<dhtt_msgs::msg::Resource> compare)
 	{
-		RCLCPP_FATAL(this->get_logger(), "\tCurrent state of resources:");
+		DHTT_LOG_FATAL(this->global_com, "\tCurrent state of resources:");
 
 		for ( auto iter : this->available_resources )
 		{
-			RCLCPP_FATAL(this->get_logger(), "\t\t%s - type: %d, locked: %d, owners: %d, channel: %d",
-							iter.name.c_str(), iter.type, iter.locked, iter.owners, iter.channel);
+			DHTT_LOG_FATAL(this->global_com, "\t\t" << iter.name << " -- type: " << iter.type << ", locked: " << iter.locked << ", owners: " << iter.owners << ", channel: " << iter.channel);
 		}
 		
-		RCLCPP_FATAL(this->get_logger(), "\tCompared to:");
+		DHTT_LOG_FATAL(this->global_com, "\tCompared to:");
 
 		for ( auto iter : compare )
 		{
-			RCLCPP_FATAL(this->get_logger(), "\t\t%s - type: %d, locked: %d, owners: %d, channel: %d",
-							iter.name.c_str(), iter.type, iter.locked, iter.owners, iter.channel);
+			DHTT_LOG_FATAL(this->global_com, "\t\t" << iter.name << " -- type: " << iter.type << ", locked: " << iter.locked << ", owners: " << iter.owners << ", channel: " << iter.channel);
 		}
 		
+	}
+
+	void Node::set_changed_flag( bool n_val )
+	{
+		this->subtree_has_changed = n_val; 
+	}
+
+	void Node::set_child_changed( std::string child, bool n_val )
+	{
+		if ( this->child_changed.find(child) == this->child_changed.end() )
+			return;
+
+		this->child_changed[child] = n_val;
+
+		this->subtree_has_changed = false;
+
+		for ( auto pair : this->child_changed )
+			this->subtree_has_changed |= pair.second;
 	}
 	
 	void Node::modify(std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response)
@@ -659,7 +671,7 @@ namespace dhtt
 				response->error_msg = std::string("Error parsing new params: ") + ex.what();
 				response->success = false;
 
-				RCLCPP_ERROR(this->get_logger(), "Error parsing new params: %s", ex.what());
+				DHTT_LOG_ERROR(this->global_com, "Error parsing new params: " << ex.what());
 
 				throw ex; 
 
@@ -683,7 +695,7 @@ namespace dhtt
 		{
 			// std::lock_guard<std::mutex> lock(this->logic_mut);
 		
-			RCLCPP_FATAL(this->get_logger(), "Resources updated");
+			DHTT_LOG_DEBUG(this->global_com, "Resources updated");
 			this->available_resources = canonical_list->resource_state;
 
 			this->resource_status_updated = true;
@@ -720,16 +732,11 @@ namespace dhtt
 
 	void Node::pull_resources()
 	{
-		std::vector<std::string> names = this->global_com->sync_send_param_request_safe<std::vector<std::string>>(
-			"/param_node", "dhtt_resources.names", {});
-		std::vector<long int> types = this->global_com->sync_send_param_request_safe<std::vector<long int>>(
-			"/param_node", "dhtt_resources.types", {});
-		std::vector<long int> channels = this->global_com->sync_send_param_request_safe<std::vector<long int>>(
-			"/param_node", "dhtt_resources.channels", {});
-		std::vector<bool> locks = this->global_com->sync_send_param_request_safe<std::vector<bool>>(
-			"/param_node", "dhtt_resources.locks", {});
-		std::vector<long int> owners = this->global_com->sync_send_param_request_safe<std::vector<long int>>(
-			"/param_node", "dhtt_resources.owners", {});
+		std::vector<std::string> names = this->global_com->get_parameter_sync("dhtt_resources.names").as_string_array();
+		std::vector<long int> types = this->global_com->get_parameter_sync("dhtt_resources.types").as_integer_array();
+		std::vector<long int> channels = this->global_com->get_parameter_sync("dhtt_resources.channels").as_integer_array();
+		std::vector<bool> locks = this->global_com->get_parameter_sync("dhtt_resources.locks").as_bool_array();
+		std::vector<long int> owners = this->global_com->get_parameter_sync("dhtt_resources.owners").as_integer_array();
 		
 		this->available_resources.clear();
 
@@ -746,4 +753,5 @@ namespace dhtt
 			this->available_resources.push_back(to_add);
 		}
 	}
+
 }

@@ -1,0 +1,130 @@
+NodeList:
+  - MakeSmoothie
+  - MarkBlender
+  - IngredientAnd
+  - BananaThen
+  - GetChoppedBanana
+  - BananaInBlender
+  - StrawberryInBlenderOne
+  - StrawberryInBlenderTwo
+  - IceInBlender
+  - MoveToBlender
+  - ExecuteBlender
+  - SmoothieExists
+  - ServeThen
+  - MoveToSmoothie
+  - PickSmoothie
+  - MoveToDeliversquare
+  - PlaceDeliversquare
+
+Nodes:
+
+  MakeSmoothie:
+    type: 2
+    behavior_type: "dhtt_plugins::ThenBehavior"
+    robot: 0
+    parent: 'NONE'
+    params: [ ]
+
+  MarkBlender:
+    type: 4
+    behavior_type: "dhtt_plugins::CookingObjectExistsBehavior"
+    robot: 0
+    parent: 'MakeSmoothie'
+    params: [ 'object: Blender', 'conditions: Free', 'mark: A#' ]
+
+  IngredientAnd:
+    type: 1
+    behavior_type: "dhtt_plugins::AndBehavior"
+    robot: 0
+    parent: 'MakeSmoothie'
+    params: [ ]
+  
+  BananaThen:
+    type: 2
+    behavior_type: "dhtt_plugins::ThenBehavior"
+    robot: 0
+    parent: 'IngredientAnd'
+    params: [ ]  
+  GetChoppedBanana:
+    type: 5
+    behavior_type: "get_banana_chopped.yaml"
+    robot: 0
+    parent: "BananaThen"
+    params: [ "mark: A#" ]
+  BananaInBlender:
+    type: 5
+    behavior_type: "get_banana_chopped_in_blender.yaml"
+    robot: 0
+    parent: "BananaThen"
+    params: [ "mark: A#" ]
+
+  StrawberryInBlenderOne:
+    type: 5
+    behavior_type: "get_strawberry_in_blender.yaml"
+    robot: 0
+    parent: "IngredientAnd"
+    params: [ "mark: A#" ]
+  StrawberryInBlenderTwo:
+    type: 5
+    behavior_type: "get_strawberry_in_blender.yaml"
+    robot: 0
+    parent: "IngredientAnd"
+    params: [ "mark: A#" ]
+
+  IceInBlender:
+    type: 5
+    behavior_type: "get_ice_in_blender.yaml"
+    robot: 0
+    parent: "IngredientAnd"
+    params: [ "mark: A#" ]
+
+  MoveToBlender:
+    type: 4
+    behavior_type: "dhtt_plugins::CookingMoveBehavior"
+    robot: 0
+    parent: "MakeSmoothie"
+    params: [ "object: Blender", "mark: A#" ]
+  ExecuteBlender:
+    type: 4
+    behavior_type: "dhtt_plugins::CookingExecuteBehavior"
+    robot: 0
+    parent: "MakeSmoothie"
+    params: [ "object: Blender", "mark: A#"]
+  SmoothieExists:
+    type: 4
+    behavior_type: "dhtt_plugins::CookingObjectExistsBehavior"
+    robot: 0
+    parent: "MakeSmoothie"
+    params: [ "object: Smoothie", "mark: A#", "unmark: foo"]
+
+  ServeThen:
+    type: 2
+    behavior_type: "dhtt_plugins::ThenBehavior"
+    robot: 0
+    parent: "MakeSmoothie"
+    params: [ ]
+  MoveToSmoothie:
+    type: 4
+    behavior_type: "dhtt_plugins::CookingMoveBehavior"
+    robot: 0
+    parent: "ServeThen"
+    params: [ "object: Smoothie", "mark: A#" ]
+  PickSmoothie:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'ServeThen'
+    params: [ 'object: Smoothie', 'mark: A#', 'unmark: foo' ]
+  MoveToDeliversquare:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'ServeThen'
+    params: [ 'object: AbsorbingDeliversquare', 'mark: A#' ]
+  PlaceDeliversquare:
+    type: 4
+    behavior_type: 'dhtt_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'ServeThen'
+    params: [ 'object: AbsorbingDeliversquare', 'mark: A#' ]

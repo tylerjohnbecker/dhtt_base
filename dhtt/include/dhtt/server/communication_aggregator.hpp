@@ -15,6 +15,15 @@
 
 namespace dhtt
 {
+	enum LOG_LEVEL
+	{
+		DEBUG=0,
+		INFO=1,
+		WARN=2,
+		ERROR=3,
+		FATAL=4
+	};
+
 	/**
 	 * \brief Communication Aggregator for subscription and service calls coming from behaviors in the tree
 	 * 
@@ -31,7 +40,13 @@ namespace dhtt
 	{
 	public:
 		CommunicationAggregator(std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> exec_ptr, int queue_size = 10) : 
-								Node("CommunicationAggregator"), sub_qos(queue_size), unique_id(0), local_ex_ptr(exec_ptr) {};
+								Node("ComAgg", rclcpp::NodeOptions().allow_undeclared_parameters(true).automatically_declare_parameters_from_overrides(true)),
+								 sub_qos(queue_size), unique_id(0), local_ex_ptr(exec_ptr) 
+		{
+			this->declare_parameter("world.marked_objects_taints", std::vector<std::string>());
+			this->declare_parameter("world.marked_objects_types", std::vector<std::string>());
+			this->declare_parameter("world.marked_objects_ids", std::vector<long int>());
+		};
 
 		/**
 		 * \brief registers a subscriber callback 
@@ -276,25 +291,24 @@ namespace dhtt
 		}
 
 		/**
-		 * \brief Returns a syncParametersClient ptr to the given node_name
+		 * \brief Returns a SyncParametersClient ptr to the given node_name
 		 * 
-		 * This method only creates a new SyncParametersClient if one does not already exist for the given node_name. Otherwise
-		 * 	it will return a shared_ptr to the existing one. It will also return nullptr if the node cannot be reached.
+		 * This method only creates a new SyncParametersClient if one does not already exist for the given node_name. 
 		 * 
 		 * \param node_name string name of the node which we are grabbing params from
 		 * 
-		 * \return std::shared_ptr to the request param client. If the node could not be reached returns nullptr instead.
+		 * \return ptr to the param client or nullptr if it couldn't be reached
 		 */
 		std::shared_ptr<rclcpp::SyncParametersClient> register_param_client(std::string node_name)
 		{
-			if ( not this->param_node_ptr )
-				this->param_node_ptr = std::make_shared<rclcpp::Node>("dhtt_param_node");
+			if ( not this->param_client_node_ptr )
+				this->param_client_node_ptr = std::make_shared<rclcpp::Node>("param_client_node");
 
 			// if it doesn't exist already or has been deleted
 			if ( this->param_client_ptrs.find(node_name) == this->param_client_ptrs.end() or
 					this->param_client_ptrs[node_name].expired() )
 			{
-				auto n_param_client = std::make_shared<rclcpp::SyncParametersClient>(this->param_node_ptr, node_name);
+				auto n_param_client = std::make_shared<rclcpp::SyncParametersClient>(this->param_client_node_ptr, node_name);
 
 				{// new scope to prevent the using statement from annoying me later
 					using namespace std::chrono_literals;
@@ -315,22 +329,105 @@ namespace dhtt
 		/**
 		 * \brief thread safe function for making a param client request
 		 * 
-		 * This is useful since so many of the different behaviors need to make param requests simultaneously. Literally, just picks up a mutex before the
-		 * 	call.
+		 * This just takes the asynchronous call and waits for the future making it a synchronous wrapper.
 		 * 
 		 * \param request_from the param client ptr to make a thread safe request on
 		 * 
 		 * \return std::shared_future to the response efrom the server
 		 */
-		template <typename parameter_type>
-		parameter_type sync_send_param_request_safe(std::string param_client_name, std::string param_name, const parameter_type& default_value)
+		rclcpp::Parameter get_parameter_sync(std::string param_client_name, std::string param_name)
 		{
-			// pick up the mutex to ensure thread safety
+			if ( this->param_client_ptrs[param_client_name].expired() )
+				return rclcpp::Parameter();
+			
 			std::lock_guard<std::mutex> lock(this->param_mutex);
 
-			parameter_type to_ret = this->param_client_ptrs[param_client_name].lock()->get_parameter<parameter_type>(param_name, default_value);
-		
+			std::shared_ptr<rclcpp::SyncParametersClient> local_ptr = this->param_client_ptrs[param_client_name].lock();
+
+			std::vector<rclcpp::Parameter> to_ret = local_ptr->get_parameters({ param_name });
+			
+			return to_ret[0];
+		}
+
+		/**
+		 * \brief synchronously grabs a parameter from this nodes param server
+		 * 
+		 * A wrapper on the overloaded method that uses a mutex for thread safety with read/write to params.
+		 * 
+		 * \param param_name name of the reqested param
+		 * 
+		 * \return rclcpp::Parameter containing the requested param (Empty if param doesn't exist on server)
+		 */
+		rclcpp::Parameter get_parameter_sync(std::string param_name)
+		{
+			std::lock_guard<std::mutex> lock(this->local_param_mutex);
+			
+			rclcpp::Parameter to_ret = this->get_parameter(param_name);
+
 			return to_ret;
+		}
+
+		/**
+		 * \brief synchronously sets the value of a param on the param server
+		 * 
+		 * Grabs a local mutex so that there are no async problems.
+		 * 
+		 * \param param_name name of the param to change
+		 * \param n_val new value of the parameter
+		 * 
+		 * \return void
+		 */
+		void set_parameter_sync(rclcpp::Parameter n_val)
+		{
+			std::lock_guard<std::mutex> lock(this->local_param_mutex);
+
+			this->set_parameter(n_val);
+		}
+
+		/**
+		 * \brief async safe wrapper for the set_parameters function
+		 */
+		void set_parameters_sync(std::vector<rclcpp::Parameter> n_vals)
+		{
+			std::lock_guard<std::mutex> lock(this->local_param_mutex);
+
+			this->set_parameters(n_vals);
+		}
+
+		/**
+		 * \brief wrapper on RCLCPP_blank_STREAM functions to allow non-nodes to utilize them
+		 * 
+		 * This function is intended to be called through the macros shown in node.hpp.
+		 * 
+		 * \param severity level to log at (INFO, WARN, ...)
+		 * \param to_print string stream of desired output
+		 * 
+		 * \return void
+		 */
+		void log_stream (LOG_LEVEL severity, std::stringstream& to_print )
+		{
+			std::string out = to_print.str();
+
+			switch (severity)
+			{
+			case LOG_LEVEL::DEBUG:
+				RCLCPP_DEBUG(this->get_logger(), "%s", out.c_str());
+				break;
+			case LOG_LEVEL::INFO:
+				RCLCPP_INFO(this->get_logger(), "%s", out.c_str());
+				break;
+			case LOG_LEVEL::WARN:
+				RCLCPP_WARN(this->get_logger(), "%s", out.c_str());
+				break;
+			case LOG_LEVEL::ERROR:
+				RCLCPP_ERROR(this->get_logger(), "%s", out.c_str());
+				break;
+			case LOG_LEVEL::FATAL:
+				RCLCPP_FATAL(this->get_logger(), "%s", out.c_str());
+				break;
+			default:
+				throw std::runtime_error("Unknown logging level chosen. Was this run through a macro?");
+			}
 		}
 
 	private:
@@ -391,12 +488,13 @@ namespace dhtt
 		std::map<std::string, std::any> publisher_ptrs; // std::any = std::weak_ptr < rclcpp::Publisher < msg_type > >
 
 		// param client members
+		std::shared_ptr<rclcpp::Node> param_client_node_ptr = nullptr;
 		std::map<std::string, std::weak_ptr<rclcpp::SyncParametersClient>> param_client_ptrs; 
-		std::shared_ptr<rclcpp::Node> param_node_ptr = nullptr; // need these for the internals of syncparametersclient
 				
 		// general thread safety
 		std::mutex register_mutex;
 		std::mutex param_mutex;
+		std::mutex local_param_mutex;
 
 		// executor ptr
 		std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> local_ex_ptr;

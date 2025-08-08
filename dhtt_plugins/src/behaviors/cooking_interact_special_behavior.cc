@@ -40,17 +40,12 @@ void CookingInteractSpecialBehavior::do_work(dhtt::Node *container)
 	req->action.params = dest_point_str;
 
 	auto res = this->send_request_and_update(req);
-	// auto res = this->cooking_request_client->async_send_request(req);
-	// RCLCPP_INFO(container->get_logger(), "Sending move_to request");
-	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
-	// RCLCPP_INFO(container->get_logger(), "move_to request completed");
 
 	bool suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(container->get_logger(),
-					 "move_to request did not succeed, returning early: %s",
-					 res.get()->error_msg.c_str());
+		DHTT_LOG_ERROR(this->com_agg, "move_to request did not succeed, returning early: " <<
+					 res.get()->error_msg);
 		this->done = false;
 		return;
 	}
@@ -66,16 +61,12 @@ void CookingInteractSpecialBehavior::do_work(dhtt::Node *container)
 								  : dhtt_msgs::msg::CookingAction::INTERACT_PICK_UP_SPECIAL_ARM2;
 
 	res = this->send_request_and_update(req);
-	// res = this->cooking_request_client->async_send_request(req);
-	// RCLCPP_INFO(container->get_logger(), "Sending interact_special request");
-	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
-	// RCLCPP_INFO(container->get_logger(), "execute interact_special completed");
 
 	suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(container->get_logger(),
-					 "interact_special request did not succeed: %s", res.get()->error_msg.c_str());
+		DHTT_LOG_ERROR(this->com_agg, 
+					 "interact_special request did not succeed: " << res.get()->error_msg);
 	}
 
 	this->done = suc;

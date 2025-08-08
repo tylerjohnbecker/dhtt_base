@@ -30,36 +30,10 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 	// }
 
 	const auto prev_dest_obj = this->destination_object;
-
-	/* move_to */
-	auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
-	req->super_action = dhtt_msgs::srv::CookingRequest::Request::ACTION;
-	req->action.player_name = dhtt_msgs::msg::CookingAction::DEFAULT_PLAYER_NAME;
-	req->action.action_type = dhtt_msgs::msg::CookingAction::MOVE_TO;
-
-	std::string dest_point_str = std::to_string(this->destination_point.x) + ", " +
-								 std::to_string(this->destination_point.y);
-
-	req->action.params = dest_point_str;
-
-	auto res = this->send_request_and_update(req);
-	// auto res = this->cooking_request_client->async_send_request(req);
-	// RCLCPP_INFO(container->get_logger(), "Sending move_to request");
-	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
-	// RCLCPP_INFO(container->get_logger(), "move_to request completed");
-
-	bool suc = res.get()->success;
-	if (not suc)
-	{
-		RCLCPP_ERROR(container->get_logger(),
-					 "move_to request did not succeed, returning early: %s",
-					 res.get()->error_msg.c_str());
-		this->done = false;
-		return;
-	}
+	auto last_holding = this->last_obs->agents[0].holding;
 
 	/* interact_primary */
-	req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
+	auto req = std::make_shared<dhtt_msgs::srv::CookingRequest::Request>();
 	req->super_action = dhtt_msgs::srv::CookingRequest::Request::ACTION;
 	req->action.player_name = dhtt_msgs::msg::CookingAction::DEFAULT_PLAYER_NAME;
 
@@ -68,17 +42,24 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 								  ? dhtt_msgs::msg::CookingAction::INTERACT_PRIMARY_ARM1
 								  : dhtt_msgs::msg::CookingAction::INTERACT_PRIMARY_ARM2;
 
-	res = this->send_request_and_update(req);
-	// res = this->cooking_request_client->async_send_request(req);
-	// RCLCPP_INFO(container->get_logger(), "Sending interact request");
-	// this->com_agg->spin_until_future_complete<std::shared_ptr<dhtt_msgs::srv::CookingRequest::Response>>(res);
-	// RCLCPP_INFO(container->get_logger(), "execute interact completed");
+	auto res = this->send_request_and_update(req);
 
-	suc = res.get()->success;
+	bool suc = res.get()->success;
 	if (not suc)
 	{
-		RCLCPP_ERROR(container->get_logger(),
-					 "interact_primary request did not succeed: %s", res.get()->error_msg.c_str());
+		DHTT_LOG_ERROR(this->com_agg, 
+					 "interact_primary request did not succeed: " << res.get()->error_msg);
+		return;
+	}
+	
+	// check if the object was actually placed in the world
+	auto current_holding = this->last_obs->agents[0].holding;
+	
+	if ( last_holding.size() <= current_holding.size() )
+	{
+		DHTT_LOG_ERROR(this->com_agg, "place did not succeed inventory did not change.");
+		
+		this->done = false;
 		return;
 	}
 
@@ -103,8 +84,8 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 
 		if (not suc)
 		{
-			RCLCPP_ERROR(container->get_logger(), "NOP request did not succeed: %s",
-						 res.get()->error_msg.c_str());
+			DHTT_LOG_ERROR(this->com_agg, "NOP request did not succeed: " <<
+						 res.get()->error_msg);
 			return;
 		}
 	}
@@ -113,20 +94,8 @@ void CookingPlaceBehavior::do_work(dhtt::Node *container)
 	{
 		// unmark everything at destination location (before it gets changed by observation
 		// callback), which should now include the placed object
-		// this->com_agg->spin_some();
 
-		for (const auto &world_obj : this->last_obs->objects)
-		{
-			if (world_obj.location == prev_dest_obj.location)
-			{
-				if (not CookingBehavior::unmark_object(world_obj.world_id))
-				{
-					// suc = false; not actually an error when unmarking an unmarked object
-					RCLCPP_ERROR(container->get_logger(),
-								 ("Error unmarking object " + prev_dest_obj.object_type).c_str());
-				}
-			}
-		}
+		this->unmark_at_location(prev_dest_obj.location);
 	}
 
 	this->done = suc;
