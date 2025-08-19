@@ -1,0 +1,16 @@
+# Request
+int8 super_action
+dhtt_cooking_msgs/CookingAction   action
+
+# CONSTANTS
+# super_action types
+int8 START=0
+int8 STOP=1
+int8 RESET=2
+int8 ACTION=3
+int8 OBSERVE=4
+
+---
+# Response
+bool    success
+string  error_msg

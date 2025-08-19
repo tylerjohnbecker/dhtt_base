@@ -1,43 +1,46 @@
 cmake_minimum_required(VERSION 3.5)
-project(dhtt_plugins)
+project(dhtt_cooking_plugins)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
 endif()
 
-# Default to C++20
+# Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 20)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic -Wno-undef)
+  add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 # find dependencies
+find_package(ament_cmake REQUIRED)
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(dhtt REQUIRED)
 find_package(dhtt_msgs REQUIRED)
+find_package(dhtt_plugins REQUIRED)
+find_package(dhtt_cooking_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 
-add_library(dhtt_plugins SHARED src/dhtt_plugins.cpp
-                                src/tasks/root_behavior.cc src/tasks/and_behavior.cc src/tasks/then_behavior.cc src/tasks/or_behavior.cc
-                                src/behaviors/test/test_behavior.cc 
-                                # src/behaviors/test/mock_move_behavior.cc src/behaviors/test/mock_look_behavior.cc
-                                src/behaviors/action_type.cc src/behaviors/move_behavior.cc src/behaviors/pick_behavior.cc src/behaviors/place_behavior.cc
-                                # src/goitrs/goitr_test.cc src/goitrs/find_goitr.cc
-                                src/tree/ptr_branch.cc)
+add_library(dhtt_cooking_plugins SHARED  src/dhtt_cooking_plugins.cpp
+                                        src/behaviors/cooking_behavior.cc src/behaviors/cooking_execute_behavior.cc src/behaviors/cooking_interact_special_behavior.cc
+                                        src/behaviors/cooking_move_behavior.cc src/behaviors/cooking_pick_behavior.cc src/behaviors/cooking_place_behavior.cc
+                                        src/behaviors/cooking_plate_place_behavior.cc src/behaviors/cooking_object_exists_behavior.cc)
 
-target_include_directories(dhtt_plugins PUBLIC
+target_include_directories(dhtt_cooking_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_link_libraries(dhtt_plugins dhtt::dhtt_lib)
-ament_target_dependencies( dhtt_plugins
+target_link_libraries(dhtt_cooking_plugins dhtt::dhtt_lib)
+target_link_libraries(dhtt_cooking_plugins dhtt_plugins::dhtt_plugins)
+ament_target_dependencies( dhtt_cooking_plugins
   dhtt
   dhtt_msgs
+  dhtt_plugins
+  dhtt_cooking_msgs
   pluginlib
   rclcpp
   rclcpp_action
@@ -54,7 +57,7 @@ install(
   DESTINATION include
 )
 install(
-  TARGETS dhtt_plugins
+  TARGETS dhtt_cooking_plugins
   EXPORT export_${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -72,11 +75,8 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-# ament_export_include_directories(
-#   include
-# )
 ament_export_libraries(
-  dhtt_plugins
+  dhtt_cooking_plugins
 )
 ament_export_targets(
   export_${PROJECT_NAME}

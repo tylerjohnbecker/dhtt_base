@@ -1,0 +1,149 @@
+NodeList:
+  - MakeSalad
+  - IngredientAnd
+  - GetChoppedTomato
+  - GetChoppedOnion
+  - GetChoppedLettuce
+  - GetPlate
+  - ServeThen
+  - MoveToPlate
+  - PickPlate
+  - MoveToTomato
+  - PlacePlateUnderTomato
+  - PickTomatoPlate
+  - MoveToOnion
+  - PlaceStackUnderOnion
+  - PlateStackPickOne
+  - MoveToLettuce
+  - PlaceStackUnderLettuce
+  - PlateStackPickTwo
+  - PlateDeliversquareMoveTo
+  - PlateDeliversquarePlace
+
+Nodes:
+
+  MakeSalad:
+    type: 2
+    behavior_type: "dhtt_plugins::ThenBehavior"
+    robot: 0
+    parent: 'NONE'
+    params: [ ]
+  IngredientAnd:
+    type: 1
+    behavior_type: "dhtt_plugins::AndBehavior"
+    robot: 0
+    parent: 'MakeSalad'
+    params: [ ]
+
+  GetChoppedTomato:
+    type: 5
+    behavior_type: "get_tomato_chopped.yaml"
+    robot: 0
+    parent: "IngredientAnd"
+    params: [ "mark: A#" ]
+
+  GetChoppedOnion:
+    type: 5
+    behavior_type: "get_onion_chopped.yaml"
+    robot: 0
+    parent: "IngredientAnd"
+    params: [ 'mark: B#' ]
+
+  GetChoppedLettuce:
+    type: 5
+    behavior_type: "get_lettuce_chopped.yaml"
+    robot: 0
+    parent: "IngredientAnd"
+    params: [ 'mark: D#' ]
+
+  GetPlate:
+    type: 5
+    behavior_type: "get_plate.yaml"
+    robot: 0
+    parent: "IngredientAnd"
+    params: [ 'mark: C#' ]
+
+  ServeThen:
+    type: 2
+    behavior_type: "dhtt_plugins::ThenBehavior"
+    robot: 0
+    parent: "MakeSalad"
+    params: [ ]
+  MoveToPlate:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'ServeThen'
+    params: [ 'object: Plate', 'conditions: Free', 'mark: C#' ]
+  PickPlate:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'ServeThen'
+    params: [ 'object: Plate', 'mark: C#', 'unmark: foo' ]
+  MoveToTomato:
+    type: 4
+    behavior_type: "dhtt_cooking_plugins::CookingMoveBehavior"
+    robot: 0
+    parent: "ServeThen"
+    params: [ "object: Tomato", "conditions: Chopped", "mark: A#" ]
+  PlacePlateUnderTomato:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPlatePlaceBehavior'
+    robot: 0
+    parent: 'ServeThen'
+    params: [ 'object: Tomato', 'mark: A#' ]
+  PickTomatoPlate:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'
+    robot: 0
+    parent: "ServeThen"
+    params: [ "object: Tomato", "conditions: Chopped", "mark: A#", "unmark: foo" ]
+  MoveToOnion:
+    type: 4
+    behavior_type: "dhtt_cooking_plugins::CookingMoveBehavior"
+    robot: 0
+    parent: "ServeThen"
+    params: [ "object: Onion", "conditions: Chopped", "mark: B#" ]
+  PlaceStackUnderOnion:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPlatePlaceBehavior'
+    robot: 0
+    parent: 'ServeThen'
+    params: [ 'object: Onion', 'mark: B#' ]
+  PlateStackPickOne:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'ServeThen'
+    params: [ 'object: Onion', 'mark: B#', 'unmark: foo' ]
+  MoveToLettuce:
+    type: 4
+    behavior_type: "dhtt_cooking_plugins::CookingMoveBehavior"
+    robot: 0
+    parent: "ServeThen"
+    params: [ "object: Lettuce", "conditions: Chopped", "mark: D#" ]
+  PlaceStackUnderLettuce:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPlatePlaceBehavior'
+    robot: 0
+    parent: 'ServeThen'
+    params: [ 'object: Lettuce', 'mark: D#' ]
+  PlateStackPickTwo:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'ServeThen'
+    params: [ 'object: Lettuce', 'mark: D#', 'unmark: foo' ]
+  PlateDeliversquareMoveTo:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'ServeThen'
+    params: [ 'object: AbsorbingDeliversquare', 'mark: A#', ]
+  PlateDeliversquarePlace:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPlatePlaceBehavior'
+    robot: 0
+    parent: 'ServeThen'
+    params: [ 'object: AbsorbingDeliversquare', 'mark: A#' ]

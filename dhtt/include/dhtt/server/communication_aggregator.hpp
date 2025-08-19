@@ -391,7 +391,18 @@ namespace dhtt
 		{
 			std::lock_guard<std::mutex> lock(this->local_param_mutex);
 
-			this->set_parameters(n_vals);
+			// sometimes set_parameters is failing, so maybe we can just try until it works. (not sure what a better solutions looks like)
+			bool done;
+			do
+			{
+				auto ret_val = this->set_parameters(n_vals);
+
+				done = true;
+
+				for ( auto iter : ret_val )
+					done &= iter.successful;
+
+			} while ( not done );
 		}
 
 		/**

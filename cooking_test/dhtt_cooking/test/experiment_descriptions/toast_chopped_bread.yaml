@@ -1,0 +1,80 @@
+NodeList:
+  - ToastThen
+  - BreadChoppedMoveTo
+  - BreadChoppedPick
+  - MoveToToaster
+  - PlaceToaster
+  - ExecuteToaster
+  - ToastExists
+  - MoveToToast
+  - PickToast
+  - MoveToCounter
+  - PlaceToast              
+
+Nodes:
+  ToastThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: [ ]
+  BreadChoppedMoveTo:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'ToastThen'
+    params: [ 'object: Bread', 'conditions: Chopped', 'mark: $mark' ]
+  BreadChoppedPick:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'ToastThen'
+    params: [ 'object: Bread', 'mark: $mark' ]
+  MoveToToaster:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'ToastThen'
+    params: [ 'object: Toaster', 'mark: $mark', ]
+  PlaceToaster:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'ToastThen'
+    params: [ 'object: Toaster', 'mark: $mark' ]
+  ExecuteToaster:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'ToastThen'
+    params: [ 'object: Toaster', 'mark: $mark' ]
+  ToastExists:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingObjectExistsBehavior'
+    robot: 0
+    parent: 'ToastThen'
+    params: [ 'object: Bread', 'conditions: Toasted', 'mark: $mark', 'unmark: foo' ]
+  MoveToToast:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'ToastThen'
+    params: [ 'object: Bread', 'conditions: Toasted', 'mark: $mark' ]
+  PickToast:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'ToastThen'
+    params: [ 'object: Bread', 'conditions: Toasted', 'mark: $mark', 'unmark: foo' ]
+  MoveToCounter:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'ToastThen'
+    params: [ 'object: Counter', 'conditions: Free', 'mark: $mark' , ]
+  PlaceToast:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'ToastThen'
+    params: [ 'object: Counter', 'mark: $mark' ]

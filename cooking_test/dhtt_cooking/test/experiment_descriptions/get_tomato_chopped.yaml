@@ -1,0 +1,80 @@
+NodeList:
+  - TomatoThen                         # BEGIN TOMATO
+  - TomatoMoveToDispenser
+  - TomatoExecuteDispenser
+  - TomatoPick
+  - CutboardThen
+  - TomatoMoveToCutboard
+  - TomatoPlaceCutboard
+  - TomatoExecuteCutboard
+  - ChoppedTomatoPick
+  - ChoppedTomatoMoveToCounter
+  - ChoppedTomatoPlaceCounter          # END TOMATO
+
+Nodes:
+  TomatoThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: [ ]
+  TomatoMoveToDispenser:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoThen'
+    params: [ 'object: TomatoDispenser', 'mark: $mark' ]
+  TomatoExecuteDispenser:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'TomatoThen'
+    params: [ 'object: TomatoDispenser', 'mark: $mark' ]
+  TomatoPick:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'TomatoThen'
+    params: [ 'object: Tomato', 'mark: $mark', 'unmark: foo' ]
+  CutboardThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'TomatoThen'
+    params: [ 'enforced_sequential: true']
+  TomatoMoveToCutboard:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'CutboardThen'
+    params: [ 'object: Cutboard', 'mark: $mark' ]
+  TomatoPlaceCutboard:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'CutboardThen'
+    params: [ 'object: Cutboard', 'mark: $mark' ]
+  TomatoExecuteCutboard:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'CutboardThen'
+    params: [ 'object: Cutboard', 'mark: $mark' ]
+  ChoppedTomatoPick:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'CutboardThen'
+    params: [ 'object: Tomato', 'mark: $mark', 'unmark: foo' ]
+  ChoppedTomatoMoveToCounter:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'TomatoThen'
+    params: [ 'object: Counter', 'conditions: Free', 'mark: $mark', ]
+  ChoppedTomatoPlaceCounter:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'TomatoThen'
+    params: [ 'object: Counter', 'conditions: Free', 'mark: $mark' ]

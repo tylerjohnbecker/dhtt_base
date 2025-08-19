@@ -1,0 +1,80 @@
+NodeList:
+  - ChoppedBananaThen                         # BEGIN Banana
+  - BananaMoveToDispenser
+  - BananaExecuteDispenser
+  - BananaPickFromDispenser
+  - CutboardThen
+  - BananaMoveToCutboard
+  - BananaPlaceCutboard
+  - BananaExecuteCutboard
+  - ChoppedBananaPick
+  - ChoppedBananaMoveToCounter
+  - ChoppedBananaPlaceCounter          # END Banana
+
+Nodes:
+  ChoppedBananaThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: [ ]
+  BananaMoveToDispenser:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'ChoppedBananaThen'
+    params: [ 'object: BananaDispenser', 'mark: $mark' ]
+  BananaExecuteDispenser:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'ChoppedBananaThen'
+    params: [ 'object: BananaDispenser', 'mark: $mark' ]
+  BananaPickFromDispenser:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'ChoppedBananaThen'
+    params: [ 'object: Banana', 'mark: $mark', 'unmark: foo' ]
+  CutboardThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'ChoppedBananaThen'
+    params: [ 'enforced_sequential: true']
+  BananaMoveToCutboard:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'CutboardThen'
+    params: [ 'object: Cutboard', 'mark: $mark' ]
+  BananaPlaceCutboard:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'CutboardThen'
+    params: [ 'object: Cutboard', 'mark: $mark' ]
+  BananaExecuteCutboard:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingExecuteBehavior'
+    robot: 0
+    parent: 'CutboardThen'
+    params: [ 'object: Cutboard', 'mark: $mark' ]
+  ChoppedBananaPick:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'
+    robot: 0
+    parent: 'CutboardThen'
+    params: [ 'object: Banana', 'mark: $mark', 'unmark: foo' ]
+  ChoppedBananaMoveToCounter:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'
+    robot: 0
+    parent: 'ChoppedBananaThen'
+    params: [ 'object: Counter', 'conditions: Free', 'mark: $mark', ]
+  ChoppedBananaPlaceCounter:
+    type: 4
+    behavior_type: 'dhtt_cooking_plugins::CookingPlaceBehavior'
+    robot: 0
+    parent: 'ChoppedBananaThen'
+    params: [ 'object: Counter', 'conditions: Free', 'mark: $mark' ]
