@@ -36,6 +36,13 @@ class CookingPlatePlaceBehavior : public CookingPlaceBehavior
 	 * @param container unused
 	 */
 	void do_work(dhtt::Node *container) override;
+	
+	/**
+	 * Retains nothing
+	 * @param container unused
+	 * @return empty vector
+	 */
+	std::vector<dhtt_msgs::msg::Resource> get_retained_resources(dhtt::Node *container) override;
 
   protected:
   private:

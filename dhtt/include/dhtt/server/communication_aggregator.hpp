@@ -193,29 +193,6 @@ namespace dhtt
 			this->subscription_ptrs[topic_name] = tmp_sub_vector;
 
 			return true;
-
-			// // I think that this casting is ok since we don't care about using the function here (otherwise this function needs a template)
-			// auto tmp = std::any_cast< std::map<std::string, std::function< void( std::shared_ptr< msg_type > ) >> >(this->function_tables[topic_name]);
-
-			// if ( tmp.find(subscriber_name) == tmp.end() )
-			// 	return false;
-
-			// // erase in tmp variable and then save back to internal data structure
-			// tmp.erase(subscriber_name);
-
-			// // if its empty tho don't save it and delete the subscriber
-			// if ( tmp.empty() )
-			// {
-			// 	// deleting everything is easy
-			// 	this->function_tables.erase(topic_name);
-			// 	this->subscription_ptrs.erase(topic_name);
-
-			// 	return true;
-			// }
-
-			// this->function_tables[topic_name] = tmp;
-
-			return true;
 		}
 
 		/**
@@ -441,6 +418,30 @@ namespace dhtt
 			}
 		}
 
+		/** 
+		 * \brief creates or returns a local copy of a mutex under the given name
+		 * 
+		 * These mutexes are meant for global synchronization through the com_agg, mostly synchronization is local to given nodes so in those
+		 * 	cases it should be done using a local mutex not one of these.
+		 * 
+		 * \param mut_name name of the mutex request
+		 * 
+		 * \return shared_ptr to the locally stored mutex
+		 */
+		std::shared_ptr<std::mutex> request_mutex(std::string mut_name)
+		{
+			// first check if we have registered it before or if it has since expired
+			if ( this->mutex_ptrs.find(mut_name) == this->mutex_ptrs.end() or this->mutex_ptrs[mut_name].expired() )
+			{
+				std::shared_ptr<std::mutex> n_mut_ptr = std::make_shared<std::mutex>();
+				this->mutex_ptrs[mut_name] = std::weak_ptr<std::mutex>(n_mut_ptr);
+
+				return n_mut_ptr;
+			}
+
+			return this->mutex_ptrs[mut_name].lock();
+		}
+
 	private:
 
 		/**
@@ -502,6 +503,9 @@ namespace dhtt
 		std::shared_ptr<rclcpp::Node> param_client_node_ptr = nullptr;
 		std::map<std::string, std::weak_ptr<rclcpp::SyncParametersClient>> param_client_ptrs; 
 				
+		// mutex sharing
+		std::map<std::string, std::weak_ptr<std::mutex>> mutex_ptrs;
+
 		// general thread safety
 		std::mutex register_mutex;
 		std::mutex param_mutex;

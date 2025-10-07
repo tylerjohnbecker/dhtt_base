@@ -126,10 +126,12 @@ double CookingBehavior::get_perceived_efficiency(dhtt::Node* container)
 	// Make sure we're up to date with observations
 	// this->com_agg->spin_some();
 
+	(void) container;
+
 	if ( this->done )
 		return 0;
 
-	if (not this->last_obs)
+	if (this->observed_env.size() == 0)
 	{
 		DHTT_LOG_DEBUG(this->com_agg,
 					"No observation yet. This node probably won't behave as intended. Making " << 
@@ -170,42 +172,7 @@ double CookingBehavior::get_perceived_efficiency(dhtt::Node* container)
 		update_lock.unlock();
 	}
 
-	if (this->destination_point.x == 0 and this->destination_point.y == 0)
-	{
-		DHTT_LOG_WARN(this->com_agg,
-					"Destination location is (0,0), are you sure this is correct?");
-	}
-
-	if (this->last_obs->agents.empty())
-	{
-		DHTT_LOG_ERROR(this->com_agg,
-					 "No agents in observation yet. Setting activation_potential to 0");
-		// maybe we need to get a new observation once per activation
-		this->updated = false;
-
-		return 0;
-	}
-
-	if (not this->destination_is_good)
-	{
-		DHTT_LOG_WARN(this->com_agg,
-					"Don't have a good destination (is the object in the right state?). Setting "
-					"activation_potential to 0.");
-		// maybe we need to get a new observation once per activation
-		this->updated = false;
-		return 0;
-	}
-
-	// maybe we need to get a new observation once per activation
-	this->updated = false;
-
-	return 1; // return something other than 0
-
-	// At this point, we've checked that there is a valid observation, and
-	// set_destination_to_closest_object() should have been called in observation_callback(), so
-	// agent_loc and destination_point should be good to go.
-
-	// return your measure here
+	return 1;
 }
 
 double CookingBehavior::point_distance(const geometry_msgs::msg::Point &point1,
@@ -218,7 +185,7 @@ double CookingBehavior::agent_point_distance(const geometry_msgs::msg::Point &po
 {
 	// Assumes we have a valid observation
 	// assume there is only one agent
-	geometry_msgs::msg::Point agent_loc = this->last_obs->agents.front().object_members.location;
+	geometry_msgs::msg::Point agent_loc = this->observed_agent.object_members.location;
 	return this->point_distance(agent_loc, point);
 }
 
@@ -233,26 +200,11 @@ void CookingBehavior::initialize(std::vector<std::string> params)
 	// clients
 	this->cooking_request_client = this->com_agg->register_service_client<dhtt_cooking_msgs::srv::CookingRequest>("Cooking_Server");
 
-	// this->param_node_ptr =
-	// 	std::make_shared<rclcpp::Node>(std::string(this->com_agg->get_name()) + "_params",
-	// 								   rclcpp::NodeOptions()
-	// 									   .allow_undeclared_parameters(true)
-	// 									   .automatically_declare_parameters_from_overrides(true));
-
-
-	// this->params_client_ptr = this->com_agg->register_param_client("/param_node");
-
 	// checks
 	if (not this->cooking_request_client->wait_for_service(std::chrono::seconds(1)))
 	{
 		DHTT_LOG_FATAL(this->com_agg, "Could not contact dhtt_cooking service");
 		throw std::runtime_error("Could not contact dhtt_cooking service");
-	}
-
-	if (not this->last_obs)
-	{
-		DHTT_LOG_DEBUG(this->com_agg,
-					 "Did not get first observation. This node may not behave properly.");
 	}
 
 	// initialize message types to more obvious bad values
@@ -279,17 +231,17 @@ void CookingBehavior::observation_callback(std::shared_ptr<dhtt_cooking_msgs::ms
 
 	{
 		std::lock_guard<std::mutex> update_guard(this->observation_mut);
-
 		DHTT_LOG_DEBUG(this->com_agg, "Inside observation callback");
-		this->last_obs = msg;
-
-		// Chicken-egg, This may be called before parse_params() has set destination_* members, which
-		// set_destination_to_closest_object() needs to find the relevant object, but that function also
-		// needs this initial observation. Check that they are set.
-		if (this->destination_type == this->PARAM_OBJECT_TYPE and not this->destination_value.empty())
+		this->observed_env.clear(); // clear first so we only have the most up to date information
+		
+		for ( auto iter : msg->objects )
 		{
-			this->set_destination_to_closest_object();
+			std::string name = dhtt_cooking_utils::get_resource_name(iter);
+
+			this->observed_env[name] = iter;
 		}
+
+		this->observed_agent = msg->agents[0];
 
 		this->updated = true;
 	}
@@ -297,110 +249,278 @@ void CookingBehavior::observation_callback(std::shared_ptr<dhtt_cooking_msgs::ms
 	this->update_condition.notify_one();
 }
 
-void CookingBehavior::set_destination_to_closest_object()
+std::string CookingBehavior::set_destination_to_closest_free_object(int8_t type, std::vector<dhtt_msgs::msg::Resource> resources_list)
 {
 	// Assumes on entry that this->last_obs is valid. I.e. we've received an observation and
 	// destination_type is object not coord. It is the callers responsibility to be sure of that,
-	if (this->last_obs == nullptr or this->destination_type == CookingBehavior::PARAM_COORDINATE)
+	float min_dist = 10000.0;
+	std::string current_min_name = "";
+
+	for ( auto iter : resources_list )
 	{
-		throw std::runtime_error("Bad call to set_destination_to_closest_object()");
+		if ( not iter.locked and iter.type == type and dhtt_cooking_utils::is_free(iter, this->observed_env) )
+		{
+			float cur_dist = this->agent_point_distance(this->observed_env[iter.name].location);
+			if ( cur_dist < min_dist )
+			{
+				min_dist = cur_dist;
+				current_min_name = iter.name;
+			}
+		}
 	}
 
-	if (this->destination_value.empty())
+	this->destination_point = this->observed_env[current_min_name].location;
+	this->destination_object = this->observed_env[current_min_name];
+	this->destination_is_good = true;
+
+	return current_min_name;
+}
+
+std::string CookingBehavior::set_destination_to_closest_owned(int8_t type, std::vector<dhtt_msgs::msg::Resource> resources_list)
+{
+	float min_dist = 10000.0;
+	std::string current_min_name = "";
+
+	for ( auto iter : resources_list )
 	{
-		throw std::runtime_error("Empty destination_value");
+		int8_t cur_type = iter.type;
+		if ( cur_type == type )
+		{
+			float cur_dist = this->agent_point_distance(this->observed_env[iter.name].location);
+			if ( cur_dist < min_dist )
+			{
+				min_dist = cur_dist;
+				current_min_name = iter.name;
+			}
+		}
 	}
 
-	DHTT_LOG_DEBUG(this->com_agg,  "Setting destination to val: " << this->destination_value << ", with conds: " << this->destination_conditions);
+	this->destination_point = this->observed_env[current_min_name].location;
+	this->destination_object = this->observed_env[current_min_name];
+	this->destination_is_good = true;
 
-	auto pred_typeandconds = [this](const dhtt_cooking_msgs::msg::CookingObject &obj)
+	return current_min_name;
+}
+
+std::string CookingBehavior::set_destination_to_closest(int8_t type, std::vector<dhtt_msgs::msg::Resource> resources_list)
+{
+	float min_dist = 10000.0;
+	std::string current_min_name = "";
+
+	for ( auto iter : resources_list )
 	{
-		if (obj.location == this->last_obs->agents.front().object_members.location)
+		int8_t cur_type = iter.type;
+		if ( cur_type == type and not iter.locked )
 		{
-			return false; // Don't count objects the agent is already holding
+			float cur_dist = this->agent_point_distance(this->observed_env[iter.name].location);
+			if ( cur_dist < min_dist )
+			{
+				min_dist = cur_dist;
+				current_min_name = iter.name;
+			}
 		}
+	}
 
-		else if (obj.object_type == this->destination_value)
+	this->destination_point = this->observed_env[current_min_name].location;
+	this->destination_object = this->observed_env[current_min_name];
+	this->destination_is_good = true;
+
+	return current_min_name;
+}
+
+std::string CookingBehavior::set_destination_to_closest_free(int8_t type, std::vector<dhtt_msgs::msg::Resource> resources_list)
+{
+	float min_dist = 10000.0;
+	std::string current_min_name = "";
+
+	for ( auto iter : resources_list )
+	{
+		int8_t cur_type = iter.type;
+		if ( cur_type == type and not iter.locked and dhtt_cooking_utils::is_free(iter, this->observed_env) )
 		{
-			// Check conditions
-			const std::vector<std::string> conds =
-				CookingBehavior::parse_conds_string(this->destination_conditions);
-
-			return this->check_conds(conds, obj);
+			float cur_dist = this->agent_point_distance(this->observed_env[iter.name].location);
+			if ( cur_dist < min_dist )
+			{
+				min_dist = cur_dist;
+				current_min_name = iter.name;
+			}
 		}
-		return false; // Not correct type
+	}
+
+	this->destination_point = this->observed_env[current_min_name].location;
+	this->destination_object = this->observed_env[current_min_name];
+	this->destination_is_good = true;
+
+	return current_min_name;
+}
+
+std::string CookingBehavior::set_destination_to_static_under(int8_t type, std::vector<dhtt_msgs::msg::Resource> resources_list)
+{
+	// first find resource in given list
+	dhtt_msgs::msg::Resource dynamic_resource;
+
+	auto find_by_type = [&type](dhtt_msgs::msg::Resource to_check){ return to_check.type == type; };
+
+	// should always be just one of each type owned by the move behavior
+	auto dynamic_resource_iter = std::find_if(resources_list.begin(), resources_list.end(), find_by_type);
+
+	if ( dynamic_resource_iter == resources_list.end() )
+		return "";
+
+	dynamic_resource = *dynamic_resource_iter;
+	
+	// next do linear search to find the static resource underneath
+	auto same_location = []( geometry_msgs::msg::Point loc1, geometry_msgs::msg::Point loc2 )  { return loc1.x == loc2.x and loc1.y == loc2.y; };
+
+	auto dynamic_loc = this->observed_env[dynamic_resource.name].location;
+
+	auto find_by_location = [&dynamic_loc, &same_location](std::pair<std::string, dhtt_cooking_msgs::msg::CookingObject> to_check) 
+	{ 
+		return same_location(dynamic_loc, to_check.second.location) and dhtt_cooking_utils::is_static_obj(to_check.second); 
 	};
 
-	std::vector<std::vector<dhtt_cooking_msgs::msg::CookingObject>::const_iterator> found_typeconds_iters;
-	std::vector<std::vector<dhtt_cooking_msgs::msg::CookingObject>::const_iterator>
-		found_typecondsmark_iters;
-	for (auto iter = this->last_obs->objects.cbegin(); iter != this->last_obs->objects.cend();
-		 ++iter)
-	{
-		if (pred_typeandconds(*iter))
-		{
-			found_typeconds_iters.push_back(iter);
-		}
-	}
+	auto static_object = std::find_if(this->observed_env.begin(), this->observed_env.end(), find_by_location);
 
-	if (found_typeconds_iters.empty())
-	{
-		this->destination_is_good = false;
-		return;
-	}
-
-	// We have some objects in the world that match our type and conditions. Now check if any of
-	// them have our mark. If we can't find one because they are all marked by someone else, we
-	// fail. If because at least one of them is not marked at all, return that one.
-	if (not this->destination_mark.empty())
-	{
-		std::vector<std::vector<dhtt_cooking_msgs::msg::CookingObject>::const_iterator> found_with_no_mark;
-
-		for (auto iter : found_typeconds_iters)
-		{
-			char mark = this->check_mark(*iter);
-
-			if (mark == '1')
-			{
-				found_typecondsmark_iters.push_back(iter);
-			}
-			else if (mark == '2')
-			{
-				found_with_no_mark.push_back(iter);
-			}
-			else
-			{
-				continue;
-			}
-		}
-		if (found_typecondsmark_iters
-				.empty()) // none of our taints found, reconsider with unmarked objects
-		{
-			found_typecondsmark_iters = found_with_no_mark;
-		}
-
-		if (found_typecondsmark_iters.empty())
-		{
-			this->destination_is_good = false;
-			return;
-		}
-	}
-
-	auto found_iters = this->destination_mark.empty() ? std::move(found_typeconds_iters)
-													  : std::move(found_typecondsmark_iters);
-
-	const auto found_min_it =
-		std::min_element(found_iters.cbegin(), found_iters.cend(),
-						 [this](std::vector<dhtt_cooking_msgs::msg::CookingObject>::const_iterator itL,
-								std::vector<dhtt_cooking_msgs::msg::CookingObject>::const_iterator itR)
-						 {
-							 return this->agent_point_distance(itL->location) <
-									this->agent_point_distance(itR->location);
-						 });
-
-	this->destination_point = (*found_min_it)->location;
-	this->destination_object = **found_min_it;
+	this->destination_point = static_object->second.location;
+	this->destination_object = static_object->second;
 	this->destination_is_good = true;
+
+	return static_object->first;
+}
+
+std::string CookingBehavior::get_dynamic_in_front()
+{
+	// get location and orientation of agent
+	auto agent_loc = this->observed_agent.object_members.location;
+	auto agent_ori = this->observed_agent.orientation;
+
+	// get location of in front
+	auto front_loc = agent_loc;
+
+	if ( agent_ori == dhtt_cooking_msgs::msg::CookingAgent::WEST )
+		front_loc.x -= 1;
+	else if ( agent_ori == dhtt_cooking_msgs::msg::CookingAgent::EAST )
+		front_loc.x += 1;
+	else if ( agent_ori == dhtt_cooking_msgs::msg::CookingAgent::SOUTH )
+		front_loc.y += 1;
+	else if ( agent_ori == dhtt_cooking_msgs::msg::CookingAgent::NORTH )
+		front_loc.y -= 1;
+
+	// get dynamic objects in front
+	std::map<std::string, dhtt_cooking_msgs::msg::CookingObject>::iterator found_iter = this->observed_env.begin();
+
+	auto find_front_loc = [&front_loc]( std::pair<std::string, dhtt_cooking_msgs::msg::CookingObject> to_check ){ return to_check.second.location.x == front_loc.x and to_check.second.location.y == front_loc.y; };
+
+	// continue the search until the object found is dynamic or we run out
+	do
+	{
+		found_iter = std::find_if(std::next(found_iter), this->observed_env.end(), find_front_loc);
+
+		if ( found_iter == this->observed_env.end() )
+			return "";
+
+	} while ( not dhtt_cooking_utils::is_dynamic_obj( found_iter->second ) );
+
+	// pick one and return
+	return found_iter->first;
+}
+
+std::string CookingBehavior::get_static_in_front()
+{
+	// get location and orientation of agent
+	auto agent_loc = this->observed_agent.object_members.location;
+	auto agent_ori = this->observed_agent.orientation;
+
+	// get location of in front
+	auto front_loc = agent_loc;
+
+	if ( agent_ori == dhtt_cooking_msgs::msg::CookingAgent::WEST )
+		front_loc.x -= 1;
+	else if ( agent_ori == dhtt_cooking_msgs::msg::CookingAgent::EAST )
+		front_loc.x += 1;
+	else if ( agent_ori == dhtt_cooking_msgs::msg::CookingAgent::SOUTH )
+		front_loc.y += 1;
+	else if ( agent_ori == dhtt_cooking_msgs::msg::CookingAgent::NORTH )
+		front_loc.y -= 1;
+
+	// get dynamic objects in front
+	auto find_front_loc = [&front_loc]( std::pair<std::string, dhtt_cooking_msgs::msg::CookingObject> to_check ){ return to_check.second.location.x == front_loc.x and to_check.second.location.y == front_loc.y; };
+	std::map<std::string, dhtt_cooking_msgs::msg::CookingObject>::iterator found_iter = std::find_if(this->observed_env.begin(), this->observed_env.end(), find_front_loc);
+
+	if ( found_iter == this->observed_env.end() )
+		return "";
+
+	// continue the search until the object found is dynamic or we run out
+	while ( not dhtt_cooking_utils::is_static_obj( found_iter->second ) )
+	{
+		found_iter = std::find_if(std::next(found_iter), this->observed_env.end(), find_front_loc);
+
+		if ( found_iter == this->observed_env.end() )
+			return "";
+
+	}
+
+	// pick one and return
+	return found_iter->first;
+}
+
+std::vector<std::string> CookingBehavior::get_all_dynamic_in_front()
+{
+	// get location and orientation of agent
+	auto agent_loc = this->observed_agent.object_members.location;
+	auto agent_ori = this->observed_agent.orientation;
+
+	// get location of in front
+	auto front_loc = agent_loc;
+
+	if ( agent_ori == dhtt_cooking_msgs::msg::CookingAgent::WEST )
+		front_loc.x -= 1;
+	else if ( agent_ori == dhtt_cooking_msgs::msg::CookingAgent::EAST )
+		front_loc.x += 1;
+	else if ( agent_ori == dhtt_cooking_msgs::msg::CookingAgent::SOUTH )
+		front_loc.y += 1;
+	else if ( agent_ori == dhtt_cooking_msgs::msg::CookingAgent::NORTH )
+		front_loc.y -= 1;
+
+	std::vector<std::string> to_ret;
+
+	auto find_front_loc = [&front_loc]( std::pair<std::string, dhtt_cooking_msgs::msg::CookingObject> to_check ){ return to_check.second.location.x == front_loc.x and to_check.second.location.y == front_loc.y; };
+
+	std::map<std::string, dhtt_cooking_msgs::msg::CookingObject>::iterator found_iter = std::find_if(this->observed_env.begin(), this->observed_env.end(), find_front_loc);
+	// continue the search until all dynamic objs are found
+	do 
+	{
+		if ( dhtt_cooking_utils::is_dynamic_obj( found_iter->second ) )
+			to_ret.push_back(found_iter->first);
+	} while ( ( found_iter = std::find_if(std::next(found_iter), this->observed_env.end(), find_front_loc) ) != this->observed_env.end() ) ;
+
+	// pick one and return
+	return to_ret;
+}
+
+std::string CookingBehavior::get_static_underneath(std::string name)
+{ 
+	auto dynamic_obj = this->observed_env[name];
+	auto same_location = []( geometry_msgs::msg::Point loc1, geometry_msgs::msg::Point loc2 )  { return loc1.x == loc2.x and loc1.y == loc2.y; };
+
+	for ( auto pair : this->observed_env )
+		if ( dhtt_cooking_utils::is_static_obj(pair.second) and same_location(dynamic_obj.location, pair.second.location) )
+			return pair.first;
+
+	return "";
+}
+
+std::string CookingBehavior::has_resource_free_of_type(dhtt::Node* container, int8_t type)
+{
+	auto find_by_type = [&type](dhtt_msgs::msg::Resource to_check){ return type == to_check.type and not to_check.locked; };
+	auto resources = container->get_resource_state();
+	
+	auto iter = std::find_if(resources.begin(), resources.end(), find_by_type);
+
+	if ( iter != resources.end() )
+		return iter->name;
+
+	return ""; 
 }
 
 std::string CookingBehavior::which_arm(dhtt::Node *container)

@@ -42,6 +42,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/InternalServiceRegistration.srv"
   "srv/FetchInfo.srv"
   "srv/GoitrRequest.srv"
+  "srv/ResourceRequest.srv"
 #  "srv/NutreeJsonRequest.srv"
 
   # action files

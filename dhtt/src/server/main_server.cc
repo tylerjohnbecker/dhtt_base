@@ -61,6 +61,7 @@ namespace dhtt
 		// this->spinner_cp->add_node(this->node_map["ROOT_0"]);
 		this->node_map["ROOT_0"]->register_servers();
 		this->node_map["ROOT_0"]->set_resource_status_updated(true);
+		
 		// this->node_map["ROOT_0"]->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
 		/// initialize external services
@@ -68,6 +69,7 @@ namespace dhtt
 		this->control_server = this->create_service<dhtt_msgs::srv::ControlRequest>("/control_service", std::bind(&MainServer::control_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->conc_group);
 		this->fetch_server = this->create_service<dhtt_msgs::srv::FetchRequest>("/fetch_service", std::bind(&MainServer::fetch_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->conc_group);
 		this->history_server = this->create_service<dhtt_msgs::srv::HistoryRequest>("/history_service", std::bind(&MainServer::history_callback, this,std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->conc_group);
+		this->resource_server = this->create_service<dhtt_msgs::srv::ResourceRequest>("/resource_service", std::bind(&MainServer::resource_callback, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, this->conc_group);
 
 		// this->client_ptr = rclcpp_action::create_client<dhtt_msgs::action::Activation>( this, "/dhtt/ROOT_0/activate", this->conc_group);
 		// this->maintenance_client_ptrs["ROOT_0"] = rclcpp_action::create_client<dhtt_msgs::action::Condition>(this, "/dhtt/ROOT_0/condition", this->conc_group);
@@ -76,6 +78,8 @@ namespace dhtt
 		// initialize and start maintenance thread
 		this->maintenance_thread = std::make_shared<std::thread>( std::bind( &MainServer::maintainer_thread_cb, this ) );
 		this->maintenance_thread->detach();
+
+		this->resource_update_mut_ptr = this->global_com->request_mutex("resource_update");
 	}
 
 	MainServer::~MainServer()
@@ -510,6 +514,108 @@ namespace dhtt
 		response->node_history = list_cast;
 	}
 
+	void MainServer::resource_callback( const std::shared_ptr<dhtt_msgs::srv::ResourceRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ResourceRequest::Response> response )
+	{
+		RCLCPP_INFO(this->get_logger(), "--- Resource request recieved!");
+
+		std::lock_guard<std::mutex> resource_update_lock(*(this->resource_update_mut_ptr));
+
+		// pull the resource lists
+		auto resource_names = this->global_com->get_parameter_sync("dhtt_resources.names").as_string_array();
+		auto resource_types = this->global_com->get_parameter_sync("dhtt_resources.types").as_integer_array();
+		auto resource_channels = this->global_com->get_parameter_sync("dhtt_resources.channels").as_integer_array();
+		auto resource_locks = this->global_com->get_parameter_sync("dhtt_resources.locks").as_bool_array();
+		auto resource_owners = this->global_com->get_parameter_sync("dhtt_resources.owners").as_integer_array();
+
+		if ( request->type == dhtt_msgs::srv::ResourceRequest::Request::ADD )
+		{
+			response->success = false;
+
+			// append the resources as long as they do not duplicate members of our list
+			for ( auto resource : request->to_modify.resource_state )
+			{
+				if ( std::find(resource_names.begin(), resource_names.end(), resource.name) == resource_names.end() )
+				{
+					resource_names.push_back( resource.name );
+					resource_types.push_back( resource.type );
+					resource_channels.push_back( resource.channel );
+					resource_locks.push_back( resource.locked );
+					resource_owners.push_back( resource.owners );
+
+					response->success = true;
+				}
+			}
+
+			// push the lists back to the param server
+			this->global_com->set_parameters_sync({rclcpp::Parameter("dhtt_resources.names", resource_names), 
+												rclcpp::Parameter("dhtt_resources.types", resource_types),
+												rclcpp::Parameter("dhtt_resources.channels", resource_channels),
+												rclcpp::Parameter("dhtt_resources.locks", resource_locks),
+												rclcpp::Parameter("dhtt_resources.owners", resource_owners)});
+
+			response->server_resources = dhtt_utils::vector_to_msg(resource_names, resource_types, resource_channels, resource_locks, resource_owners);
+
+			RCLCPP_INFO(this->get_logger(), "--- Resource Request Resolved");
+			return;
+		}
+		else if ( request->type == dhtt_msgs::srv::ResourceRequest::Request::REMOVE )
+		{
+			response->success = false;
+
+			// find all of the indices that need to be removed
+			std::stack<int> to_remove;
+
+			for ( auto resource : request->to_modify.resource_state )
+			{
+				auto iter = std::find(resource_names.begin(), resource_names.end(), resource.name);
+
+				if ( iter != resource_names.end() )
+					to_remove.push(std::distance(resource_names.begin(), iter));
+			}
+
+			// now remove them in reverse order
+			int index = -1;
+			
+			while( (int) to_remove.size() > 0 )
+			{
+				index = to_remove.top();
+
+				resource_names.erase(resource_names.begin() + index);
+				resource_types.erase(resource_types.begin() + index);
+				resource_channels.erase(resource_channels.begin() + index);
+				resource_locks.erase(resource_locks.begin() + index);
+				resource_owners.erase(resource_owners.begin() + index);
+
+				response->success = true; // as long as a single resource was removed
+				to_remove.pop();
+			}
+
+			// push the lists back to the param server
+			this->global_com->set_parameters_sync({rclcpp::Parameter("dhtt_resources.names", resource_names), 
+												rclcpp::Parameter("dhtt_resources.types", resource_types),
+												rclcpp::Parameter("dhtt_resources.channels", resource_channels),
+												rclcpp::Parameter("dhtt_resources.locks", resource_locks),
+												rclcpp::Parameter("dhtt_resources.owners", resource_owners)});
+
+			response->server_resources = dhtt_utils::vector_to_msg(resource_names, resource_types, resource_channels, resource_locks, resource_owners);
+			RCLCPP_INFO(this->get_logger(), "--- Resource Request Resolved");
+			return;
+		}
+		else if ( request->type == dhtt_msgs::srv::ResourceRequest::Request::GET )
+		{
+			response->server_resources = dhtt_utils::vector_to_msg(resource_names, resource_types, resource_channels, resource_locks, resource_owners);
+			response->success = true;
+
+			RCLCPP_INFO(this->get_logger(), "--- Resource Request Resolved");
+			return;
+		}
+
+		response->success = false;
+
+		RCLCPP_INFO(this->get_logger(), "--- Resource Request Resolved");
+		return;
+	}
+
 	// modify helpers
 	// I should also think about the node number here
 	std::string MainServer::add_node( std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string parent_name, dhtt_msgs::msg::Node to_add, bool force, int index)
@@ -559,12 +665,16 @@ namespace dhtt
 		
 		// ensure that the goitr type is added if it exists
 		std::string goitr_type = "";
+		std::string potential_type = "dhtt_plugins::EfficiencyPotential";
 
 		if ( strcmp(to_add.goitr_name.c_str(), ""))
 			goitr_type = to_add.goitr_name;
 
+		if ( strcmp(to_add.potential_type.c_str(), "" ) )
+			potential_type = to_add.potential_type;
+
 		// create a physical node from the message and add to physical list
-		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(this->global_com, to_add.node_name, to_add.plugin_name, to_add.params, parent_name, "dhtt_plugins::PtrBranchSocket", goitr_type);
+		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(this->global_com, to_add.node_name, to_add.plugin_name, to_add.params, parent_name, "dhtt_plugins::PtrBranchSocket", goitr_type, potential_type);
 
 		if (this->node_map[to_add.node_name]->loaded_successfully() == false)
 		{
@@ -667,12 +777,16 @@ namespace dhtt
 			
 			// ensure that the goitr type is added if it exists
 			std::string goitr_type = "";
+			std::string potential_type = "dhtt_plugins::EfficiencyPotential";
 
 			if ( strcmp(to_add.goitr_name.c_str(), ""))
 				goitr_type = to_add.goitr_name;
 
+			if ( strcmp(to_add.potential_type.c_str(), "" ) )
+				potential_type = to_add.potential_type;
+
 			// create a physical node from the message and add to physical list
-			this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(this->global_com, to_add.node_name, to_add.plugin_name, to_add.params, parent_name, "dhtt_plugins::PtrBranchSocket", goitr_type);
+			this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(this->global_com, to_add.node_name, to_add.plugin_name, to_add.params, parent_name, "dhtt_plugins::PtrBranchSocket", goitr_type, potential_type);
 
 			if (this->node_map[to_add.node_name]->loaded_successfully() == false)
 			{
@@ -1338,16 +1452,17 @@ namespace dhtt
 
 	void MainServer::reset_param_server()
 	{
-		// get a sync param client ptr from the communication_aggregator
-		// auto param_name_list = this->global_com->list_parameters({}, 2).names;
+		// void the current robot resources
+		this->global_com->set_parameters_sync({rclcpp::Parameter("dhtt_resources.names", std::vector<std::string>()), 
+												rclcpp::Parameter("dhtt_resources.types", std::vector<int>()),
+												rclcpp::Parameter("dhtt_resources.channels", std::vector<int>()),
+												rclcpp::Parameter("dhtt_resources.locks", std::vector<bool>()),
+												rclcpp::Parameter("dhtt_resources.owners", std::vector<int>())});
 
-		// std::vector<rclcpp::Parameter> param_list = {};
+		// reload the robot resources from the yaml given initially
+		this->node_map["ROOT_0"]->logic->initialize({});
 
-		// put empty parameter values for each of the retrieved parameter names
-		// for ( auto iter : param_name_list )
-		// 	if ( iter.find("dhtt_resources") == std::string::npos )
-		// 		this->global_com->set_parameter_sync(rclcpp::Parameter(iter, rclcpp::ParameterValue()));
-
+		// now reset our marks ( TODO: REMOVE )
 		this->global_com->set_parameter_sync(rclcpp::Parameter("world.marked_objects_taints", std::vector<std::string>()));
 		this->global_com->set_parameter_sync(rclcpp::Parameter("world.marked_objects_types", std::vector<std::string>()));
 		this->global_com->set_parameter_sync(rclcpp::Parameter("world.marked_objects_ids", std::vector<long int>()));
@@ -1817,6 +1932,16 @@ namespace dhtt
 					catch (const std::exception& e)
 					{
 						to_build.goitr_name = "";
+					}
+
+					// check optional parameter potential_type
+					try 
+					{
+						to_build.potential_type = config["Nodes"][(*iter)]["potential_type"].as<std::string>();
+					}
+					catch (const std::exception& e)
+					{
+						to_build.potential_type = "";
 					}
 
 					if (to_build.type > dhtt_msgs::msg::Node::SUBTREE)

@@ -22,6 +22,7 @@ Nodes:
   MakeSmoothie:
     type: 2
     behavior_type: "dhtt_plugins::ThenBehavior"
+    potential_type: "dhtt_plugins::ResourcePotential"
     robot: 0
     parent: 'NONE'
     params: [ ]
@@ -31,7 +32,7 @@ Nodes:
     behavior_type: "dhtt_cooking_plugins::CookingObjectExistsBehavior"
     robot: 0
     parent: 'MakeSmoothie'
-    params: [ 'object: Blender', 'conditions: Free', 'mark: A#' ]
+    params: [ 'object: Blender', 'mark: A#' ]
 
   IngredientAnd:
     type: 1
@@ -127,4 +128,4 @@ Nodes:
     behavior_type: 'dhtt_cooking_plugins::CookingPlaceBehavior'
     robot: 0
     parent: 'ServeThen'
-    params: [ 'object: AbsorbingDeliversquare', 'mark: A#' ]
+    params: [ 'object: AbsorbingDeliversquare', 'mark: A#', 'unmark: foo' ]

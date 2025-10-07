@@ -25,6 +25,7 @@
 // interfaces
 #include "dhtt/tree/node_type.hpp"
 #include "dhtt/tree/branch_type.hpp"
+#include "dhtt/tree/potential_type.hpp"
 #include "dhtt/planning/goitr_type.hpp"
 
 // dhtt includes
@@ -50,9 +51,9 @@ namespace dhtt
 
 #define DHTT_LOG(severity, com_ptr, out) \
 	{ \
-	std::stringstream ss; \
-	ss <<  "[" << this->name << "]: " << out; \
-	com_ptr->log_stream(severity,  ss); \
+		std::stringstream ss; \
+		ss <<  "[" << this->name << "]: " << out; \
+		com_ptr->log_stream(severity,  ss); \
 	}
 
 #define DHTT_LOG_DEBUG(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::DEBUG, com_ptr, out)
@@ -86,7 +87,7 @@ namespace dhtt
 		 * 
 		 * \return void
 		 */
-		Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string parent_name, std::string socket_type="dhtt_plugins::PtrBranchSocket", std::string goitr_type="");
+		Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string parent_name, std::string socket_type="dhtt_plugins::PtrBranchSocket", std::string goitr_type="", std::string potential_type="dhtt_plugins::EfficiencyPotential");
 		~Node();
 
 		// Node(Node const&)=delete;// deleting copy constructor to debug
@@ -108,6 +109,13 @@ namespace dhtt
 		 * \return error message from loading the plugin (blank if no error occurred)
 		 */
 		std::string get_error_msg();
+
+		/**
+		 * \brief get the number of resources owned in the subtree starting at this node
+		 * 
+		 * \return number of resource used by this subtree
+		 */
+		int get_subtree_resources();
 
 		/**
 		 * \brief Returns all currently owned resources of the node
@@ -156,6 +164,15 @@ namespace dhtt
 		 * \return shared ptr to the global communication aggregator
 		 */
 		std::shared_ptr<CommunicationAggregator> get_com_agg();
+
+		/**
+		 * \brief returns a ptr to the logic plugin of this node
+		 * 
+		 * This is useful for making considerations for activation potential for example from outside of this node.
+		 * 
+		 * \return a ptr to the logic plugin of this node
+		 */
+		std::shared_ptr<NodeType> get_logic();
 
 		/**
 		 * \brief setter method for passsed resources
@@ -580,11 +597,13 @@ namespace dhtt
 		pluginlib::ClassLoader<GoitrType> goitr_type_loader;
 		pluginlib::ClassLoader<BranchSocketType> branch_socket_type_loader;
 		pluginlib::ClassLoader<BranchPlugType> branch_plug_type_loader;
+		pluginlib::ClassLoader<PotentialType> potential_type_loader;
 
 		std::shared_ptr<NodeType> logic;
 		std::shared_ptr<GoitrType> replanner;
 		std::shared_ptr<BranchSocketType> parent_communication_socket;
 		std::map<std::string, std::pair<bool, std::shared_ptr<BranchPlugType>>> child_communication_plugs;
+		std::shared_ptr<PotentialType> potential;
 
 		dhtt_msgs::msg::NodeStatus status;
 		std::map<std::string, dhtt_msgs::action::Activation::Result::SharedPtr> responses;
@@ -612,6 +631,7 @@ namespace dhtt
 		double activation_potential;
 
 		int priority;
+		int resources_owned_by_subtree;
 
 		std::atomic_bool resource_status_updated;
 		bool has_goitr;

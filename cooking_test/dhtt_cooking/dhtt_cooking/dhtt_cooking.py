@@ -8,8 +8,14 @@ import rclpy.node
 import geometry_msgs.msg
 
 import threading
+import cooking_zoo
 
-from dhtt_cooking_msgs.msg import CookingAction, CookingAgent, CookingObservation, CookingObject, CookingRecipe
+from rclpy.callback_groups import ReentrantCallbackGroup
+
+from dhtt_msgs.msg import Resource
+from dhtt_msgs.srv import ResourceRequest
+
+from dhtt_cooking_msgs.msg import CookingAction, CookingAgent, CookingObservation, CookingObject, CookingRecipe, CookingTypes
 from dhtt_cooking_msgs.srv import CookingRequest
 
 from cooking_zoo.cooking_agents.base_agent import BaseAgent
@@ -24,6 +30,65 @@ from typing import List, Tuple, Dict
 DEFAULT_PLAYER_NAME = CookingAction.DEFAULT_PLAYER_NAME  # usually player_0 this is from cooking_zoo cooking_env.py
 DEFAULT_AGENT_ID = CookingAction.DEFAULT_AGENT_ID  # usually agent-1. This is the name given to the actual agent object
 
+resource_type_dict = {
+    cooking_zoo.cooking_world.world_objects.Counter: 4, # COUNTER=4
+    cooking_zoo.cooking_world.world_objects.Cutboard: 5, # CUT_BOARD=5
+    cooking_zoo.cooking_world.world_objects.Toaster: 6, # TOASTER=6
+    cooking_zoo.cooking_world.world_objects.Pot: 7, # POT=7
+    cooking_zoo.cooking_world.world_objects.Blender: 8, # BLENDER=8
+    cooking_zoo.cooking_world.world_objects.Pan: 9, # PAN=9
+    cooking_zoo.cooking_world.world_objects.PlateDispenser: 10, # PLATE_DISPENSER=10
+    cooking_zoo.cooking_world.world_objects.BreadDispenser: 11, # BREAD_DISPENSER=11
+    cooking_zoo.cooking_world.world_objects.PastaDispenser: 12, # PASTA_DISPENSER=12
+    cooking_zoo.cooking_world.world_objects.IceDispenser: 13, # ICE_DISPENSER=13
+    cooking_zoo.cooking_world.world_objects.OnionDispenser: 14, # ONION_DISPENSER=14
+    cooking_zoo.cooking_world.world_objects.EggDispenser: 15, # EGG_DISPENSER=15
+    cooking_zoo.cooking_world.world_objects.BananaDispenser: 16, # BANANA_DISPENSER=16
+    cooking_zoo.cooking_world.world_objects.StrawberryDispenser: 17, # STRAWBERRY_DISPENSER=17
+    cooking_zoo.cooking_world.world_objects.TomatoDispenser: 18, # TOMATO_DISPENSER=18
+    cooking_zoo.cooking_world.world_objects.LettuceDispenser: 19, # LETTUCE_DISPENSER=19
+    cooking_zoo.cooking_world.world_objects.AbsorbingDeliversquare: 20, # ABSORBING_DELIVER_SQUARE=20
+    "Counter": 4,
+    "Cutboard": 5,
+    "Toaster": 6,
+    "Pot": 7,
+    "Blender": 8,
+    "Pan": 9,
+    "PlateDispenser": 10,
+    "BreadDispenser": 11,
+    "PastaDispenser": 12,
+    "IceDispenser": 13,
+    "OnionDispenser": 14,
+    "EggDispenser": 15,
+    "BananaDispenser": 16,
+    "StrawberryDispenser": 17,
+    "TomatoDispenser": 18,
+    "LettuceDispenser": 19,
+    "AbsorbingDeliversquare": 20,
+}
+
+dynamic_resource_type_dict = {
+    "Plate": 21,
+    "Bread": 22,
+    "Pasta": 23,
+    "Ice": 24,
+    "Onion": 25,
+    "Egg": 26,
+    "Banana": 27,
+    "Strawberry": 28, 
+    "Tomato": 29,
+    "Lettuce": 30,
+    "BreadChopped": 31, 
+    "BreadToasted": 32,
+    "PastaCooked": 33, 
+    "OnionChopped": 34,
+    "EggFried": 35,
+    "BananaChopped": 36, 
+    "TomatoChopped": 37,
+    "TomatoFried": 38,
+    "LettuceChoppped": 39,
+    "Smoothie": 40,
+}
 
 class CookingNode(rclpy.node.Node):
     """
@@ -37,21 +102,26 @@ class CookingNode(rclpy.node.Node):
     actions.
     """
 
-    def __init__(self):
+    def __init__(self, ex):
         super().__init__('cooking_zoo')
 
         self.cooking_environment = CookingEnvironment()
-
+        
         self.qos = rclpy.qos.QoSProfile(history=rclpy.qos.HistoryPolicy.KEEP_ALL)
 
         self.cooking_server = self.create_service(CookingRequest, 'Cooking_Server', self.cooking_request_callback, qos_profile=self.qos)
         self.cooking_observation_publisher = self.create_publisher(CookingObservation, 'Cooking_Observations', 10)
+        self.client = self.create_client(ResourceRequest, "/resource_service")
 
         self.service_lock = threading.Lock()
 
-        self.get_logger().debug('Initialized' + self.get_name())
-
         self.actions_taken: list[CookingAction] = []
+
+        self.thread = None
+        self.detectors = []
+        self.my_ex = ex
+
+        self.tick = threading.Condition()
 
         if self.cooking_environment:
             obs = self._prepare_observation_msg()
@@ -69,12 +139,14 @@ class CookingNode(rclpy.node.Node):
             if request.super_action == CookingRequest.Request.START:
                 self.get_logger().info('Got start request')
                 self.cooking_environment.start()
+                self.dispatch_resource_update()
             elif request.super_action == CookingRequest.Request.STOP:
                 self.get_logger().info('Got stop request')
                 self.cooking_environment.stop()
             elif request.super_action == CookingRequest.Request.RESET:
                 self.get_logger().info('Got reset request')
                 self.cooking_environment.reset()
+                # self.dispatch_resource_update()
             elif request.super_action == CookingRequest.Request.ACTION:
                 self.get_logger().info('Got action request')
                 if request.action.player_name == "":
@@ -87,6 +159,12 @@ class CookingNode(rclpy.node.Node):
 
                     if response.error_msg == "":
                         self.actions_taken.append(request.action)
+                    
+                        if request.action.action_type == CookingAction.EXECUTE_ACTION_ARM1 or request.action.action_type == CookingAction.EXECUTE_ACTION_ARM2:
+                            self.dispatch_detector_in_front_of_agent()
+                self.tick.acquire()
+                self.tick.notify_all()
+                self.tick.release()
             elif request.super_action == CookingRequest.Request.OBSERVE:
                 self.get_logger().info('Got observe request')
                 # self.get_logger().info('Published observation')
@@ -108,6 +186,216 @@ class CookingNode(rclpy.node.Node):
         obs = self.cooking_environment.get_observation_msg()
         obs.actions = self.actions_taken
         return obs
+    
+    def dispatch_resource_update(self):
+        if self.thread:
+            self.thread.join()
+
+        self.get_logger().info("Dispatching resource thread.")
+
+        self.thread = threading.Thread(target=self.register_resources_on_server, args=[])
+        self.thread.start()
+
+    def dispatch_detector_in_front_of_agent(self):
+        self.get_logger().warn("Dispatching detector for square in front of agent")
+
+        location = self.get_location_in_front()
+
+        self.detectors.append(threading.Thread(target=self.register_resource_when_changed, args=[location]))
+        self.detectors[-1].daemon = True # detach thread so we don't have to clean up resources
+        self.detectors[-1].start()
+
+        # self.get_logger().warn("Thread dispatched")
+
+    def register_resource_when_changed(self, location):
+        # self.get_logger().warn(f'{location}')
+
+        obj_type = resource_type_dict[self.get_static_at_location(location).object_type]
+
+        # self.get_logger().warn(f'{obj_type}')
+
+        # only do this for static objects that cook their items
+        if obj_type == CookingTypes.TOASTER or obj_type == CookingTypes.POT or obj_type == CookingTypes.BLENDER or obj_type == CookingTypes.PAN:
+        
+            # self.get_logger().warn("waiting for change in env")
+            self.detect_change_at_location(location)
+
+            # self.get_logger().warn("Found change registering new resource!")
+
+            self.register_resources_at_location_on_server(location)
+
+    def get_location_in_front(self):
+        world_agents = self.cooking_environment.env.unwrapped.world.agents
+        agents = [self.cooking_environment._agent_to_agent_msg(obj) for obj in world_agents]
+
+        location = agents[0].object_members.location
+
+        if agents[0].orientation == 1:
+            location.x -= 1
+        elif agents[0].orientation == 2:
+            location.x += 1
+        elif agents[0].orientation == 3:
+            location.y += 1
+        else:  
+            location.y -= 1
+
+        return location
+
+    def get_dynamic_at_location(self, location):
+
+        to_ret = []
+        world_objects = self.cooking_environment.env.unwrapped.world.world_objects
+
+        for obj_list in world_objects.values():
+            for obj in obj_list:
+
+                if obj.location[0] == location.x and obj.location[1] == location.y \
+                        and not type(obj) in resource_type_dict.keys():
+                    to_ret.append(obj)
+        
+        return to_ret
+    
+    def get_static_at_location(self, location):
+        to_ret = None
+        world_objects = self.cooking_environment.env.unwrapped.world.world_objects
+
+        for obj_list in world_objects.values():
+            for obj in obj_list:
+
+                if obj.location[0] == location.x and obj.location[1] == location.y \
+                        and type(obj) in resource_type_dict.keys():
+                    to_ret = obj
+        
+        return self.cooking_environment._object_to_object_msg(to_ret)
+    
+    # loops until a change in the dynamic objects at a location is detected
+    def detect_change_at_location(self, location):
+        initial_state = [ self.cooking_environment._object_to_object_msg(loc) for loc in self.get_dynamic_at_location(location) ]
+
+        loop = True
+
+        while loop:
+            # only loop on ticks
+            self.tick.acquire()
+            self.tick.wait()
+
+            new_state = [ self.cooking_environment._object_to_object_msg(loc) for loc in self.get_dynamic_at_location(location) ]
+
+            # self.get_logger().error("No change at location!")
+
+            # if new state is the same as the old state then we keep looping
+            for i in new_state:
+                comparison = None
+
+                for j in initial_state:
+                    if j.world_id == i.world_id:
+                        comparison = j
+                        break
+
+                if comparison == None or \
+                        comparison.object_type != i.object_type: 
+                    loop = False
+                    break
+
+                for a in comparison.physical_state:
+                    if not a in i.physical_state:
+                        loop = False
+                        break
+            
+            self.tick.release()
+
+    def register_resources_at_location_on_server(self, location):
+        with self.service_lock:
+
+            if not self.client.wait_for_service(timeout_sec=1.0):
+                self.get_logger().error("Could not contact resource service")
+
+                raise RuntimeError("Could not contact resource service")
+
+            # add the resources from the environment
+
+            req = ResourceRequest.Request()
+            req.type = ResourceRequest.Request.ADD
+
+            for obj in self.get_dynamic_at_location(location):
+                n_resource = Resource()
+
+                cooking_obj = self.cooking_environment._object_to_object_msg(obj)
+
+                n_resource.name = cooking_obj.object_type
+
+                relevant_condition = ""
+
+                for cond in cooking_obj.physical_state:
+                    if cond == "Chopped":
+                        relevant_condition = cond
+                    elif cond == "Toasted" or cond == "Cooked" or cond == "Fried":
+                        relevant_condition = cond
+                        break
+
+                n_resource.name += relevant_condition
+
+                n_resource.type = dynamic_resource_type_dict[n_resource.name]
+
+                n_resource.name +=  "_" + str(cooking_obj.world_id)
+                n_resource.channel = 0
+                n_resource.locked = False
+                n_resource.owners = 0
+
+                req.to_modify._resource_state.append(n_resource)
+
+            # send request to the dhtt server
+            self.client.call_async(req)
+    
+    def register_resources_on_server(self):
+        with self.service_lock:
+
+            if not self.client.wait_for_service(timeout_sec=1.0):
+                self.get_logger().error("Could not contact resource service")
+
+                raise RuntimeError("Could not contact resource service")
+
+            # add the resources from the environment
+            world_objects = self.cooking_environment.env.unwrapped.world.world_objects
+
+            req = ResourceRequest.Request()
+            req.type = ResourceRequest.Request.ADD
+
+            for obj_list in world_objects.values():
+                for obj in obj_list:
+
+                    if ( obj.location[0] == 0 and obj.location[1] == 0 ) or \
+                        ( obj.location[0] == 8 and obj.location[1] == 0 ) or \
+                        ( obj.location[0] == 0 and obj.location[1] == 8 ) or \
+                        ( obj.location[0] == 8 and obj.location[1] == 8 ):
+                        continue
+
+                    if type(obj) in resource_type_dict.keys():
+                        n_resource = Resource()
+
+                        n_resource.name = f'{type(obj).__name__}_{obj.unique_id}'
+                        n_resource.type = resource_type_dict[type(obj)]
+                        n_resource.channel = 0
+                        n_resource.locked = False
+                        n_resource.owners = 0
+
+                        req.to_modify._resource_state.append(n_resource)
+
+            # send request to the dhtt server
+            self.client.call_async(req)
+
+            # what if I just don't block for the response
+            # self.my_ex.spin_until_future_complete(future=response_future)
+            # res = response_future.result()
+
+            # # throw exception if this did not succeed
+            # if not res.success:
+            #     self.get_logger().error("Failed to register resources on the server")
+
+            #     raise RuntimeError("Failed to register resources on the server")
+
+            # self.get_logger().fatal("Response received")
+        return
 
 
 class CookingEnvironment:
@@ -384,8 +672,8 @@ class CookingEnvironment:
 def main():
     rclpy.init()
 
-    node = CookingNode()
     my_ex = rclpy.executors.MultiThreadedExecutor()
+    node = CookingNode(my_ex)
 
     my_ex.add_node(node)
 

@@ -19,9 +19,13 @@ string[]				params
 int8 					type
 string					plugin_name
 string					goitr_name
+string                  potential_type
 
 # the resources that the node has been given access to
 dhtt_msgs/Resource[]	owned_resources
+
+# number of resources controlled by this subtree
+int32                   subtree_owned_resources
 
 # this is an indicator of the status of the node
 dhtt_msgs/NodeStatus	node_status

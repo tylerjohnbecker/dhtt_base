@@ -33,6 +33,13 @@ float64 					activation_potential
 dhtt_msgs/Resource[] 		released_resources
 dhtt_msgs/Resource[] 		passed_resources
 
+### dynamic resource handling ###
+# added resources will be added once they reach the root behavior and will be given a locked state. If they are in released resources they will then be released.
+dhtt_msgs/Resource[]        added_resources
+
+# removed resources will be removed at the root behavior
+dhtt_msgs/Resource[]        removed_resources
+
 # the last behavior which ran and whether or not it finished successfully 
 string						last_behavior
 bool 						success

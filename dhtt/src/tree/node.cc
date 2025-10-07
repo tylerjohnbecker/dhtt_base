@@ -2,9 +2,9 @@
 
 namespace dhtt
 {
-	Node::Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string p_name, std::string branch_socket_type, std::string goitr_type) : 
+	Node::Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string p_name, std::string branch_socket_type, std::string goitr_type, std::string potential_type) : 
 			conc_group(nullptr), node_type_loader("dhtt", "dhtt::NodeType"), goitr_type_loader("dhtt", "dhtt::GoitrType"), 
-			branch_socket_type_loader("dhtt", "dhtt::BranchSocketType"), branch_plug_type_loader("dhtt", "dhtt::BranchPlugType"),
+			branch_socket_type_loader("dhtt", "dhtt::BranchSocketType"), branch_plug_type_loader("dhtt", "dhtt::BranchPlugType"), potential_type_loader("dhtt", "dhtt::PotentialType"),
 			name(name), parent_name(p_name), priority(1), resource_status_updated(false), first_activation(true), active(false)
 	{
 		// create a callback group for parallel ones
@@ -16,6 +16,7 @@ namespace dhtt
 		this->error_msg = "";
 		this->successful_load = true;
 		this->has_goitr = false;
+		this->resources_owned_by_subtree = 0;
 
 		this->global_com = com_agg;
 
@@ -42,6 +43,20 @@ namespace dhtt
 		catch (pluginlib::PluginlibException& ex)
 		{
 			this->error_msg = "Error when loading plugin " + branch_socket_type + ": " + ex.what();
+			this->successful_load = false;
+
+			DHTT_LOG_ERROR(this->global_com, this->error_msg);
+
+			return;
+		}
+
+		try
+		{
+			this->potential = this->potential_type_loader.createSharedInstance(potential_type);
+		}
+		catch (pluginlib::PluginlibException& ex)
+		{
+			this->error_msg = "Error when loading plugin " + potential_type + ": " + ex.what();
 			this->successful_load = false;
 
 			DHTT_LOG_ERROR(this->global_com, this->error_msg);
@@ -104,6 +119,11 @@ namespace dhtt
 		return this->error_msg;
 	}
 
+	int Node::get_subtree_resources()
+	{
+		return this->resources_owned_by_subtree;
+	}
+
 	std::vector<dhtt_msgs::msg::Resource> Node::get_owned_resources()
 	{
 		return this->owned_resources;
@@ -127,6 +147,11 @@ namespace dhtt
 	std::shared_ptr<CommunicationAggregator> Node::get_com_agg()
 	{
 		return this->global_com;
+	}
+		
+	std::shared_ptr<NodeType> Node::get_logic()
+	{
+		return this->logic;
 	}
 
 	void Node::set_passed_resources(std::vector<dhtt_msgs::msg::Resource> set_to)
@@ -320,23 +345,30 @@ namespace dhtt
 		bool is_possible = true;
 	
 		dhtt_msgs::msg::Resource looking_for;
-		auto find_fulfill = [&]( dhtt_msgs::msg::Resource to_check )
+		std::function<bool(dhtt_msgs::msg::Resource)> find_fulfill_by_type = [&]( dhtt_msgs::msg::Resource to_check )
 		{
 			return (looking_for.type == to_check.type) and not to_check.locked;
+		};
+
+		std::function<bool(dhtt_msgs::msg::Resource)> find_fulfill_by_name = [&]( dhtt_msgs::msg::Resource to_check )
+		{
+			return not strcmp(looking_for.name.c_str(), to_check.name.c_str()) and not to_check.locked;
 		};
 
 		for ( dhtt_msgs::msg::Resource check : requested_resources )
 		{
 			looking_for = check;
 
-			std::vector<dhtt_msgs::msg::Resource>::iterator found = std::find_if(this->available_resources.begin(), this->available_resources.end(), find_fulfill);
+			auto find_func = ( not strcmp("", check.name.c_str()) ) ? find_fulfill_by_type : find_fulfill_by_name;
+
+			std::vector<dhtt_msgs::msg::Resource>::iterator found = std::find_if(this->available_resources.begin(), this->available_resources.end(), find_func);
 
 			while ( found != this->available_resources.end() )
 			{
 				if ((*found).locked == false )
 					break;
 				else
-					found = std::find_if(found, this->available_resources.end(), find_fulfill);
+					found = std::find_if(found, this->available_resources.end(), find_func);
 			}
 
 			if ( found == this->available_resources.end() )
@@ -374,6 +406,7 @@ namespace dhtt
 		full_status.goitr_name = this->goitr_name;
 
 		full_status.owned_resources = this->owned_resources;
+		full_status.subtree_owned_resources = this->resources_owned_by_subtree;
 
 		full_status.node_status = this->status;
 
@@ -428,6 +461,9 @@ namespace dhtt
 				
 			this->update_status(dhtt_msgs::msg::NodeStatus::ACTIVE);
 
+			// update subtree owned resources
+			this->resources_owned_by_subtree += (int) goal.passed_resources.size();
+
 			// deal with any passed resources
 			for ( dhtt_msgs::msg::Resource passed_resource : goal.passed_resources )
 				this->owned_resources.push_back( passed_resource );
@@ -438,7 +474,7 @@ namespace dhtt
 			this->active_child_name = to_ret.local_best_node;
 
 			// check preconditions before moving request up
-			to_ret.activation_potential = this->logic->get_perceived_efficiency(this);
+			to_ret.activation_potential = this->potential->compute_activation_potential(this);
 			to_ret.possible = to_ret.possible and this->check_preconditions() and (to_ret.activation_potential > 0);
 
 			if ( to_ret.possible )
@@ -456,6 +492,9 @@ namespace dhtt
 				DHTT_LOG_WARN(this->global_com, "Starting work!");
 				this->update_status(dhtt_msgs::msg::NodeStatus::WORKING);
 
+				// update owned subtree resources
+				this->resources_owned_by_subtree += (int) goal.granted_resources.size();
+
 				// add granted resources to the owned resources for the logic
 				for ( dhtt_msgs::msg::Resource granted_resource : goal.granted_resources )
 					this->owned_resources.push_back( granted_resource );
@@ -464,6 +503,12 @@ namespace dhtt
 				if ( this->check_preconditions() )
 				{
 					to_ret = *this->logic->work_callback(this);
+
+					// add necessary resources and added to the subtree total
+					this->resources_owned_by_subtree += (int) to_ret.requested_resources.size() + (int) to_ret.added_resources.size();
+
+					// subtract released and removed from the subtree total
+					this->resources_owned_by_subtree -= (int) to_ret.released_resources.size() - (int) to_ret.removed_resources.size();
 
 					this->apply_postconditions();
 				}

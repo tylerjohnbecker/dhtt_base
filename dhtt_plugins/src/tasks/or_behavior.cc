@@ -152,7 +152,8 @@ namespace dhtt_plugins
 		auto result = container->get_activation_results()[active];
 
 		// child has now run at least once so we can no longer reselect
-		this->child_has_run = true;
+		if ( result.success )
+			this->child_has_run = true;
 
 		// if they are done then so are we
 		if ( result.done )
@@ -160,7 +161,10 @@ namespace dhtt_plugins
 
 		// change hands of resources and pass up
 		to_ret->passed_resources = result.passed_resources;
+		to_ret->requested_resources = result.requested_resources;
 		to_ret->released_resources = result.released_resources;
+		to_ret->added_resources = result.added_resources;
+		to_ret->removed_resources = result.removed_resources;
 		to_ret->last_behavior = result.last_behavior;
 		to_ret->done = this->is_done();
 		to_ret->success = result.success;

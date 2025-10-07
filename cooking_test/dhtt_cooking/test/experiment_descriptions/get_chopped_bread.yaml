@@ -1,8 +1,8 @@
 NodeList:
   - BreadOr
-  - ExistsThen
+  # - ExistsThen
   - BreadChoppedBreadExists            # BEGIN FIND TOAST # END FIND TOAST
-  - BreadChoppedBreadDefer
+  # - BreadChoppedBreadDefer
   - BreadNewBreadThen                  # BEGIN NEW TOAST
   - BreadMoveToDispenser
   - BreadExecuteDispenser
@@ -40,7 +40,7 @@ Nodes:
     type: 4
     behavior_type: 'dhtt_cooking_plugins::CookingObjectExistsBehavior'
     robot: 0
-    parent: 'ExistsThen'
+    parent: 'BreadOr'
     params: [ 'object: Bread', 'conditions: Chopped', 'mark: $mark' ]
   BreadChoppedBreadDefer:
     type: 4
@@ -98,7 +98,7 @@ Nodes:
     params: [ 'object: Bread', 'mark: $mark', 'unmark: foo' ]
   BreadChoppedAnd:
     type: 1
-    behavior_type: "dhtt_plugins::AndBehavior"
+    behavior_type: "dhtt_plugins::ThenBehavior"
     robot: 0
     parent: "BreadNewBreadThen"
     params: [ ]
@@ -113,7 +113,7 @@ Nodes:
     behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'
     robot: 0
     parent: 'BreadChoppedThenOne'
-    params: [ 'object: Cutboard', 'mark: $mark' ]
+    params: ['object: Cutboard', 'mark: $mark' ]
   BreadChoppedBreadPickOne:
     type: 4
     behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'

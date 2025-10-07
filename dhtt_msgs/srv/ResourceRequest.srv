@@ -1,0 +1,16 @@
+# choice of which modification to perform
+int8 				        type
+
+# resources to modify (if type is remove they should exist on the server already)
+dhtt_msgs/Resources         to_modify
+
+# msg constants (self explanatory)
+int8 				        ADD=1
+int8 				        REMOVE=2
+int8                        GET=3
+---
+# returns whether or not a node was found, and whether it could be modified successfully
+bool 				        success
+
+# the canonical list of server resources after the requested change
+dhtt_msgs/Resources         server_resources

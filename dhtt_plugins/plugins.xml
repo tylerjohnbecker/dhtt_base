@@ -67,5 +67,13 @@
 	<class type="dhtt_plugins::OrBehavior" base_class_type="dhtt::NodeType">
 		<description>Task node which executes children in the order specified when the children are added to the tree.</description>
 	</class>
+
+	<!-- Potentials -->
+	<class type="dhtt_plugins::EfficiencyPotential" base_class_type="dhtt::PotentialType">
+		<description> Returns the perceived efficiency computed by the node class </description>
+	</class>
+	<class type="dhtt_plugins::ResourcePotential" base_class_type="dhtt::PotentialType">
+		<description> Returns the perceived efficiency computed by the node class until a threshold is met for resource usage, then returns the proportion of resources used in the attached node's subtree</description>
+	</class>
 	
 </library>

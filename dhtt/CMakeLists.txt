@@ -30,7 +30,9 @@ find_package(yaml-cpp REQUIRED)
 find_library(LIBSTDCXX_10 libstdc++.so.6 PATHS)
 
 # make nodes
-add_library(dhtt_lib SHARED src/utils.cc src/tree/node.cc src/server/main_server.cc src/planning/goitr_type.cc src/server/sub_server.cc)
+add_library(dhtt_lib SHARED 
+                      src/utils/condition_utils.cc src/utils/resource_utils.cc 
+                      src/tree/node.cc src/server/main_server.cc src/planning/goitr_type.cc src/server/sub_server.cc)
 target_include_directories(dhtt_lib PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)

@@ -2,13 +2,20 @@
 #define COOKING_BEHAVIOR_HPP
 
 #include "dhtt_cooking_msgs/msg/cooking_observation.hpp"
+#include "dhtt_cooking_msgs/msg/cooking_types.hpp"
 #include "dhtt_cooking_msgs/srv/cooking_request.hpp"
+
+#include "dhtt_cooking_plugins/cooking_utils.hpp"
+
 #include "dhtt_plugins/behaviors/action_type.hpp"
+
 #include "rclcpp/rclcpp.hpp"
+
 #include <float.h>
 
 namespace dhtt_cooking_plugins
 {
+
 class CookingBehavior : public dhtt_plugins::ActionType
 {
   public:
@@ -48,7 +55,7 @@ class CookingBehavior : public dhtt_plugins::ActionType
 	 * their own metric.
 	 * @return 0 if the checks failed, 1 otherwise.
 	 */
-	virtual double get_perceived_efficiency(dhtt::Node* containenr) override;
+	virtual double get_perceived_efficiency(dhtt::Node* container) override;
 
   protected:
 	std::string destination_type;  // key: coordinate or closest object
@@ -77,10 +84,105 @@ class CookingBehavior : public dhtt_plugins::ActionType
 	void initialize(std::vector<std::string> params) override;
 
 	/**
-	 * Using this->destination_value, this->destination_conds, and this->last_obs, set
-	 * this->destination_point
+	 * \brief sets the destination of this behavior to the closest free object of the given type
+	 * 
+	 * This will return the canonical name of the requested resource and will set internal values for ap calculations etc.
+	 * 
+	 * \param type the requested destination type
+	 * \param resources_list the list from which to choose the destination resource
+	 * 
+	 * \return name of the resource chosen
 	 */
-	void set_destination_to_closest_object();
+	std::string set_destination_to_closest_free_object(int8_t type, std::vector<dhtt_msgs::msg::Resource> resources_list);
+
+	/**
+	 * \brief sets the destination of this behavior to the closest free object of the given type
+	 * 
+	 * This will return the canonical name of the requested resource and will set internal values for ap calculations etc. Does not check if the object is locked
+	 * 	because resources list is assumed to contain resources owned by this behavior.
+	 * 
+	 * \param type the requested destination type
+	 * \param resources_list the list from which to choose the destination resource
+	 * 
+	 * \return name of the resource chosen
+	 */
+	std::string set_destination_to_closest_owned(int8_t type, std::vector<dhtt_msgs::msg::Resource> resources_list);
+
+	/**
+	 * \brief sets the destination of this behavior to the closest unlocked object of the given type
+	 * 
+	 * This will return the canonical name of the requested resource and will set internal values for ap calculations etc. Does not check if the object is locked
+	 * 	because resources list is assumed to contain resources owned by this behavior.
+	 * 
+	 * \param type the requested destination type
+	 * \param resources_list the list from which to choose the destination resource
+	 * 
+	 * \return name of the resource chosen
+	 */
+	std::string set_destination_to_closest(int8_t type, std::vector<dhtt_msgs::msg::Resource> resources_list);
+
+	/**
+	 * \brief sets the destination of this behavior to the closest free object of the given type
+	 * 
+	 * \param type the requested destination type
+	 * \param resources_list the list from which to choose the destination resource
+	 * 
+	 * \return name of the resource chosen
+	 */
+	std::string set_destination_to_closest_free(int8_t type, std::vector<dhtt_msgs::msg::Resource> resources_list);
+
+	/**
+	 * \brief sets the destination of this behavior to the static object under our dynamic target
+	 * 
+	 * like the set_destination_to_closest_object this will also set our destination such that the ap calculation will work.
+	 * 
+	 * \param type the requested destination type
+	 * \param resources_list the list from which to choose the destination resource
+	 * 
+	 * \return name of the resource chosen
+	 */
+	std::string set_destination_to_static_under(int8_t type, std::vector<dhtt_msgs::msg::Resource> resources_list);
+
+	/**
+	 * \brief gets the dynamic object in front of the agent (takes orientation into account)
+	 * 
+	 * Defaults to the first dynamic object on the static object in front of the agent.
+	 * 
+	 * \return name of the resource found
+	 */
+	std::string get_dynamic_in_front();
+
+	/**
+	 * \brief gets the static object in front of the agent (takes orientation into account)
+	 * 
+	 * Static objects are not stacked so there should only be one in front of the agent ever.
+	 * 
+	 * \return name of the resource found
+	 */
+	std::string get_static_in_front();
+
+	/**
+	 * \brief returns a list of all the dynamic objects in front of the agent
+	 * 
+	 * \return list of object names in front of the agent
+	 */
+	std::vector<std::string> get_all_dynamic_in_front();
+
+	/**
+	 * \brief gets the static object underneath a given dynamic obj
+	 * 
+	 * \param name name of dynamic obj to check for the static obj underneath
+	 * 
+	 * \return name of static object underneath given dynamic obj
+	 */
+	std::string get_static_underneath(std::string name);
+
+	/**
+	 * \brief searches for a resource in the canonical list that is both of the given type and free
+	 * 
+	 * \return true if a resource exists which is of the given type and not locked
+	 */
+	std::string has_resource_free_of_type(dhtt::Node* container, int8_t type);
 
 	static std::string which_arm(dhtt::Node *container);
 
@@ -151,7 +253,10 @@ class CookingBehavior : public dhtt_plugins::ActionType
 	 */
 	std::shared_future<dhtt_cooking_msgs::srv::CookingRequest::Response::SharedPtr> send_request_and_update(dhtt_cooking_msgs::srv::CookingRequest::Request::SharedPtr to_send);
 
-  std::string cooking_observation_subscriber;
+	std::string cooking_observation_subscriber;
+
+	std::map<std::string, dhtt_cooking_msgs::msg::CookingObject> observed_env;
+	dhtt_cooking_msgs::msg::CookingAgent observed_agent;
 
 	rclcpp::Client<dhtt_cooking_msgs::srv::CookingRequest>::SharedPtr cooking_request_client;
 
@@ -204,6 +309,7 @@ class CookingBehavior : public dhtt_plugins::ActionType
 
 	static std::pair<std::string, std::string> extract_keyval(const std::string &param_string);
 };
+
 } // namespace dhtt_cooking_plugins
 
 #endif // COOKING_BEHAVIOR_HPP

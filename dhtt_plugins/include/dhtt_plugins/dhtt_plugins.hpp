@@ -22,6 +22,9 @@
 
 #include "dhtt_plugins/tree/ptr_branch.hpp"
 
+#include "dhtt_plugins/potentials/efficiency_potential.hpp"
+#include "dhtt_plugins/potentials/resource_potential.hpp"
+
 #include <pluginlib/class_list_macros.hpp>
 
 // NodeTypes
@@ -45,5 +48,9 @@ PLUGINLIB_EXPORT_CLASS(dhtt_plugins::PlaceBehavior, dhtt::NodeType)
 // BranchTypes
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::PtrBranchSocket, dhtt::BranchSocketType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::PtrBranchPlug, dhtt::BranchPlugType)
+
+// PotentialTypes
+PLUGINLIB_EXPORT_CLASS(dhtt_plugins::EfficiencyPotential, dhtt::PotentialType)
+PLUGINLIB_EXPORT_CLASS(dhtt_plugins::ResourcePotential, dhtt::PotentialType)
 
 #endif  // DHTT_PLUGINS__HTT_PLUGINS_HPP_

@@ -24,19 +24,8 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 {
 	(void)container; // Unused
 
-	std::vector<dhtt_cooking_msgs::msg::CookingObject> prev_held = this->last_obs->agents[0].holding;
-	auto last_holding = this->last_obs->agents[0].holding;
-
-	// Equivalent of get_released_resources() but for "resources" on the paramserver
-	DHTT_LOG_INFO(this->com_agg, 
-				"Unmarking object that was under " <<
-				 this->destination_object.object_type
-					);
-	if (this->should_unmark and not this->unmark_static_object_under_obj(this->destination_object, true))
-	{
-		DHTT_LOG_WARN(this->com_agg, 
-					"Error unmarking static object under " << this->destination_object.object_type);
-	}
+	std::vector<dhtt_cooking_msgs::msg::CookingObject> prev_held = this->observed_agent.holding;
+	auto last_holding = this->observed_agent.holding;
 
 	/* interact_primary */
 	auto req = std::make_shared<dhtt_cooking_msgs::srv::CookingRequest::Request>();
@@ -58,7 +47,7 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 		return;
 	}
 
-	auto current_holding = this->last_obs->agents[0].holding;
+	auto current_holding = this->observed_agent.holding;
 	
 	if ( last_holding.size() >= current_holding.size() )
 	{
@@ -71,7 +60,7 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 	// Mark the object that was picked. If the static object had multiple objects on top (chopping
 	// bread), it is ambiguous which one will be picked.
 	dhtt_cooking_msgs::msg::CookingObject picked_obj;
-	for (const auto &held : this->last_obs->agents[0].holding)
+	for (const auto &held : this->observed_agent.holding)
 	{
 		if (std::find(prev_held.cbegin(), prev_held.cend(), held) == prev_held.cend())
 		{
@@ -80,17 +69,16 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 		}
 	}
 
-	// if picked object is not marked for anyone
-	if (not this->destination_mark.empty() and this->check_mark(picked_obj) == '2')
-	{
-		DHTT_LOG_INFO(this->com_agg, "Marking object as " << this->destination_mark);
-		suc = this->mark_object(picked_obj.world_id, this->destination_mark);
-		if (not suc)
-		{
-			DHTT_LOG_ERROR(this->com_agg,  "Marking object failed: " <<
-						 res.get()->error_msg);
-		}
-	}
+	std::string held_resource_name = dhtt_cooking_utils::get_resource_name(picked_obj);
+
+	DHTT_LOG_INFO(this->com_agg, "Aquired object: " << held_resource_name );
+
+	// picked_resource msg
+	dhtt_msgs::msg::Resource picked_resource;
+	picked_resource.type = dhtt_cooking_utils::resource_name_to_type(held_resource_name);
+	picked_resource.name = held_resource_name;
+
+	this->necessary_world_resources.push_back(picked_resource);
 
 	this->done = suc;
 }
@@ -104,41 +92,21 @@ CookingPickBehavior::get_retained_resources(dhtt::Node *container)
 	}
 
 	std::vector<dhtt_msgs::msg::Resource> to_ret;
-
-	// just keep access to the first gripper found (shouldn't matter for now)
-	for (auto resource_iter : container->get_owned_resources())
-	{
-		if (resource_iter.type == dhtt_msgs::msg::Resource::GRIPPER)
-		{
-			to_ret.push_back(resource_iter);
-			break;
-		}
-	}
-
-	return to_ret;
-}
-
-std::vector<dhtt_msgs::msg::Resource>
-CookingPickBehavior::get_released_resources(dhtt::Node *container)
-{
-	if (this->should_keep)
-	{
-		return std::vector<dhtt_msgs::msg::Resource>();
-	}
-
-	std::vector<dhtt_msgs::msg::Resource> to_ret;
 	bool first = true;
 
+	std::string front_static = this->get_static_in_front();
+
+	// just keep access to the first gripper found (shouldn't matter for now) and all of the cooking objects other than the one in front
 	for (auto resource_iter : container->get_owned_resources())
 	{
-		if (resource_iter.type != dhtt_msgs::msg::Resource::GRIPPER or not first)
+		if ( resource_iter.type == dhtt_msgs::msg::Resource::GRIPPER and first)
 		{
 			to_ret.push_back(resource_iter);
-		}
-		else
-		{ // skip the first gripper but not the rest
+
 			first = false;
 		}
+		else if ( dhtt_cooking_utils::is_cooking_obj(resource_iter.type) and strcmp(resource_iter.name.c_str(), front_static.c_str()) )
+			to_ret.push_back(resource_iter);
 	}
 
 	return to_ret;

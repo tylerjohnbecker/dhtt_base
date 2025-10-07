@@ -4,6 +4,8 @@
 #include "dhtt_cooking_plugins/visibility_control.h"
 
 // list of plugin files to include here
+#include "dhtt_cooking_plugins/cooking_utils.hpp"
+
 #include "dhtt_cooking_plugins/behaviors/cooking_execute_behavior.hpp"
 #include "dhtt_cooking_plugins/behaviors/cooking_interact_special_behavior.hpp"
 #include "dhtt_cooking_plugins/behaviors/cooking_move_behavior.hpp"

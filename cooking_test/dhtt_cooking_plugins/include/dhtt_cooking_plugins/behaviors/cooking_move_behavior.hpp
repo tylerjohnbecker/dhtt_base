@@ -47,6 +47,11 @@ class CookingMoveBehavior : public CookingBehavior
 	 */
 	std::vector<dhtt_msgs::msg::Resource> get_necessary_resources() override;
 
+	/**
+	 * \brief needs a counter/dispenser/tool to run
+	 */
+	void populate_resource_lists(dhtt::Node* container) override;
+
   protected:
   private:
 };
