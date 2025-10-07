@@ -26,8 +26,11 @@ class ReducedNodeMsg:
 
 def read_messages(input_bag: str):
     reader = rosbag2_py.SequentialReader()
+
+    filetype = "mcap" if ".mcap" in input_bag else "sqlite3"
+
     reader.open(
-        rosbag2_py.StorageOptions(uri=input_bag, storage_id="mcap"),
+        rosbag2_py.StorageOptions(uri=input_bag, storage_id=filetype),
         rosbag2_py.ConverterOptions(
             input_serialization_format="cdr", output_serialization_format="cdr"
         ),
@@ -91,3 +94,14 @@ def filter_status_by_node_names(message_generator, node_names: set[str]):
 
                 yield ret
         pass  # skip
+
+
+if __name__ == "__main__":
+    bag_path: str = '/IdeaProjects/TylerAAMAS/rosbag2_2025_10_07-12_05_35_0.db3'
+    _message_gen = get_message_generator(bag_path)
+
+    set_of_nodes: set[str] = {"A1", "A2", "A3"}
+
+    # see bagToCSV.ReducedNodeMsg
+    my_dataset_generator = filter_status_by_node_names(_message_gen, set_of_nodes)
+    print(list(my_dataset_generator))
