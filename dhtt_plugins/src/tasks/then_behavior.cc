@@ -114,8 +114,8 @@ namespace dhtt_plugins
 		// for (auto const& x  : results)
 		// 	total_sum += x.second->activation_potential;
 
-		DHTT_LOG_WARN(this->com_agg, "\tRecommending child [" << first_child_in_queue << "] for activation in queue position " << this->child_queue_index 
-						<< " with potential " << results[first_child_in_queue].activation_potential << "...");
+		DHTT_LOG_WARN(this->com_agg, "\tRecommending child [" << to_ret->local_best_node << "] for activation in queue position " << this->child_queue_index 
+						<< " with potential [" << results[first_child_in_queue].activation_potential << "]...");
 
 		this->activation_potential = results[first_child_in_queue].activation_potential;// / total_num_children;
 
@@ -165,7 +165,13 @@ namespace dhtt_plugins
 		// change hands of resources and pass up
 		if ( not this->is_done() )
 		{
-			container->set_passed_resources(result.passed_resources);
+			auto tmp = result.passed_resources;
+
+			// requested resources are always passed
+			for ( auto iter : result.requested_resources )
+				tmp.push_back(iter);
+
+			container->set_passed_resources(tmp);
 		}
 		else
 		{
@@ -174,6 +180,9 @@ namespace dhtt_plugins
 		}
 
 		to_ret->released_resources = result.released_resources;
+		to_ret->requested_resources = result.requested_resources;
+		to_ret->added_resources = result.added_resources;
+		to_ret->removed_resources = result.removed_resources;
 		to_ret->last_behavior = result.last_behavior;
 		to_ret->done = this->is_done();
 		to_ret->success = result.success;

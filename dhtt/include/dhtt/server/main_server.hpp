@@ -34,6 +34,7 @@
 #include "dhtt_msgs/srv/fetch_request.hpp"
 #include "dhtt_msgs/srv/modify_request.hpp"
 #include "dhtt_msgs/srv/history_request.hpp"
+#include "dhtt_msgs/srv/resource_request.hpp"
 #include "dhtt_msgs/srv/internal_control_request.hpp"
 #include "dhtt_msgs/srv/internal_modify_request.hpp"
 #include "dhtt_msgs/srv/internal_service_registration.hpp"
@@ -76,24 +77,29 @@ namespace dhtt
 		// *** PRIVATE MEMBER FUNCTIONS ***
 		// server callbacks
 		/**
-		 * \brief callback for handling ModifyRequests. See ModifyRequest.msg for more information.
+		 * \brief callback for handling ModifyRequests. See ModifyRequest.srv for more information.
 		 */ 
 		void modify_callback( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response );
 
 		/**
-		 * \brief callback for handling ControlRequest. See ControlRequest.msg for more information.
+		 * \brief callback for handling ControlRequest. See ControlRequest.srv for more information.
 		 */ 
 		void control_callback( const std::shared_ptr<dhtt_msgs::srv::ControlRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ControlRequest::Response> response );
 
 		/**
-		 * \brief callback for handling FetchRequest. See FetchRequest.msg for more information.
+		 * \brief callback for handling FetchRequest. See FetchRequest.srv for more information.
 		 */ 
 		void fetch_callback( const std::shared_ptr<dhtt_msgs::srv::FetchRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> response );
 
 		/**
-		 * \brief callback for handling HistoryRequest. See HistoryRequest.msg for more information.
+		 * \brief callback for handling HistoryRequest. See HistoryRequest.srv for more information.
 		 */ 
 		void history_callback( const std::shared_ptr<dhtt_msgs::srv::HistoryRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::HistoryRequest::Response> response );
+
+		/**
+		 * \brief callback for handling ResourceRequest. See ResourceRequest.srv for more information.
+		 */
+		void resource_callback( const std::shared_ptr<dhtt_msgs::srv::ResourceRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ResourceRequest::Response> response );
 
 		// modify helpers
 		/**
@@ -498,6 +504,7 @@ namespace dhtt
 		rclcpp::Service<dhtt_msgs::srv::ControlRequest>::SharedPtr control_server;
 		rclcpp::Service<dhtt_msgs::srv::FetchRequest>::SharedPtr fetch_server;
 		rclcpp::Service<dhtt_msgs::srv::HistoryRequest>::SharedPtr history_server;
+		rclcpp::Service<dhtt_msgs::srv::ResourceRequest>::SharedPtr resource_server;
 
 		// publishers
 		rclcpp::Publisher<dhtt_msgs::msg::NodeStatus>::SharedPtr root_status_pub;
@@ -518,6 +525,8 @@ namespace dhtt
 		std::mutex running_mut;
 		std::mutex maintenance_mut;
 		std::mutex wait_mut;
+
+		std::shared_ptr<std::mutex> resource_update_mut_ptr;
 
 		// condition variables
 		std::condition_variable maintenance_queue_condition;

@@ -7,6 +7,8 @@ namespace dhtt_plugins
 		this->num_active_children = 0;
 		this->activation_potential = 0;
 
+		this->first_activation = true;
+
 		this->preconditions.logical_operator = dhtt_utils::LOGICAL_AND;
 		this->postconditions.logical_operator = dhtt_utils::LOGICAL_AND;
 
@@ -19,9 +21,18 @@ namespace dhtt_plugins
 	{
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> to_ret = std::make_shared<dhtt_msgs::action::Activation::Result>();
 
+		// on first activation we need to keep the resources we were handed so that we always give them to the child behaviors
+		if ( this->first_activation )
+		{
+			this->initially_passed.clear();
+			this->initially_passed = container->get_owned_resources();
+
+			this->first_activation = false;
+		}
+
 		// activate all children which aren't done yet
 		dhtt_msgs::action::Activation::Goal n_goal;
-		n_goal.passed_resources = container->get_owned_resources();
+		n_goal.passed_resources = this->initially_passed;
 
 		DHTT_LOG_INFO(this->com_agg, "\tAuction callback started activating children...");
 
@@ -68,13 +79,17 @@ namespace dhtt_plugins
 		}
 
 		this->num_active_children = num_children;
-		this->activation_potential = activation_potential_sum / num_children;
+		this->activation_potential = (strcmp("", local_best_child.c_str())) ? results[local_best_child].activation_potential : 0.0;
 		to_ret->activation_potential = activation_potential;
 
 		// check if a possible child exists
 		if ( strcmp( "", local_best_child.c_str() ) )
 		{
 			to_ret->possible = results[local_best_child].possible;
+		}
+		else
+		{
+			DHTT_LOG_WARN(this->com_agg, "Nothing is possible!!");
 		}
 
 		// send stop back to the rest
@@ -126,10 +141,23 @@ namespace dhtt_plugins
 
 		DHTT_LOG_INFO(this->com_agg, "Child finished running, " << this->num_active_children << " active children left.");
 
+		// update the resources to pass when done
+		if ( result.done )
+		{
+			this->update_total_passed(result);
+
+			if ( this->is_done() )
+			{
+				to_ret->passed_resources = this->total_passed;
+				container->set_passed_resources(std::vector<dhtt_msgs::msg::Resource>());
+			}
+		}
+
 		// copy and return message with this node as the local node
 		to_ret->released_resources = result.released_resources;
-		to_ret->released_resources.insert(to_ret->released_resources.end(),  result.passed_resources.begin(), result.passed_resources.end());
-		// to_ret->passed_resources = result.passed_resources;
+		to_ret->requested_resources = result.requested_resources;
+		to_ret->added_resources = result.added_resources;
+		to_ret->removed_resources = result.removed_resources;
 		to_ret->last_behavior = result.last_behavior;
 		to_ret->done = this->is_done();
 		to_ret->success = result.success;
@@ -192,5 +220,40 @@ namespace dhtt_plugins
 	bool AndBehavior::is_done() 
 	{
 		return this->num_active_children == 0;
+	}
+
+	void AndBehavior::update_total_passed(dhtt_msgs::action::Activation::Result result)
+	{
+		dhtt_msgs::msg::Resource look_for;
+		auto same_resource = [&]( dhtt_msgs::msg::Resource to_check) { return not strcmp(look_for.name.c_str(), to_check.name.c_str()) ; }; 
+
+		// first remove any removed resources
+		for ( auto resource : result.removed_resources )
+		{
+			look_for = resource;
+			std::vector<dhtt_msgs::msg::Resource>::iterator to_remove;
+
+			while ( ( to_remove = find_if(this->total_passed.begin(), this->total_passed.end(), same_resource ) ) != this->total_passed.end() )
+				this->total_passed.erase(to_remove);
+		}
+
+		// next remove any released resources
+		for ( auto resource : result.released_resources )
+		{
+			look_for = resource;
+			std::vector<dhtt_msgs::msg::Resource>::iterator to_remove;
+
+			while ( ( to_remove = find_if(this->total_passed.begin(), this->total_passed.end(), same_resource ) ) != this->total_passed.end() )
+				this->total_passed.erase(to_remove);
+		}
+
+		// finally add any new passed resources
+		for ( auto resource : result.passed_resources )
+		{
+			look_for = resource;
+
+			if ( std::find_if(this->total_passed.begin(), this->total_passed.end(), same_resource ) == this->total_passed.end() )
+				this->total_passed.push_back(look_for);
+		}
 	}
 }

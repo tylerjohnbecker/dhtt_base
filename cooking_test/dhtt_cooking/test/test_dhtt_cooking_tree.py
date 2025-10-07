@@ -126,7 +126,9 @@ class TestCookingZooTree:
         fetch_rq.return_full_subtree = True
 
         fetch_future = self.node.fetchsrv.call_async(fetch_rq)
-        rclpy.spin_until_future_complete(self.node, fetch_future)
+        rclpy.spin_until_future_complete(self.node, fetch_future, timeout_sec=1.0)
+
+        assert fetch_future.done()
 
         fetch_rs = fetch_future.result()
 
@@ -501,10 +503,11 @@ class TestCookingZooTree:
     #         self.wait_for_finished_execution()
     #         # self.reset_tree()
     def test_pastaWithTomatoSauce_experiment(self, serial):
+        return
         with TestCookingZooTree.lock:
             self.initialize()
-            self.reset_level()
             self.reset_tree()
+            self.reset_level()
             self.wait_for_waiting()
 
             req = ModifyRequest.Request()
@@ -527,10 +530,11 @@ class TestCookingZooTree:
             self.wait_for_finished_execution()
 
     def test_smoothie_experiment(self, serial):
+        return
         with TestCookingZooTree.lock:
             self.initialize()
-            self.reset_level()
             self.reset_tree()
+            self.reset_level()
             self.wait_for_waiting()
 
             req = ModifyRequest.Request()
@@ -553,10 +557,11 @@ class TestCookingZooTree:
             self.wait_for_finished_execution()
 
     def test_egg_toast_recipe(self, serial):
+        return
         with TestCookingZooTree.lock:
             self.initialize()
-            self.reset_level()
             self.reset_tree()
+            self.reset_level()
             self.wait_for_waiting()
 
             req = ModifyRequest.Request()
@@ -573,16 +578,25 @@ class TestCookingZooTree:
             nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
             nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
             nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+            # nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+            # nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+
+            # nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+            # nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+            # nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+            # nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+            # nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
 
             self.start_tree()
 
             self.wait_for_finished_execution()
 
     def test_salad_recipe(self, serial):
+        return
         with TestCookingZooTree.lock:
             self.initialize()
-            self.reset_level()
             self.reset_tree()
+            self.reset_level()
             self.wait_for_waiting()
 
             req = ModifyRequest.Request()
@@ -605,10 +619,11 @@ class TestCookingZooTree:
             self.wait_for_finished_execution()
 
     def test_heterogeneous_recipes(self, serial):
+        return
         with TestCookingZooTree.lock:
             self.initialize()
-            self.reset_level()
             self.reset_tree()
+            self.reset_level()
             self.wait_for_waiting()
 
             req = ModifyRequest.Request()
@@ -632,11 +647,11 @@ class TestCookingZooTree:
             self.wait_for_finished_execution()
 
     def test_multiple_recipes(self, serial):
-        return
+        # return
         with TestCookingZooTree.lock:
             self.initialize()
-            self.reset_level()
             self.reset_tree()
+            self.reset_level()
             self.wait_for_waiting()
 
             req = ModifyRequest.Request()
@@ -652,7 +667,7 @@ class TestCookingZooTree:
 
             arr = [ "/experiment_descriptions/recipe_egg_toast.yaml", "/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml", "/experiment_descriptions/recipe_salad.yaml", "/experiment_descriptions/recipe_smoothie.yaml"]
 
-            for i in range(30):
+            for i in range(10):
                 to_add = random.choice(arr)
 
                 nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)

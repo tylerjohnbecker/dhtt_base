@@ -107,9 +107,7 @@ namespace dhtt_plugins
 		 * \return void
 		 */
 		void release_all_resources() override;
-
-	protected:
-
+		
 		/**
 		 * \brief loads the robot resources in the robot_resources_path
 		 * 
@@ -119,6 +117,8 @@ namespace dhtt_plugins
 		 * \return void
 		 */
 		void load_resources_from_yaml();
+
+	protected:
 
 		/**
 		 * \brief publishes the current state of the resources to the rest of the dHTT
@@ -137,6 +137,15 @@ namespace dhtt_plugins
 		void push_resources();
 
 		/**
+		 * \brief pulls new resources from the param server
+		 * 
+		 * This function weill not update the state of existing resources as the root behaviors internal list is canonical for those.
+		 * 
+		 * \return void
+		 */
+		void pull_resources();
+
+		/**
 		 * \brief fullfills a request from the child
 		 * 
 		 * updates the status of the resources on the robot such that a given set of resources has been handed out. Resources are given on a first found basis so for example if there are two arms on the
@@ -152,13 +161,37 @@ namespace dhtt_plugins
 		 * \brief releases resources that were in use
 		 * 
 		 * After behaviors are done running they generally release at least some resources so that the root node can hand them out again. This function searches the internal list for the resources by name
-		 * 	and releases them.  
+		 * 	and releases them. 
 		 *
 		 * \param to_release the list of resources to release
 		 * 
 		 * \return void
 		 */
 		void release_resources(std::vector<dhtt_msgs::msg::Resource> to_release);
+
+		/**
+		 * \brief adds requested resources to the internal canonical resource list
+		 * 
+		 * Resources are always added as locked, so if they are added by a behavior they should also be passed or released as if they already existed in the list. If the resources already exist in the internal list
+		 * 	then this function will throw an exception to avoid undefined behavior. 
+		 * 
+		 * \param to_add vector of resources to add
+		 * 
+		 * \return void
+		 */
+		void add_resources(std::vector<dhtt_msgs::msg::Resource> to_add);
+
+		/**
+		 * \brief removes requested resources from internal canonical resource list
+		 * 
+		 * Resources are removed before releasing and passing so if the removed resources are in those lists as well this will cause an exception to be thrown in release resources. If the resources are already 
+		 * 	not in the internal list then this function will throw an exception to avoid undefined behavior.
+		 * 
+		 * \param to_remove vector of resources to remove
+		 * 
+		 * \return void
+		 */
+		void remove_resources(std::vector<dhtt_msgs::msg::Resource> to_remove);
 
 		/**
 		 * \brief callback to handle stop requests from MainServer
@@ -172,15 +205,6 @@ namespace dhtt_plugins
 		 */
 		void control_callback( const std::shared_ptr<dhtt_msgs::srv::InternalControlRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::InternalControlRequest::Response> response );
 
-		/**
-		 * \brief just a helpful spinning method
-		 * 
-		 * This node needs the extra spinning thread to ensure that it can send out the messages for the status and that it can asynchronously receive a control request from MainServer
-		 * 
-		 * \return void
-		 */
-		void async_spin();
-
 		std::string robot_resources_file_path;
 
 		std::vector<dhtt_msgs::msg::Resource> canonical_resources_list;
@@ -189,16 +213,15 @@ namespace dhtt_plugins
 		bool children_done;
 		bool interrupted;
 		bool slow;
-		
-		std::shared_ptr<rclcpp::Node> pub_node_ptr;
-		std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> resource_executor;
+
+		bool already_made = false;
+
+		std::shared_ptr<std::mutex> resource_update_mut_ptr;
 
 		std::shared_ptr<rclcpp::SyncParametersClient> param_client_ptr;
 		
 		rclcpp::Publisher<dhtt_msgs::msg::Resources>::SharedPtr status_pub;
 		rclcpp::Service<dhtt_msgs::srv::InternalControlRequest>::SharedPtr control_server;
-
-		std::shared_ptr<std::thread> spin_thread;
 
 	private:
 	};

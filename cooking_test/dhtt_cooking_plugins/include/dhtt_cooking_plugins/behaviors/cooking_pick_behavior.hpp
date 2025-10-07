@@ -35,18 +35,11 @@ class CookingPickBehavior : public CookingBehavior
 	std::vector<dhtt_msgs::msg::Resource> get_retained_resources(dhtt::Node *container) override;
 
 	/**
-	 * Releases all resources except the gripper that is now holding the object
-	 * @param container pointer to the node which is running this logic.
-	 * @return vector releasing the owned robot arm
-	 */
-	std::vector<dhtt_msgs::msg::Resource> get_released_resources(dhtt::Node *container) override;
-
-	/**
 	 * Needs one gripper and the move base (to set the agent's orientation)
 	 * @return vector containing a gripper resource and base
 	 */
 	std::vector<dhtt_msgs::msg::Resource> get_necessary_resources() override;
-
+	
   protected:
   private:
 };

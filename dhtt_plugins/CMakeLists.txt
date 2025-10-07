@@ -29,6 +29,7 @@ add_library(dhtt_plugins SHARED src/dhtt_plugins.cpp
                                 # src/behaviors/test/mock_move_behavior.cc src/behaviors/test/mock_look_behavior.cc
                                 src/behaviors/action_type.cc src/behaviors/move_behavior.cc src/behaviors/pick_behavior.cc src/behaviors/place_behavior.cc
                                 # src/goitrs/goitr_test.cc src/goitrs/find_goitr.cc
+                                src/potentials/efficiency_potential.cc src/potentials/resource_potential.cc
                                 src/tree/ptr_branch.cc)
 
 target_include_directories(dhtt_plugins PUBLIC

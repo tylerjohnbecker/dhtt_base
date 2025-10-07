@@ -28,6 +28,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/CookingObservation.msg"
   "msg/CookingRecipe.msg"
   "msg/CookingAgent.msg"
+  "msg/CookingTypes.msg"
 
   # service files
   "srv/CookingRequest.srv"

@@ -30,12 +30,6 @@ class CookingObjectExistsBehavior : public CookingBehavior
 	std::vector<dhtt_msgs::msg::Resource> get_retained_resources(dhtt::Node *container) override;
 
 	/**
-	 * @param container pointer to the node which is running this logic.
-	 * @return Does not change the resources already owned by this node.
-	 */
-	std::vector<dhtt_msgs::msg::Resource> get_released_resources(dhtt::Node *container) override;
-
-	/**
 	 * @return No resources needed
 	 */
 	std::vector<dhtt_msgs::msg::Resource> get_necessary_resources() override;

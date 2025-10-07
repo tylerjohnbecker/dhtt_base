@@ -29,7 +29,9 @@ find_package(pluginlib REQUIRED)
 add_library(dhtt_cooking_plugins SHARED  src/dhtt_cooking_plugins.cpp
                                         src/behaviors/cooking_behavior.cc src/behaviors/cooking_execute_behavior.cc src/behaviors/cooking_interact_special_behavior.cc
                                         src/behaviors/cooking_move_behavior.cc src/behaviors/cooking_pick_behavior.cc src/behaviors/cooking_place_behavior.cc
-                                        src/behaviors/cooking_plate_place_behavior.cc src/behaviors/cooking_object_exists_behavior.cc)
+                                        src/behaviors/cooking_plate_place_behavior.cc src/behaviors/cooking_object_exists_behavior.cc
+                                        src/cooking_utils.cc
+                                        )
 
 target_include_directories(dhtt_cooking_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

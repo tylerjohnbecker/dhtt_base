@@ -67,8 +67,23 @@ namespace dhtt_plugins
 		bool is_done() override;
 
 	protected:
+
+		/**
+		 * \brief updates the total passed resources from an Activation result message
+		 * 
+		 * \param result used to update total
+		 * 
+		 * \return void
+		 */
+		void update_total_passed(dhtt_msgs::action::Activation::Result result);
+	
 		int num_active_children;
 		double activation_potential;
+
+		bool first_activation;
+
+		std::vector<dhtt_msgs::msg::Resource> initially_passed;
+		std::vector<dhtt_msgs::msg::Resource> total_passed;
 
 	private:
 	};
