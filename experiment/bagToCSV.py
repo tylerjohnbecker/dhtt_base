@@ -87,21 +87,10 @@ def filter_status_by_node_names(message_generator, node_names: set[str]):
                 id = msg[2]
                 node_name = msg[1].node_name
                 ttype = msg[1].type
-                num_resources = random.randint(0, 5)  # TODO
+                num_resources = msg[1].subtree_owned_resources
                 activation_potential = 0.1 * random.randint(0, 10)  # TODO
 
                 ret = ReducedNodeMsg(timestamp, id, node_name, ttype, activation_potential, num_resources)
 
                 yield ret
         pass  # skip
-
-
-if __name__ == "__main__":
-    bag_path: str = '/IdeaProjects/TylerAAMAS/rosbag2_2025_10_07-12_05_35_0.db3'
-    _message_gen = get_message_generator(bag_path)
-
-    set_of_nodes: set[str] = {"A1", "A2", "A3"}
-
-    # see bagToCSV.ReducedNodeMsg
-    my_dataset_generator = filter_status_by_node_names(_message_gen, set_of_nodes)
-    print(list(my_dataset_generator))
