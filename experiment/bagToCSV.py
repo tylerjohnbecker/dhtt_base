@@ -2,7 +2,6 @@
 
 """script that reads ROS2 messages from an MCAP bag using the rosbag2_py API."""
 import dataclasses
-import random
 import re
 
 import pandas
@@ -22,6 +21,7 @@ class ReducedNodeMsg:
     type: str
     activation_potential: float
     num_resources: int
+    node_status: int
 
 
 def read_messages(input_bag: str):
@@ -88,9 +88,10 @@ def filter_status_by_node_names(message_generator, node_names: set[str]):
                 node_name = msg[1].node_name
                 ttype = msg[1].type
                 num_resources = msg[1].subtree_owned_resources
-                activation_potential = 0.1 * random.randint(0, 10)  # TODO
+                activation_potential = 0.0  # TODO
+                node_status = msg[1].node_status.state
 
-                ret = ReducedNodeMsg(timestamp, id, node_name, ttype, activation_potential, num_resources)
+                ret = ReducedNodeMsg(timestamp, id, node_name, ttype, activation_potential, num_resources, node_status)
 
                 yield ret
         pass  # skip
