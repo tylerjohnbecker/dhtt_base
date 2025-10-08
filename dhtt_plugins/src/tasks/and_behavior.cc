@@ -110,7 +110,7 @@ namespace dhtt_plugins
 		if ( to_ret->possible )
 		{
 			to_ret->requested_resources = results[local_best_child].requested_resources;
-			to_ret->owned_resources = results[local_best_child].owned_resources;
+			// to_ret->owned_resources = results[local_best_child].owned_resources;
 		}
 
 		to_ret->done = this->is_done();
@@ -141,6 +141,11 @@ namespace dhtt_plugins
 
 		DHTT_LOG_INFO(this->com_agg, "Child finished running, " << this->num_active_children << " active children left.");
 
+		to_ret->released_resources = result.released_resources;
+		to_ret->requested_resources = result.requested_resources;
+		to_ret->added_resources = result.added_resources;
+		to_ret->removed_resources = result.removed_resources;
+
 		// update the resources to pass when done
 		if ( result.done )
 		{
@@ -151,13 +156,25 @@ namespace dhtt_plugins
 				to_ret->passed_resources = this->total_passed;
 				container->set_passed_resources(std::vector<dhtt_msgs::msg::Resource>());
 			}
+			else
+			{
+				dhtt_msgs::msg::Resource look_for;
+				auto same_resource = [&]( dhtt_msgs::msg::Resource to_check) { return not strcmp(look_for.name.c_str(), to_check.name.c_str()) ; }; 
+
+				// if we are still passing the resource to other nodes don't unlock it
+				for ( auto iter : this->initially_passed )
+				{
+					look_for = iter;
+
+					std::vector<dhtt_msgs::msg::Resource>::iterator to_remove;
+
+					while ( ( to_remove = find_if(to_ret->released_resources.begin(), to_ret->released_resources.end(), same_resource ) ) != to_ret->released_resources.end() )
+						to_ret->released_resources.erase(to_remove);
+				}	
+			}
 		}
 
 		// copy and return message with this node as the local node
-		to_ret->released_resources = result.released_resources;
-		to_ret->requested_resources = result.requested_resources;
-		to_ret->added_resources = result.added_resources;
-		to_ret->removed_resources = result.removed_resources;
 		to_ret->last_behavior = result.last_behavior;
 		to_ret->done = this->is_done();
 		to_ret->success = result.success;

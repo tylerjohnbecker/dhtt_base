@@ -217,6 +217,7 @@ namespace dhtt_plugins
 		bool already_made = false;
 
 		std::shared_ptr<std::mutex> resource_update_mut_ptr;
+		std::shared_ptr<std::mutex> global_modify_mut_ptr;
 
 		std::shared_ptr<rclcpp::SyncParametersClient> param_client_ptr;
 		

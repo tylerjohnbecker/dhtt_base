@@ -27,6 +27,7 @@ namespace dhtt_plugins
 		this->load_resources_from_yaml();
 
 		this->resource_update_mut_ptr = this->com_agg->request_mutex("resource_update");
+		this->global_modify_mut_ptr = this->com_agg->request_mutex("modify");
 	}
 
 	std::shared_ptr<dhtt_msgs::action::Activation::Result> RootBehavior::auction_callback( dhtt::Node* container ) 
@@ -56,6 +57,7 @@ namespace dhtt_plugins
 		{
 			{ // scope in which the resource state can be updated
 				std::lock_guard<std::mutex> resource_update_lock(*(this->resource_update_mut_ptr));
+				std::lock_guard<std::mutex> modify_lock(*(this->global_modify_mut_ptr));
 
 				// publish state of resources to all nodes in the tree
 				// this->publish_resources();
@@ -134,7 +136,7 @@ namespace dhtt_plugins
 			print_resource_state();
 
 			if (this->slow)
-				rclcpp::sleep_for(std::chrono::milliseconds(150));
+				rclcpp::sleep_for(std::chrono::milliseconds(100));
 		}
 		
 		this->release_all_resources(); // might be improper for stopping and starting the tree

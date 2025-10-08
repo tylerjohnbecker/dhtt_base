@@ -7,12 +7,9 @@ NodeList:
   - ServeThen
   - MoveToPlate
   - PickPlate
-  - MoveToPasta
-  - PlacePlateUnderPasta
-  - PickPasta
-  - MoveToSauce
-  - PlacePastaUnderSauce
-  - PlateStackPick
+  - CollectIngredientsThen
+  - CollectPasta
+  - CollectSauce
   - PlateDeliversquareMoveTo
   - PlateDeliversquarePlace
 
@@ -71,42 +68,27 @@ Nodes:
     robot: 0
     parent: 'ServeThen'
     params: [ 'object: Plate', 'mark: C#', 'unmark: foo' ]
-  MoveToPasta:
-    type: 4
-    behavior_type: "dhtt_cooking_plugins::CookingMoveBehavior"
-    robot: 0
-    parent: "ServeThen"
-    params: [ "object: Pasta", "conditions: Cooked", "mark: A#" ]
-  PlacePlateUnderPasta:
-    type: 4
-    behavior_type: 'dhtt_cooking_plugins::CookingPlatePlaceBehavior'
+
+  CollectIngredientsThen:
+    type: 1
+    behavior_type: "dhtt_plugins::ThenBehavior"
     robot: 0
     parent: 'ServeThen'
-    params: [ 'object: Pasta', 'mark: A#' ]
-  PickPasta:
-    type: 4
-    behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'
+    params: []
+
+  CollectPasta:
+    type: 5
+    behavior_type: "collect_ingredient.yaml"
     robot: 0
-    parent: "ServeThen"
-    params: [ "object: Pasta", "conditions: Cooked", "mark: A#", "unmark: foo " ]
-  MoveToSauce:
-    type: 4
-    behavior_type: "dhtt_cooking_plugins::CookingMoveBehavior"
+    parent: 'CollectIngredientsThen'
+    params: [ 'object: Pasta', 'conditions: Cooked' ]
+  CollectSauce:
+    type: 5
+    behavior_type: "collect_ingredient.yaml"
     robot: 0
-    parent: "ServeThen"
-    params: [ "object: Tomato", "conditions: Fried", "mark: B#" ]
-  PlacePastaUnderSauce:
-    type: 4
-    behavior_type: 'dhtt_cooking_plugins::CookingPlatePlaceBehavior'
-    robot: 0
-    parent: 'ServeThen'
-    params: [ 'object: Tomato', "conditions: Fried", 'mark: B#' ]
-  PlateStackPick:
-    type: 4
-    behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'
-    robot: 0
-    parent: 'ServeThen'
-    params: [ 'object: Plate', 'mark: C#', 'unmark: foo' ]
+    parent: 'CollectIngredientsThen'
+    params: [ 'object: Tomato', 'conditions: Fried' ]
+
   PlateDeliversquareMoveTo:
     type: 4
     behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'

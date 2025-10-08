@@ -104,7 +104,7 @@ namespace dhtt_plugins
 		{
 			to_ret->local_best_node = first_child_in_queue;
 			to_ret->requested_resources = results[first_child_in_queue].requested_resources;
-			to_ret->owned_resources = results[first_child_in_queue].owned_resources;
+			// to_ret->owned_resources = results[first_child_in_queue].owned_resources;
 		}
 
 		// calculate activation potential

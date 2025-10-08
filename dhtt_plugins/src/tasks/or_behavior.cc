@@ -121,7 +121,7 @@ namespace dhtt_plugins
 
 		to_ret->local_best_node = this->activated_child_name;
 		to_ret->requested_resources = child_req.requested_resources;
-		to_ret->owned_resources = child_req.owned_resources;
+		// to_ret->owned_resources = child_req.owned_resources;
 		to_ret->done = child_req.done;
 		to_ret->possible = child_req.possible;
 

@@ -1,0 +1,24 @@
+NodeList:
+  - BreadThen
+  - GetChoppedBread
+  - ToastBread
+
+Nodes:
+  BreadThen:
+    type: 2
+    behavior_type: "dhtt_plugins::ThenBehavior"
+    robot: 0
+    parent: "NONE"
+    params: [ ]
+  GetChoppedBread:
+    type: 5
+    behavior_type: "get_chopped_bread.yaml"
+    robot: 0
+    parent: "BreadThen"
+    params: [ "mark: B#" ]
+  ToastBread:
+    type: 5
+    behavior_type: "toast_chopped_bread.yaml"
+    robot: 0
+    parent: "BreadThen"
+    params: [ "mark: B#" ]

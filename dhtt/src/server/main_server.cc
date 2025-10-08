@@ -80,6 +80,7 @@ namespace dhtt
 		this->maintenance_thread->detach();
 
 		this->resource_update_mut_ptr = this->global_com->request_mutex("resource_update");
+		this->global_modify_mut_ptr = this->global_com->request_mutex("modify");
 	}
 
 	MainServer::~MainServer()
@@ -154,6 +155,7 @@ namespace dhtt
 			}
 		}
 
+		std::lock_guard<std::mutex> resource_guard(*(this->global_modify_mut_ptr));
 
 		if ( request->type == dhtt_msgs::srv::ModifyRequest::Request::ADD)
 		{
@@ -1887,26 +1889,46 @@ namespace dhtt
 		try 
 		{
 
-			std::function<std::string ( std::vector<dhtt_msgs::msg::Node>&, std::string, std::vector<std::string>, std::string )> create_nodes_to_add_recursive = 
-			[&]( std::vector<dhtt_msgs::msg::Node>& to_construct, std::string file_name_cur, std::vector<std::string> file_args_cur, std::string parent_name_cur) 
+			std::function<std::string ( std::vector<dhtt_msgs::msg::Node>&, std::string, std::vector<std::string>, std::string, std::string )> create_nodes_to_add_recursive = 
+			[&]( std::vector<dhtt_msgs::msg::Node>& to_construct, std::string file_name_cur, std::vector<std::string> file_args_cur, std::string parent_name_cur, std::string top_node_name) 
 			{
 				// first build vector of nodes from yaml file
 				YAML::Node config = YAML::LoadFile(file_name_cur);
 			
 				std::vector<std::string> nodes = config["NodeList"].as<std::vector<std::string>>();
 
+				std::string fake_parent = "";
+
 				for ( std::vector<std::string>::iterator iter = nodes.begin(); iter != nodes.end(); iter++)
 				{
 					dhtt_msgs::msg::Node to_build;
 
-					std::string node_name = *iter;
+					std::string node_name;
+
+					if ( iter == nodes.begin() and top_node_name != "" )
+					{
+						node_name = top_node_name;
+						fake_parent = *iter;
+
+						to_build.node_name = node_name;
+					}
+					else
+					{
+						node_name = *iter;
+
+						updated_names[node_name] = node_name + "_" + std::to_string(number_of_nodes);
+						to_build.node_name = updated_names[node_name];
+					}
+
 					std::string parent_name = config["Nodes"][(*iter)]["parent"].as<std::string>();
 
-					updated_names[node_name] = node_name + "_" + std::to_string(number_of_nodes);
+					if ( fake_parent != "" and parent_name == fake_parent )
+					{
+						parent_name = top_node_name;
 
-					to_build.node_name = updated_names[node_name];
-
-					if ( not strcmp(parent_name.c_str(), ROOT_PARENT_NAME) and not strcmp(parent_name_cur.c_str(), "") )
+						to_build.parent_name = parent_name;
+					}
+					else if ( not strcmp(parent_name.c_str(), ROOT_PARENT_NAME) and not strcmp(parent_name_cur.c_str(), "") )
 					{
 						to_build.parent_name = parent_name;
 					}
@@ -2005,14 +2027,14 @@ namespace dhtt
 
 						to_build.plugin_name = file_path.parent_path().native() + "/" + to_build.plugin_name;
 
-						create_nodes_to_add_recursive(to_construct, to_build.plugin_name, to_build.params, to_build.parent_name);
+						create_nodes_to_add_recursive(to_construct, to_build.plugin_name, to_build.params, to_build.parent_name, to_build.node_name);
 					}
 				}			
 
 				return std::string();
 			};
 
-			std::string err = create_nodes_to_add_recursive(nodes_to_add, file_name, file_args, parent_name);
+			std::string err = create_nodes_to_add_recursive(nodes_to_add, file_name, file_args, parent_name, "");
 
 			if ( strcmp(err.c_str(), "") )
 				return err;

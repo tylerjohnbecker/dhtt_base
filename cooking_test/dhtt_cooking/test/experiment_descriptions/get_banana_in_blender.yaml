@@ -1,0 +1,24 @@
+NodeList:
+  - BananaThen
+  - GetChoppedBanana
+  - BananaInBlender
+
+Nodes:
+  BananaThen:
+    type: 2
+    behavior_type: "dhtt_plugins::ThenBehavior"
+    robot: 0
+    parent: 'NONE'
+    params: [ ]  
+  GetChoppedBanana:
+    type: 5
+    behavior_type: "get_banana_chopped.yaml"
+    robot: 0
+    parent: "BananaThen"
+    params: [ "mark: A#" ]
+  BananaInBlender:
+    type: 5
+    behavior_type: "get_banana_chopped_in_blender.yaml"
+    robot: 0
+    parent: "BananaThen"
+    params: [ "mark: A#" ]

@@ -527,6 +527,7 @@ namespace dhtt
 		std::mutex wait_mut;
 
 		std::shared_ptr<std::mutex> resource_update_mut_ptr;
+		std::shared_ptr<std::mutex> global_modify_mut_ptr;
 
 		// condition variables
 		std::condition_variable maintenance_queue_condition;

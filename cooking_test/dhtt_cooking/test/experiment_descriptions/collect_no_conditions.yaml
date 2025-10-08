@@ -1,0 +1,31 @@
+NodeList:
+  - CollectThen
+  - MoveToIngredient
+  - PlateUnderIngredient
+  - PickPlate
+
+Nodes:
+  CollectThen:
+    type: 2
+    behavior_type: "dhtt_plugins::ThenBehavior"
+    robot: 0
+    parent: "NONE"
+    params: [ "enforced_sequential: true" ]
+  MoveToIngredient:
+    type: 4
+    behavior_type: "dhtt_cooking_plugins::CookingMoveBehavior"
+    robot: 0 
+    parent: "CollectThen"
+    params: [ 'object: $object' ]
+  PlateUnderIngredient:
+    type: 4
+    behavior_type: "dhtt_cooking_plugins::CookingPlatePlaceBehavior"
+    robot: 0
+    parent: "CollectThen"
+    params: [ 'object: $object' ]
+  PickPlate:
+    type: 4
+    behavior_type: "dhtt_cooking_plugins::CookingPickBehavior"
+    robot: 0
+    parent: "CollectThen"
+    params: [ 'object: $object', 'unmark: foo' ]

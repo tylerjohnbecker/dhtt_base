@@ -2,9 +2,7 @@ NodeList:
   - MakeSmoothie
   - MarkBlender
   - IngredientAnd
-  - BananaThen
-  - GetChoppedBanana
-  - BananaInBlender
+  - BananaInBlenderOne
   - StrawberryInBlenderOne
   - StrawberryInBlenderTwo
   - IceInBlender
@@ -40,25 +38,13 @@ Nodes:
     robot: 0
     parent: 'MakeSmoothie'
     params: [ ]
-  
-  BananaThen:
-    type: 2
-    behavior_type: "dhtt_plugins::ThenBehavior"
-    robot: 0
-    parent: 'IngredientAnd'
-    params: [ ]  
-  GetChoppedBanana:
+    
+  BananaInBlenderOne:
     type: 5
-    behavior_type: "get_banana_chopped.yaml"
+    behavior_type: "get_banana_in_blender.yaml"
     robot: 0
-    parent: "BananaThen"
-    params: [ "mark: A#" ]
-  BananaInBlender:
-    type: 5
-    behavior_type: "get_banana_chopped_in_blender.yaml"
-    robot: 0
-    parent: "BananaThen"
-    params: [ "mark: A#" ]
+    parent: "IngredientAnd"
+    params: []
 
   StrawberryInBlenderOne:
     type: 5

@@ -8,13 +8,17 @@ import rclpy.node
 import pathlib
 import yaml
 import os
+import time
 
 import contextlib
-import filelock
+from filelock import FileLock
 
 import random
 
 from threading import Lock
+from typing import Any
+
+import filelock
 
 from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest
 from dhtt_cooking_msgs.srv import CookingRequest
@@ -93,7 +97,7 @@ class ServerNode(rclpy.node.Node):
         control_rs = control_future.result()
 
 @pytest.fixture(scope='session')
-def lock(tmp_path_factory):
+def lock(tmp_path_factory: Any):
     base_temp = tmp_path_factory.getbasetemp()
     lock_file = base_temp.parent / 'serial.lock'
     yield filelock.FileLock(lock_file=str(lock_file))
@@ -101,7 +105,7 @@ def lock(tmp_path_factory):
         os.remove(path=lock_file)
 
 @pytest.fixture()
-def serial(lock):
+def serial(lock: FileLock):
     with lock.acquire(poll_interval=0.1):
         yield
 
@@ -165,7 +169,7 @@ class TestCookingZooTree:
         control_rs = control_future.result()
 
     # asserts here will only work if this is the only way that nodes have been added to the tree
-    def add_from_yaml(self, file_name, force, add_to="ROOT_0"):
+    def add_from_yaml(self, file_name, force, add_to="ROOT_0", file_args = []):
 
         wd = pathlib.Path(__file__).parent.resolve()
 
@@ -181,6 +185,7 @@ class TestCookingZooTree:
         modify_rq = ModifyRequest.Request()
         modify_rq.type = ModifyRequest.Request.ADD_FROM_FILE
         modify_rq.force = force
+        modify_rq.file_args = file_args
 
         modify_rq.to_modify.append(add_to)
         modify_rq.to_add = f'{wd}{file_name}'
@@ -338,6 +343,269 @@ class TestCookingZooTree:
 
         assert res
         return res
+    
+    def remove_subtree(self, subtree_top):
+
+        modify_rq = ModifyRequest.Request()
+        modify_rq.force = True
+        modify_rq.type = ModifyRequest.Request.REMOVE
+        modify_rq.to_modify.append(subtree_top)
+
+        modify_future = self.node.modifysrv.call_async(modify_rq)
+        rclpy.spin_until_future_complete(self.node, modify_future)
+
+        modify_rs = modify_future.result()
+    
+    def remove_egg(self, added_nodes):
+        # egg is in both IngredientsAnd and ServeThen
+        get_egg_subtree = ""
+        collect_egg_subtree = ""
+        
+        for i in added_nodes:
+            if "GetFriedEgg" in i:
+                get_egg_subtree = i
+            elif "CollectEgg" in i:
+                collect_egg_subtree = i
+
+        self.remove_subtree(get_egg_subtree)
+        self.remove_subtree(collect_egg_subtree)
+
+    def add_egg(self, added_nodes):
+        # egg is in both IngredientsAnd and ServeThen
+        ingred = ""
+        collect = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        for i in added_nodes:
+            if "CollectIngredientsThen" in i:
+                collect = i
+
+        self.add_from_yaml("/experiment_descriptions/get_fried_egg.yaml", True, ingred, [ 'mark: B#' ])
+        self.add_from_yaml("/experiment_descriptions/collect_ingredient.yaml", True, collect, [ 'object: Egg', 'conditions: Fried' ])
+
+    def remove_toast(self, added_nodes):
+        # Toast is in both IngredientsAnd and ServeThen
+        get_bread_subtree = ""
+        collect_bread_subtree = ""
+        
+        for i in added_nodes:
+            if "GetToast" in i:
+                get_bread_subtree = i
+                break
+
+        for i in added_nodes:
+            if "CollectBread" in i:
+                collect_bread_subtree = i
+                break
+
+        self.remove_subtree(get_bread_subtree)
+        self.remove_subtree(collect_bread_subtree)
+
+    def add_toast(self, added_nodes):
+        # egg is in both IngredientsAnd and ServeThen
+        ingred = ""
+        collect = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        for i in added_nodes:
+            if "CollectIngredientsThen" in i:
+                collect = i
+
+        self.add_from_yaml("/experiment_descriptions/get_toast.yaml", True, ingred, [ ])
+        self.add_from_yaml("/experiment_descriptions/collect_ingredient.yaml", True, collect, [ 'object: Bread', 'conditions: Toasted' ])
+
+    def add_bread(self, added_nodes):
+        # egg is in both IngredientsAnd and ServeThen
+        ingred = ""
+        collect = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        for i in added_nodes:
+            if "CollectIngredientsThen" in i:
+                collect = i
+
+        self.add_from_yaml("/experiment_descriptions/get_chopped_bread.yaml", True, ingred, [ 'mark: A#'])
+        self.add_from_yaml("/experiment_descriptions/collect_ingredient.yaml", True, collect, [ 'object: Bread', 'conditions: Chopped' ])
+
+    def add_onion(self, added_nodes):
+        # egg is in both IngredientsAnd and ServeThen
+        ingred = ""
+        collect = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        for i in added_nodes:
+            if "CollectIngredientsThen" in i:
+                collect = i
+
+        self.add_from_yaml("/experiment_descriptions/get_onion_chopped.yaml", True, ingred, [ 'mark: A#'])
+        self.add_from_yaml("/experiment_descriptions/collect_ingredient.yaml", True, collect, [ 'object: Onion', 'conditions: Chopped' ])
+
+    def remove_tomato(self, added_nodes):
+        # Toast is in both IngredientsAnd and ServeThen
+        get_bread_subtree = ""
+        collect_bread_subtree = ""
+        
+        for i in added_nodes:
+            if "GetChoppedTomato" in i:
+                get_bread_subtree = i
+                break
+
+        for i in added_nodes:
+            if "CollectTomato" in i:
+                collect_bread_subtree = i
+                break
+
+        self.remove_subtree(get_bread_subtree)
+        self.remove_subtree(collect_bread_subtree)
+
+    def remove_tomato_sauce(self, added_nodes):
+        # Toast is in both IngredientsAnd and ServeThen
+        get_bread_subtree = ""
+        collect_bread_subtree = ""
+        
+        for i in added_nodes:
+            if "GetTomatoSauce" in i:
+                get_bread_subtree = i
+                break
+
+        for i in added_nodes:
+            if "CollectSauce" in i:
+                collect_bread_subtree = i
+                break
+
+        self.remove_subtree(get_bread_subtree)
+        self.remove_subtree(collect_bread_subtree)
+
+    def remove_onion(self, added_nodes):
+        # Toast is in both IngredientsAnd and ServeThen
+        get_bread_subtree = ""
+        collect_bread_subtree = ""
+        
+        for i in added_nodes:
+            if "GetChoppedOnion" in i:
+                get_bread_subtree = i
+                break
+
+        for i in added_nodes:
+            if "CollectOnion" in i:
+                collect_bread_subtree = i
+                break
+
+        self.remove_subtree(get_bread_subtree)
+        self.remove_subtree(collect_bread_subtree)
+
+    def remove_toast(self, added_nodes):
+        # Toast is in both IngredientsAnd and ServeThen
+        get_bread_subtree = ""
+        collect_bread_subtree = ""
+        
+        for i in added_nodes:
+            if "GetTomatoSauce" in i:
+                get_bread_subtree = i
+                break
+
+        for i in added_nodes:
+            if "CollectSauce" in i:
+                collect_bread_subtree = i
+                break
+
+        self.remove_subtree(get_bread_subtree)
+        self.remove_subtree(collect_bread_subtree)
+
+    def add_tomato_soup(self, added_nodes):
+        # add the tomato_sauce to both the IngredientsAnd and CollectIngredientsThen
+
+        ingred = ""
+        collect = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        for i in added_nodes:
+            if "CollectIngredientsThen" in i:
+                collect = i
+
+        self.add_from_yaml("/experiment_descriptions/get_tomato_sauce.yaml", True, ingred, [ 'mark: B#' ])
+        self.add_from_yaml("/experiment_descriptions/collect_ingredient.yaml", True, collect, [ 'object: Tomato', 'conditions: Fried' ])
+
+    def add_strawb_to_smoothie(self, added_nodes):
+        # just add another strawberry in the one spot
+        ingred = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        self.add_from_yaml("/experiment_descriptions/get_strawberry_in_blender.yaml", True, ingred, [ 'mark: B#' ])
+
+    def add_strawb(self, added_nodes):
+        # add the tomato_sauce to both the IngredientsAnd and CollectIngredientsThen
+
+        ingred = ""
+        collect = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        for i in added_nodes:
+            if "CollectIngredientsThen" in i:
+                collect = i
+
+        self.add_from_yaml("/experiment_descriptions/get_strawberry.yaml", True, ingred, [ 'mark: B#' ])
+        self.add_from_yaml("/experiment_descriptions/collect_no_conditions.yaml", True, collect, [ 'object: Strawberry'])
+
+    def add_banana_to_smoothie(self, added_nodes):
+        # just add another strawberry in the one spot
+        ingred = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        self.add_from_yaml("/experiment_descriptions/get_banana_in_blender.yaml", True, ingred, [])
+
+    def add_banana(self, added_nodes):
+        # add the tomato_sauce to both the IngredientsAnd and CollectIngredientsThen
+
+        ingred = ""
+        collect = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        for i in added_nodes:
+            if "CollectIngredientsThen" in i:
+                collect = i
+
+        self.add_from_yaml("/experiment_descriptions/get_banana_chopped.yaml", True, ingred, [ 'mark: B#' ])
+        self.add_from_yaml("/experiment_descriptions/collect_ingredient.yaml", True, collect, [ 'object: Banana', 'conditions: Chopped'])
+
+    def no_change(self, added_nodes):
+        return
 
     # def test_known_good(self):
     #     with TestCookingZooTree.lock:
@@ -502,7 +770,7 @@ class TestCookingZooTree:
     #         self.start_tree()
     #         self.wait_for_finished_execution()
     #         # self.reset_tree()
-    def test_pastaWithTomatoSauce_experiment(self, serial):
+    def test_pastaWithTomatoSauce_experiment(self, serial: None):
         return
         with TestCookingZooTree.lock:
             self.initialize()
@@ -529,7 +797,50 @@ class TestCookingZooTree:
 
             self.wait_for_finished_execution()
 
-    def test_smoothie_experiment(self, serial):
+    def test_pastaWithTomatoSauce_experiment_dynamic(self, serial: None):
+        return
+        with TestCookingZooTree.lock:
+            self.initialize()
+            self.reset_tree()
+            self.reset_level()
+            self.wait_for_waiting()
+
+            req = ModifyRequest.Request()
+            req.type = ModifyRequest.Request.ADD
+            req.to_modify.append('ROOT_0')
+            req.add_node = Node()
+            req.add_node.type = Node.AND
+            req.add_node.node_name = 'AllOrdersAnd'
+            req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
+            fut = self.node.modifysrv.call_async(req)
+            rclpy.spin_until_future_complete(self.node, fut)
+            true_name = fut.result().added_nodes[0]
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml", force=True, add_to=true_name)
+
+            self.start_tree()
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml", force=True, add_to=true_name)
+
+            self.add_onion(nodes)
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml", force=True, add_to=true_name)
+
+            self.add_bread(nodes)
+
+            time.sleep(30)
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml", force=True, add_to=true_name)
+
+            self.add_egg(nodes)
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml", force=True, add_to=true_name)
+
+            self.remove_tomato_sauce(nodes)
+
+            self.wait_for_finished_execution()
+
+    def test_smoothie_experiment(self, serial: None):
         return
         with TestCookingZooTree.lock:
             self.initialize()
@@ -556,7 +867,40 @@ class TestCookingZooTree:
 
             self.wait_for_finished_execution()
 
-    def test_egg_toast_recipe(self, serial):
+    def test_smoothie_experiment_dynamic(self, serial: None):
+        return
+        with TestCookingZooTree.lock:
+            self.initialize()
+            self.reset_tree()
+            self.reset_level()
+            self.wait_for_waiting()
+
+            req = ModifyRequest.Request()
+            req.type = ModifyRequest.Request.ADD
+            req.to_modify.append('ROOT_0')
+            req.add_node = Node()
+            req.add_node.type = Node.AND
+            req.add_node.node_name = 'AllOrdersAnd'
+            req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
+            fut = self.node.modifysrv.call_async(req)
+            rclpy.spin_until_future_complete(self.node, fut)
+            true_name = fut.result().added_nodes[0]
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_smoothie.yaml", force=True, add_to=true_name)
+
+            self.start_tree()
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_smoothie.yaml", force=True, add_to=true_name)
+
+            self.add_strawb_to_smoothie(nodes)
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_smoothie.yaml", force=True, add_to=true_name)
+
+            self.add_banana_to_smoothie(nodes)
+
+            self.wait_for_finished_execution()
+
+    def test_egg_toast_recipe(self, serial: None):
         return
         with TestCookingZooTree.lock:
             self.initialize()
@@ -580,7 +924,6 @@ class TestCookingZooTree:
             nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
             # nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
             # nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
-
             # nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
             # nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
             # nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
@@ -591,7 +934,81 @@ class TestCookingZooTree:
 
             self.wait_for_finished_execution()
 
-    def test_salad_recipe(self, serial):
+    def test_egg_toast_recipe_dynamic(self, serial: None):
+        return
+        with TestCookingZooTree.lock:
+            self.initialize()
+            self.reset_tree()
+            self.reset_level()
+            self.wait_for_waiting()
+
+            req = ModifyRequest.Request()
+            req.type = ModifyRequest.Request.ADD
+            req.to_modify.append('ROOT_0')
+            req.add_node = Node()
+            req.add_node.type = Node.AND
+            req.add_node.node_name = 'AllOrdersAnd'
+            req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
+            fut = self.node.modifysrv.call_async(req)
+            rclpy.spin_until_future_complete(self.node, fut)
+            true_name = fut.result().added_nodes[0]
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+
+            self.start_tree()
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+
+            self.remove_egg(nodes)
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+
+            self.remove_toast(nodes)
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+
+            self.add_tomato_soup(nodes)
+
+            time.sleep(30)
+
+            # nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+
+            # self.add_egg(nodes)
+
+            # nodes = self.add_from_yaml("/experiment_descriptions/recipe_egg_toast.yaml", force=True, add_to=true_name)
+
+            # self.add_toast(nodes)
+
+            # self.start_tree()
+            self.wait_for_finished_execution()
+
+    def test_salad_recipe(self, serial: None):
+        return
+        with TestCookingZooTree.lock:
+            self.initialize()
+            self.reset_tree()
+            self.reset_level()
+            self.wait_for_waiting()
+
+            req = ModifyRequest.Request()
+            req.type = ModifyRequest.Request.ADD
+            req.to_modify.append('ROOT_0')
+            req.add_node = Node()
+            req.add_node.type = Node.AND
+            req.add_node.node_name = 'AllOrdersAnd'
+            req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
+            fut = self.node.modifysrv.call_async(req)
+            rclpy.spin_until_future_complete(self.node, fut)
+            true_name = fut.result().added_nodes[0]
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_salad.yaml", force=True, add_to=true_name)
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_salad.yaml", force=True, add_to=true_name)
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_salad.yaml", force=True, add_to=true_name)
+
+            self.start_tree()
+
+            self.wait_for_finished_execution()
+    def test_salad_recipe(self, serial: None):
         return
         with TestCookingZooTree.lock:
             self.initialize()
@@ -618,7 +1035,48 @@ class TestCookingZooTree:
 
             self.wait_for_finished_execution()
 
-    def test_heterogeneous_recipes(self, serial):
+    def test_salad_recipe_dynamic(self, serial: None):
+        return
+        with TestCookingZooTree.lock:
+            self.initialize()
+            self.reset_tree()
+            self.reset_level()
+            self.wait_for_waiting()
+
+            req = ModifyRequest.Request()
+            req.type = ModifyRequest.Request.ADD
+            req.to_modify.append('ROOT_0')
+            req.add_node = Node()
+            req.add_node.type = Node.AND
+            req.add_node.node_name = 'AllOrdersAnd'
+            req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
+            fut = self.node.modifysrv.call_async(req)
+            rclpy.spin_until_future_complete(self.node, fut)
+            true_name = fut.result().added_nodes[0]
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_salad.yaml", force=True, add_to=true_name)
+
+            self.start_tree()
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_salad.yaml", force=True, add_to=true_name)
+
+            self.remove_tomato(nodes)
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_salad.yaml", force=True, add_to=true_name)
+
+            self.remove_onion(nodes)
+
+            # nodes = self.add_from_yaml("/experiment_descriptions/recipe_salad.yaml", force=True, add_to=true_name)
+
+            # self.add_banana(nodes)
+
+            nodes = self.add_from_yaml("/experiment_descriptions/recipe_salad.yaml", force=True, add_to=true_name)
+
+            self.add_strawb(nodes)
+
+            self.wait_for_finished_execution()
+
+    def test_heterogeneous_recipes(self, serial: None):
         return
         with TestCookingZooTree.lock:
             self.initialize()
@@ -644,10 +1102,10 @@ class TestCookingZooTree:
 
             self.start_tree()
 
-            self.wait_for_finished_execution()
+            # self.wait_for_finished_execution()
 
-    def test_multiple_recipes(self, serial):
-        # return
+    def test_multiple_recipes(self, serial: None):
+        return
         with TestCookingZooTree.lock:
             self.initialize()
             self.reset_tree()
@@ -673,6 +1131,86 @@ class TestCookingZooTree:
                 nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
 
             self.start_tree()
+
+            self.wait_for_finished_execution()
+
+    def test_multiple_recipes_over_time(self, serial: None):
+        # return
+        with TestCookingZooTree.lock:
+            self.initialize()
+            self.reset_tree()
+            self.reset_level()
+            self.wait_for_waiting()
+
+            req = ModifyRequest.Request()
+            req.type = ModifyRequest.Request.ADD
+            req.to_modify.append('ROOT_0')
+            req.add_node = Node()
+            req.add_node.type = Node.AND
+            req.add_node.node_name = 'AllOrdersAnd'
+            req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
+            fut = self.node.modifysrv.call_async(req)
+            rclpy.spin_until_future_complete(self.node, fut)
+            true_name = fut.result().added_nodes[0]
+
+            recipe_arr = [ "/experiment_descriptions/recipe_egg_toast.yaml", "/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml", "/experiment_descriptions/recipe_salad.yaml", "/experiment_descriptions/recipe_smoothie.yaml"]
+
+            recipe_change_dict = {
+                "/experiment_descriptions/recipe_egg_toast.yaml": [self.no_change, self.remove_egg, self.remove_toast, self.add_tomato_soup],
+                "/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml": [self.no_change, self.add_egg, self.add_onion, self.add_bread, self.remove_tomato_sauce],
+                "/experiment_descriptions/recipe_salad.yaml": [self.no_change, self.remove_tomato, self.remove_onion],
+                "/experiment_descriptions/recipe_smoothie.yaml": [self.no_change, self.add_strawb_to_smoothie, self.add_banana_to_smoothie],
+            }
+
+            for i in range(4):
+                to_add = random.choice(recipe_arr)
+
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
+
+            self.start_tree()
+
+            time.sleep(30)
+
+            for i in range(4):
+                to_add = random.choice(recipe_arr)
+
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
+          
+            time.sleep(30)
+
+            for i in range(4):
+                to_add = random.choice(recipe_arr)
+
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
+          
+            time.sleep(30)
+
+            for i in range(4):
+                to_add = random.choice(recipe_arr)
+
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
+          
+            time.sleep(30)
+
+            for i in range(4):
+                to_add = random.choice(recipe_arr)
+
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
 
             self.wait_for_finished_execution()
 
