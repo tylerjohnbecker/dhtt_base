@@ -451,7 +451,7 @@ namespace dhtt
 		// use a condition variable to only grab the logic_mut once the resources have been updated
 		// auto check_resources_updated = [&](){ return (bool) this->resource_status_updated; };
 
-		// std::unique_lock<std::mutex> lock(this->logic_mut);
+		std::unique_lock<std::mutex> lock(this->logic_mut);
 
 		if ( this->status.state == dhtt_msgs::msg::NodeStatus::WAITING )
 		{
@@ -462,7 +462,7 @@ namespace dhtt
 			this->update_status(dhtt_msgs::msg::NodeStatus::ACTIVE);
 
 			// update subtree owned resources
-			this->resources_owned_by_subtree += (int) goal.passed_resources.size();
+			this->add_unique_resources(goal.passed_resources);
 
 			// deal with any passed resources
 			for ( dhtt_msgs::msg::Resource passed_resource : goal.passed_resources )
@@ -493,7 +493,7 @@ namespace dhtt
 				this->update_status(dhtt_msgs::msg::NodeStatus::WORKING);
 
 				// update owned subtree resources
-				this->resources_owned_by_subtree += (int) goal.granted_resources.size();
+				this->add_unique_resources(goal.passed_resources);
 
 				// add granted resources to the owned resources for the logic
 				for ( dhtt_msgs::msg::Resource granted_resource : goal.granted_resources )
@@ -505,10 +505,12 @@ namespace dhtt
 					to_ret = *this->logic->work_callback(this);
 
 					// add necessary resources and added to the subtree total
-					this->resources_owned_by_subtree += (int) to_ret.requested_resources.size() + (int) to_ret.added_resources.size();
+					this->add_unique_resources(to_ret.requested_resources);
+					this->add_unique_resources(to_ret.added_resources);
 
 					// subtract released and removed from the subtree total
-					this->resources_owned_by_subtree -= (int) to_ret.released_resources.size() - (int) to_ret.removed_resources.size();
+					this->remove_unique_resources(to_ret.released_resources);
+					this->remove_unique_resources(to_ret.removed_resources);
 
 					this->apply_postconditions();
 				}
@@ -516,7 +518,11 @@ namespace dhtt
 					DHTT_LOG_ERROR(this->global_com, "Preconditions not met, restarting auction!");
 
 				if (this->logic->is_done())
+				{
 					this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
+
+					this->resources_owned_by_subtree = 0;
+				}
 				else
 					this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
@@ -797,6 +803,54 @@ namespace dhtt
 
 			this->available_resources.push_back(to_add);
 		}
+	}
+
+	void Node::add_unique_resources(std::vector<dhtt_msgs::msg::Resource> to_count)
+	{
+		dhtt_msgs::msg::Resource to_find;
+		auto same_resource = [&to_find] (dhtt_msgs::msg::Resource to_check) { return not strcmp(to_find.name.c_str(), to_check.name.c_str()); };
+
+		for ( auto resource : to_count )
+		{
+			to_find = resource;
+			std::vector<dhtt_msgs::msg::Resource>::iterator iter;
+
+			if (  ( iter = std::find_if(this->subtree_owned_resources.begin(), this->subtree_owned_resources.end(), same_resource) ) == this->subtree_owned_resources.end())
+				this->subtree_owned_resources.push_back(resource);
+		}
+
+		std::vector<std::vector<dhtt_msgs::msg::Resource>::iterator> to_remove;
+
+		for ( auto resource = this->subtree_owned_resources.begin() ; resource != this->subtree_owned_resources.end() ; resource++)
+		{
+			to_find = *resource;
+			std::vector<dhtt_msgs::msg::Resource>::iterator iter;
+
+			if (  ( iter = std::find_if(this->available_resources.begin(), this->available_resources.end(), same_resource) ) == this->available_resources.end())
+				to_remove.push_back(resource);
+		}
+
+		for ( auto iter = to_remove.rbegin() ; iter != to_remove.rend() ; iter++ )
+			this->subtree_owned_resources.erase(*iter);
+		
+		this->resources_owned_by_subtree = (int) this->subtree_owned_resources.size();
+	}
+
+	void Node::remove_unique_resources(std::vector<dhtt_msgs::msg::Resource> to_count)
+	{
+		dhtt_msgs::msg::Resource to_find;
+		auto same_resource = [&to_find] (dhtt_msgs::msg::Resource to_check) { return not strcmp(to_find.name.c_str(), to_check.name.c_str()); };
+
+		for ( auto resource : to_count )
+		{
+			to_find = resource;
+			std::vector<dhtt_msgs::msg::Resource>::iterator iter;
+
+			if (  ( iter = std::find_if(this->subtree_owned_resources.begin(), this->subtree_owned_resources.end(), same_resource) ) != this->subtree_owned_resources.end() )
+				this->subtree_owned_resources.erase(iter);
+		}
+		
+		this->resources_owned_by_subtree = (int) this->subtree_owned_resources.size();
 	}
 
 }

@@ -1,25 +1,20 @@
 NodeList:
-  - EggToastThen
+  - MakeEggToast
   - IngredientAnd
   - GetFriedEgg 
   - GetPlate
-  - BreadThen
-  - GetChoppedBread
   - GetToast
   - ServeThen
   - MoveToPlate
   - PickPlate
-  - MoveToServeFriedEgg
-  - PlacePlateUnderEgg
-  - PickPlateAndEgg
-  - MoveToServeToast
-  - PlacePlateUnderToast
-  - PlateStackPick
+  - CollectIngredientsThen
+  - CollectEgg
+  - CollectBread
   - PlateDeliversquareMoveTo
   - PlateDeliversquarePlace
 
 Nodes:
-  EggToastThen:
+  MakeEggToast:
     type: 2
     behavior_type: "dhtt_plugins::ThenBehavior"
     potential_type: "dhtt_plugins::ResourcePotential"
@@ -30,7 +25,7 @@ Nodes:
     type: 1
     behavior_type: "dhtt_plugins::AndBehavior"
     robot: 0
-    parent: "EggToastThen"
+    parent: "MakeEggToast"
     params: [ ]
   GetFriedEgg:
     type: 5
@@ -44,30 +39,18 @@ Nodes:
     robot: 0
     parent: "IngredientAnd"
     params: [ "mark: C#" ]
-  BreadThen:
-    type: 2
-    behavior_type: "dhtt_plugins::ThenBehavior"
+  GetToast: 
+    type: 5 
+    behavior_type: "get_toast.yaml"
     robot: 0
     parent: "IngredientAnd"
-    params: [ ]
-  GetChoppedBread:
-    type: 5
-    behavior_type: "get_chopped_bread.yaml"
-    robot: 0
-    parent: "BreadThen"
-    params: [ "mark: B#" ]
-  GetToast:
-    type: 5
-    behavior_type: "toast_chopped_bread.yaml"
-    robot: 0
-    parent: "BreadThen"
-    params: [ "mark: B#" ]
+    params: []
     
   ServeThen:
     type: 2
     behavior_type: "dhtt_plugins::ThenBehavior"
     robot: 0
-    parent: "EggToastThen"
+    parent: "MakeEggToast"
     params: [ ]
   MoveToPlate:
     type: 4
@@ -81,42 +64,27 @@ Nodes:
     robot: 0
     parent: 'ServeThen'
     params: [ 'object: Plate', 'mark: C#', 'unmark: foo' ]
-  MoveToServeFriedEgg:
-    type: 4
-    behavior_type: "dhtt_cooking_plugins::CookingMoveBehavior"
-    robot: 0
-    parent: "ServeThen"
-    params: [ "object: Egg", "conditions: Fried", "mark: A#" ]
-  PlacePlateUnderEgg:
-    type: 4
-    behavior_type: 'dhtt_cooking_plugins::CookingPlatePlaceBehavior'
+
+  CollectIngredientsThen:
+    type: 1
+    behavior_type: "dhtt_plugins::ThenBehavior"
     robot: 0
     parent: 'ServeThen'
-    params: [ 'object: Egg', 'mark: A#' ]
-  PickPlateAndEgg:
-    type: 4
-    behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'
+    params: []
+
+  CollectEgg:
+    type: 5
+    behavior_type: "collect_ingredient.yaml"
     robot: 0
-    parent: "ServeThen"
-    params: [ "object: Egg", "conditions: Fried", "mark: A#", "unmark: foo" ]
-  MoveToServeToast:
-    type: 4
-    behavior_type: "dhtt_cooking_plugins::CookingMoveBehavior"
+    parent: 'CollectIngredientsThen'
+    params: [ 'object: Egg', 'conditions: Fried' ]
+  CollectBread:
+    type: 5
+    behavior_type: "collect_ingredient.yaml"
     robot: 0
-    parent: "ServeThen"
-    params: [ "object: Bread", "conditions: Toasted", "mark: B#" ]
-  PlacePlateUnderToast:
-    type: 4
-    behavior_type: 'dhtt_cooking_plugins::CookingPlatePlaceBehavior'
-    robot: 0
-    parent: 'ServeThen'
-    params: [ 'object: Bread', 'mark: B#' ]
-  PlateStackPick:
-    type: 4
-    behavior_type: 'dhtt_cooking_plugins::CookingPickBehavior'
-    robot: 0
-    parent: 'ServeThen'
-    params: [ 'object: Plate', 'mark: C#', 'unmark: foo' ]
+    parent: 'CollectIngredientsThen'
+    params: [ 'object: Bread', 'conditions: Toasted' ]
+
   PlateDeliversquareMoveTo:
     type: 4
     behavior_type: 'dhtt_cooking_plugins::CookingMoveBehavior'

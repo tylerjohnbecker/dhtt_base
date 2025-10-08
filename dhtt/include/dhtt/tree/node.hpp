@@ -617,6 +617,9 @@ namespace dhtt
 		std::vector<dhtt_msgs::msg::Resource> owned_resources;
 		std::vector<dhtt_msgs::msg::Resource> available_resources;
 		std::vector<dhtt_msgs::msg::Resource> passed_resources;
+
+		std::vector<dhtt_msgs::msg::Resource> subtree_owned_resources;
+
 		std::vector<std::string> child_names;
 		std::map<std::string, bool> child_changed;
 
@@ -643,6 +646,9 @@ namespace dhtt
 		std::string error_msg;
 
 	private:
+
+		void add_unique_resources(std::vector<dhtt_msgs::msg::Resource> to_count); 
+		void remove_unique_resources(std::vector<dhtt_msgs::msg::Resource> to_count);
 	};
 
 }
