@@ -24,7 +24,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'dhtt_cooking = dhtt_cooking.dhtt_cooking:main'
+            'dhtt_cooking = dhtt_cooking.dhtt_cooking:main',
+            'experiment_and = dhtt_cooking.experiments:experiment_and',
+            'experiment_then = dhtt_cooking.experiments:experiment_then'
         ],
     },
 )

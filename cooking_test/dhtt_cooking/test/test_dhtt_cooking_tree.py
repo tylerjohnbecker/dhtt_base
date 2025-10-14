@@ -1077,7 +1077,7 @@ class TestCookingZooTree:
             self.wait_for_finished_execution()
 
     def test_heterogeneous_recipes(self, serial: None):
-        return
+        # return
         with TestCookingZooTree.lock:
             self.initialize()
             self.reset_tree()
@@ -1133,86 +1133,5 @@ class TestCookingZooTree:
             self.start_tree()
 
             self.wait_for_finished_execution()
-
-    def test_multiple_recipes_over_time(self, serial: None):
-        # return
-        with TestCookingZooTree.lock:
-            self.initialize()
-            self.reset_tree()
-            self.reset_level()
-            self.wait_for_waiting()
-
-            req = ModifyRequest.Request()
-            req.type = ModifyRequest.Request.ADD
-            req.to_modify.append('ROOT_0')
-            req.add_node = Node()
-            req.add_node.type = Node.AND
-            req.add_node.node_name = 'AllOrdersAnd'
-            req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
-            fut = self.node.modifysrv.call_async(req)
-            rclpy.spin_until_future_complete(self.node, fut)
-            true_name = fut.result().added_nodes[0]
-
-            recipe_arr = [ "/experiment_descriptions/recipe_egg_toast.yaml", "/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml", "/experiment_descriptions/recipe_salad.yaml", "/experiment_descriptions/recipe_smoothie.yaml"]
-
-            recipe_change_dict = {
-                "/experiment_descriptions/recipe_egg_toast.yaml": [self.no_change, self.remove_egg, self.remove_toast, self.add_tomato_soup],
-                "/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml": [self.no_change, self.add_egg, self.add_onion, self.add_bread, self.remove_tomato_sauce],
-                "/experiment_descriptions/recipe_salad.yaml": [self.no_change, self.remove_tomato, self.remove_onion],
-                "/experiment_descriptions/recipe_smoothie.yaml": [self.no_change, self.add_strawb_to_smoothie, self.add_banana_to_smoothie],
-            }
-
-            for i in range(4):
-                to_add = random.choice(recipe_arr)
-
-                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
-
-                # make change
-                random.choice(recipe_change_dict[to_add])(nodes)
-
-            self.start_tree()
-
-            time.sleep(30)
-
-            for i in range(4):
-                to_add = random.choice(recipe_arr)
-
-                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
-
-                # make change
-                random.choice(recipe_change_dict[to_add])(nodes)
-          
-            time.sleep(30)
-
-            for i in range(4):
-                to_add = random.choice(recipe_arr)
-
-                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
-
-                # make change
-                random.choice(recipe_change_dict[to_add])(nodes)
-          
-            time.sleep(30)
-
-            for i in range(4):
-                to_add = random.choice(recipe_arr)
-
-                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
-
-                # make change
-                random.choice(recipe_change_dict[to_add])(nodes)
-          
-            time.sleep(30)
-
-            for i in range(4):
-                to_add = random.choice(recipe_arr)
-
-                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
-
-                # make change
-                random.choice(recipe_change_dict[to_add])(nodes)
-
-            self.wait_for_finished_execution()
-
 
     # TODO negative tests

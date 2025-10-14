@@ -1,0 +1,809 @@
+#!/usr/bin/python
+
+"""Boilerplate copied from dhtt tests"""
+
+import pytest
+import rclpy
+import rclpy.node
+import pathlib
+import yaml
+import os
+import time
+
+import contextlib
+from filelock import FileLock
+
+import random
+
+from threading import Lock
+from typing import Any
+
+import filelock
+
+from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest
+from dhtt_cooking_msgs.srv import CookingRequest
+from dhtt_msgs.msg import Subtree, Node, NodeStatus
+
+
+class ServerNode(rclpy.node.Node):
+
+    def __init__(self):
+        super().__init__('test_node')
+        self.modifysrv = self.create_client(ModifyRequest, '/modify_service')
+        assert self.modifysrv.wait_for_service(timeout_sec=5.0)
+
+        self.fetchsrv = self.create_client(FetchRequest, '/fetch_service')
+        assert self.fetchsrv.wait_for_service(timeout_sec=5.0)
+
+        self.controlsrv = self.create_client(ControlRequest, '/control_service')
+        assert self.controlsrv.wait_for_service(timeout_sec=5.0)
+
+        self.historysrv = self.create_client(HistoryRequest, '/history_service')
+        assert self.historysrv.wait_for_service(timeout_sec=5.0)
+
+        self.cooking_client = self.create_client(CookingRequest, '/Cooking_Server')
+        assert self.historysrv.wait_for_service(timeout_sec=1.0)
+
+        self.root_status_sub = self.create_subscription(NodeStatus, '/root_status', self.root_status_listener, 10)
+        self.status_sub = self.create_subscription(Node, "/status", self.status_listener, 10)
+
+        self.root_state = 0
+        self.node_states = {}
+
+    def root_status_listener(self, data):
+        self.root_state = data.state
+
+    def status_listener(self, data):
+        # node_name = data.node_name.split('_')[0]
+
+        self.node_states[data.node_name] = data
+
+    def get_tree(self):
+        fetch_rq = FetchRequest.Request()
+        fetch_rq.return_full_subtree = True
+
+        fetch_future = self.fetchsrv.call_async(fetch_rq)
+        rclpy.spin_until_future_complete(self, fetch_future)
+
+        fetch_rs = fetch_future.result()
+
+        return fetch_rs
+
+    def wait_for_node_in_state(self, node_name, state):
+        while self.node_states[node_name].node_status.state != state and rclpy.ok():
+            rclpy.spin_once(self)
+
+    def reset_tree(self):
+        fetch_rs = self.get_tree()
+
+        if len(fetch_rs.found_subtrees[0].tree_nodes) > 1:
+            nodes_to_remove = [i.node_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:]]
+
+            reset_rq = ControlRequest.Request()
+            reset_rq.type = ControlRequest.Request.RESET
+
+            reset_future = self.controlsrv.call_async(reset_rq)
+            rclpy.spin_until_future_complete(self, reset_future)
+
+            reset_rs = reset_future.result()
+
+    def interrupt_tree(self):
+        control_rq = ControlRequest.Request()
+        control_rq.type = ControlRequest.Request.STOP
+
+        control_future = self.controlsrv.call_async(control_rq)
+        rclpy.spin_until_future_complete(self, control_future)
+
+        control_rs = control_future.result()
+
+@pytest.fixture(scope='session')
+def lock(tmp_path_factory: Any):
+    base_temp = tmp_path_factory.getbasetemp()
+    lock_file = base_temp.parent / 'serial.lock'
+    yield filelock.FileLock(lock_file=str(lock_file))
+    with contextlib.suppress(OSError):
+        os.remove(path=lock_file)
+
+@pytest.fixture()
+def serial(lock: FileLock):
+    with lock.acquire(poll_interval=0.1):
+        yield
+
+class ExperimentClass:
+    first = True
+    node: ServerNode = None
+    lock = Lock()
+    rclpy.init()
+
+    def initialize(self):
+
+        if ExperimentClass.first:
+
+            ExperimentClass.first = False
+
+            ExperimentClass.node = ServerNode()
+
+        self.ok = False
+
+    def get_tree(self):
+        fetch_rq = FetchRequest.Request()
+        fetch_rq.return_full_subtree = True
+
+        fetch_future = self.node.fetchsrv.call_async(fetch_rq)
+        rclpy.spin_until_future_complete(self.node, fetch_future, timeout_sec=1.0)
+
+        assert fetch_future.done()
+
+        fetch_rs = fetch_future.result()
+
+        assert fetch_rs.success == True
+
+        return fetch_rs
+
+    def reset_tree(self):
+
+        self.interrupt_tree()
+
+        fetch_rs = self.get_tree()
+
+        if len(fetch_rs.found_subtrees[0].tree_nodes) > 1:
+            nodes_to_remove = [i.node_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:]]
+
+            reset_rq = ControlRequest.Request()
+            reset_rq.type = ControlRequest.Request.RESET
+
+            reset_future = self.node.controlsrv.call_async(reset_rq)
+            rclpy.spin_until_future_complete(self.node, reset_future)
+
+            reset_rs = reset_future.result()
+
+            assert reset_rs.success == True
+
+    def interrupt_tree(self):
+        control_rq = ControlRequest.Request()
+        control_rq.type = ControlRequest.Request.STOP
+
+        control_future = self.node.controlsrv.call_async(control_rq)
+        rclpy.spin_until_future_complete(self.node, control_future)
+
+        control_rs = control_future.result()
+
+    # asserts here will only work if this is the only way that nodes have been added to the tree
+    def add_from_yaml(self, file_name, force, add_to="ROOT_0", file_args = []):
+
+        wd = pathlib.Path(__file__).parent.resolve()
+
+        yaml_dict = None
+
+        assert file_name.split('.')[-1] == 'yaml'
+
+        with open(f'{wd}{file_name}', 'r') as file:
+            yaml_dict = yaml.safe_load(file)
+
+        assert yaml_dict != None
+
+        modify_rq = ModifyRequest.Request()
+        modify_rq.type = ModifyRequest.Request.ADD_FROM_FILE
+        modify_rq.force = force
+        modify_rq.file_args = file_args
+
+        modify_rq.to_modify.append(add_to)
+        modify_rq.to_add = f'{wd}{file_name}'
+
+        modify_future = self.node.modifysrv.call_async(modify_rq)
+        rclpy.spin_until_future_complete(self.node, modify_future)
+
+        modify_rs = modify_future.result()
+
+        assert modify_rs.success == True
+
+    #     fetch_rs = self.get_tree()
+
+    #     node_names_orig = yaml_dict['NodeList']
+    #     node_parents_orig = [yaml_dict['Nodes'][i]['parent'] for i in node_names_orig]
+
+    #     node_names_from_server = [i.node_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:]]
+    #     parent_names_from_server = [i.parent_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:]]
+
+    #     # verify that all nodes were added
+    #     for index, val in enumerate(node_names_orig):
+    #         found = False;
+
+    #         for index2, gt_val in enumerate(node_names_from_server):
+    #             if val in gt_val:
+    #                 found = True
+    #                 break
+
+    #         # assert found
+
+    #     # verify that each node has the correct parent
+    #     for index, val in enumerate(node_parents_orig):
+    #         found = False;
+
+    #         for index2, gt_val in enumerate(parent_names_from_server):
+    #             if val in gt_val:
+    #                 found = True
+    #                 break
+
+    #         # assert found or (val == 'NONE' and parent_names_from_server[index] == add_to)
+
+    #     goitr_names_from_server = [i.goitr_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:]]
+
+    #     # verify goitrs were added correctly
+    #     for index, val in enumerate(yaml_dict['Nodes']):
+    #         try:
+    #             goitr_type_from_file = i['goitr_type']
+
+    #             assert goitr_type_from_file == goitr_names_from_server[index]
+    #         except:
+    #             continue
+
+        return modify_rs.added_nodes
+
+    def load_expected_from_yaml(self, file_name):
+
+        wd = pathlib.Path(__file__).parent.resolve()
+
+        assert file_name.split('.')[-1] == 'yaml'
+
+        with open(f'{wd}{file_name}', 'r') as file:
+            yaml_dict = yaml.safe_load(file)
+
+        assert yaml_dict != None
+        assert len(yaml_dict["expected_order"]) > 0
+
+        return yaml_dict["expected_order"]
+
+    def start_tree(self):
+        control_rq = ControlRequest.Request()
+        control_rq.type = ControlRequest.Request.START
+
+        control_future = self.node.controlsrv.call_async(control_rq)
+        rclpy.spin_until_future_complete(self.node, control_future)
+
+        control_rs = control_future.result()
+
+        assert control_rs.success == True
+
+        return control_rs
+
+    def spin_sub(self):
+        while self.ok:
+            rclpy.spin_once(self.node)
+
+            assert rclpy.ok()
+
+    def wait_for_waiting(self):
+        while ExperimentClass.node.root_state != NodeStatus.WAITING and rclpy.ok():
+            rclpy.spin_once(ExperimentClass.node)
+
+        assert rclpy.ok()
+
+    def wait_for_finished_execution(self):
+
+        # self.ok = True
+
+        # spin_thread = Thread(target=self.spin_sub)
+        # spin_thread.start()
+
+        while ExperimentClass.node.root_state != NodeStatus.DONE and rclpy.ok():
+            rclpy.spin_once(ExperimentClass.node)
+
+        # self.ok = False
+        # spin_thread.join()
+
+        assert rclpy.ok()
+
+    def get_history(self):
+        history_rq = HistoryRequest.Request()
+
+        history_future = self.node.historysrv.call_async(history_rq)
+        rclpy.spin_until_future_complete(self.node, history_future)
+
+        history_rs = history_future.result()
+
+        return history_rs.node_history
+
+    def compare_history_to_expected(self, history, expected):
+        assert len(history) == len(expected)
+
+        for index, val in enumerate(expected):
+            assert val == history[index].split('_')[0]
+
+    def order_from_file_test(self, file_name):
+
+        with ExperimentClass.lock:
+            self.initialize()
+            self.reset_level()
+            self.reset_tree()
+
+            # self.wait_for_waiting()
+
+            # expected = self.load_expected_from_yaml(file_name)
+
+            self.add_from_yaml(file_name, force=True)
+
+            self.start_tree()
+
+            self.wait_for_finished_execution()
+
+            history = self.get_history()
+
+            # self.compare_history_to_expected(history, expected)
+            self.reset_tree()
+
+    def reset_level(self):
+        request = CookingRequest.Request()
+        request.super_action = CookingRequest.Request.START
+
+        future = self.node.cooking_client.call_async(request)
+        rclpy.spin_until_future_complete(self.node, future)
+
+        res = future.result()
+
+        assert res
+        return res
+    
+    def remove_subtree(self, subtree_top):
+
+        modify_rq = ModifyRequest.Request()
+        modify_rq.force = True
+        modify_rq.type = ModifyRequest.Request.REMOVE
+        modify_rq.to_modify.append(subtree_top)
+
+        modify_future = self.node.modifysrv.call_async(modify_rq)
+        rclpy.spin_until_future_complete(self.node, modify_future)
+
+        modify_rs = modify_future.result()
+    
+    def remove_egg(self, added_nodes):
+        # egg is in both IngredientsAnd and ServeThen
+        get_egg_subtree = ""
+        collect_egg_subtree = ""
+        
+        for i in added_nodes:
+            if "GetFriedEgg" in i:
+                get_egg_subtree = i
+            elif "CollectEgg" in i:
+                collect_egg_subtree = i
+
+        self.remove_subtree(get_egg_subtree)
+        self.remove_subtree(collect_egg_subtree)
+
+    def add_egg(self, added_nodes):
+        # egg is in both IngredientsAnd and ServeThen
+        ingred = ""
+        collect = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        for i in added_nodes:
+            if "CollectIngredientsThen" in i:
+                collect = i
+
+        self.add_from_yaml("/experiment_descriptions/get_fried_egg.yaml", True, ingred, [ 'mark: B#' ])
+        self.add_from_yaml("/experiment_descriptions/collect_ingredient.yaml", True, collect, [ 'object: Egg', 'conditions: Fried' ])
+
+    def remove_toast(self, added_nodes):
+        # Toast is in both IngredientsAnd and ServeThen
+        get_bread_subtree = ""
+        collect_bread_subtree = ""
+        
+        for i in added_nodes:
+            if "GetToast" in i:
+                get_bread_subtree = i
+                break
+
+        for i in added_nodes:
+            if "CollectBread" in i:
+                collect_bread_subtree = i
+                break
+
+        self.remove_subtree(get_bread_subtree)
+        self.remove_subtree(collect_bread_subtree)
+
+    def add_toast(self, added_nodes):
+        # egg is in both IngredientsAnd and ServeThen
+        ingred = ""
+        collect = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        for i in added_nodes:
+            if "CollectIngredientsThen" in i:
+                collect = i
+
+        self.add_from_yaml("/experiment_descriptions/get_toast.yaml", True, ingred, [ ])
+        self.add_from_yaml("/experiment_descriptions/collect_ingredient.yaml", True, collect, [ 'object: Bread', 'conditions: Toasted' ])
+
+    def add_bread(self, added_nodes):
+        # egg is in both IngredientsAnd and ServeThen
+        ingred = ""
+        collect = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        for i in added_nodes:
+            if "CollectIngredientsThen" in i:
+                collect = i
+
+        self.add_from_yaml("/experiment_descriptions/get_chopped_bread.yaml", True, ingred, [ 'mark: A#'])
+        self.add_from_yaml("/experiment_descriptions/collect_ingredient.yaml", True, collect, [ 'object: Bread', 'conditions: Chopped' ])
+
+    def add_onion(self, added_nodes):
+        # egg is in both IngredientsAnd and ServeThen
+        ingred = ""
+        collect = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        for i in added_nodes:
+            if "CollectIngredientsThen" in i:
+                collect = i
+
+        self.add_from_yaml("/experiment_descriptions/get_onion_chopped.yaml", True, ingred, [ 'mark: A#'])
+        self.add_from_yaml("/experiment_descriptions/collect_ingredient.yaml", True, collect, [ 'object: Onion', 'conditions: Chopped' ])
+
+    def remove_tomato(self, added_nodes):
+        # Toast is in both IngredientsAnd and ServeThen
+        get_bread_subtree = ""
+        collect_bread_subtree = ""
+        
+        for i in added_nodes:
+            if "GetChoppedTomato" in i:
+                get_bread_subtree = i
+                break
+
+        for i in added_nodes:
+            if "CollectTomato" in i:
+                collect_bread_subtree = i
+                break
+
+        self.remove_subtree(get_bread_subtree)
+        self.remove_subtree(collect_bread_subtree)
+
+    def remove_tomato_sauce(self, added_nodes):
+        # Toast is in both IngredientsAnd and ServeThen
+        get_bread_subtree = ""
+        collect_bread_subtree = ""
+        
+        for i in added_nodes:
+            if "GetTomatoSauce" in i:
+                get_bread_subtree = i
+                break
+
+        for i in added_nodes:
+            if "CollectSauce" in i:
+                collect_bread_subtree = i
+                break
+
+        self.remove_subtree(get_bread_subtree)
+        self.remove_subtree(collect_bread_subtree)
+
+    def remove_onion(self, added_nodes):
+        # Toast is in both IngredientsAnd and ServeThen
+        get_bread_subtree = ""
+        collect_bread_subtree = ""
+        
+        for i in added_nodes:
+            if "GetChoppedOnion" in i:
+                get_bread_subtree = i
+                break
+
+        for i in added_nodes:
+            if "CollectOnion" in i:
+                collect_bread_subtree = i
+                break
+
+        self.remove_subtree(get_bread_subtree)
+        self.remove_subtree(collect_bread_subtree)
+
+    def remove_toast(self, added_nodes):
+        # Toast is in both IngredientsAnd and ServeThen
+        get_bread_subtree = ""
+        collect_bread_subtree = ""
+        
+        for i in added_nodes:
+            if "GetTomatoSauce" in i:
+                get_bread_subtree = i
+                break
+
+        for i in added_nodes:
+            if "CollectSauce" in i:
+                collect_bread_subtree = i
+                break
+
+        self.remove_subtree(get_bread_subtree)
+        self.remove_subtree(collect_bread_subtree)
+
+    def add_tomato_soup(self, added_nodes):
+        # add the tomato_sauce to both the IngredientsAnd and CollectIngredientsThen
+
+        ingred = ""
+        collect = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        for i in added_nodes:
+            if "CollectIngredientsThen" in i:
+                collect = i
+
+        self.add_from_yaml("/experiment_descriptions/get_tomato_sauce.yaml", True, ingred, [ 'mark: B#' ])
+        self.add_from_yaml("/experiment_descriptions/collect_ingredient.yaml", True, collect, [ 'object: Tomato', 'conditions: Fried' ])
+
+    def add_strawb_to_smoothie(self, added_nodes):
+        # just add another strawberry in the one spot
+        ingred = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        self.add_from_yaml("/experiment_descriptions/get_strawberry_in_blender.yaml", True, ingred, [ 'mark: B#' ])
+
+    def add_strawb(self, added_nodes):
+        # add the tomato_sauce to both the IngredientsAnd and CollectIngredientsThen
+
+        ingred = ""
+        collect = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        for i in added_nodes:
+            if "CollectIngredientsThen" in i:
+                collect = i
+
+        self.add_from_yaml("/experiment_descriptions/get_strawberry.yaml", True, ingred, [ 'mark: B#' ])
+        self.add_from_yaml("/experiment_descriptions/collect_no_conditions.yaml", True, collect, [ 'object: Strawberry'])
+
+    def add_banana_to_smoothie(self, added_nodes):
+        # just add another strawberry in the one spot
+        ingred = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        self.add_from_yaml("/experiment_descriptions/get_banana_in_blender.yaml", True, ingred, [])
+
+    def add_banana(self, added_nodes):
+        # add the tomato_sauce to both the IngredientsAnd and CollectIngredientsThen
+
+        ingred = ""
+        collect = ""
+
+        for i in added_nodes:
+            if "IngredientAnd" in i:
+                ingred = i
+                break
+
+        for i in added_nodes:
+            if "CollectIngredientsThen" in i:
+                collect = i
+
+        self.add_from_yaml("/experiment_descriptions/get_banana_chopped.yaml", True, ingred, [ 'mark: B#' ])
+        self.add_from_yaml("/experiment_descriptions/collect_ingredient.yaml", True, collect, [ 'object: Banana', 'conditions: Chopped'])
+
+    def no_change(self, added_nodes):
+        return
+
+    def experiment_top_and(self, serial: None):
+        # return
+        with ExperimentClass.lock:
+            self.initialize()
+            self.reset_tree()
+            self.reset_level()
+            self.wait_for_waiting()
+
+            req = ModifyRequest.Request()
+            req.type = ModifyRequest.Request.ADD
+            req.to_modify.append('ROOT_0')
+            req.add_node = Node()
+            req.add_node.type = Node.AND
+            req.add_node.node_name = 'AllOrdersAnd'
+            req.add_node.plugin_name = 'dhtt_plugins::AndBehavior'
+            fut = self.node.modifysrv.call_async(req)
+            rclpy.spin_until_future_complete(self.node, fut)
+            true_name = fut.result().added_nodes[0]
+
+            recipe_arr = [ "/experiment_descriptions/recipe_egg_toast.yaml", "/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml", "/experiment_descriptions/recipe_salad.yaml", "/experiment_descriptions/recipe_smoothie.yaml"]
+
+            recipe_change_dict = {
+                "/experiment_descriptions/recipe_egg_toast.yaml": [self.no_change, self.remove_egg, self.remove_toast, self.add_tomato_soup],
+                "/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml": [self.no_change, self.add_egg, self.add_onion, self.add_bread, self.remove_tomato_sauce],
+                "/experiment_descriptions/recipe_salad.yaml": [self.no_change, self.remove_tomato, self.remove_onion],
+                "/experiment_descriptions/recipe_smoothie.yaml": [self.no_change, self.add_strawb_to_smoothie],
+            }
+
+
+            last_choice = ""
+            to_add = ""
+
+            for i in range(4):
+                while to_add == last_choice:
+                    to_add = random.choice(recipe_arr)
+
+                last_choice = to_add
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
+
+            self.start_tree()
+
+            time.sleep(25)
+
+            for i in range(4):
+                while to_add == last_choice:
+                    to_add = random.choice(recipe_arr)
+
+                last_choice = to_add
+
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
+          
+            time.sleep(30)
+
+            for i in range(4):
+                while to_add == last_choice:
+                    to_add = random.choice(recipe_arr)
+
+                last_choice = to_add
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
+          
+            time.sleep(30)
+
+            for i in range(4):
+                while to_add == last_choice:
+                    to_add = random.choice(recipe_arr)
+
+                last_choice = to_add
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
+          
+            time.sleep(30)
+
+            for i in range(4):
+                while to_add == last_choice:
+                    to_add = random.choice(recipe_arr)
+
+                last_choice = to_add
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
+
+            self.wait_for_finished_execution()
+
+    def experiment_top_then(self, serial: None):
+        # return
+        with ExperimentClass.lock:
+            self.initialize()
+            self.reset_tree()
+            self.reset_level()
+            self.wait_for_waiting()
+
+            req = ModifyRequest.Request()
+            req.type = ModifyRequest.Request.ADD
+            req.to_modify.append('ROOT_0')
+            req.add_node = Node()
+            req.add_node.type = Node.THEN
+            req.add_node.node_name = 'AllOrdersThen'
+            req.add_node.plugin_name = 'dhtt_plugins::ThenBehavior'
+            fut = self.node.modifysrv.call_async(req)
+            rclpy.spin_until_future_complete(self.node, fut)
+            true_name = fut.result().added_nodes[0]
+
+            recipe_arr = [ "/experiment_descriptions/recipe_egg_toast.yaml", "/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml", "/experiment_descriptions/recipe_salad.yaml", "/experiment_descriptions/recipe_smoothie.yaml"]
+
+            recipe_change_dict = {
+                "/experiment_descriptions/recipe_egg_toast.yaml": [self.no_change, self.remove_egg, self.remove_toast, self.add_tomato_soup],
+                "/experiment_descriptions/recipe_pasta_with_tomato_sauce.yaml": [self.no_change, self.add_egg, self.add_onion, self.add_bread, self.remove_tomato_sauce],
+                "/experiment_descriptions/recipe_salad.yaml": [self.no_change, self.remove_tomato, self.remove_onion],
+                "/experiment_descriptions/recipe_smoothie.yaml": [self.no_change, self.add_strawb_to_smoothie],
+            }
+
+
+            last_choice = ""
+            to_add = ""
+
+            for i in range(4):
+                while to_add == last_choice:
+                    to_add = random.choice(recipe_arr)
+
+                last_choice = to_add
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
+
+            self.start_tree()
+
+            time.sleep(25)
+
+            for i in range(4):
+                while to_add == last_choice:
+                    to_add = random.choice(recipe_arr)
+
+                last_choice = to_add
+
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
+          
+            time.sleep(30)
+
+            for i in range(4):
+                while to_add == last_choice:
+                    to_add = random.choice(recipe_arr)
+
+                last_choice = to_add
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
+          
+            time.sleep(30)
+
+            for i in range(4):
+                while to_add == last_choice:
+                    to_add = random.choice(recipe_arr)
+
+                last_choice = to_add
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
+          
+            time.sleep(30)
+
+            for i in range(4):
+                while to_add == last_choice:
+                    to_add = random.choice(recipe_arr)
+
+                last_choice = to_add
+                nodes = self.add_from_yaml(to_add, force=True, add_to=true_name)
+
+                # make change
+                random.choice(recipe_change_dict[to_add])(nodes)
+
+            self.wait_for_finished_execution()
+
+
+def experiment_and ():
+    my_exp = ExperimentClass()
+
+    my_exp.experiment_top_and()
+
+def experiment_then ():
+    my_exp = ExperimentClass()
+
+    my_exp.experiment_top_then()
