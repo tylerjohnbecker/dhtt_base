@@ -30,7 +30,7 @@ namespace dhtt
 	 * \brief Base class describing the logic of the nodes
 	 * 
 	 * This is an interface for how to write the logic of a node. This encompasses both task nodes and behavior nodes. Each node needs describe how to initialize, how to perform the auction,
-	 * 	what work to perform, how to parse params, and how to calculate activation_potential.
+	 * 	what work to perform, how to parse params, and how to calculate perceived efficiency.
 	 */
 	class NodeType
 	{
@@ -165,18 +165,13 @@ namespace dhtt
 			this->name = name;
 		};
 
-		virtual rclcpp::Logger get_logger() const
-		{
-			return rclcpp::get_logger(this->name);
-		};
-
 		goal_t goal_type = PERSISTENT;
 
 		std::vector<dhtt_msgs::msg::Resource> necessary_resources;
 
 		std::vector<std::string> params;
 
-		// I don't know if I want to leave it like this, but... This parameter is set shortly after the factory in dhtt::Node build this NodeType
+		// I don't know if I want to leave it like this, but... This parameter is set shortly after the factory in dhtt::Node build this NodeType but before initialization
 		std::shared_ptr<CommunicationAggregator> com_agg;
 
 	protected:

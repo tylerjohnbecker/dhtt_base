@@ -29,7 +29,9 @@ namespace dhtt_plugins
 		 * \brief auction behavior for the AND node.
 		 * 
 		 * An AND node runs all of it's children in an unspecified order. The auction activates all children and collects their requests. Then, the request with the
-		 * 	highest activation potential is chosen and sent up the tree. All other children are returned to the WAITING state.
+		 * 	highest activation potential is chosen and sent up the tree. All other children are returned to the WAITING state. When the AND node is first activated
+		 * 	it saves the resources that were passed and always passes those to the children. When each child is finished the AND adds the passed resources to a full
+		 * 	list and then when it finishes passes the entire list of resources from the children.
 		 * 
 		 * \param container see dhtt::NodeType
 		 * 

@@ -31,8 +31,8 @@ int32                   subtree_owned_resources
 dhtt_msgs/NodeStatus	node_status
 
 # this is a list of the local pre and postconditions for this node
-string preconditions
-string postconditions
+string                  preconditions
+string                  postconditions
 
 # node type declarations (for specific behavior types use the common name parameter as well)
 int8 					ROOT=0

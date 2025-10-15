@@ -40,38 +40,57 @@
 
 #define ACTIVATION_POTENTIAL_HIGHEST 2.0
 
-
-// #define DHTT_LOG_INFO(com_ptr, string_stream) com_ptr->log_stream(1, std::stringstream() << "[" << this->name << "]: " << string_stream)
-// #define DHTT_LOG_WARN(com_ptr, string_stream) com_ptr->log_stream(2, std::stringstream() << "[" << this->name << "]: " << string_stream)
-// #define DHTT_LOG_ERROR(com_ptr, string_stream) com_ptr->log_stream(3, std::stringstream() << "[" << this->name << "]: " << string_stream)
-// #define DHTT_LOG_FATAL(com_ptr, string_stream) com_ptr->log_stream(4, std::stringstream() << "[" << this->name << "]: " << string_stream)
-
 namespace dhtt
 {
 
-#define DHTT_LOG(severity, com_ptr, out) \
-	{ \
-		std::stringstream ss; \
-		ss <<  "[" << this->name << "]: " << out; \
-		com_ptr->log_stream(severity,  ss); \
-	}
+	/**
+	 * \brief logger functions for dhtt nodes
+	 * 
+	 * Because dhtt nodes do not have their own logger (they are not rclcpp::Node's) this serves as a wrapper function which allows them to use the stream syntax and utilize the
+	 * 	communication aggregator's logger with their own name appended.
+	 * 
+	 * \param severity set by calling function to DEBUG, INFO, WARN, ERROR, or FATAL
+	 * \param com_ptr ptr to the communication aggregator which the node class is attached to
+	 * \param out stream information to log 
+	 * 
+	 * \return void
+	 */
+	#define DHTT_LOG(severity, com_ptr, out) \
+		{ \
+			std::stringstream ss; \
+			ss <<  "[" << this->name << "]: " << out; \
+			com_ptr->log_stream(severity,  ss); \
+		}
 
-#define DHTT_LOG_DEBUG(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::DEBUG, com_ptr, out)
-#define DHTT_LOG_INFO(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::INFO, com_ptr, out)
-#define DHTT_LOG_WARN(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::WARN, com_ptr, out)
-#define DHTT_LOG_ERROR(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::ERROR, com_ptr, out)
-#define DHTT_LOG_FATAL(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::FATAL, com_ptr, out)
+	/**
+	 * \brief implementation of logger
+	 * 
+	 * DHTT_LOG should not be used, and instead one of DHTT_LOG_DEBUG, DHTT_LOG_INFO, etc. should be used by the Node class and the NodeType plugins. Each macro wraps DHTT_LOG with
+	 * 	a given severity so that the user does not need to use that parameter when logging.
+	 * 
+	 * \param com_ptr ptr to the communication aggregator which the node class is attached to
+	 * \param out stream information to log 
+	 * 
+	 * \return void
+	 */
+	#define DHTT_LOG_DEBUG(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::DEBUG, com_ptr, out)
+	#define DHTT_LOG_INFO(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::INFO, com_ptr, out)
+	#define DHTT_LOG_WARN(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::WARN, com_ptr, out)
+	#define DHTT_LOG_ERROR(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::ERROR, com_ptr, out)
+	#define DHTT_LOG_FATAL(com_ptr, out) DHTT_LOG(dhtt::LOG_LEVEL::FATAL, com_ptr, out)
 
 	/**
 	 * \brief dHTT Node class for all nodes on the tree
 	 * 
 	 * Main Node class for behaviors and tasks on the tree. Facilitates auction behavior, activation spreading behavior, basic resource management, status updates and maintenance, and communication with the Main Server.
-	 * 	All node specific logic is kept as a private plugin member that is loaded when the object is created (dhtt::NodeType). All node communication mechanisms are also kept as a private plugin member so that it can
-	 * 	be modularized.
+	 * 	All node specific logic is kept as a private plugin member that is loaded when the object is created (dhtt::NodeType). All node communication mechanisms are also kept as a private plugin member (dhtt::BranchType's) 
+	 * 	so that the communication is modular. Finally, the activation potential computation of the node is relegated to another plugin (dhtt::PotentialType).
 	 */
 	class Node
 	{
 	public:
+
+		friend class MainServer;
 
 		/**
 		 * \brief Constructor for the node class
@@ -84,15 +103,13 @@ namespace dhtt
 		 * \param parent_name name of this nodes parent (parent is notified of new child through dhtt::MainServer)
 		 * \param socket_type name of the plugin to use for this node's parent socket
 		 * \param goitr_type name of the goitr plugin to load for this node (if empty no goitr is loaded)
+		 * \param potential_type name of the activation potential plugin for this node (dhtt_plugins::EfficiencyPotential by default)
 		 * 
 		 * \return void
 		 */
 		Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string parent_name, std::string socket_type="dhtt_plugins::PtrBranchSocket", std::string goitr_type="", std::string potential_type="dhtt_plugins::EfficiencyPotential");
+		
 		~Node();
-
-		// Node(Node const&)=delete;// deleting copy constructor to debug
-
-		friend class MainServer;
 
 		/**
 		 * \brief returns the value of successful_load
@@ -139,8 +156,8 @@ namespace dhtt
 		/**
 		 * \brief Returns the node's copy of the resource state
 		 * 
-		 * the state of the available resources on the robot is maintained by the root node of the tree. The state is also given to each node in the tree through an internal topic each time
-		 * 	the state of the resources is changed. 
+		 * the state of the available resources on the robot is maintained by the root node of the tree. The state is pulled from a shared param server on the communication aggregator
+		 * 	during the activation of this node. The root node pushes any changes to the resource state as a part of its activation. 
 		 * 
 		 * \return list of all resources on the robot (owned or otherwise)
 		 */
@@ -187,16 +204,6 @@ namespace dhtt
 		void set_passed_resources(std::vector<dhtt_msgs::msg::Resource> set_to);
 
 		/**
-		 * \brief registers this node with it's parent
-		 * 
-		 * sends a service request to the the registration topic of the parent node (found through the given parent name). If this fails then the succesful_load flag is flipped and an error_msg is
-		 * 	saved.
-		 * 
-		 * \return void
-		 */
-		// void register_with_parent(int index=-1);
-
-		/**
 		 * \brief registers the necessary servers, publishers, action servers, etc. of this node.
 		 * 
 		 * should only be used by MainServer. 
@@ -210,7 +217,6 @@ namespace dhtt
 		 * 
 		 * Adds child at the end of the child name list (or at the given index), and attempts to create a branch plug for the child. If the plugin fails to load the function will return false and
 		 * 	an error message will be place in the error_msg member.
-		 * 
 		 * 
 		 * \return true if the operation worked false if a failure occured 
 		 */
@@ -253,7 +259,7 @@ namespace dhtt
 		/**
 		 * \brief spreads activation to all children
 		 * 
-		 * iterates through list and utilizes the async_activate_child method
+		 * iterates through list of children and utilizes the async_activate_child method
 		 * 
 		 * \param activation_goal goal to send to children 
 		 * 
@@ -416,101 +422,6 @@ namespace dhtt
 
 	protected:
 
-		// activation action server callbacks
-		/**
-		 * \brief goal callback for activation action server
-		 * 
-		 * Just accepts any goal that is given as activation will only be sent by the parent and only one at a time for now. The actual handling of whether the node should become active is 
-		 * 	performed in the activation_accepted_callback
-		 * 
-		 * \param uuid internal action server param (not used in this callback)
-		 * \param goal goal passed in for activation (not used in this callback)
-		 * 
-		 * \return always accept the goal right now
-		 */
-		// rclcpp_action::GoalResponse goal_activation_callback(const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const dhtt_msgs::action::Activation::Goal> goal);
-
-		/**
-		 * \brief cancel callback for activation action server
-		 * 
-		 * currently accepts any cancel request. This should perform some logic to immediately stop the node from activating and propogate the cancellation down, however, this is currently 
-		 * 	not implemented.
-		 * 
-		 * \param goal_handle internal action server representation of the goal which is to be cancelled
-		 * 
-		 * \return always accepts the cancel request for now
-		 */
-		// rclcpp_action::CancelResponse cancel_activation_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Activation>> goal_handle);
-
-		/**
-		 * \brief maintains the finite state machine status of the node after activation is received
-		 * 
-		 * The activation mechanism of a node is described extensively in the paper for dHTT's, however, it essentially does:
-		 * - if the node is waiting it becomes active
-		 * - if the node is active and gets a successful activation it begins working
-		 * - if the node is active and gets a unsuccessful activation it goes back to waiting
-		 * - if the node is done it just immediately sends a response and stops
-		 * 
-		 * if the node becomes active or working it starts a separate thread and runs the activate function. if it goes back to waiting it propogates the unsuccessful activation down to it's 
-		 * 	children as well.
-		 *  
-		 * \param goal_handle internal action server representation of the goal
-		 * 
-		 * \return void
-		 */
-		// void activation_accepted_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Activation>> goal_handle);
-
-		/**
-		 * \brief accepts any goal for now
-		 */
-		// rclcpp_action::GoalResponse condition_goal_activation_callback(const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const dhtt_msgs::action::Condition::Goal> goal);
-
-		/**
-		 * \brief cancels any goal for now
-		 */
-		// rclcpp_action::CancelResponse condition_cancel_activation_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Condition>> goal_handle);
-
-		/**
-		 * \brief if the request is just a GET returns the pre and postconditions, if it is a maintain request this spins up a thread to run the combine_child_contions function instead.
-		 */
-		// void condition_activation_accepted_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Condition>> goal_handle);
-
-
-		/**
-		 * \brief stores results received from activating children
-		 * 
-		 * Also increments the number of results gotten back so that the busy wait can end after enough responses are received.
-		 * 
-		 * \param result action server result sent back from child to be saved
-		 * \param node_name child from which the result was received (saved when the result callback was bound)
-		 * 
-		 * \return void
-		 */
-		// void store_result_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name );
-
-		/**
-		 * \brief stores results received from activating children
-		 *
-		 * Also increments the number of results gotten back so that the busy wait can end after enough responses are received.
-		 *
-		 * \param result action server result sent back from child to be saved
-		 * \param node_name child from which the result was received (saved when the result callback was bound)
-		 *
-		 * \return void
-		 */
-		// void store_failed_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name );
-
-		/**
-		 * \brief stores the conditions of the given child
-		 * 
-		 * \param result from child
-		 * \param node_name child who sent back result
-		 * 
-		 * \return void
-		 */
-		// void store_condition_callback ( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Condition>::WrappedResult & result, std::string node_name );
-
-
 		// service callbacks
 
 		/**
@@ -554,7 +465,7 @@ namespace dhtt
 		/**
 		 * \brief applies postconditions to world state
 		 * 
-		 * Postconditions are defined in nthe node type of this class. This changes the parameter server to reflect this behavior's postconditions.
+		 * Postconditions are defined in the node type of this class. This changes the parameter server to reflect this behavior's postconditions.
 		 * 
 		 * \return void
 		 */

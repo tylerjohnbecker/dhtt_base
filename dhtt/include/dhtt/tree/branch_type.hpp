@@ -32,7 +32,7 @@ namespace dhtt
 	 * 	pipeline.
 	 * 
 	 * Note: I think I could make this more generalized to facilitate one of each communication pipeline, however, I'm not sure that this is the best way forward for the class
-	 * 	representation.
+	 * 	representation. 
 	 */
 	class BranchSocketType
 	{
