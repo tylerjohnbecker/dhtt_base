@@ -71,6 +71,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle"><div class="title">dhtt Namespace Reference</div></div>
 </div><!--header-->
@@ -78,6 +79,15 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1BranchPlugType.html">BranchPlugType</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for the plugs which provides the necessary multithreading capabilities.  <a href="classdhtt_1_1BranchPlugType.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1BranchSocketType.html">BranchSocketType</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">base class for the branch socket  <a href="classdhtt_1_1BranchSocketType.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1CommunicationAggregator.html">CommunicationAggregator</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Communication Aggregator for subscription and service calls coming from behaviors in the tree.  <a href="classdhtt_1_1CommunicationAggregator.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html">MainServer</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">main communication to manipulate and get information from the dHTT  <a href="classdhtt_1_1MainServer.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -87,15 +97,99 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html">NodeType</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class describing the logic of the nodes.  <a href="classdhtt_1_1NodeType.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1PotentialType.html">PotentialType</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">a lightweight plugin for computing the activation potential of a node  <a href="classdhtt_1_1PotentialType.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1SubServer.html">SubServer</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">sub server for a subtree in the dHTT  <a href="classdhtt_1_1SubServer.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a4c8b4cf5d1d5a5a949c78117ed356359"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacedhtt.html#a4c8b4cf5d1d5a5a949c78117ed356359">activation_goal</a> = dhtt_msgs::action::Activation::Goal</td></tr>
+<tr class="separator:a4c8b4cf5d1d5a5a949c78117ed356359"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a597894051c180c1af8ec2e3d2b748ad4"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacedhtt.html#a597894051c180c1af8ec2e3d2b748ad4">activation_result</a> = dhtt_msgs::action::Activation::Result</td></tr>
+<tr class="separator:a597894051c180c1af8ec2e3d2b748ad4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a519efb18d9fa3b2973f67597d1b53a41"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacedhtt.html#a519efb18d9fa3b2973f67597d1b53a41">condition_goal</a> = dhtt_msgs::action::Condition::Goal</td></tr>
+<tr class="separator:a519efb18d9fa3b2973f67597d1b53a41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c01455b2a4f5e1878637aed1e74ef5f"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacedhtt.html#a6c01455b2a4f5e1878637aed1e74ef5f">condition_result</a> = dhtt_msgs::action::Condition::Result</td></tr>
+<tr class="separator:a6c01455b2a4f5e1878637aed1e74ef5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
+<tr class="memitem:aed1585e5c084d00cd0f452ae750c4290"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290">LOG_LEVEL</a> { <br />
+&#160;&#160;<a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a76b0f5e7632157ad6e29e0f685efee0a">DEBUG</a> =0
+, <a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a468584cf28a806aa97e5fa88c9aa3081">INFO</a> =1
+, <a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a324f59f46cb62eb300ba345b96778f4c">WARN</a> =2
+, <a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a52d2eff9fc4fe7097d3d3f3f45f14bf3">ERROR</a> =3
+, <br />
+&#160;&#160;<a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a3578cd2b4420dfefc809479b329d0a0e">FATAL</a> =4
+<br />
+ }</td></tr>
+<tr class="separator:aed1585e5c084d00cd0f452ae750c4290"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a17868f4d160b0f36d56ebd2027e008"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacedhtt.html#a3a17868f4d160b0f36d56ebd2027e008">goal_t</a> { <a class="el" href="namespacedhtt.html#a3a17868f4d160b0f36d56ebd2027e008adb421c8b35e9d91c2e0f520567fac9b7">PERSISTENT</a>
 , <a class="el" href="namespacedhtt.html#a3a17868f4d160b0f36d56ebd2027e008af55e59f27e9e45b89ea75d002cdb496f">TRANSIENT</a>
  }</td></tr>
 <tr class="memdesc:a3a17868f4d160b0f36d56ebd2027e008"><td class="mdescLeft">&#160;</td><td class="mdescRight">enum for the different types of goals  <a href="namespacedhtt.html#a3a17868f4d160b0f36d56ebd2027e008">More...</a><br /></td></tr>
 <tr class="separator:a3a17868f4d160b0f36d56ebd2027e008"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="a4c8b4cf5d1d5a5a949c78117ed356359" name="a4c8b4cf5d1d5a5a949c78117ed356359"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c8b4cf5d1d5a5a949c78117ed356359">&#9670;&#160;</a></span>activation_goal</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacedhtt.html#a4c8b4cf5d1d5a5a949c78117ed356359">dhtt::activation_goal</a> = typedef dhtt_msgs::action::Activation::Goal</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a597894051c180c1af8ec2e3d2b748ad4" name="a597894051c180c1af8ec2e3d2b748ad4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a597894051c180c1af8ec2e3d2b748ad4">&#9670;&#160;</a></span>activation_result</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacedhtt.html#a597894051c180c1af8ec2e3d2b748ad4">dhtt::activation_result</a> = typedef dhtt_msgs::action::Activation::Result</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a519efb18d9fa3b2973f67597d1b53a41" name="a519efb18d9fa3b2973f67597d1b53a41"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a519efb18d9fa3b2973f67597d1b53a41">&#9670;&#160;</a></span>condition_goal</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacedhtt.html#a519efb18d9fa3b2973f67597d1b53a41">dhtt::condition_goal</a> = typedef dhtt_msgs::action::Condition::Goal</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6c01455b2a4f5e1878637aed1e74ef5f" name="a6c01455b2a4f5e1878637aed1e74ef5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c01455b2a4f5e1878637aed1e74ef5f">&#9670;&#160;</a></span>condition_result</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacedhtt.html#a6c01455b2a4f5e1878637aed1e74ef5f">dhtt::condition_result</a> = typedef dhtt_msgs::action::Condition::Result</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a3a17868f4d160b0f36d56ebd2027e008" name="a3a17868f4d160b0f36d56ebd2027e008"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3a17868f4d160b0f36d56ebd2027e008">&#9670;&#160;</a></span>goal_t</h2>
@@ -114,6 +208,27 @@ Enumerations</h2></td></tr>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3a17868f4d160b0f36d56ebd2027e008adb421c8b35e9d91c2e0f520567fac9b7" name="a3a17868f4d160b0f36d56ebd2027e008adb421c8b35e9d91c2e0f520567fac9b7"></a>PERSISTENT&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a3a17868f4d160b0f36d56ebd2027e008af55e59f27e9e45b89ea75d002cdb496f" name="a3a17868f4d160b0f36d56ebd2027e008af55e59f27e9e45b89ea75d002cdb496f"></a>TRANSIENT&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<a id="aed1585e5c084d00cd0f452ae750c4290" name="aed1585e5c084d00cd0f452ae750c4290"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed1585e5c084d00cd0f452ae750c4290">&#9670;&#160;</a></span>LOG_LEVEL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290">dhtt::LOG_LEVEL</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aed1585e5c084d00cd0f452ae750c4290a76b0f5e7632157ad6e29e0f685efee0a" name="aed1585e5c084d00cd0f452ae750c4290a76b0f5e7632157ad6e29e0f685efee0a"></a>DEBUG&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aed1585e5c084d00cd0f452ae750c4290a468584cf28a806aa97e5fa88c9aa3081" name="aed1585e5c084d00cd0f452ae750c4290a468584cf28a806aa97e5fa88c9aa3081"></a>INFO&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aed1585e5c084d00cd0f452ae750c4290a324f59f46cb62eb300ba345b96778f4c" name="aed1585e5c084d00cd0f452ae750c4290a324f59f46cb62eb300ba345b96778f4c"></a>WARN&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aed1585e5c084d00cd0f452ae750c4290a52d2eff9fc4fe7097d3d3f3f45f14bf3" name="aed1585e5c084d00cd0f452ae750c4290a52d2eff9fc4fe7097d3d3f3f45f14bf3"></a>ERROR&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aed1585e5c084d00cd0f452ae750c4290a3578cd2b4420dfefc809479b329d0a0e" name="aed1585e5c084d00cd0f452ae750c4290a3578cd2b4420dfefc809479b329d0a0e"></a>FATAL&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>

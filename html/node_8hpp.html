@@ -82,8 +82,11 @@ $(function() {
 <div class="contents">
 <div class="textblock"><code>#include &lt;memory&gt;</code><br />
 <code>#include &lt;chrono&gt;</code><br />
+<code>#include &lt;condition_variable&gt;</code><br />
+<code>#include &lt;mutex&gt;</code><br />
 <code>#include &quot;pluginlib/class_loader.hpp&quot;</code><br />
 <code>#include &quot;rclcpp_action/rclcpp_action.hpp&quot;</code><br />
+<code>#include &quot;std_msgs/msg/string.hpp&quot;</code><br />
 <code>#include &quot;dhtt_msgs/msg/node.hpp&quot;</code><br />
 <code>#include &quot;dhtt_msgs/msg/resource.hpp&quot;</code><br />
 <code>#include &quot;dhtt_msgs/msg/resources.hpp&quot;</code><br />
@@ -91,27 +94,47 @@ $(function() {
 <code>#include &quot;dhtt_msgs/srv/internal_service_registration.hpp&quot;</code><br />
 <code>#include &quot;dhtt_msgs/srv/modify_request.hpp&quot;</code><br />
 <code>#include &quot;dhtt_msgs/action/activation.hpp&quot;</code><br />
+<code>#include &quot;dhtt_msgs/action/condition.hpp&quot;</code><br />
 <code>#include &quot;<a class="el" href="node__type_8hpp_source.html">dhtt/tree/node_type.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="branch__type_8hpp_source.html">dhtt/tree/branch_type.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="potential__type_8hpp_source.html">dhtt/tree/potential_type.hpp</a>&quot;</code><br />
+<code>#include &quot;dhtt/planning/goitr_type.hpp&quot;</code><br />
+<code>#include &quot;<a class="el" href="communication__aggregator_8hpp_source.html">dhtt/server/communication_aggregator.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for node.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="node_8hpp__incl.png" border="0" usemap="#adhtt_2include_2dhtt_2tree_2node_8hpp" alt=""/></div>
 <map name="adhtt_2include_2dhtt_2tree_2node_8hpp" id="adhtt_2include_2dhtt_2tree_2node_8hpp">
-<area shape="rect" title=" " alt="" coords="867,5,1009,45"/>
-<area shape="rect" title=" " alt="" coords="5,101,73,126"/>
-<area shape="rect" title=" " alt="" coords="98,101,159,126"/>
-<area shape="rect" title=" " alt="" coords="183,101,354,126"/>
-<area shape="rect" title=" " alt="" coords="378,93,517,133"/>
-<area shape="rect" title=" " alt="" coords="541,101,709,126"/>
-<area shape="rect" title=" " alt="" coords="733,101,924,126"/>
-<area shape="rect" title=" " alt="" coords="949,101,1146,126"/>
-<area shape="rect" title=" " alt="" coords="1170,93,1314,133"/>
-<area shape="rect" title=" " alt="" coords="1339,93,1505,133"/>
-<area shape="rect" title=" " alt="" coords="1530,93,1677,133"/>
-<area shape="rect" title=" " alt="" coords="1701,101,1908,126"/>
-<area shape="rect" href="node__type_8hpp.html" title=" " alt="" coords="1933,101,2090,126"/>
-<area shape="rect" title=" " alt="" coords="1941,181,1999,207"/>
-<area shape="rect" title=" " alt="" coords="2024,181,2079,207"/>
+<area shape="rect" title=" " alt="" coords="1267,5,1409,45"/>
+<area shape="rect" title=" " alt="" coords="5,269,73,295"/>
+<area shape="rect" title=" " alt="" coords="926,101,987,126"/>
+<area shape="rect" title=" " alt="" coords="1012,101,1139,126"/>
+<area shape="rect" title=" " alt="" coords="101,269,159,295"/>
+<area shape="rect" title=" " alt="" coords="1163,101,1334,126"/>
+<area shape="rect" title=" " alt="" coords="1358,93,1497,133"/>
+<area shape="rect" title=" " alt="" coords="1521,101,1689,126"/>
+<area shape="rect" title=" " alt="" coords="1713,101,1881,126"/>
+<area shape="rect" title=" " alt="" coords="1905,101,2096,126"/>
+<area shape="rect" title=" " alt="" coords="2121,101,2318,126"/>
+<area shape="rect" title=" " alt="" coords="2342,93,2486,133"/>
+<area shape="rect" title=" " alt="" coords="2511,93,2677,133"/>
+<area shape="rect" title=" " alt="" coords="2702,93,2849,133"/>
+<area shape="rect" title=" " alt="" coords="603,189,809,214"/>
+<area shape="rect" title=" " alt="" coords="834,189,1037,214"/>
+<area shape="rect" href="node__type_8hpp.html" title=" " alt="" coords="391,101,549,126"/>
+<area shape="rect" href="communication__aggregator_8hpp.html" title=" " alt="" coords="121,181,297,221"/>
+<area shape="rect" href="branch__type_8hpp.html" title=" " alt="" coords="734,101,902,126"/>
+<area shape="rect" href="potential__type_8hpp.html" title=" " alt="" coords="2873,93,2995,133"/>
+<area shape="rect" title=" " alt="" coords="3019,93,3145,133"/>
+<area shape="rect" title=" " alt="" coords="441,189,499,214"/>
+<area shape="rect" title=" " alt="" coords="524,189,579,214"/>
+<area shape="rect" title=" " alt="" coords="321,189,417,214"/>
+<area shape="rect" title=" " alt="" coords="185,269,227,295"/>
+<area shape="rect" title=" " alt="" coords="705,269,763,295"/>
+<area shape="rect" title=" " alt="" coords="943,269,997,295"/>
+<area shape="rect" title=" " alt="" coords="251,269,371,295"/>
+<area shape="rect" title=" " alt="" coords="1162,189,1234,214"/>
+<area shape="rect" title=" " alt="" coords="1259,189,1337,214"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -119,17 +142,20 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="node_8hpp__dep__incl.png" border="0" usemap="#adhtt_2include_2dhtt_2tree_2node_8hppdep" alt=""/></div>
 <map name="adhtt_2include_2dhtt_2tree_2node_8hppdep" id="adhtt_2include_2dhtt_2tree_2node_8hppdep">
-<area shape="rect" title=" " alt="" coords="554,5,695,45"/>
-<area shape="rect" href="main__server_8hpp.html" title=" " alt="" coords="6,101,161,141"/>
-<area shape="rect" href="action__type_8hpp.html" title=" " alt="" coords="185,93,341,148"/>
-<area shape="rect" href="test__behavior_8hpp.html" title=" " alt="" coords="365,93,521,148"/>
-<area shape="rect" href="and__behavior_8hpp.html" title=" " alt="" coords="546,93,703,148"/>
-<area shape="rect" href="or__behavior_8hpp.html" title=" " alt="" coords="727,93,874,148"/>
-<area shape="rect" href="root__behavior_8hpp.html" title=" " alt="" coords="899,93,1057,148"/>
-<area shape="rect" href="then__behavior_8hpp.html" title=" " alt="" coords="1081,93,1243,148"/>
+<area shape="rect" title=" " alt="" coords="823,5,965,45"/>
+<area shape="rect" href="main__server_8hpp.html" title=" " alt="" coords="186,101,341,141"/>
+<area shape="rect" href="action__type_8hpp.html" title=" " alt="" coords="365,93,521,148"/>
+<area shape="rect" href="test_2test__behavior_8hpp.html" title=" " alt="" coords="545,93,701,148"/>
+<area shape="rect" href="test__behavior_8hpp.html" title=" " alt="" coords="725,93,881,148"/>
+<area shape="rect" href="and__behavior_8hpp.html" title=" " alt="" coords="906,93,1063,148"/>
+<area shape="rect" href="or__behavior_8hpp.html" title=" " alt="" coords="1087,93,1234,148"/>
+<area shape="rect" href="root__behavior_8hpp.html" title=" " alt="" coords="1259,93,1417,148"/>
+<area shape="rect" href="then__behavior_8hpp.html" title=" " alt="" coords="1441,93,1603,148"/>
 <area shape="rect" href="move__behavior_8hpp.html" title=" " alt="" coords="5,196,161,251"/>
 <area shape="rect" href="pick__behavior_8hpp.html" title=" " alt="" coords="185,196,341,251"/>
 <area shape="rect" href="place__behavior_8hpp.html" title=" " alt="" coords="365,196,521,251"/>
+<area shape="rect" href="mock__look__behavior_8hpp.html" title=" " alt="" coords="546,196,741,251"/>
+<area shape="rect" href="mock__move__behavior_8hpp.html" title=" " alt="" coords="765,196,967,251"/>
 </map>
 </div>
 </div>
@@ -154,10 +180,28 @@ Macros</h2></td></tr>
 <tr class="separator:ae32a692deaa3a778c25d52f2b63322bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afaf57526d195e6c04efce9d8cb8d1082"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="node_8hpp.html#afaf57526d195e6c04efce9d8cb8d1082">ACTIVATION_POSTFIX</a>&#160;&#160;&#160;&quot;/activate&quot;</td></tr>
 <tr class="separator:afaf57526d195e6c04efce9d8cb8d1082"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1477da138b14a32adc845e7d6e7a0be6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="node_8hpp.html#a1477da138b14a32adc845e7d6e7a0be6">CONDITION_POSTFIX</a>&#160;&#160;&#160;&quot;/condition&quot;</td></tr>
+<tr class="separator:a1477da138b14a32adc845e7d6e7a0be6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae549cb06a6c0c8989e42b0bbf8d44728"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="node_8hpp.html#ae549cb06a6c0c8989e42b0bbf8d44728">RESOURCES_POSTFIX</a>&#160;&#160;&#160;&quot;/resource&quot;</td></tr>
 <tr class="separator:ae549cb06a6c0c8989e42b0bbf8d44728"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe6a7b3393adc1231c17f63de3a3ca0e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="node_8hpp.html#abe6a7b3393adc1231c17f63de3a3ca0e">CONTROL_POSTFIX</a>&#160;&#160;&#160;&quot;/control&quot;</td></tr>
 <tr class="separator:abe6a7b3393adc1231c17f63de3a3ca0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea64820a04cecfa368b6fc9fdcac6959"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="node_8hpp.html#aea64820a04cecfa368b6fc9fdcac6959">ACTIVATION_POTENTIAL_HIGHEST</a>&#160;&#160;&#160;2.0</td></tr>
+<tr class="separator:aea64820a04cecfa368b6fc9fdcac6959"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc3f418c484eeca6aa5a5ed73fae419b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="node_8hpp.html#afc3f418c484eeca6aa5a5ed73fae419b">DHTT_LOG</a>(severity,  com_ptr,  out)</td></tr>
+<tr class="memdesc:afc3f418c484eeca6aa5a5ed73fae419b"><td class="mdescLeft">&#160;</td><td class="mdescRight">logger functions for dhtt nodes  <a href="node_8hpp.html#afc3f418c484eeca6aa5a5ed73fae419b">More...</a><br /></td></tr>
+<tr class="separator:afc3f418c484eeca6aa5a5ed73fae419b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02d260609e7f8b55e58f58a3052a7350"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="node_8hpp.html#a02d260609e7f8b55e58f58a3052a7350">DHTT_LOG_DEBUG</a>(com_ptr,  out)&#160;&#160;&#160;<a class="el" href="node_8hpp.html#afc3f418c484eeca6aa5a5ed73fae419b">DHTT_LOG</a>(<a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a76b0f5e7632157ad6e29e0f685efee0a">dhtt::LOG_LEVEL::DEBUG</a>, com_ptr, out)</td></tr>
+<tr class="memdesc:a02d260609e7f8b55e58f58a3052a7350"><td class="mdescLeft">&#160;</td><td class="mdescRight">implementation of logger  <a href="node_8hpp.html#a02d260609e7f8b55e58f58a3052a7350">More...</a><br /></td></tr>
+<tr class="separator:a02d260609e7f8b55e58f58a3052a7350"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae711a53793908b49528084f8ad3c189c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="node_8hpp.html#ae711a53793908b49528084f8ad3c189c">DHTT_LOG_INFO</a>(com_ptr,  out)&#160;&#160;&#160;<a class="el" href="node_8hpp.html#afc3f418c484eeca6aa5a5ed73fae419b">DHTT_LOG</a>(<a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a468584cf28a806aa97e5fa88c9aa3081">dhtt::LOG_LEVEL::INFO</a>, com_ptr, out)</td></tr>
+<tr class="separator:ae711a53793908b49528084f8ad3c189c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa23c6afeec21111dc7c6af64f2a82dca"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="node_8hpp.html#aa23c6afeec21111dc7c6af64f2a82dca">DHTT_LOG_WARN</a>(com_ptr,  out)&#160;&#160;&#160;<a class="el" href="node_8hpp.html#afc3f418c484eeca6aa5a5ed73fae419b">DHTT_LOG</a>(<a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a324f59f46cb62eb300ba345b96778f4c">dhtt::LOG_LEVEL::WARN</a>, com_ptr, out)</td></tr>
+<tr class="separator:aa23c6afeec21111dc7c6af64f2a82dca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4820125279ce7ad91faa4130a34f1146"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="node_8hpp.html#a4820125279ce7ad91faa4130a34f1146">DHTT_LOG_ERROR</a>(com_ptr,  out)&#160;&#160;&#160;<a class="el" href="node_8hpp.html#afc3f418c484eeca6aa5a5ed73fae419b">DHTT_LOG</a>(<a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a52d2eff9fc4fe7097d3d3f3f45f14bf3">dhtt::LOG_LEVEL::ERROR</a>, com_ptr, out)</td></tr>
+<tr class="separator:a4820125279ce7ad91faa4130a34f1146"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac99184137697d23be5edebef3935f6db"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="node_8hpp.html#ac99184137697d23be5edebef3935f6db">DHTT_LOG_FATAL</a>(com_ptr,  out)&#160;&#160;&#160;<a class="el" href="node_8hpp.html#afc3f418c484eeca6aa5a5ed73fae419b">DHTT_LOG</a>(<a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a3578cd2b4420dfefc809479b329d0a0e">dhtt::LOG_LEVEL::FATAL</a>, com_ptr, out)</td></tr>
+<tr class="separator:ac99184137697d23be5edebef3935f6db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="afaf57526d195e6c04efce9d8cb8d1082" name="afaf57526d195e6c04efce9d8cb8d1082"></a>
@@ -174,6 +218,34 @@ Macros</h2></td></tr>
 
 </div>
 </div>
+<a id="aea64820a04cecfa368b6fc9fdcac6959" name="aea64820a04cecfa368b6fc9fdcac6959"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea64820a04cecfa368b6fc9fdcac6959">&#9670;&#160;</a></span>ACTIVATION_POTENTIAL_HIGHEST</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ACTIVATION_POTENTIAL_HIGHEST&#160;&#160;&#160;2.0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1477da138b14a32adc845e7d6e7a0be6" name="a1477da138b14a32adc845e7d6e7a0be6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1477da138b14a32adc845e7d6e7a0be6">&#9670;&#160;</a></span>CONDITION_POSTFIX</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CONDITION_POSTFIX&#160;&#160;&#160;&quot;/condition&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="abe6a7b3393adc1231c17f63de3a3ca0e" name="abe6a7b3393adc1231c17f63de3a3ca0e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abe6a7b3393adc1231c17f63de3a3ca0e">&#9670;&#160;</a></span>CONTROL_POSTFIX</h2>
 
@@ -182,6 +254,208 @@ Macros</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define CONTROL_POSTFIX&#160;&#160;&#160;&quot;/control&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afc3f418c484eeca6aa5a5ed73fae419b" name="afc3f418c484eeca6aa5a5ed73fae419b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc3f418c484eeca6aa5a5ed73fae419b">&#9670;&#160;</a></span>DHTT_LOG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DHTT_LOG</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">severity, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">com_ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">out&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">        { \</div>
+<div class="line">            std::stringstream ss; \</div>
+<div class="line">            ss &lt;&lt;  <span class="stringliteral">&quot;[&quot;</span> &lt;&lt; this-&gt;name &lt;&lt; <span class="stringliteral">&quot;]: &quot;</span> &lt;&lt; out; \</div>
+<div class="line">            com_ptr-&gt;log_stream(severity,  ss); \</div>
+<div class="line">        }</div>
+</div><!-- fragment -->
+<p>logger functions for dhtt nodes </p>
+<p >Because dhtt nodes do not have their own logger (they are not rclcpp::Node's) this serves as a wrapper function which allows them to use the stream syntax and utilize the communication aggregator's logger with their own name appended.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">severity</td><td>set by calling function to DEBUG, INFO, WARN, ERROR, or FATAL </td></tr>
+    <tr><td class="paramname">com_ptr</td><td>ptr to the communication aggregator which the node class is attached to </td></tr>
+    <tr><td class="paramname">out</td><td>stream information to log</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
+<a id="a02d260609e7f8b55e58f58a3052a7350" name="a02d260609e7f8b55e58f58a3052a7350"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02d260609e7f8b55e58f58a3052a7350">&#9670;&#160;</a></span>DHTT_LOG_DEBUG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DHTT_LOG_DEBUG</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">com_ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">out&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;<a class="el" href="node_8hpp.html#afc3f418c484eeca6aa5a5ed73fae419b">DHTT_LOG</a>(<a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a76b0f5e7632157ad6e29e0f685efee0a">dhtt::LOG_LEVEL::DEBUG</a>, com_ptr, out)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>implementation of logger </p>
+<p >DHTT_LOG should not be used, and instead one of DHTT_LOG_DEBUG, DHTT_LOG_INFO, etc. should be used by the Node class and the NodeType plugins. Each macro wraps DHTT_LOG with a given severity so that the user does not need to use that parameter when logging.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">com_ptr</td><td>ptr to the communication aggregator which the node class is attached to </td></tr>
+    <tr><td class="paramname">out</td><td>stream information to log</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
+<a id="a4820125279ce7ad91faa4130a34f1146" name="a4820125279ce7ad91faa4130a34f1146"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4820125279ce7ad91faa4130a34f1146">&#9670;&#160;</a></span>DHTT_LOG_ERROR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DHTT_LOG_ERROR</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">com_ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">out&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;<a class="el" href="node_8hpp.html#afc3f418c484eeca6aa5a5ed73fae419b">DHTT_LOG</a>(<a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a52d2eff9fc4fe7097d3d3f3f45f14bf3">dhtt::LOG_LEVEL::ERROR</a>, com_ptr, out)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac99184137697d23be5edebef3935f6db" name="ac99184137697d23be5edebef3935f6db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac99184137697d23be5edebef3935f6db">&#9670;&#160;</a></span>DHTT_LOG_FATAL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DHTT_LOG_FATAL</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">com_ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">out&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;<a class="el" href="node_8hpp.html#afc3f418c484eeca6aa5a5ed73fae419b">DHTT_LOG</a>(<a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a3578cd2b4420dfefc809479b329d0a0e">dhtt::LOG_LEVEL::FATAL</a>, com_ptr, out)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae711a53793908b49528084f8ad3c189c" name="ae711a53793908b49528084f8ad3c189c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae711a53793908b49528084f8ad3c189c">&#9670;&#160;</a></span>DHTT_LOG_INFO</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DHTT_LOG_INFO</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">com_ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">out&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;<a class="el" href="node_8hpp.html#afc3f418c484eeca6aa5a5ed73fae419b">DHTT_LOG</a>(<a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a468584cf28a806aa97e5fa88c9aa3081">dhtt::LOG_LEVEL::INFO</a>, com_ptr, out)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa23c6afeec21111dc7c6af64f2a82dca" name="aa23c6afeec21111dc7c6af64f2a82dca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa23c6afeec21111dc7c6af64f2a82dca">&#9670;&#160;</a></span>DHTT_LOG_WARN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DHTT_LOG_WARN</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">com_ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">out&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;<a class="el" href="node_8hpp.html#afc3f418c484eeca6aa5a5ed73fae419b">DHTT_LOG</a>(<a class="el" href="namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a324f59f46cb62eb300ba345b96778f4c">dhtt::LOG_LEVEL::WARN</a>, com_ptr, out)</td>
         </tr>
       </table>
 </div><div class="memdoc">

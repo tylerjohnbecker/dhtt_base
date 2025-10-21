@@ -107,50 +107,77 @@ Collaboration diagram for dhtt::MainServer:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a79c34c695e51e387b1afb1ce0dd84ae0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a79c34c695e51e387b1afb1ce0dd84ae0">MainServer</a> (std::string node_name, std::shared_ptr&lt; rclcpp::executors::MultiThreadedExecutor &gt; spinner)</td></tr>
-<tr class="memdesc:a79c34c695e51e387b1afb1ce0dd84ae0"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor for the <a class="el" href="classdhtt_1_1MainServer.html" title="main communication to manipulate and get information from the dHTT">MainServer</a> Class  <a href="classdhtt_1_1MainServer.html#a79c34c695e51e387b1afb1ce0dd84ae0">More...</a><br /></td></tr>
-<tr class="separator:a79c34c695e51e387b1afb1ce0dd84ae0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e0c463a08c78eb1ca4e63d3f87d67d4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a8e0c463a08c78eb1ca4e63d3f87d67d4">MainServer</a> (std::string node_name, std::shared_ptr&lt; rclcpp::executors::MultiThreadedExecutor &gt; spinner, bool slow=false)</td></tr>
+<tr class="memdesc:a8e0c463a08c78eb1ca4e63d3f87d67d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor for the <a class="el" href="classdhtt_1_1MainServer.html" title="main communication to manipulate and get information from the dHTT">MainServer</a> Class  <a href="classdhtt_1_1MainServer.html#a8e0c463a08c78eb1ca4e63d3f87d67d4">More...</a><br /></td></tr>
+<tr class="separator:a8e0c463a08c78eb1ca4e63d3f87d67d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4cb4032ccc5d22e5fc85d5846c4579a8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a4cb4032ccc5d22e5fc85d5846c4579a8">~MainServer</a> ()</td></tr>
 <tr class="separator:a4cb4032ccc5d22e5fc85d5846c4579a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:a5baef94ba95d5800a20424cf6ae0ea18"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a5baef94ba95d5800a20424cf6ae0ea18">modify_callback</a> (const std::shared_ptr&lt; dhtt_msgs::srv::ModifyRequest::Request &gt; request, std::shared_ptr&lt; dhtt_msgs::srv::ModifyRequest::Response &gt; response)</td></tr>
-<tr class="memdesc:a5baef94ba95d5800a20424cf6ae0ea18"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback for handling ModifyRequests. See ModifyRequest.msg for more information.  <a href="classdhtt_1_1MainServer.html#a5baef94ba95d5800a20424cf6ae0ea18">More...</a><br /></td></tr>
+<tr class="memdesc:a5baef94ba95d5800a20424cf6ae0ea18"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback for handling ModifyRequests. See ModifyRequest.srv for more information.  <a href="classdhtt_1_1MainServer.html#a5baef94ba95d5800a20424cf6ae0ea18">More...</a><br /></td></tr>
 <tr class="separator:a5baef94ba95d5800a20424cf6ae0ea18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a305d4682414cf86aa02193467007b23c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a305d4682414cf86aa02193467007b23c">control_callback</a> (const std::shared_ptr&lt; dhtt_msgs::srv::ControlRequest::Request &gt; request, std::shared_ptr&lt; dhtt_msgs::srv::ControlRequest::Response &gt; response)</td></tr>
-<tr class="memdesc:a305d4682414cf86aa02193467007b23c"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback for handling ControlRequest. See ControlRequest.msg for more information.  <a href="classdhtt_1_1MainServer.html#a305d4682414cf86aa02193467007b23c">More...</a><br /></td></tr>
+<tr class="memdesc:a305d4682414cf86aa02193467007b23c"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback for handling ControlRequest. See ControlRequest.srv for more information.  <a href="classdhtt_1_1MainServer.html#a305d4682414cf86aa02193467007b23c">More...</a><br /></td></tr>
 <tr class="separator:a305d4682414cf86aa02193467007b23c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61792024c9057d85558c9b129bcfad34"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a61792024c9057d85558c9b129bcfad34">fetch_callback</a> (const std::shared_ptr&lt; dhtt_msgs::srv::FetchRequest::Request &gt; request, std::shared_ptr&lt; dhtt_msgs::srv::FetchRequest::Response &gt; response)</td></tr>
-<tr class="memdesc:a61792024c9057d85558c9b129bcfad34"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback for handling FetchRequest. See FetchRequest.msg for more information.  <a href="classdhtt_1_1MainServer.html#a61792024c9057d85558c9b129bcfad34">More...</a><br /></td></tr>
+<tr class="memdesc:a61792024c9057d85558c9b129bcfad34"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback for handling FetchRequest. See FetchRequest.srv for more information.  <a href="classdhtt_1_1MainServer.html#a61792024c9057d85558c9b129bcfad34">More...</a><br /></td></tr>
 <tr class="separator:a61792024c9057d85558c9b129bcfad34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f2558f1d98c5f2388a0935469eb6935"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a8f2558f1d98c5f2388a0935469eb6935">history_callback</a> (const std::shared_ptr&lt; dhtt_msgs::srv::HistoryRequest::Request &gt; request, std::shared_ptr&lt; dhtt_msgs::srv::HistoryRequest::Response &gt; response)</td></tr>
-<tr class="memdesc:a8f2558f1d98c5f2388a0935469eb6935"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback for handling HistoryRequest. See HistoryRequest.msg for more information.  <a href="classdhtt_1_1MainServer.html#a8f2558f1d98c5f2388a0935469eb6935">More...</a><br /></td></tr>
+<tr class="memdesc:a8f2558f1d98c5f2388a0935469eb6935"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback for handling HistoryRequest. See HistoryRequest.srv for more information.  <a href="classdhtt_1_1MainServer.html#a8f2558f1d98c5f2388a0935469eb6935">More...</a><br /></td></tr>
 <tr class="separator:a8f2558f1d98c5f2388a0935469eb6935"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2dce91b70003524c39f9425c0ed7ecca"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a2dce91b70003524c39f9425c0ed7ecca">add_node</a> (std::shared_ptr&lt; dhtt_msgs::srv::ModifyRequest::Response &gt; response, std::string parent_name, dhtt_msgs::msg::Node to_add)</td></tr>
-<tr class="memdesc:a2dce91b70003524c39f9425c0ed7ecca"><td class="mdescLeft">&#160;</td><td class="mdescRight">helper function for adding new nodes to the tree  <a href="classdhtt_1_1MainServer.html#a2dce91b70003524c39f9425c0ed7ecca">More...</a><br /></td></tr>
-<tr class="separator:a2dce91b70003524c39f9425c0ed7ecca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e728cbb985a54de271a01a1f0d2b3ce"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a9e728cbb985a54de271a01a1f0d2b3ce">add_nodes_from_file</a> (std::shared_ptr&lt; dhtt_msgs::srv::ModifyRequest::Response &gt; response, std::string parent_name, std::string file_name)</td></tr>
-<tr class="memdesc:a9e728cbb985a54de271a01a1f0d2b3ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a subtree described in a given .yaml file.  <a href="classdhtt_1_1MainServer.html#a9e728cbb985a54de271a01a1f0d2b3ce">More...</a><br /></td></tr>
-<tr class="separator:a9e728cbb985a54de271a01a1f0d2b3ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa0eb710f37098afa6de7bb04dfafd4d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#aaa0eb710f37098afa6de7bb04dfafd4d">resource_callback</a> (const std::shared_ptr&lt; dhtt_msgs::srv::ResourceRequest::Request &gt; request, std::shared_ptr&lt; dhtt_msgs::srv::ResourceRequest::Response &gt; response)</td></tr>
+<tr class="memdesc:aaa0eb710f37098afa6de7bb04dfafd4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback for handling ResourceRequest. See ResourceRequest.srv for more information.  <a href="classdhtt_1_1MainServer.html#aaa0eb710f37098afa6de7bb04dfafd4d">More...</a><br /></td></tr>
+<tr class="separator:aaa0eb710f37098afa6de7bb04dfafd4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35d3db25bf6f92a806ecbf4c6a343b65"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a35d3db25bf6f92a806ecbf4c6a343b65">add_node</a> (std::shared_ptr&lt; dhtt_msgs::srv::ModifyRequest::Response &gt; response, std::string parent_name, dhtt_msgs::msg::Node to_add, bool force=true, int index=-1)</td></tr>
+<tr class="memdesc:a35d3db25bf6f92a806ecbf4c6a343b65"><td class="mdescLeft">&#160;</td><td class="mdescRight">helper function for adding new nodes to the tree  <a href="classdhtt_1_1MainServer.html#a35d3db25bf6f92a806ecbf4c6a343b65">More...</a><br /></td></tr>
+<tr class="separator:a35d3db25bf6f92a806ecbf4c6a343b65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28abce8d945c5050892805c53306c1f3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a28abce8d945c5050892805c53306c1f3">add_nodes_from_file</a> (std::shared_ptr&lt; dhtt_msgs::srv::ModifyRequest::Response &gt; response, std::string parent_name, std::string file_name, std::vector&lt; std::string &gt; file_args, bool force=true)</td></tr>
+<tr class="memdesc:a28abce8d945c5050892805c53306c1f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a subtree described in a given .yaml file.  <a href="classdhtt_1_1MainServer.html#a28abce8d945c5050892805c53306c1f3">More...</a><br /></td></tr>
+<tr class="separator:a28abce8d945c5050892805c53306c1f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7043583ea0451e54fdc3fa164adf4c40"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a7043583ea0451e54fdc3fa164adf4c40">remove_node</a> (const std::shared_ptr&lt; dhtt_msgs::srv::ModifyRequest::Response &gt; response, std::string to_remove)</td></tr>
 <tr class="memdesc:a7043583ea0451e54fdc3fa164adf4c40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a given node from the tree.  <a href="classdhtt_1_1MainServer.html#a7043583ea0451e54fdc3fa164adf4c40">More...</a><br /></td></tr>
 <tr class="separator:a7043583ea0451e54fdc3fa164adf4c40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae40d57d6711240dd4e603d6aa4259d5d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#ae40d57d6711240dd4e603d6aa4259d5d">change_params</a> (const std::shared_ptr&lt; dhtt_msgs::srv::ModifyRequest::Request &gt; request)</td></tr>
 <tr class="memdesc:ae40d57d6711240dd4e603d6aa4259d5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes params of a given node name.  <a href="classdhtt_1_1MainServer.html#ae40d57d6711240dd4e603d6aa4259d5d">More...</a><br /></td></tr>
 <tr class="separator:ae40d57d6711240dd4e603d6aa4259d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af222dc5f7079cf5261856fe177cd06a5"><td class="memItemLeft" align="right" valign="top">dhtt_utils::PredicateConjunction&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#af222dc5f7079cf5261856fe177cd06a5">get_postconditions</a> (int subtree_index)</td></tr>
+<tr class="memdesc:af222dc5f7079cf5261856fe177cd06a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the terminal postconditions for a given subtree.  <a href="classdhtt_1_1MainServer.html#af222dc5f7079cf5261856fe177cd06a5">More...</a><br /></td></tr>
+<tr class="separator:af222dc5f7079cf5261856fe177cd06a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae8b77a5a0cebd6acf4ef5155e9bcf83"><td class="memItemLeft" align="right" valign="top">dhtt_utils::PredicateConjunction&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#aae8b77a5a0cebd6acf4ef5155e9bcf83">get_preconditions</a> (int subtree_index)</td></tr>
+<tr class="memdesc:aae8b77a5a0cebd6acf4ef5155e9bcf83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the preconditions of an entire subtree.  <a href="classdhtt_1_1MainServer.html#aae8b77a5a0cebd6acf4ef5155e9bcf83">More...</a><br /></td></tr>
+<tr class="separator:aae8b77a5a0cebd6acf4ef5155e9bcf83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43a8a6a38b488bfe6fa033f739353860"><td class="memItemLeft" align="right" valign="top">dhtt_utils::PredicateConjunction&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a43a8a6a38b488bfe6fa033f739353860">collect_previous_postconditions</a> (std::string parent_name, int child_index)</td></tr>
+<tr class="memdesc:a43a8a6a38b488bfe6fa033f739353860"><td class="mdescLeft">&#160;</td><td class="mdescRight">collect the postconditions of temporally previous behaviors into a single predicate conjunction  <a href="classdhtt_1_1MainServer.html#a43a8a6a38b488bfe6fa033f739353860">More...</a><br /></td></tr>
+<tr class="separator:a43a8a6a38b488bfe6fa033f739353860"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed2d1522a382ccadfc3c680c244a335f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#aed2d1522a382ccadfc3c680c244a335f">get_next_behaviors</a> (std::string parent_name, int child_index, int offset=0)</td></tr>
+<tr class="memdesc:aed2d1522a382ccadfc3c680c244a335f"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the list of subtrees which temporally will occur after the given index  <a href="classdhtt_1_1MainServer.html#aed2d1522a382ccadfc3c680c244a335f">More...</a><br /></td></tr>
+<tr class="separator:aed2d1522a382ccadfc3c680c244a335f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b11c43bcce1b80070f6f4b9279caf91"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a7b11c43bcce1b80070f6f4b9279caf91">can_remove</a> (std::string node_name)</td></tr>
+<tr class="memdesc:a7b11c43bcce1b80070f6f4b9279caf91"><td class="mdescLeft">&#160;</td><td class="mdescRight">modify helper to check if removing a node will violate any preconditions  <a href="classdhtt_1_1MainServer.html#a7b11c43bcce1b80070f6f4b9279caf91">More...</a><br /></td></tr>
+<tr class="separator:a7b11c43bcce1b80070f6f4b9279caf91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a4e8caddec43a6b0cd591aee0cc0348"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a2a4e8caddec43a6b0cd591aee0cc0348">can_add</a> (dhtt_msgs::msg::Node to_add, int index)</td></tr>
+<tr class="memdesc:a2a4e8caddec43a6b0cd591aee0cc0348"><td class="mdescLeft">&#160;</td><td class="mdescRight">modify helper to check if adding the given node will violate preconditions of another  <a href="classdhtt_1_1MainServer.html#a2a4e8caddec43a6b0cd591aee0cc0348">More...</a><br /></td></tr>
+<tr class="separator:a2a4e8caddec43a6b0cd591aee0cc0348"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b26e20c59f42231e4d972951c7e49bf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a8b26e20c59f42231e4d972951c7e49bf">can_mutate</a> (std::string node_name, std::string n_type)</td></tr>
+<tr class="memdesc:a8b26e20c59f42231e4d972951c7e49bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">modify helper to check if mutating the given node will violate a precondition of another as well as the preconditions of it's children  <a href="classdhtt_1_1MainServer.html#a8b26e20c59f42231e4d972951c7e49bf">More...</a><br /></td></tr>
+<tr class="separator:a8b26e20c59f42231e4d972951c7e49bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a669b9175b3a76523c73c2635d265de6d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a669b9175b3a76523c73c2635d265de6d">stop_tree</a> (bool interrupt)</td></tr>
 <tr class="memdesc:a669b9175b3a76523c73c2635d265de6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops execution of the tree.  <a href="classdhtt_1_1MainServer.html#a669b9175b3a76523c73c2635d265de6d">More...</a><br /></td></tr>
 <tr class="separator:a669b9175b3a76523c73c2635d265de6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7cc8b0a9ea7eddd75f31e15489c04fe"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#ad7cc8b0a9ea7eddd75f31e15489c04fe">start_tree</a> ()</td></tr>
 <tr class="memdesc:ad7cc8b0a9ea7eddd75f31e15489c04fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Signals the root node to start execution.  <a href="classdhtt_1_1MainServer.html#ad7cc8b0a9ea7eddd75f31e15489c04fe">More...</a><br /></td></tr>
 <tr class="separator:ad7cc8b0a9ea7eddd75f31e15489c04fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a72c0e39f43bb2ce066d7de9f2d12f5"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a2a72c0e39f43bb2ce066d7de9f2d12f5">save_tree</a> ()</td></tr>
-<tr class="memdesc:a2a72c0e39f43bb2ce066d7de9f2d12f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the current tree and params of each node to a given file name.  <a href="classdhtt_1_1MainServer.html#a2a72c0e39f43bb2ce066d7de9f2d12f5">More...</a><br /></td></tr>
-<tr class="separator:a2a72c0e39f43bb2ce066d7de9f2d12f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa5b2c635c84ac2cad31c11f66f4d8b1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#afa5b2c635c84ac2cad31c11f66f4d8b1">save_tree</a> (std::string file_name, std::string file_path)</td></tr>
+<tr class="memdesc:afa5b2c635c84ac2cad31c11f66f4d8b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the current tree and params of each node to a given file name.  <a href="classdhtt_1_1MainServer.html#afa5b2c635c84ac2cad31c11f66f4d8b1">More...</a><br /></td></tr>
+<tr class="separator:afa5b2c635c84ac2cad31c11f66f4d8b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ad2e6bea01a93bb8a7dd17cc2f82746"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a5ad2e6bea01a93bb8a7dd17cc2f82746">reset_tree</a> ()</td></tr>
 <tr class="memdesc:a5ad2e6bea01a93bb8a7dd17cc2f82746"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes everything in the tree except for the root node.  <a href="classdhtt_1_1MainServer.html#a5ad2e6bea01a93bb8a7dd17cc2f82746">More...</a><br /></td></tr>
 <tr class="separator:a5ad2e6bea01a93bb8a7dd17cc2f82746"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acea6fce1e737211794cb949f6fa320ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#acea6fce1e737211794cb949f6fa320ae">reset_param_server</a> ()</td></tr>
+<tr class="memdesc:acea6fce1e737211794cb949f6fa320ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">resets all parameters in param_node to default values  <a href="classdhtt_1_1MainServer.html#acea6fce1e737211794cb949f6fa320ae">More...</a><br /></td></tr>
+<tr class="separator:acea6fce1e737211794cb949f6fa320ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e3e7c6bcb4ab30a474c4111e2010c44"><td class="memItemLeft" align="right" valign="top">std::vector&lt; dhtt_msgs::msg::Subtree &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a0e3e7c6bcb4ab30a474c4111e2010c44">fetch_subtrees_by_common_name</a> (std::string name)</td></tr>
 <tr class="memdesc:a0e3e7c6bcb4ab30a474c4111e2010c44"><td class="mdescLeft">&#160;</td><td class="mdescRight">fetches all subtrees which contain the given string in their name  <a href="classdhtt_1_1MainServer.html#a0e3e7c6bcb4ab30a474c4111e2010c44">More...</a><br /></td></tr>
 <tr class="separator:a0e3e7c6bcb4ab30a474c4111e2010c44"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,6 +187,18 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:aa771d513effe038bc986e5a1728f28a1"><td class="memItemLeft" align="right" valign="top">dhtt_msgs::msg::Subtree&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#aa771d513effe038bc986e5a1728f28a1">fetch_subtree_by_name</a> (std::string name)</td></tr>
 <tr class="memdesc:aa771d513effe038bc986e5a1728f28a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">fetches the subtree with exactly the given name  <a href="classdhtt_1_1MainServer.html#aa771d513effe038bc986e5a1728f28a1">More...</a><br /></td></tr>
 <tr class="separator:aa771d513effe038bc986e5a1728f28a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4fb19b1639ae232b8c02ece1ee39a83"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#aa4fb19b1639ae232b8c02ece1ee39a83">maintainer_thread_cb</a> ()</td></tr>
+<tr class="memdesc:aa4fb19b1639ae232b8c02ece1ee39a83"><td class="mdescLeft">&#160;</td><td class="mdescRight">main thread function for the maintenance pipeline  <a href="classdhtt_1_1MainServer.html#aa4fb19b1639ae232b8c02ece1ee39a83">More...</a><br /></td></tr>
+<tr class="separator:aa4fb19b1639ae232b8c02ece1ee39a83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9659de6fe35fff8d2ed417b0cf1d9463"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a9659de6fe35fff8d2ed417b0cf1d9463">start_maintain</a> (std::string node_name)</td></tr>
+<tr class="memdesc:a9659de6fe35fff8d2ed417b0cf1d9463"><td class="mdescLeft">&#160;</td><td class="mdescRight">adds a node name to the maintain queue and returns the id associated with the name  <a href="classdhtt_1_1MainServer.html#a9659de6fe35fff8d2ed417b0cf1d9463">More...</a><br /></td></tr>
+<tr class="separator:a9659de6fe35fff8d2ed417b0cf1d9463"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8911c5dc8b996ead55c3b8dc3352611f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a8911c5dc8b996ead55c3b8dc3352611f">wait_for_maintain</a> (int id)</td></tr>
+<tr class="memdesc:a8911c5dc8b996ead55c3b8dc3352611f"><td class="mdescLeft">&#160;</td><td class="mdescRight">blocks until the given id of the request is completed in the main thread  <a href="classdhtt_1_1MainServer.html#a8911c5dc8b996ead55c3b8dc3352611f">More...</a><br /></td></tr>
+<tr class="separator:a8911c5dc8b996ead55c3b8dc3352611f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a297ba2fe76e3642533782e03575cfda2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a297ba2fe76e3642533782e03575cfda2">wait_for_maintain_all</a> ()</td></tr>
+<tr class="memdesc:a297ba2fe76e3642533782e03575cfda2"><td class="mdescLeft">&#160;</td><td class="mdescRight">waits for the maintenance queue to be empty  <a href="classdhtt_1_1MainServer.html#a297ba2fe76e3642533782e03575cfda2">More...</a><br /></td></tr>
+<tr class="separator:a297ba2fe76e3642533782e03575cfda2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52c8c63c817455fa2493b257f3dc3c4b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a52c8c63c817455fa2493b257f3dc3c4b">status_callback</a> (const std::shared_ptr&lt; dhtt_msgs::msg::Node &gt; data)</td></tr>
 <tr class="memdesc:a52c8c63c817455fa2493b257f3dc3c4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">subscription callback to maintain the internal status of each node  <a href="classdhtt_1_1MainServer.html#a52c8c63c817455fa2493b257f3dc3c4b">More...</a><br /></td></tr>
 <tr class="separator:a52c8c63c817455fa2493b257f3dc3c4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -184,12 +223,30 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:ac389893f1ef1e0c6d05fa7b09673e0b3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; dhtt_msgs::msg::Node &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#ac389893f1ef1e0c6d05fa7b09673e0b3">get_active_nodes</a> ()</td></tr>
 <tr class="memdesc:ac389893f1ef1e0c6d05fa7b09673e0b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a list of all nodes that have status ACTIVE.  <a href="classdhtt_1_1MainServer.html#ac389893f1ef1e0c6d05fa7b09673e0b3">More...</a><br /></td></tr>
 <tr class="separator:ac389893f1ef1e0c6d05fa7b09673e0b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ee34ff2dce8b8b2bff8547e07e3d051"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a3ee34ff2dce8b8b2bff8547e07e3d051">set_changed_up_tree</a> (std::vector&lt; dhtt_msgs::msg::Node &gt;::iterator node)</td></tr>
+<tr class="memdesc:a3ee34ff2dce8b8b2bff8547e07e3d051"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets changed flag for given node and all parent nodes up the tree  <a href="classdhtt_1_1MainServer.html#a3ee34ff2dce8b8b2bff8547e07e3d051">More...</a><br /></td></tr>
+<tr class="separator:a3ee34ff2dce8b8b2bff8547e07e3d051"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaca8d1df11ec698b7b5761c38639b8bd"><td class="memItemLeft" align="right" valign="top">dhtt_msgs::msg::Subtree&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#aaca8d1df11ec698b7b5761c38639b8bd">construct_subtree_from_node_iter</a> (std::vector&lt; dhtt_msgs::msg::Node &gt;::iterator top_node)</td></tr>
 <tr class="memdesc:aaca8d1df11ec698b7b5761c38639b8bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">internal function which constructs a subtree message from a given node iter  <a href="classdhtt_1_1MainServer.html#aaca8d1df11ec698b7b5761c38639b8bd">More...</a><br /></td></tr>
 <tr class="separator:aaca8d1df11ec698b7b5761c38639b8bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ef29a85c0dae88b7e02e81b2ba2d5d6"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a2ef29a85c0dae88b7e02e81b2ba2d5d6">construct_subtree_from_yaml</a> (dhtt_msgs::msg::Subtree &amp;to_construct, std::string file_name, std::vector&lt; std::string &gt; file_args, std::string parent_name=&quot;&quot;)</td></tr>
+<tr class="memdesc:a2ef29a85c0dae88b7e02e81b2ba2d5d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructs a Subtree message from a yaml description of a tree  <a href="classdhtt_1_1MainServer.html#a2ef29a85c0dae88b7e02e81b2ba2d5d6">More...</a><br /></td></tr>
+<tr class="separator:a2ef29a85c0dae88b7e02e81b2ba2d5d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c3b8f72cf27ed7c94f25e887c60abda"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a3c3b8f72cf27ed7c94f25e887c60abda">can_modify</a> (std::string to_modify)</td></tr>
+<tr class="memdesc:a3c3b8f72cf27ed7c94f25e887c60abda"><td class="mdescLeft">&#160;</td><td class="mdescRight">internal check for if the given node can be modified  <a href="classdhtt_1_1MainServer.html#a3c3b8f72cf27ed7c94f25e887c60abda">More...</a><br /></td></tr>
+<tr class="separator:a3c3b8f72cf27ed7c94f25e887c60abda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc3aaea607d614c105ff004354e5f8f4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#acc3aaea607d614c105ff004354e5f8f4">subtrees_are_disjoint</a> (std::string to_modify, std::string to_check)</td></tr>
+<tr class="memdesc:acc3aaea607d614c105ff004354e5f8f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">checks if two subtrees rooted at the inputted node names are disjoint  <a href="classdhtt_1_1MainServer.html#acc3aaea607d614c105ff004354e5f8f4">More...</a><br /></td></tr>
+<tr class="separator:acc3aaea607d614c105ff004354e5f8f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
+<tr class="memitem:aee8783b9db60d818f7f85b149af00fb4"><td class="memItemLeft" align="right" valign="top">rclcpp::CallbackGroup::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#aee8783b9db60d818f7f85b149af00fb4">conc_group</a></td></tr>
+<tr class="separator:aee8783b9db60d818f7f85b149af00fb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad18b008dce188b5c84e64601f1c62121"><td class="memItemLeft" align="right" valign="top">rclcpp::SubscriptionOptions&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#ad18b008dce188b5c84e64601f1c62121">sub_opts</a></td></tr>
+<tr class="separator:ad18b008dce188b5c84e64601f1c62121"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7afa774e12a5fe9536fdcaa137ddf68b"><td class="memItemLeft" align="right" valign="top">rclcpp::PublisherOptions&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a7afa774e12a5fe9536fdcaa137ddf68b">pub_opts</a></td></tr>
+<tr class="separator:a7afa774e12a5fe9536fdcaa137ddf68b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1b02dde668cf184e3a01685335dedf6"><td class="memItemLeft" align="right" valign="top">rclcpp::Service&lt; dhtt_msgs::srv::ModifyRequest &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#aa1b02dde668cf184e3a01685335dedf6">modify_server</a></td></tr>
 <tr class="separator:aa1b02dde668cf184e3a01685335dedf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d47c114329b812188850b3024d758fd"><td class="memItemLeft" align="right" valign="top">rclcpp::Service&lt; dhtt_msgs::srv::ControlRequest &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a3d47c114329b812188850b3024d758fd">control_server</a></td></tr>
@@ -198,6 +255,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a4774ab8f47ee4ecaa2652db2027ef1cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1adbe3100452f96c256ffcf8ee1e403f"><td class="memItemLeft" align="right" valign="top">rclcpp::Service&lt; dhtt_msgs::srv::HistoryRequest &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a1adbe3100452f96c256ffcf8ee1e403f">history_server</a></td></tr>
 <tr class="separator:a1adbe3100452f96c256ffcf8ee1e403f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d2c0e90099406b06f9225488c950c9a"><td class="memItemLeft" align="right" valign="top">rclcpp::Service&lt; dhtt_msgs::srv::ResourceRequest &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a1d2c0e90099406b06f9225488c950c9a">resource_server</a></td></tr>
+<tr class="separator:a1d2c0e90099406b06f9225488c950c9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3db453527ebe9fbb960649f529098cec"><td class="memItemLeft" align="right" valign="top">rclcpp::Publisher&lt; dhtt_msgs::msg::NodeStatus &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a3db453527ebe9fbb960649f529098cec">root_status_pub</a></td></tr>
 <tr class="separator:a3db453527ebe9fbb960649f529098cec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c4025076fe2b03cf2692e6ed3c26c05"><td class="memItemLeft" align="right" valign="top">rclcpp::Subscription&lt; dhtt_msgs::msg::Node &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a8c4025076fe2b03cf2692e6ed3c26c05">status_sub</a></td></tr>
@@ -206,26 +265,66 @@ Private Attributes</h2></td></tr>
 <tr class="separator:ae55dbb2e55fd4f94237a91d4bc1b537d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97bd436d74aaebe3a4801c392ae8cdc2"><td class="memItemLeft" align="right" valign="top">rclcpp::Client&lt; dhtt_msgs::srv::InternalControlRequest &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a97bd436d74aaebe3a4801c392ae8cdc2">internal_control_client</a></td></tr>
 <tr class="separator:a97bd436d74aaebe3a4801c392ae8cdc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad63cd9dd8e4454f874424025e06c64ed"><td class="memItemLeft" align="right" valign="top">boost::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#ad63cd9dd8e4454f874424025e06c64ed">modify_mut</a></td></tr>
-<tr class="separator:ad63cd9dd8e4454f874424025e06c64ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbe7a0ea592dc0dbb7acd9da9e4c8b7d"><td class="memItemLeft" align="right" valign="top">boost::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#abbe7a0ea592dc0dbb7acd9da9e4c8b7d">running_mut</a></td></tr>
-<tr class="separator:abbe7a0ea592dc0dbb7acd9da9e4c8b7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d6a69f832b19159aed48d7b78c7afd4"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, std::shared_ptr&lt; <a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a9d6a69f832b19159aed48d7b78c7afd4">node_map</a></td></tr>
-<tr class="separator:a9d6a69f832b19159aed48d7b78c7afd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ca2aaa2d398822268c9cd76d1a92ba1"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1CommunicationAggregator.html">CommunicationAggregator</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a0ca2aaa2d398822268c9cd76d1a92ba1">global_com</a></td></tr>
+<tr class="separator:a0ca2aaa2d398822268c9cd76d1a92ba1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b416fb5572df4ef7160797e32c0a75f"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; std::string, rclcpp_action::Client&lt; dhtt_msgs::action::Condition &gt;::SharedPtr &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a6b416fb5572df4ef7160797e32c0a75f">maintenance_client_ptrs</a></td></tr>
+<tr class="separator:a6b416fb5572df4ef7160797e32c0a75f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40ed25d68d02b1a9370658c19b965049"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a40ed25d68d02b1a9370658c19b965049">modify_mut</a></td></tr>
+<tr class="separator:a40ed25d68d02b1a9370658c19b965049"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d280409bc4098db671180f2a7020765"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a6d280409bc4098db671180f2a7020765">running_mut</a></td></tr>
+<tr class="separator:a6d280409bc4098db671180f2a7020765"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3c3bb1d4f3f325f314bf9ce694dba56"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#ab3c3bb1d4f3f325f314bf9ce694dba56">maintenance_mut</a></td></tr>
+<tr class="separator:ab3c3bb1d4f3f325f314bf9ce694dba56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad780a807bc1f022232beba3bbdaa917"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#aad780a807bc1f022232beba3bbdaa917">wait_mut</a></td></tr>
+<tr class="separator:aad780a807bc1f022232beba3bbdaa917"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbe9de4af29154c11f4d4809a32c5658"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; std::mutex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#afbe9de4af29154c11f4d4809a32c5658">resource_update_mut_ptr</a></td></tr>
+<tr class="separator:afbe9de4af29154c11f4d4809a32c5658"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a113242243c4877669e3c27aefdf903be"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; std::mutex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a113242243c4877669e3c27aefdf903be">global_modify_mut_ptr</a></td></tr>
+<tr class="separator:a113242243c4877669e3c27aefdf903be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6908630e2d55048989ec616e2839d81"><td class="memItemLeft" align="right" valign="top">std::condition_variable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#ad6908630e2d55048989ec616e2839d81">maintenance_queue_condition</a></td></tr>
+<tr class="separator:ad6908630e2d55048989ec616e2839d81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a296d18854b0f38b6825859e7745a8070"><td class="memItemLeft" align="right" valign="top">std::condition_variable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a296d18854b0f38b6825859e7745a8070">finished_maintenance_id_condition</a></td></tr>
+<tr class="separator:a296d18854b0f38b6825859e7745a8070"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f786ec492dad67973a1597d0411ba2a"><td class="memItemLeft" align="right" valign="top">std::queue&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a8f786ec492dad67973a1597d0411ba2a">maintenance_queue</a></td></tr>
+<tr class="separator:a8f786ec492dad67973a1597d0411ba2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80a28d5ee6fbebb02b98cddf4d3a0802"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; std::string, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a80a28d5ee6fbebb02b98cddf4d3a0802">maintenance_dict</a></td></tr>
+<tr class="separator:a80a28d5ee6fbebb02b98cddf4d3a0802"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0379d00c2df037e73afcc34dd46684fb"><td class="memItemLeft" align="right" valign="top">dhtt_msgs::action::Condition::Result::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a0379d00c2df037e73afcc34dd46684fb">maintenance_result</a></td></tr>
+<tr class="separator:a0379d00c2df037e73afcc34dd46684fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b1afa18687955d6f54172461d05bef6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a6b1afa18687955d6f54172461d05bef6">waiting_for_maintenance</a></td></tr>
+<tr class="separator:a6b1afa18687955d6f54172461d05bef6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f26d9e27b9453375f847d05fb9beab9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a9f26d9e27b9453375f847d05fb9beab9">last_finished_id</a></td></tr>
+<tr class="separator:a9f26d9e27b9453375f847d05fb9beab9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9235374ed5977ae647e2ff0155a8e51e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a9235374ed5977ae647e2ff0155a8e51e">used_id</a></td></tr>
+<tr class="separator:a9235374ed5977ae647e2ff0155a8e51e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70cb9c48d9368173fe96df869f0747a7"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; std::string, std::shared_ptr&lt; <a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a70cb9c48d9368173fe96df869f0747a7">node_map</a></td></tr>
+<tr class="separator:a70cb9c48d9368173fe96df869f0747a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0785b9f6450a5aa44ef3d1386179e6d1"><td class="memItemLeft" align="right" valign="top">dhtt_msgs::msg::Subtree&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a0785b9f6450a5aa44ef3d1386179e6d1">node_list</a></td></tr>
 <tr class="separator:a0785b9f6450a5aa44ef3d1386179e6d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32c91656658edf862ab4953bafbd5f01"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; std::thread &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a32c91656658edf862ab4953bafbd5f01">run_tree_thread</a></td></tr>
 <tr class="separator:a32c91656658edf862ab4953bafbd5f01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10e28cc6c4677cde04a331d20082882d"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; std::thread &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a10e28cc6c4677cde04a331d20082882d">maintenance_thread</a></td></tr>
+<tr class="separator:a10e28cc6c4677cde04a331d20082882d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a09b7af60f180c4a2884834a5045030cf"><td class="memItemLeft" align="right" valign="top">std::list&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a09b7af60f180c4a2884834a5045030cf">history</a></td></tr>
 <tr class="separator:a09b7af60f180c4a2884834a5045030cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72e0f6e8d43d0d48af21110fb2f73a0e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a72e0f6e8d43d0d48af21110fb2f73a0e">being_modified</a></td></tr>
+<tr class="separator:a72e0f6e8d43d0d48af21110fb2f73a0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8597f5377a68158e6176af833ed49a3a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; rclcpp::executors::MultiThreadedExecutor &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a8597f5377a68158e6176af833ed49a3a">spinner_cp</a></td></tr>
 <tr class="separator:a8597f5377a68158e6176af833ed49a3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2de781c29b240bd4197654dd799ab362"><td class="memItemLeft" align="right" valign="top">std::experimental::filesystem::path&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a2de781c29b240bd4197654dd799ab362">dhtt_folder_path</a></td></tr>
+<tr class="separator:a2de781c29b240bd4197654dd799ab362"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acbb04ecf855a277a08cb75f853a29ec0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#acbb04ecf855a277a08cb75f853a29ec0">total_nodes_added</a></td></tr>
 <tr class="separator:acbb04ecf855a277a08cb75f853a29ec0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a760368e748f42ff110b41093dd644c2a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a760368e748f42ff110b41093dd644c2a">verbose</a></td></tr>
 <tr class="separator:a760368e748f42ff110b41093dd644c2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7dbbf6c6d913289a4ee63b82488cab13"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a7dbbf6c6d913289a4ee63b82488cab13">running</a></td></tr>
 <tr class="separator:a7dbbf6c6d913289a4ee63b82488cab13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8369e390a7b32a3c5b2b7413522f5cac"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a8369e390a7b32a3c5b2b7413522f5cac">end</a></td></tr>
+<tr class="separator:a8369e390a7b32a3c5b2b7413522f5cac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5dc9af6f362b582ff46c9a90d00298af"><td class="memItemLeft" align="right" valign="top">long unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a5dc9af6f362b582ff46c9a90d00298af">cooking_zoo_counter</a> = 0</td></tr>
+<tr class="separator:a5dc9af6f362b582ff46c9a90d00298af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9bea1389f6a53ab0e2274ac8ca19a313"><td class="memItemLeft" align="right" valign="top">const std::map&lt; int, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a9bea1389f6a53ab0e2274ac8ca19a313">NODE_TYPE_TO_PLUGIN</a></td></tr>
+<tr class="separator:a9bea1389f6a53ab0e2274ac8ca19a313"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >main communication to manipulate and get information from the dHTT </p>
@@ -236,8 +335,8 @@ Private Attributes</h2></td></tr>
 <li>history: requests for runtime history information from the tree </li>
 </ul>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a79c34c695e51e387b1afb1ce0dd84ae0" name="a79c34c695e51e387b1afb1ce0dd84ae0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79c34c695e51e387b1afb1ce0dd84ae0">&#9670;&#160;</a></span>MainServer()</h2>
+<a id="a8e0c463a08c78eb1ca4e63d3f87d67d4" name="a8e0c463a08c78eb1ca4e63d3f87d67d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e0c463a08c78eb1ca4e63d3f87d67d4">&#9670;&#160;</a></span>MainServer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -252,7 +351,13 @@ Private Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::shared_ptr&lt; rclcpp::executors::MultiThreadedExecutor &gt;&#160;</td>
-          <td class="paramname"><em>spinner</em>&#160;</td>
+          <td class="paramname"><em>spinner</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>slow</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -291,8 +396,8 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a2dce91b70003524c39f9425c0ed7ecca" name="a2dce91b70003524c39f9425c0ed7ecca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2dce91b70003524c39f9425c0ed7ecca">&#9670;&#160;</a></span>add_node()</h2>
+<a id="a35d3db25bf6f92a806ecbf4c6a343b65" name="a35d3db25bf6f92a806ecbf4c6a343b65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35d3db25bf6f92a806ecbf4c6a343b65">&#9670;&#160;</a></span>add_node()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -316,7 +421,19 @@ Private Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">dhtt_msgs::msg::Node&#160;</td>
-          <td class="paramname"><em>to_add</em>&#160;</td>
+          <td class="paramname"><em>to_add</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>force</em> = <code>true</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em> = <code>-1</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -337,7 +454,9 @@ Private Attributes</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">response</td><td>shared_ptr to the response which will be returned to the user. Modified with any successfully added node's name. </td></tr>
     <tr><td class="paramname">parent_name</td><td>name of the parent of the new node </td></tr>
-    <tr><td class="paramname">to_add</td><td>msg format of the new node. See Node.msg for more information.</td></tr>
+    <tr><td class="paramname">to_add</td><td>msg format of the new node. See Node.msg for more information. </td></tr>
+    <tr><td class="paramname">force</td><td>switch to check pre/postcondition relationships after change </td></tr>
+    <tr><td class="paramname">index</td><td>to insert the new node add in the parent's child list</td></tr>
   </table>
   </dd>
 </dl>
@@ -345,8 +464,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a9e728cbb985a54de271a01a1f0d2b3ce" name="a9e728cbb985a54de271a01a1f0d2b3ce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e728cbb985a54de271a01a1f0d2b3ce">&#9670;&#160;</a></span>add_nodes_from_file()</h2>
+<a id="a28abce8d945c5050892805c53306c1f3" name="a28abce8d945c5050892805c53306c1f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28abce8d945c5050892805c53306c1f3">&#9670;&#160;</a></span>add_nodes_from_file()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -370,7 +489,19 @@ Private Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>file_name</em>&#160;</td>
+          <td class="paramname"><em>file_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; std::string &gt;&#160;</td>
+          <td class="paramname"><em>file_args</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>force</em> = <code>true</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -391,11 +522,176 @@ Private Attributes</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">response</td><td>shared_ptr to the response which will be returned to the user. Modified with any successfully added node's name. </td></tr>
     <tr><td class="paramname">parent_name</td><td>name of the parent of the new node </td></tr>
-    <tr><td class="paramname">file_name</td><td>full path of the yaml file which describes the subtree to add</td></tr>
+    <tr><td class="paramname">file_name</td><td>full path of the yaml file which describes the subtree to add </td></tr>
+    <tr><td class="paramname">file_args</td><td>vector of 'arg_name: val' arg pairs to fill blank arguments in the yaml file (in the yaml they should look like 'key: $arg_name') </td></tr>
+    <tr><td class="paramname">force</td><td>switch to check pre/postcondition relationships after change</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>string with exception information or empty string if successful </dd></dl>
+
+</div>
+</div>
+<a id="a2a4e8caddec43a6b0cd591aee0cc0348" name="a2a4e8caddec43a6b0cd591aee0cc0348"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a4e8caddec43a6b0cd591aee0cc0348">&#9670;&#160;</a></span>can_add()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dhtt::MainServer::can_add </td>
+          <td>(</td>
+          <td class="paramtype">dhtt_msgs::msg::Node&#160;</td>
+          <td class="paramname"><em>to_add</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>modify helper to check if adding the given node will violate preconditions of another </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">to_add</td><td>message representation of the node to be added </td></tr>
+    <tr><td class="paramname">index</td><td>order of node in the parent's child list</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if adding the given node does not violate any preconditions of subsequent behaviors, false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="a3c3b8f72cf27ed7c94f25e887c60abda" name="a3c3b8f72cf27ed7c94f25e887c60abda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c3b8f72cf27ed7c94f25e887c60abda">&#9670;&#160;</a></span>can_modify()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dhtt::MainServer::can_modify </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>to_modify</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>internal check for if the given node can be modified </p>
+<p >Nodes can always be modified simultaneously unless on is in the subtree of another. This function ensures that they are not.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">to_modify</td><td>node to check for whether it can be modified</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the node can be modified, false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="a8b26e20c59f42231e4d972951c7e49bf" name="a8b26e20c59f42231e4d972951c7e49bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b26e20c59f42231e4d972951c7e49bf">&#9670;&#160;</a></span>can_mutate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dhtt::MainServer::can_mutate </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>node_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>n_type</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>modify helper to check if mutating the given node will violate a precondition of another as well as the preconditions of it's children </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">node_name</td><td>candidate node for mutation </td></tr>
+    <tr><td class="paramname">n_type</td><td>new type of the node after mutation</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if given operation doesn't violate preconditions, false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="a7b11c43bcce1b80070f6f4b9279caf91" name="a7b11c43bcce1b80070f6f4b9279caf91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b11c43bcce1b80070f6f4b9279caf91">&#9670;&#160;</a></span>can_remove()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dhtt::MainServer::can_remove </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>node_name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>modify helper to check if removing a node will violate any preconditions </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">node_name</td><td>name of candidate node to remove</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if removing node_name won't violate any subsequent preconditions, false otherwise </dd></dl>
 
 </div>
 </div>
@@ -426,6 +722,53 @@ Private Attributes</h2></td></tr>
 <p>Changes params of a given node name. </p>
 <p >NOT IMPLEMENTED YET</p>
 <dl class="section return"><dt>Returns</dt><dd>error message </dd></dl>
+
+</div>
+</div>
+<a id="a43a8a6a38b488bfe6fa033f739353860" name="a43a8a6a38b488bfe6fa033f739353860"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43a8a6a38b488bfe6fa033f739353860">&#9670;&#160;</a></span>collect_previous_postconditions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">dhtt_utils::PredicateConjunction dhtt::MainServer::collect_previous_postconditions </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>parent_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>child_index</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>collect the postconditions of temporally previous behaviors into a single predicate conjunction </p>
+<p >Upwardly traverses the tree and adds all new postconditions to a growing list in order to create an estimate of the world state before a certain node is to begin this is useful for deciding if the preconditions of a behavior will be met by the time it runs.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">parent_name</td><td>immediate parent to the proposed node </td></tr>
+    <tr><td class="paramname">the</td><td>index of that node in it's parent's children list</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>PredicateConjuction represents the prior world state </dd></dl>
 
 </div>
 </div>
@@ -465,6 +808,64 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a2ef29a85c0dae88b7e02e81b2ba2d5d6" name="a2ef29a85c0dae88b7e02e81b2ba2d5d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ef29a85c0dae88b7e02e81b2ba2d5d6">&#9670;&#160;</a></span>construct_subtree_from_yaml()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string dhtt::MainServer::construct_subtree_from_yaml </td>
+          <td>(</td>
+          <td class="paramtype">dhtt_msgs::msg::Subtree &amp;&#160;</td>
+          <td class="paramname"><em>to_construct</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>file_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; std::string &gt;&#160;</td>
+          <td class="paramname"><em>file_args</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>parent_name</em> = <code>&quot;&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>constructs a Subtree message from a yaml description of a tree </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">to_construct</td><td>reference to the message which is constructed as a side effect </td></tr>
+    <tr><td class="paramname">file_name</td><td>name and path of file to load yaml from</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>empty string if successfully loaded, otherwise contains an error message </dd></dl>
+
+</div>
+</div>
 <a id="a305d4682414cf86aa02193467007b23c" name="a305d4682414cf86aa02193467007b23c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a305d4682414cf86aa02193467007b23c">&#9670;&#160;</a></span>control_callback()</h2>
 
@@ -499,7 +900,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>callback for handling ControlRequest. See ControlRequest.msg for more information. </p>
+<p>callback for handling ControlRequest. See ControlRequest.srv for more information. </p>
 
 </div>
 </div>
@@ -537,7 +938,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>callback for handling FetchRequest. See FetchRequest.msg for more information. </p>
+<p>callback for handling FetchRequest. See FetchRequest.srv for more information. </p>
 
 </div>
 </div>
@@ -743,6 +1144,132 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="aed2d1522a382ccadfc3c680c244a335f" name="aed2d1522a382ccadfc3c680c244a335f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed2d1522a382ccadfc3c680c244a335f">&#9670;&#160;</a></span>get_next_behaviors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; int &gt; dhtt::MainServer::get_next_behaviors </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>parent_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>child_index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>offset</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>returns the list of subtrees which temporally will occur after the given index </p>
+<p >Subtrees will only happen temporally after the given index if they share an ancestor which enforces temporal constraints (and will run after). This function gathers each topmost subtree which fits this description. This is most important when considering if a given subtree can be removed</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">parent_name</td><td>immediate parent to the proposed node </td></tr>
+    <tr><td class="paramname">child_index</td><td>index where the child will be inserted </td></tr>
+    <tr><td class="paramname">offset</td><td>to ignore the parent node set to one (each level of the tree the offset will be added to the initial value of the child index)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>list of indices of the subsequent subtrees in the internal node_list </dd></dl>
+
+</div>
+</div>
+<a id="af222dc5f7079cf5261856fe177cd06a5" name="af222dc5f7079cf5261856fe177cd06a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af222dc5f7079cf5261856fe177cd06a5">&#9670;&#160;</a></span>get_postconditions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">dhtt_utils::PredicateConjunction dhtt::MainServer::get_postconditions </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>subtree_index</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the terminal postconditions for a given subtree. </p>
+<p >Terminal postconditions are the sum total postconditions of a given subtree.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">subtree_index</td><td>index of the subtree node in the internal nodelist</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>list of [ key, val ] postconditions given after running a subtree </dd></dl>
+
+</div>
+</div>
+<a id="aae8b77a5a0cebd6acf4ef5155e9bcf83" name="aae8b77a5a0cebd6acf4ef5155e9bcf83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae8b77a5a0cebd6acf4ef5155e9bcf83">&#9670;&#160;</a></span>get_preconditions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">dhtt_utils::PredicateConjunction dhtt::MainServer::get_preconditions </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>subtree_index</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the preconditions of an entire subtree. </p>
+<p >Every behavior that can run when a subtree is activated will be requested for preconditions and the result will be return as a single wholistic list</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">subtree_index</td><td>index of the subtree node in the internal nodelist</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>list of [ key, val ] preconditions required for running a subtree </dd></dl>
+
+</div>
+</div>
 <a id="a8f2558f1d98c5f2388a0935469eb6935" name="a8f2558f1d98c5f2388a0935469eb6935"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8f2558f1d98c5f2388a0935469eb6935">&#9670;&#160;</a></span>history_callback()</h2>
 
@@ -777,7 +1304,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>callback for handling HistoryRequest. See HistoryRequest.msg for more information. </p>
+<p>callback for handling HistoryRequest. See HistoryRequest.srv for more information. </p>
 
 </div>
 </div>
@@ -806,6 +1333,41 @@ Private Attributes</h2></td></tr>
 
 <p>Fixes the internal tree representation. </p>
 <p >Makes necessary changes to the internal representation of the dHTT after a node is added or removed.</p>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
+<a id="aa4fb19b1639ae232b8c02ece1ee39a83" name="aa4fb19b1639ae232b8c02ece1ee39a83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4fb19b1639ae232b8c02ece1ee39a83">&#9670;&#160;</a></span>maintainer_thread_cb()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dhtt::MainServer::maintainer_thread_cb </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>main thread function for the maintenance pipeline </p>
+<p >The maintenance pipeline maintains a queue of node names to maintain with given id's. When a node name is taken off of the queue the node in question's maintenance server is pinged with a request and the thread stalls to wait for the response. Once a response is received this thread notifies any waiting threads with the id corresponding to the response. Then the thread continues in an infinite loop.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">queue_size</td><td>max number of maintenance requests in the queue.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
 </div>
@@ -844,7 +1406,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>callback for handling ModifyRequests. See ModifyRequest.msg for more information. </p>
+<p>callback for handling ModifyRequests. See ModifyRequest.srv for more information. </p>
 
 </div>
 </div>
@@ -916,11 +1478,41 @@ Private Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">response</td><td>shared_ptr to the response which will be returned to the user. Modified with any successfully added node's name. </td></tr>
-    <tr><td class="paramname">to_remove</td><td>exact name of node to remove from the tree</td></tr>
+    <tr><td class="paramname">to_remove</td><td>exact name of node to remove from the tree </td></tr>
+    <tr><td class="paramname">force</td><td>switch to check pre/postcondition relationships after change </td></tr>
+    <tr><td class="paramname">force</td><td>switch to check pre/postcondition relationships after change</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>string with exception information or empty string if successful </dd></dl>
+
+</div>
+</div>
+<a id="acea6fce1e737211794cb949f6fa320ae" name="acea6fce1e737211794cb949f6fa320ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acea6fce1e737211794cb949f6fa320ae">&#9670;&#160;</a></span>reset_param_server()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dhtt::MainServer::reset_param_server </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>resets all parameters in param_node to default values </p>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
 </div>
 </div>
@@ -953,6 +1545,44 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="aaa0eb710f37098afa6de7bb04dfafd4d" name="aaa0eb710f37098afa6de7bb04dfafd4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa0eb710f37098afa6de7bb04dfafd4d">&#9670;&#160;</a></span>resource_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dhtt::MainServer::resource_callback </td>
+          <td>(</td>
+          <td class="paramtype">const std::shared_ptr&lt; dhtt_msgs::srv::ResourceRequest::Request &gt;&#160;</td>
+          <td class="paramname"><em>request</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; dhtt_msgs::srv::ResourceRequest::Response &gt;&#160;</td>
+          <td class="paramname"><em>response</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>callback for handling ResourceRequest. See ResourceRequest.srv for more information. </p>
+
+</div>
+</div>
 <a id="aa801ca3cae4f4adcb5617e26a430186f" name="aa801ca3cae4f4adcb5617e26a430186f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa801ca3cae4f4adcb5617e26a430186f">&#9670;&#160;</a></span>run_tree()</h2>
 
@@ -982,8 +1612,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a2a72c0e39f43bb2ce066d7de9f2d12f5" name="a2a72c0e39f43bb2ce066d7de9f2d12f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a72c0e39f43bb2ce066d7de9f2d12f5">&#9670;&#160;</a></span>save_tree()</h2>
+<a id="afa5b2c635c84ac2cad31c11f66f4d8b1" name="afa5b2c635c84ac2cad31c11f66f4d8b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa5b2c635c84ac2cad31c11f66f4d8b1">&#9670;&#160;</a></span>save_tree()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -994,8 +1624,19 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">std::string dhtt::MainServer::save_tree </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>file_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>file_path</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -1008,6 +1649,77 @@ Private Attributes</h2></td></tr>
 <p>Saves the current tree and params of each node to a given file name. </p>
 <p >NOT IMPLEMENTED YET</p>
 <dl class="section return"><dt>Returns</dt><dd>error message </dd></dl>
+
+</div>
+</div>
+<a id="a3ee34ff2dce8b8b2bff8547e07e3d051" name="a3ee34ff2dce8b8b2bff8547e07e3d051"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ee34ff2dce8b8b2bff8547e07e3d051">&#9670;&#160;</a></span>set_changed_up_tree()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dhtt::MainServer::set_changed_up_tree </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; dhtt_msgs::msg::Node &gt;::iterator&#160;</td>
+          <td class="paramname"><em>node</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>sets changed flag for given node and all parent nodes up the tree </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">node</td><td>iterator to the node we start setting the flags at</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
+<a id="a9659de6fe35fff8d2ed417b0cf1d9463" name="a9659de6fe35fff8d2ed417b0cf1d9463"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9659de6fe35fff8d2ed417b0cf1d9463">&#9670;&#160;</a></span>start_maintain()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int dhtt::MainServer::start_maintain </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>node_name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>adds a node name to the maintain queue and returns the id associated with the name </p>
+<p >If a node_name is already in the queue then just the id number is returned.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">node_name</td><td>to request maintenance for</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int referring to the id associated with the request </dd></dl>
 
 </div>
 </div>
@@ -1112,6 +1824,52 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="acc3aaea607d614c105ff004354e5f8f4" name="acc3aaea607d614c105ff004354e5f8f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc3aaea607d614c105ff004354e5f8f4">&#9670;&#160;</a></span>subtrees_are_disjoint()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dhtt::MainServer::subtrees_are_disjoint </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>to_modify</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>to_check</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>checks if two subtrees rooted at the inputted node names are disjoint </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">to_modify</td><td>name of the incoming node to modify </td></tr>
+    <tr><td class="paramname">to_check</td><td>name of the other node to check</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if trees are disjoint, false otherwise </dd></dl>
+
+</div>
+</div>
 <a id="ae06850b2b26f2d2e7dc8d71423665f39" name="ae06850b2b26f2d2e7dc8d71423665f39"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae06850b2b26f2d2e7dc8d71423665f39">&#9670;&#160;</a></span>tree_result_callback()</h2>
 
@@ -1142,7 +1900,92 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a8911c5dc8b996ead55c3b8dc3352611f" name="a8911c5dc8b996ead55c3b8dc3352611f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8911c5dc8b996ead55c3b8dc3352611f">&#9670;&#160;</a></span>wait_for_maintain()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dhtt::MainServer::wait_for_maintain </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>blocks until the given id of the request is completed in the main thread </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>of request to wait for</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
+<a id="a297ba2fe76e3642533782e03575cfda2" name="a297ba2fe76e3642533782e03575cfda2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a297ba2fe76e3642533782e03575cfda2">&#9670;&#160;</a></span>wait_for_maintain_all()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dhtt::MainServer::wait_for_maintain_all </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>waits for the maintenance queue to be empty </p>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="a72e0f6e8d43d0d48af21110fb2f73a0e" name="a72e0f6e8d43d0d48af21110fb2f73a0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72e0f6e8d43d0d48af21110fb2f73a0e">&#9670;&#160;</a></span>being_modified</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::string&gt; dhtt::MainServer::being_modified</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ae55dbb2e55fd4f94237a91d4bc1b537d" name="ae55dbb2e55fd4f94237a91d4bc1b537d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae55dbb2e55fd4f94237a91d4bc1b537d">&#9670;&#160;</a></span>client_ptr</h2>
 
@@ -1154,6 +1997,28 @@ Private Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">rclcpp_action::Client&lt;dhtt_msgs::action::Activation&gt;::SharedPtr dhtt::MainServer::client_ptr</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aee8783b9db60d818f7f85b149af00fb4" name="aee8783b9db60d818f7f85b149af00fb4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee8783b9db60d818f7f85b149af00fb4">&#9670;&#160;</a></span>conc_group</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">rclcpp::CallbackGroup::SharedPtr dhtt::MainServer::conc_group</td>
         </tr>
       </table>
   </td>
@@ -1187,6 +2052,72 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a5dc9af6f362b582ff46c9a90d00298af" name="a5dc9af6f362b582ff46c9a90d00298af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5dc9af6f362b582ff46c9a90d00298af">&#9670;&#160;</a></span>cooking_zoo_counter</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">long unsigned int dhtt::MainServer::cooking_zoo_counter = 0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2de781c29b240bd4197654dd799ab362" name="a2de781c29b240bd4197654dd799ab362"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2de781c29b240bd4197654dd799ab362">&#9670;&#160;</a></span>dhtt_folder_path</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::experimental::filesystem::path dhtt::MainServer::dhtt_folder_path</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8369e390a7b32a3c5b2b7413522f5cac" name="a8369e390a7b32a3c5b2b7413522f5cac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8369e390a7b32a3c5b2b7413522f5cac">&#9670;&#160;</a></span>end</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dhtt::MainServer::end</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a4774ab8f47ee4ecaa2652db2027ef1cc" name="a4774ab8f47ee4ecaa2652db2027ef1cc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4774ab8f47ee4ecaa2652db2027ef1cc">&#9670;&#160;</a></span>fetch_server</h2>
 
@@ -1198,6 +2129,72 @@ Private Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">rclcpp::Service&lt;dhtt_msgs::srv::FetchRequest&gt;::SharedPtr dhtt::MainServer::fetch_server</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a296d18854b0f38b6825859e7745a8070" name="a296d18854b0f38b6825859e7745a8070"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a296d18854b0f38b6825859e7745a8070">&#9670;&#160;</a></span>finished_maintenance_id_condition</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::condition_variable dhtt::MainServer::finished_maintenance_id_condition</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0ca2aaa2d398822268c9cd76d1a92ba1" name="a0ca2aaa2d398822268c9cd76d1a92ba1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ca2aaa2d398822268c9cd76d1a92ba1">&#9670;&#160;</a></span>global_com</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classdhtt_1_1CommunicationAggregator.html">CommunicationAggregator</a>&gt; dhtt::MainServer::global_com</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a113242243c4877669e3c27aefdf903be" name="a113242243c4877669e3c27aefdf903be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a113242243c4877669e3c27aefdf903be">&#9670;&#160;</a></span>global_modify_mut_ptr</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;std::mutex&gt; dhtt::MainServer::global_modify_mut_ptr</td>
         </tr>
       </table>
   </td>
@@ -1275,8 +2272,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ad63cd9dd8e4454f874424025e06c64ed" name="ad63cd9dd8e4454f874424025e06c64ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad63cd9dd8e4454f874424025e06c64ed">&#9670;&#160;</a></span>modify_mut</h2>
+<a id="a9f26d9e27b9453375f847d05fb9beab9" name="a9f26d9e27b9453375f847d05fb9beab9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f26d9e27b9453375f847d05fb9beab9">&#9670;&#160;</a></span>last_finished_id</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1285,7 +2282,183 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">boost::mutex dhtt::MainServer::modify_mut</td>
+          <td class="memname">int dhtt::MainServer::last_finished_id</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6b416fb5572df4ef7160797e32c0a75f" name="a6b416fb5572df4ef7160797e32c0a75f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b416fb5572df4ef7160797e32c0a75f">&#9670;&#160;</a></span>maintenance_client_ptrs</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;std::string, rclcpp_action::Client&lt;dhtt_msgs::action::Condition&gt;::SharedPtr&gt; dhtt::MainServer::maintenance_client_ptrs</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a80a28d5ee6fbebb02b98cddf4d3a0802" name="a80a28d5ee6fbebb02b98cddf4d3a0802"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80a28d5ee6fbebb02b98cddf4d3a0802">&#9670;&#160;</a></span>maintenance_dict</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;std::string, int&gt; dhtt::MainServer::maintenance_dict</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab3c3bb1d4f3f325f314bf9ce694dba56" name="ab3c3bb1d4f3f325f314bf9ce694dba56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3c3bb1d4f3f325f314bf9ce694dba56">&#9670;&#160;</a></span>maintenance_mut</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::mutex dhtt::MainServer::maintenance_mut</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8f786ec492dad67973a1597d0411ba2a" name="a8f786ec492dad67973a1597d0411ba2a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f786ec492dad67973a1597d0411ba2a">&#9670;&#160;</a></span>maintenance_queue</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::queue&lt;std::string&gt; dhtt::MainServer::maintenance_queue</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad6908630e2d55048989ec616e2839d81" name="ad6908630e2d55048989ec616e2839d81"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6908630e2d55048989ec616e2839d81">&#9670;&#160;</a></span>maintenance_queue_condition</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::condition_variable dhtt::MainServer::maintenance_queue_condition</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0379d00c2df037e73afcc34dd46684fb" name="a0379d00c2df037e73afcc34dd46684fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0379d00c2df037e73afcc34dd46684fb">&#9670;&#160;</a></span>maintenance_result</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">dhtt_msgs::action::Condition::Result::SharedPtr dhtt::MainServer::maintenance_result</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a10e28cc6c4677cde04a331d20082882d" name="a10e28cc6c4677cde04a331d20082882d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10e28cc6c4677cde04a331d20082882d">&#9670;&#160;</a></span>maintenance_thread</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;std::thread&gt; dhtt::MainServer::maintenance_thread</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a40ed25d68d02b1a9370658c19b965049" name="a40ed25d68d02b1a9370658c19b965049"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a40ed25d68d02b1a9370658c19b965049">&#9670;&#160;</a></span>modify_mut</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::mutex dhtt::MainServer::modify_mut</td>
         </tr>
       </table>
   </td>
@@ -1341,8 +2514,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a9d6a69f832b19159aed48d7b78c7afd4" name="a9d6a69f832b19159aed48d7b78c7afd4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d6a69f832b19159aed48d7b78c7afd4">&#9670;&#160;</a></span>node_map</h2>
+<a id="a70cb9c48d9368173fe96df869f0747a7" name="a70cb9c48d9368173fe96df869f0747a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70cb9c48d9368173fe96df869f0747a7">&#9670;&#160;</a></span>node_map</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1351,7 +2524,99 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;std::string, std::shared_ptr&lt;<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a>&gt; &gt; dhtt::MainServer::node_map</td>
+          <td class="memname">std::unordered_map&lt;std::string, std::shared_ptr&lt;<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a>&gt; &gt; dhtt::MainServer::node_map</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9bea1389f6a53ab0e2274ac8ca19a313" name="a9bea1389f6a53ab0e2274ac8ca19a313"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9bea1389f6a53ab0e2274ac8ca19a313">&#9670;&#160;</a></span>NODE_TYPE_TO_PLUGIN</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::map&lt;int, std::string&gt; dhtt::MainServer::NODE_TYPE_TO_PLUGIN</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">{</div>
+<div class="line">            {dhtt_msgs::msg::Node::AND, <span class="stringliteral">&quot;dhtt_plugins::AndBehavior&quot;</span>},</div>
+<div class="line">            {dhtt_msgs::msg::Node::THEN, <span class="stringliteral">&quot;dhtt_plugins::ThenBehavior&quot;</span>},</div>
+<div class="line">            {dhtt_msgs::msg::Node::OR, <span class="stringliteral">&quot;dhtt_plugins::OrBehavior&quot;</span>}}</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a7afa774e12a5fe9536fdcaa137ddf68b" name="a7afa774e12a5fe9536fdcaa137ddf68b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7afa774e12a5fe9536fdcaa137ddf68b">&#9670;&#160;</a></span>pub_opts</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">rclcpp::PublisherOptions dhtt::MainServer::pub_opts</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1d2c0e90099406b06f9225488c950c9a" name="a1d2c0e90099406b06f9225488c950c9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d2c0e90099406b06f9225488c950c9a">&#9670;&#160;</a></span>resource_server</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">rclcpp::Service&lt;dhtt_msgs::srv::ResourceRequest&gt;::SharedPtr dhtt::MainServer::resource_server</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afbe9de4af29154c11f4d4809a32c5658" name="afbe9de4af29154c11f4d4809a32c5658"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afbe9de4af29154c11f4d4809a32c5658">&#9670;&#160;</a></span>resource_update_mut_ptr</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;std::mutex&gt; dhtt::MainServer::resource_update_mut_ptr</td>
         </tr>
       </table>
   </td>
@@ -1429,8 +2694,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="abbe7a0ea592dc0dbb7acd9da9e4c8b7d" name="abbe7a0ea592dc0dbb7acd9da9e4c8b7d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abbe7a0ea592dc0dbb7acd9da9e4c8b7d">&#9670;&#160;</a></span>running_mut</h2>
+<a id="a6d280409bc4098db671180f2a7020765" name="a6d280409bc4098db671180f2a7020765"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d280409bc4098db671180f2a7020765">&#9670;&#160;</a></span>running_mut</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1439,7 +2704,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">boost::mutex dhtt::MainServer::running_mut</td>
+          <td class="memname">std::mutex dhtt::MainServer::running_mut</td>
         </tr>
       </table>
   </td>
@@ -1495,6 +2760,28 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="ad18b008dce188b5c84e64601f1c62121" name="ad18b008dce188b5c84e64601f1c62121"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad18b008dce188b5c84e64601f1c62121">&#9670;&#160;</a></span>sub_opts</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">rclcpp::SubscriptionOptions dhtt::MainServer::sub_opts</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="acbb04ecf855a277a08cb75f853a29ec0" name="acbb04ecf855a277a08cb75f853a29ec0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acbb04ecf855a277a08cb75f853a29ec0">&#9670;&#160;</a></span>total_nodes_added</h2>
 
@@ -1517,6 +2804,28 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a9235374ed5977ae647e2ff0155a8e51e" name="a9235374ed5977ae647e2ff0155a8e51e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9235374ed5977ae647e2ff0155a8e51e">&#9670;&#160;</a></span>used_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int dhtt::MainServer::used_id</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a760368e748f42ff110b41093dd644c2a" name="a760368e748f42ff110b41093dd644c2a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a760368e748f42ff110b41093dd644c2a">&#9670;&#160;</a></span>verbose</h2>
 
@@ -1528,6 +2837,50 @@ Private Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">bool dhtt::MainServer::verbose</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aad780a807bc1f022232beba3bbdaa917" name="aad780a807bc1f022232beba3bbdaa917"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad780a807bc1f022232beba3bbdaa917">&#9670;&#160;</a></span>wait_mut</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::mutex dhtt::MainServer::wait_mut</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6b1afa18687955d6f54172461d05bef6" name="a6b1afa18687955d6f54172461d05bef6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b1afa18687955d6f54172461d05bef6">&#9670;&#160;</a></span>waiting_for_maintenance</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dhtt::MainServer::waiting_for_maintenance</td>
         </tr>
       </table>
   </td>

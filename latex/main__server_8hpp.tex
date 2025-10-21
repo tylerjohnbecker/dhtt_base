@@ -1,14 +1,19 @@
 \hypertarget{main__server_8hpp}{}\doxysection{dhtt/include/dhtt/server/main\+\_\+server.hpp File Reference}
 \label{main__server_8hpp}\index{dhtt/include/dhtt/server/main\_server.hpp@{dhtt/include/dhtt/server/main\_server.hpp}}
 {\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$sys/stat.\+h$>$}\newline
 {\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$mutex$>$}\newline
+{\ttfamily \#include $<$condition\+\_\+variable$>$}\newline
 {\ttfamily \#include $<$experimental/filesystem$>$}\newline
+{\ttfamily \#include $<$queue$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
 {\ttfamily \#include \char`\"{}yaml-\/cpp/yaml.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}yaml-\/cpp/exceptions.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}boost/thread/mutex.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}rclcpp/rclcpp.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}rclcpp\+\_\+action/rclcpp\+\_\+action.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt/tree/node.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dhtt/server/communication\+\_\+aggregator.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/msg/node.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/msg/node\+\_\+status.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/msg/resource.\+hpp\char`\"{}}\newline
@@ -17,6 +22,7 @@
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/srv/fetch\+\_\+request.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/srv/modify\+\_\+request.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/srv/history\+\_\+request.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/srv/resource\+\_\+request.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/srv/internal\+\_\+control\+\_\+request.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/srv/internal\+\_\+modify\+\_\+request.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/srv/internal\+\_\+service\+\_\+registration.\+hpp\char`\"{}}\newline
@@ -43,10 +49,18 @@ namespace \mbox{\hyperlink{namespacedhtt}{dhtt}}
 \#define \mbox{\hyperlink{main__server_8hpp_a50bd9e46f76ddb651dc3bd1b620b6d9e}{ROOT\+\_\+\+PARENT}}~-\/1
 \item 
 \#define \mbox{\hyperlink{main__server_8hpp_af10401f7e8956fde03ec72309dd0b4ce}{ROOT\+\_\+\+PARENT\+\_\+\+NAME}}~\char`\"{}NONE\char`\"{}
+\item 
+\#define \mbox{\hyperlink{main__server_8hpp_ab17be3bd08ea7f87b59cf83392cb5bf4}{DEFAULT\+\_\+\+SAVE\+\_\+\+LOCATION}}~\char`\"{}/sample\+\_\+tasks/\char`\"{}
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{main__server_8hpp_ab17be3bd08ea7f87b59cf83392cb5bf4}\label{main__server_8hpp_ab17be3bd08ea7f87b59cf83392cb5bf4}} 
+\index{main\_server.hpp@{main\_server.hpp}!DEFAULT\_SAVE\_LOCATION@{DEFAULT\_SAVE\_LOCATION}}
+\index{DEFAULT\_SAVE\_LOCATION@{DEFAULT\_SAVE\_LOCATION}!main\_server.hpp@{main\_server.hpp}}
+\doxysubsubsection{\texorpdfstring{DEFAULT\_SAVE\_LOCATION}{DEFAULT\_SAVE\_LOCATION}}
+{\footnotesize\ttfamily \#define DEFAULT\+\_\+\+SAVE\+\_\+\+LOCATION~\char`\"{}/sample\+\_\+tasks/\char`\"{}}
+
 \mbox{\Hypertarget{main__server_8hpp_a681680feae4df4182d532564c42fa1fc}\label{main__server_8hpp_a681680feae4df4182d532564c42fa1fc}} 
 \index{main\_server.hpp@{main\_server.hpp}!FAILED@{FAILED}}
 \index{FAILED@{FAILED}!main\_server.hpp@{main\_server.hpp}}

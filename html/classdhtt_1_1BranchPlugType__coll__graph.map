@@ -1,0 +1,4 @@
+<map id="dhtt::BranchPlugType" name="dhtt::BranchPlugType">
+<area shape="rect" id="node1" title="Base class for the plugs which provides the necessary multithreading capabilities." alt="" coords="5,93,151,119"/>
+<area shape="rect" id="node2" href="$classdhtt_1_1Node.html" title="dHTT Node class for all nodes on the tree" alt="" coords="37,5,119,31"/>
+</map>

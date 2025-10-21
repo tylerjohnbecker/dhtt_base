@@ -18,18 +18,30 @@ Inheritance diagram for dhtt\+::Node\+Type\+:
 \item 
 virtual void \mbox{\hyperlink{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}{initialize}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}})=0
 \begin{DoxyCompactList}\small\item\em abstract initialize function for all \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} classes \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classdhtt_1_1NodeType_ad30ea49bb3361fe79058cc9e10d705f5}{destruct}} ()
+\begin{DoxyCompactList}\small\item\em just available in case there are any non-\/trivial resource cleanups in any nodetypes \end{DoxyCompactList}\item 
 virtual std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5e52}{auction\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$container)=0
 \begin{DoxyCompactList}\small\item\em functionality for completing an auction \end{DoxyCompactList}\item 
 virtual std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610e91}{work\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$container)=0
 \begin{DoxyCompactList}\small\item\em functionality for performing work \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classdhtt_1_1NodeType_ac002d98a8bba7540f55566826e862dc9}{maintain\+\_\+conditions}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container)
+\begin{DoxyCompactList}\small\item\em top down maintainer for pre and post conditions of this node \end{DoxyCompactList}\item 
 virtual void \mbox{\hyperlink{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}})=0
 \begin{DoxyCompactList}\small\item\em method to parse the input parameters for the \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}} \end{DoxyCompactList}\item 
-virtual double \mbox{\hyperlink{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c845}{get\+\_\+perceived\+\_\+efficiency}} ()=0
+virtual double \mbox{\hyperlink{classdhtt_1_1NodeType_a6d70a5e6c0d832a32249795463e45a57}{get\+\_\+perceived\+\_\+efficiency}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container)=0
 \begin{DoxyCompactList}\small\item\em calculates the activation potential of the node locally \end{DoxyCompactList}\item 
 virtual bool \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}{is\+\_\+done}} ()
 \begin{DoxyCompactList}\small\item\em check for if the node is finished running \end{DoxyCompactList}\item 
 virtual bool \mbox{\hyperlink{classdhtt_1_1NodeType_a27786baa37dcfb24f406bf0becf5d428}{can\+\_\+add\+\_\+child}} ()
-\begin{DoxyCompactList}\small\item\em whether or not this node can have children \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em whether or not this node can have children \end{DoxyCompactList}\item 
+virtual dhtt\+\_\+utils\+::\+Predicate\+Conjunction \mbox{\hyperlink{classdhtt_1_1NodeType_a83731130208082ea0bfe6b5ca55b63d2}{get\+\_\+preconditions}} ()
+\begin{DoxyCompactList}\small\item\em returns the preconditions of the behavior \end{DoxyCompactList}\item 
+virtual dhtt\+\_\+utils\+::\+Predicate\+Conjunction \mbox{\hyperlink{classdhtt_1_1NodeType_a5b4e2269bb11b08d7da5782cd66955c4}{get\+\_\+postconditions}} ()
+\begin{DoxyCompactList}\small\item\em returns the postconditions of the behavior \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classdhtt_1_1NodeType_a6398aa95ffae2bafaf46d7946e9f8ddc}{release\+\_\+all\+\_\+resources}} ()
+\begin{DoxyCompactList}\small\item\em releases all node resources \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classdhtt_1_1NodeType_a13c6ceba906a5ed7ed76f37bba9ad8ac}{set\+\_\+name}} (std\+::string \mbox{\hyperlink{classdhtt_1_1NodeType_ae4c017feba5d310ade4d1c32a86d13cf}{name}})
+\end{DoxyCompactItemize}
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -39,19 +51,25 @@ std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classd
 \item 
 std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}
 \item 
-std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_aeeef5c0db14ade9f9babe3f532195abe}{preconditions}}
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator}{Communication\+Aggregator}} $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a27113bd279ce2e62687be35e95603910}{com\+\_\+agg}}
 \end{DoxyCompactItemize}
 \doxysubsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
+dhtt\+\_\+utils\+::\+Predicate\+Conjunction \mbox{\hyperlink{classdhtt_1_1NodeType_a09f44dea50dea76741516405a5cdffe6}{preconditions}}
+\item 
+dhtt\+\_\+utils\+::\+Predicate\+Conjunction \mbox{\hyperlink{classdhtt_1_1NodeType_a1709abe730c2ec5d62c95fdf2d75a20b}{postconditions}}
+\item 
 bool \mbox{\hyperlink{classdhtt_1_1NodeType_a19ba84ac2216554b7830b2be2eb0f3d4}{children\+\_\+allowed}}
+\item 
+std\+::string \mbox{\hyperlink{classdhtt_1_1NodeType_ae4c017feba5d310ade4d1c32a86d13cf}{name}}
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
 Base class describing the logic of the nodes. 
 
-This is an interface for how to write the logic of a node. This encompasses both task nodes and behavior nodes. Each node needs describe how to initialize, how to perform the auction, what work to perform, how to parse params, and how to calculate activation\+\_\+potential. 
+This is an interface for how to write the logic of a node. This encompasses both task nodes and behavior nodes. Each node needs describe how to initialize, how to perform the auction, what work to perform, how to parse params, and how to calculate perceived efficiency. 
 
 \doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5e52}\label{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5e52}} 
@@ -76,7 +94,7 @@ returns the result part of the Activation action in order to function with the \
 \end{DoxyReturn}
 
 
-Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a85e7c1065776a83857a0638b2ce8f9c4}{dhtt\+\_\+plugins\+::\+Action\+Type}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_aae9cdfe2c52650867d780d21d5e69bcd}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a86b264bee7ad6c1e3b75dd317aebebcf}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a4d5bef6f08a3f8b41c08627c7e49529f}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a015dfd866e959e263f2a8f61338dba0d}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a3563798f0425ee7d7b40bdac6e978bf7}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a85e7c1065776a83857a0638b2ce8f9c4}{dhtt\+\_\+plugins\+::\+Action\+Type}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_aae9cdfe2c52650867d780d21d5e69bcd}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_aae9cdfe2c52650867d780d21d5e69bcd}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a86b264bee7ad6c1e3b75dd317aebebcf}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a4d5bef6f08a3f8b41c08627c7e49529f}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a015dfd866e959e263f2a8f61338dba0d}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a3563798f0425ee7d7b40bdac6e978bf7}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
 
 \mbox{\Hypertarget{classdhtt_1_1NodeType_a27786baa37dcfb24f406bf0becf5d428}\label{classdhtt_1_1NodeType_a27786baa37dcfb24f406bf0becf5d428}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!can\_add\_child@{can\_add\_child}}
@@ -93,11 +111,24 @@ Generally, behavior nodes cannot have children so in that case they should not b
 \begin{DoxyReturn}{Returns}
 true if a child can be added. false otherwise. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c845}\label{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c845}} 
+\mbox{\Hypertarget{classdhtt_1_1NodeType_ad30ea49bb3361fe79058cc9e10d705f5}\label{classdhtt_1_1NodeType_ad30ea49bb3361fe79058cc9e10d705f5}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!destruct@{destruct}}
+\index{destruct@{destruct}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{destruct()}{destruct()}}
+{\footnotesize\ttfamily virtual void dhtt\+::\+Node\+Type\+::destruct (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+just available in case there are any non-\/trivial resource cleanups in any nodetypes 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a6d70a5e6c0d832a32249795463e45a57}\label{classdhtt_1_1NodeType_a6d70a5e6c0d832a32249795463e45a57}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
 \index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt::NodeType@{dhtt::NodeType}}
 \doxysubsubsection{\texorpdfstring{get\_perceived\_efficiency()}{get\_perceived\_efficiency()}}
-{\footnotesize\ttfamily virtual double dhtt\+::\+Node\+Type\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+{\footnotesize\ttfamily virtual double dhtt\+::\+Node\+Type\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
 
 
 
@@ -110,8 +141,38 @@ activation potential value (0 -\/\texorpdfstring{$>$}{>} 1 by convention)
 \end{DoxyReturn}
 
 
-Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a681ce76a8fa7e782b207528d42d70948}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a76d1eb08379af8dd321b46c8c9aeb5e6}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a979d6362a4ccbfb6f8940abe8dec3528}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a41df48ed3feab14f2139cf7a0e40c3db}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a5e95d5ca715b6b7bef822c4344ea0c72}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a329f1af3a1e7653c9ba47ef1887eb678}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_ac53435698f66a9429b45a088418937a0}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a02598da3b388720f1c739263c00dd102}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a466e5b29c26b5387536c174b686c8076}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a44f4b992d907f0c447dea336373fb322}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a3c31da39ab8ad478c7cf528c22903e6c}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_a2c8e05dcc8e0821777d621c7a3b0620f}{dhtt\+\_\+plugins\+::\+Mock\+Look\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1MockMoveBehavior_a642e23d52842cdf33b2103635f751184}{dhtt\+\_\+plugins\+::\+Mock\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a5bb55bfeb5cf9f2abbc0615b17f6a8eb}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_ac07d143011ed8e64a0b961219d44f362}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a7748fc03a847405d30d42ffb9afbede7}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a23836ae7194d09601811b54d45175a9e}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_ae52c17eac0966150912e4ed3dd7e666c}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
 
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a5b4e2269bb11b08d7da5782cd66955c4}\label{classdhtt_1_1NodeType_a5b4e2269bb11b08d7da5782cd66955c4}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!get\_postconditions@{get\_postconditions}}
+\index{get\_postconditions@{get\_postconditions}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{get\_postconditions()}{get\_postconditions()}}
+{\footnotesize\ttfamily virtual dhtt\+\_\+utils\+::\+Predicate\+Conjunction dhtt\+::\+Node\+Type\+::get\+\_\+postconditions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+returns the postconditions of the behavior 
+
+postconditions should be defined by saving key\+: val pairs when creating the logic of a node. They should be saved in the postconditions member of this class. Inheriting classes also have the option of changing their postconditions based on the success/failure of different parts of a behavior.
+
+\begin{DoxyReturn}{Returns}
+postconditions in a Predicate\+Conjunction 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a83731130208082ea0bfe6b5ca55b63d2}\label{classdhtt_1_1NodeType_a83731130208082ea0bfe6b5ca55b63d2}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!get\_preconditions@{get\_preconditions}}
+\index{get\_preconditions@{get\_preconditions}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{get\_preconditions()}{get\_preconditions()}}
+{\footnotesize\ttfamily virtual dhtt\+\_\+utils\+::\+Predicate\+Conjunction dhtt\+::\+Node\+Type\+::get\+\_\+preconditions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+returns the preconditions of the behavior 
+
+Preconditions should be defined by saving key\+: val pairs when creating the logic of a node. They should be saved in the preconditions member of this class.
+
+\begin{DoxyReturn}{Returns}
+preconditions in a Predicate\+Conjunction 
+\end{DoxyReturn}
 \mbox{\Hypertarget{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}\label{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!initialize@{initialize}}
 \index{initialize@{initialize}!dhtt::NodeType@{dhtt::NodeType}}
@@ -134,7 +195,7 @@ void
 \end{DoxyReturn}
 
 
-Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a381962c71b85e6a8517845db1a737f79}{dhtt\+\_\+plugins\+::\+Action\+Type}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a34c108b8860540d505d0476525a92ac6}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a30cad3c2a60361f4c466b48f73a0cedc}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a907a6b140ea345f4924d0bc770a73baa}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_aae062c8fec3f8a4fa5e9126cea2c6b50}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a753bc54bd168f168e48ad390c4ec39fe}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a381962c71b85e6a8517845db1a737f79}{dhtt\+\_\+plugins\+::\+Action\+Type}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a34c108b8860540d505d0476525a92ac6}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a34c108b8860540d505d0476525a92ac6}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a30cad3c2a60361f4c466b48f73a0cedc}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a907a6b140ea345f4924d0bc770a73baa}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_aae062c8fec3f8a4fa5e9126cea2c6b50}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a753bc54bd168f168e48ad390c4ec39fe}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
 
 \mbox{\Hypertarget{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}\label{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!is\_done@{is\_done}}
@@ -153,7 +214,31 @@ true if the node is done. false otherwise.
 \end{DoxyReturn}
 
 
-Reimplemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a5dada7d97dfbd1bed5abfb9ccb295a62}{dhtt\+\_\+plugins\+::\+Action\+Type}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a2580bc3be934ae1d30935ed6f728cd99}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a157f515115c440e6e56b365aa335331d}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a92c4a1767ead32d681ac925f1422e4b7}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_acbc1a286b6dd5fbe749de264234bba35}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a01842ab0a7a2626eecb8ef90edf709a9}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
+Reimplemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a5dada7d97dfbd1bed5abfb9ccb295a62}{dhtt\+\_\+plugins\+::\+Action\+Type}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a2580bc3be934ae1d30935ed6f728cd99}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a2580bc3be934ae1d30935ed6f728cd99}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a157f515115c440e6e56b365aa335331d}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a92c4a1767ead32d681ac925f1422e4b7}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_acbc1a286b6dd5fbe749de264234bba35}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a01842ab0a7a2626eecb8ef90edf709a9}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
+
+\mbox{\Hypertarget{classdhtt_1_1NodeType_ac002d98a8bba7540f55566826e862dc9}\label{classdhtt_1_1NodeType_ac002d98a8bba7540f55566826e862dc9}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!maintain\_conditions@{maintain\_conditions}}
+\index{maintain\_conditions@{maintain\_conditions}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{maintain\_conditions()}{maintain\_conditions()}}
+{\footnotesize\ttfamily virtual void dhtt\+::\+Node\+Type\+::maintain\+\_\+conditions (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+top down maintainer for pre and post conditions of this node 
+
+This should describe how the pre and postconditions of this node\textquotesingle{}s children are combined at this node. For behaviors this is left empty as they will not have children, and for tasks the combining behavior should be described in detail.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & pointer to the node class which owns the node type in order to give use of the public methods\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Reimplemented in \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_afa49d29d0bba7da319c209d390fabb03}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_af4c211794c2e1d2c377f3d7832c15d2b}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_afaa41df3a8582ede424f7dffcb225985}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
 
 \mbox{\Hypertarget{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}\label{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!parse\_params@{parse\_params}}
@@ -177,7 +262,32 @@ void
 \end{DoxyReturn}
 
 
-Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a46e21bf8e3f45d62435a98788ab76c29}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a269c4453c62c41414eccfb703d054d3e}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a29056fe823577f83368840e8fba2d4d5}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_ad0b02769b0caebc9a9f3fb3d6ebb7f0d}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a2fd6b86b0ec6b7ce3d3b175681693d0e}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a0da23d587157936fe57313a799545556}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a18cfc69c8758a765880aa2554093d54e}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a1dfa931dbde1fdba3eeb10e9a30a890e}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a46e21bf8e3f45d62435a98788ab76c29}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a269c4453c62c41414eccfb703d054d3e}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a29056fe823577f83368840e8fba2d4d5}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_a8ef883fcafcc6274fc2a511112f42adf}{dhtt\+\_\+plugins\+::\+Mock\+Look\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1MockMoveBehavior_afa9142620dfb5759c0a4b1069f2b4067}{dhtt\+\_\+plugins\+::\+Mock\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_ad0b02769b0caebc9a9f3fb3d6ebb7f0d}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_ad0b02769b0caebc9a9f3fb3d6ebb7f0d}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a2fd6b86b0ec6b7ce3d3b175681693d0e}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a0da23d587157936fe57313a799545556}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a18cfc69c8758a765880aa2554093d54e}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a1dfa931dbde1fdba3eeb10e9a30a890e}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
+
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a6398aa95ffae2bafaf46d7946e9f8ddc}\label{classdhtt_1_1NodeType_a6398aa95ffae2bafaf46d7946e9f8ddc}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!release\_all\_resources@{release\_all\_resources}}
+\index{release\_all\_resources@{release\_all\_resources}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{release\_all\_resources()}{release\_all\_resources()}}
+{\footnotesize\ttfamily virtual void dhtt\+::\+Node\+Type\+::release\+\_\+all\+\_\+resources (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+releases all node resources 
+
+This is mostly for the root node to release resources on a request from the main server although there might be other uses for it in the future
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Reimplemented in \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a489d46c143a9f6cd35f2b5b7e5063380}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}.
+
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a13c6ceba906a5ed7ed76f37bba9ad8ac}\label{classdhtt_1_1NodeType_a13c6ceba906a5ed7ed76f37bba9ad8ac}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!set\_name@{set\_name}}
+\index{set\_name@{set\_name}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{set\_name()}{set\_name()}}
+{\footnotesize\ttfamily virtual void dhtt\+::\+Node\+Type\+::set\+\_\+name (\begin{DoxyParamCaption}\item[{std\+::string}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
 
 \mbox{\Hypertarget{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610e91}\label{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610e91}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!work\_callback@{work\_callback}}
@@ -201,7 +311,7 @@ returns the result part of the Activation action in order to function with the \
 \end{DoxyReturn}
 
 
-Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a56a3ef4023591aef5d034b6355a39715}{dhtt\+\_\+plugins\+::\+Action\+Type}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_afa00322a98999a964b482a8b35f9a57a}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a9f76f12b4ceedc96bf82261f1a0da449}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_ada2499282514c8a53c52703419a5b6e1}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a85c6d010658071484e6aa8c597fc85d3}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_ab656aa2dc5076b61108d97d6871800ec}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a56a3ef4023591aef5d034b6355a39715}{dhtt\+\_\+plugins\+::\+Action\+Type}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_afa00322a98999a964b482a8b35f9a57a}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_afa00322a98999a964b482a8b35f9a57a}{dhtt\+\_\+plugins\+::\+Test\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a9f76f12b4ceedc96bf82261f1a0da449}{dhtt\+\_\+plugins\+::\+And\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_ada2499282514c8a53c52703419a5b6e1}{dhtt\+\_\+plugins\+::\+Or\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1RootBehavior_a85c6d010658071484e6aa8c597fc85d3}{dhtt\+\_\+plugins\+::\+Root\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_ab656aa2dc5076b61108d97d6871800ec}{dhtt\+\_\+plugins\+::\+Then\+Behavior}}.
 
 
 
@@ -212,11 +322,23 @@ Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a56a3ef4023591a
 \doxysubsubsection{\texorpdfstring{children\_allowed}{children\_allowed}}
 {\footnotesize\ttfamily bool dhtt\+::\+Node\+Type\+::children\+\_\+allowed\hspace{0.3cm}{\ttfamily [protected]}}
 
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a27113bd279ce2e62687be35e95603910}\label{classdhtt_1_1NodeType_a27113bd279ce2e62687be35e95603910}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!com\_agg@{com\_agg}}
+\index{com\_agg@{com\_agg}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{com\_agg}{com\_agg}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator}{Communication\+Aggregator}}$>$ dhtt\+::\+Node\+Type\+::com\+\_\+agg}
+
 \mbox{\Hypertarget{classdhtt_1_1NodeType_a38eb2cd34604afab4f82972fded433ab}\label{classdhtt_1_1NodeType_a38eb2cd34604afab4f82972fded433ab}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!goal\_type@{goal\_type}}
 \index{goal\_type@{goal\_type}!dhtt::NodeType@{dhtt::NodeType}}
 \doxysubsubsection{\texorpdfstring{goal\_type}{goal\_type}}
 {\footnotesize\ttfamily \mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008}{goal\+\_\+t}} dhtt\+::\+Node\+Type\+::goal\+\_\+type = \mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008adb421c8b35e9d91c2e0f520567fac9b7}{PERSISTENT}}}
+
+\mbox{\Hypertarget{classdhtt_1_1NodeType_ae4c017feba5d310ade4d1c32a86d13cf}\label{classdhtt_1_1NodeType_ae4c017feba5d310ade4d1c32a86d13cf}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!name@{name}}
+\index{name@{name}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{name}{name}}
+{\footnotesize\ttfamily std\+::string dhtt\+::\+Node\+Type\+::name\hspace{0.3cm}{\ttfamily [protected]}}
 
 \mbox{\Hypertarget{classdhtt_1_1NodeType_a425a99e3ab63a286168b02cac8e2ef2d}\label{classdhtt_1_1NodeType_a425a99e3ab63a286168b02cac8e2ef2d}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!necessary\_resources@{necessary\_resources}}
@@ -230,11 +352,17 @@ Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a56a3ef4023591a
 \doxysubsubsection{\texorpdfstring{params}{params}}
 {\footnotesize\ttfamily std\+::vector$<$std\+::string$>$ dhtt\+::\+Node\+Type\+::params}
 
-\mbox{\Hypertarget{classdhtt_1_1NodeType_aeeef5c0db14ade9f9babe3f532195abe}\label{classdhtt_1_1NodeType_aeeef5c0db14ade9f9babe3f532195abe}} 
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a1709abe730c2ec5d62c95fdf2d75a20b}\label{classdhtt_1_1NodeType_a1709abe730c2ec5d62c95fdf2d75a20b}} 
+\index{dhtt::NodeType@{dhtt::NodeType}!postconditions@{postconditions}}
+\index{postconditions@{postconditions}!dhtt::NodeType@{dhtt::NodeType}}
+\doxysubsubsection{\texorpdfstring{postconditions}{postconditions}}
+{\footnotesize\ttfamily dhtt\+\_\+utils\+::\+Predicate\+Conjunction dhtt\+::\+Node\+Type\+::postconditions\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt_1_1NodeType_a09f44dea50dea76741516405a5cdffe6}\label{classdhtt_1_1NodeType_a09f44dea50dea76741516405a5cdffe6}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!preconditions@{preconditions}}
 \index{preconditions@{preconditions}!dhtt::NodeType@{dhtt::NodeType}}
 \doxysubsubsection{\texorpdfstring{preconditions}{preconditions}}
-{\footnotesize\ttfamily std\+::vector$<$std\+::string$>$ dhtt\+::\+Node\+Type\+::preconditions}
+{\footnotesize\ttfamily dhtt\+\_\+utils\+::\+Predicate\+Conjunction dhtt\+::\+Node\+Type\+::preconditions\hspace{0.3cm}{\ttfamily [protected]}}
 
 
 

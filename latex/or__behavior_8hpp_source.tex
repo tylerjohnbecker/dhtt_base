@@ -27,23 +27,25 @@
 \DoxyCodeLine{39 }
 \DoxyCodeLine{50         std::shared\_ptr<dhtt\_msgs::action::Activation::Result> \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_ada2499282514c8a53c52703419a5b6e1}{work\_callback}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
 \DoxyCodeLine{51 }
-\DoxyCodeLine{55         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a0da23d587157936fe57313a799545556}{parse\_params}}( std::vector<std::string> \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}} ) \textcolor{keyword}{override};}
+\DoxyCodeLine{55         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_af4c211794c2e1d2c377f3d7832c15d2b}{maintain\_conditions}}(\mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container) \textcolor{keyword}{override};}
 \DoxyCodeLine{56 }
-\DoxyCodeLine{65         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a329f1af3a1e7653c9ba47ef1887eb678}{get\_perceived\_efficiency}}() \textcolor{keyword}{override};}
-\DoxyCodeLine{66 }
-\DoxyCodeLine{70         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a92c4a1767ead32d681ac925f1422e4b7}{is\_done}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{60         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a0da23d587157936fe57313a799545556}{parse\_params}}( std::vector<std::string> \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}} ) \textcolor{keyword}{override};}
+\DoxyCodeLine{61 }
+\DoxyCodeLine{70         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a7748fc03a847405d30d42ffb9afbede7}{get\_perceived\_efficiency}}(\mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container) \textcolor{keyword}{override};}
 \DoxyCodeLine{71 }
-\DoxyCodeLine{72     \textcolor{keyword}{protected}:}
-\DoxyCodeLine{73         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_aa07003eb60735f7db9e5cbe35988a861}{has\_chosen\_child}};}
-\DoxyCodeLine{74         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a690d84f871a70a9a8cd5e7c7bc48e3fd}{child\_has\_run}};}
-\DoxyCodeLine{75         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a517f5e52e7c48a44c45c9d6b52536ad6}{child\_done}};}
-\DoxyCodeLine{76         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a2ace6315abbaa6e1fa0592741e1240a6}{activation\_potential}};}
-\DoxyCodeLine{77 }
-\DoxyCodeLine{78         std::string \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a4aff8507c71ff92d829cd64805a01cdf}{activated\_child\_name}};}
-\DoxyCodeLine{79     \textcolor{keyword}{private}:}
-\DoxyCodeLine{80     \};}
-\DoxyCodeLine{81 \}}
+\DoxyCodeLine{75         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a92c4a1767ead32d681ac925f1422e4b7}{is\_done}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{76 }
+\DoxyCodeLine{77     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{78         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_aa07003eb60735f7db9e5cbe35988a861}{has\_chosen\_child}};}
+\DoxyCodeLine{79         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a690d84f871a70a9a8cd5e7c7bc48e3fd}{child\_has\_run}};}
+\DoxyCodeLine{80         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a517f5e52e7c48a44c45c9d6b52536ad6}{child\_done}};}
+\DoxyCodeLine{81         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a2ace6315abbaa6e1fa0592741e1240a6}{activation\_potential}};}
 \DoxyCodeLine{82 }
-\DoxyCodeLine{83 \textcolor{preprocessor}{\#endif }\textcolor{comment}{//OR\_BEHAVIOR\_HPP}}
+\DoxyCodeLine{83         std::string \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a4aff8507c71ff92d829cd64805a01cdf}{activated\_child\_name}};}
+\DoxyCodeLine{84     \textcolor{keyword}{private}:}
+\DoxyCodeLine{85     \};}
+\DoxyCodeLine{86 \}}
+\DoxyCodeLine{87 }
+\DoxyCodeLine{88 \textcolor{preprocessor}{\#endif }\textcolor{comment}{//OR\_BEHAVIOR\_HPP}}
 
 \end{DoxyCode}

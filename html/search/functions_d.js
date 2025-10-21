@@ -1,10 +1,22 @@
 var searchData=
 [
-  ['save_5ftree_0',['save_tree',['../classdhtt_1_1MainServer.html#a2a72c0e39f43bb2ce066d7de9f2d12f5',1,'dhtt::MainServer']]],
-  ['set_5fpassed_5fresources_1',['set_passed_resources',['../classdhtt_1_1Node.html#abea1f61420a615e9ee1eca5e9e0be309',1,'dhtt::Node']]],
-  ['set_5fresource_5fstatus_5fupdated_2',['set_resource_status_updated',['../classdhtt_1_1Node.html#a9108ed5afb76cb5455fa2a59ff57c1ca',1,'dhtt::Node']]],
-  ['start_5ftree_3',['start_tree',['../classdhtt_1_1MainServer.html#ad7cc8b0a9ea7eddd75f31e15489c04fe',1,'dhtt::MainServer']]],
-  ['status_5fcallback_4',['status_callback',['../classdhtt_1_1MainServer.html#a52c8c63c817455fa2493b257f3dc3c4b',1,'dhtt::MainServer']]],
-  ['stop_5ftree_5',['stop_tree',['../classdhtt_1_1MainServer.html#a669b9175b3a76523c73c2635d265de6d',1,'dhtt::MainServer']]],
-  ['store_5fresult_5fcallback_6',['store_result_callback',['../classdhtt_1_1Node.html#a5a8ca21dcee3cf3bb135e65025652089',1,'dhtt::Node']]]
+  ['save_5ftree_0',['save_tree',['../classdhtt_1_1MainServer.html#afa5b2c635c84ac2cad31c11f66f4d8b1',1,'dhtt::MainServer']]],
+  ['send_5factivate_1',['send_activate',['../classdhtt_1_1BranchPlugType.html#adf20411eb6ee10f954802f0971a485ff',1,'dhtt::BranchPlugType']]],
+  ['send_5fmaintain_2',['send_maintain',['../classdhtt_1_1BranchPlugType.html#a08eb798e41a7a5ae39f1203abbc19906',1,'dhtt::BranchPlugType']]],
+  ['send_5fstate_5fupdated_3',['send_state_updated',['../classdhtt__plugins_1_1ActionType.html#a332bbbd5263a5ceb31a59b43979567ba',1,'dhtt_plugins::ActionType']]],
+  ['set_5fchanged_5fflag_4',['set_changed_flag',['../classdhtt_1_1Node.html#a319b19005ee7e941f138ad152d28c9a2',1,'dhtt::Node']]],
+  ['set_5fchanged_5fup_5ftree_5',['set_changed_up_tree',['../classdhtt_1_1MainServer.html#a3ee34ff2dce8b8b2bff8547e07e3d051',1,'dhtt::MainServer']]],
+  ['set_5fchild_5fchanged_6',['set_child_changed',['../classdhtt_1_1Node.html#af076bd9765a3485834f110cde0683eb6',1,'dhtt::Node']]],
+  ['set_5fname_7',['set_name',['../classdhtt_1_1NodeType.html#a13c6ceba906a5ed7ed76f37bba9ad8ac',1,'dhtt::NodeType']]],
+  ['set_5fparameter_5fsync_8',['set_parameter_sync',['../classdhtt_1_1CommunicationAggregator.html#a1bfadf9c836182647566096dd40a1811',1,'dhtt::CommunicationAggregator']]],
+  ['set_5fparameters_5fsync_9',['set_parameters_sync',['../classdhtt_1_1CommunicationAggregator.html#a9b7443c141dea8cde83e8a5b23802c08',1,'dhtt::CommunicationAggregator']]],
+  ['set_5fpassed_5fresources_10',['set_passed_resources',['../classdhtt_1_1Node.html#abea1f61420a615e9ee1eca5e9e0be309',1,'dhtt::Node']]],
+  ['set_5fresource_5fstatus_5fupdated_11',['set_resource_status_updated',['../classdhtt_1_1Node.html#a9108ed5afb76cb5455fa2a59ff57c1ca',1,'dhtt::Node']]],
+  ['start_5fmaintain_12',['start_maintain',['../classdhtt_1_1MainServer.html#a9659de6fe35fff8d2ed417b0cf1d9463',1,'dhtt::MainServer']]],
+  ['start_5fservers_13',['start_servers',['../classdhtt_1_1SubServer.html#a7b492bf024f5235b1f46d84b0a80c860',1,'dhtt::SubServer']]],
+  ['start_5ftree_14',['start_tree',['../classdhtt_1_1MainServer.html#ad7cc8b0a9ea7eddd75f31e15489c04fe',1,'dhtt::MainServer']]],
+  ['status_5fcallback_15',['status_callback',['../classdhtt_1_1MainServer.html#a52c8c63c817455fa2493b257f3dc3c4b',1,'dhtt::MainServer']]],
+  ['stop_5ftree_16',['stop_tree',['../classdhtt_1_1MainServer.html#a669b9175b3a76523c73c2635d265de6d',1,'dhtt::MainServer']]],
+  ['subserver_17',['SubServer',['../classdhtt_1_1SubServer.html#a51d68cc84b58c3a0b8496e889ea49e69',1,'dhtt::SubServer']]],
+  ['subtrees_5fare_5fdisjoint_18',['subtrees_are_disjoint',['../classdhtt_1_1MainServer.html#acc3aaea607d614c105ff004354e5f8f4',1,'dhtt::MainServer']]]
 ];

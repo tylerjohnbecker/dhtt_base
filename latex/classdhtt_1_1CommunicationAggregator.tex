@@ -1,0 +1,457 @@
+\hypertarget{classdhtt_1_1CommunicationAggregator}{}\doxysection{dhtt\+::Communication\+Aggregator Class Reference}
+\label{classdhtt_1_1CommunicationAggregator}\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+
+
+Communication Aggregator for subscription and service calls coming from behaviors in the tree.  
+
+
+
+
+{\ttfamily \#include $<$communication\+\_\+aggregator.\+hpp$>$}
+
+
+
+Inheritance diagram for dhtt\+::Communication\+Aggregator\+:
+% FIG 0
+
+
+Collaboration diagram for dhtt\+::Communication\+Aggregator\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_af0f5fbfce2a54b455e37dfc0c7307af8}{Communication\+Aggregator}} (std\+::shared\+\_\+ptr$<$ rclcpp\+::executors\+::\+Multi\+Threaded\+Executor $>$ exec\+\_\+ptr, int queue\+\_\+size=10)
+\item 
+{\footnotesize template$<$typename msg\+\_\+type $>$ }\\std\+::string \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_aed9ac2a365b7a1d0e3e362a86fe84e10}{register\+\_\+subscription}} (std\+::string topic\+\_\+name, std\+::string subscriber\+\_\+name, std\+::function$<$ void(std\+::shared\+\_\+ptr$<$ msg\+\_\+type $>$)$>$ to\+\_\+register)
+\begin{DoxyCompactList}\small\item\em registers a subscriber callback \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename msg\+\_\+type $>$ }\\bool \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a635f55d5ea0b08da5e833045935ad2ac}{unregister\+\_\+subscription}} (std\+::string topic\+\_\+name, std\+::string subscriber\+\_\+name=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em unregisters callback on given topic name \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename msg\+\_\+type $>$ }\\std\+::shared\+\_\+ptr$<$ rclcpp\+::\+Publisher$<$ msg\+\_\+type $>$ $>$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a116647ead2427b4ddf70fd42c555132b}{register\+\_\+publisher}} (std\+::string topic\+\_\+name)
+\begin{DoxyCompactList}\small\item\em registers a publisher with the given topic name and returns a ptr to the publisher for outside use \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename service\+\_\+type $>$ }\\std\+::shared\+\_\+ptr$<$ rclcpp\+::\+Client$<$ service\+\_\+type $>$ $>$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_adcf6656d3274f4064f6926c820f428c1}{register\+\_\+service\+\_\+client}} (std\+::string service\+\_\+topic\+\_\+name)
+\begin{DoxyCompactList}\small\item\em registers service client unless it\textquotesingle{}s already registered and returns a shared\+\_\+ptr to that publisher \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ rclcpp\+::\+Sync\+Parameters\+Client $>$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a4c3f4ed6dfb9f99c1f9d69b0560247d4}{register\+\_\+param\+\_\+client}} (std\+::string node\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Returns a Sync\+Parameters\+Client ptr to the given node\+\_\+name. \end{DoxyCompactList}\item 
+rclcpp\+::\+Parameter \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_afef206bc4109747d22c5526b6a4aacec}{get\+\_\+parameter\+\_\+sync}} (std\+::string param\+\_\+client\+\_\+name, std\+::string param\+\_\+name)
+\begin{DoxyCompactList}\small\item\em thread safe function for making a param client request \end{DoxyCompactList}\item 
+rclcpp\+::\+Parameter \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a5fe68f8108237701dda81c6ee0cd128b}{get\+\_\+parameter\+\_\+sync}} (std\+::string param\+\_\+name)
+\begin{DoxyCompactList}\small\item\em synchronously grabs a parameter from this nodes param server \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a1bfadf9c836182647566096dd40a1811}{set\+\_\+parameter\+\_\+sync}} (rclcpp\+::\+Parameter n\+\_\+val)
+\begin{DoxyCompactList}\small\item\em synchronously sets the value of a param on the param server \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a9b7443c141dea8cde83e8a5b23802c08}{set\+\_\+parameters\+\_\+sync}} (std\+::vector$<$ rclcpp\+::\+Parameter $>$ n\+\_\+vals)
+\begin{DoxyCompactList}\small\item\em async safe wrapper for the set\+\_\+parameters function \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ab1558112cd82af56e9f71ac6e02b5d13}{log\+\_\+stream}} (\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290}{LOG\+\_\+\+LEVEL}} severity, std\+::stringstream \&to\+\_\+print)
+\begin{DoxyCompactList}\small\item\em wrapper on RCLCPP\+\_\+blank\+\_\+\+STREAM functions to allow non-\/nodes to utilize them \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ std\+::mutex $>$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a3f10d7cf8813517a2f1b83791ec5291a}{request\+\_\+mutex}} (std\+::string mut\+\_\+name)
+\begin{DoxyCompactList}\small\item\em creates or returns a local copy of a mutex under the given name \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename msg\+\_\+type $>$ }\\void \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a0a979ec1f93eec92ce654eab37542011}{generic\+\_\+subscriber\+\_\+callback}} (std\+::string topic\+\_\+name, std\+::shared\+\_\+ptr$<$ msg\+\_\+type $>$ msg, int function\+\_\+table\+\_\+index)
+\begin{DoxyCompactList}\small\item\em all purpose subscriber callback \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::map$<$ std\+::string, std\+::any $>$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae04a1d6cdb2b1290d3c08e8123bc3e45}{function\+\_\+tables}}
+\item 
+std\+::map$<$ std\+::string, std\+::any $>$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_aa11fb00ed1a80b2a26b1926434ec9954}{subscription\+\_\+ptrs}}
+\item 
+rclcpp\+::\+QoS \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_af51f1f98e5695daf9b4d81aa007e8b41}{sub\+\_\+qos}}
+\item 
+int \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a89a2a79f44ec11ee2e0e51c545c23e62}{unique\+\_\+id}}
+\item 
+std\+::map$<$ std\+::string, std\+::any $>$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a614c2dcf089d7dc143623a333ef07971}{service\+\_\+client\+\_\+ptrs}}
+\item 
+std\+::map$<$ std\+::string, std\+::any $>$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ab1622872d91966245f52f742df581dcd}{publisher\+\_\+ptrs}}
+\item 
+std\+::shared\+\_\+ptr$<$ rclcpp\+::\+Node $>$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae271734d5ea759d958e9290eccba7604}{param\+\_\+client\+\_\+node\+\_\+ptr}} = nullptr
+\item 
+std\+::map$<$ std\+::string, std\+::weak\+\_\+ptr$<$ rclcpp\+::\+Sync\+Parameters\+Client $>$ $>$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_abc605d72f5a3fcbab83ff56697d2d5b8}{param\+\_\+client\+\_\+ptrs}}
+\item 
+std\+::map$<$ std\+::string, std\+::weak\+\_\+ptr$<$ std\+::mutex $>$ $>$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae0c08141c4cba7819749fe04afdc772a}{mutex\+\_\+ptrs}}
+\item 
+std\+::mutex \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_afc6f2d70f227d70a38d3aabcbd70043f}{register\+\_\+mutex}}
+\item 
+std\+::mutex \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ac158ec9a6767909237eb83c88b3259ac}{param\+\_\+mutex}}
+\item 
+std\+::mutex \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a72ca8ed77659aa81f5f13d204e256a30}{local\+\_\+param\+\_\+mutex}}
+\item 
+std\+::shared\+\_\+ptr$<$ rclcpp\+::executors\+::\+Multi\+Threaded\+Executor $>$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_abd8fb68e67dd9f06ca359e7fb65cf03f}{local\+\_\+ex\+\_\+ptr}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Communication Aggregator for subscription and service calls coming from behaviors in the tree. 
+
+As a result of ROS utilizing a DDS on the backend there is a small upper limit on the number of action servers, services, etc. which can be registered in one process ($\sim$130). Therefore, this class enables us to build large scale trees that have extensive connections through ROS without creating more than one subscriber/service client per topic.
+
+This class essentially creates a single subscriber/client per topic and then utilizes an internal callback to call all registered functions for each topic. The registered functions are called in separate threads and there should be no latency below a reasonable amount of callbacks, however as each callback will be run in a separate thread this class may have memory concerns which will be addressed as they are found. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_af0f5fbfce2a54b455e37dfc0c7307af8}\label{classdhtt_1_1CommunicationAggregator_af0f5fbfce2a54b455e37dfc0c7307af8}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!CommunicationAggregator@{CommunicationAggregator}}
+\index{CommunicationAggregator@{CommunicationAggregator}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{CommunicationAggregator()}{CommunicationAggregator()}}
+{\footnotesize\ttfamily dhtt\+::\+Communication\+Aggregator\+::\+Communication\+Aggregator (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ rclcpp\+::executors\+::\+Multi\+Threaded\+Executor $>$}]{exec\+\_\+ptr,  }\item[{int}]{queue\+\_\+size = {\ttfamily 10} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_a0a979ec1f93eec92ce654eab37542011}\label{classdhtt_1_1CommunicationAggregator_a0a979ec1f93eec92ce654eab37542011}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!generic\_subscriber\_callback@{generic\_subscriber\_callback}}
+\index{generic\_subscriber\_callback@{generic\_subscriber\_callback}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{generic\_subscriber\_callback()}{generic\_subscriber\_callback()}}
+{\footnotesize\ttfamily template$<$typename msg\+\_\+type $>$ \\
+void dhtt\+::\+Communication\+Aggregator\+::generic\+\_\+subscriber\+\_\+callback (\begin{DoxyParamCaption}\item[{std\+::string}]{topic\+\_\+name,  }\item[{std\+::shared\+\_\+ptr$<$ msg\+\_\+type $>$}]{msg,  }\item[{int}]{function\+\_\+table\+\_\+index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+all purpose subscriber callback 
+
+This callback will be registered for all subscribers. Each time a msg is received it will be passed to each registered function in the function table in its own thread. At the end of this callback the threads will then be joined which for now means that incoming information will be bottlenecked by the work of all callbacks completing. Therefore, for now all subscriber callbacks registered through this class should have low computational overhead in order to prevent information loss.
+
+NOTE\+: if the information loss is substantial anyway this code will be refactored accordingly
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em msg\+\_\+type} & type of the ROS message the subscriber accepts\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em topic\+\_\+name} & bounded parameter to the topic name of the subscriber \\
+\hline
+{\em msg} & incoming information\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_afef206bc4109747d22c5526b6a4aacec}\label{classdhtt_1_1CommunicationAggregator_afef206bc4109747d22c5526b6a4aacec}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!get\_parameter\_sync@{get\_parameter\_sync}}
+\index{get\_parameter\_sync@{get\_parameter\_sync}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{get\_parameter\_sync()}{get\_parameter\_sync()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily rclcpp\+::\+Parameter dhtt\+::\+Communication\+Aggregator\+::get\+\_\+parameter\+\_\+sync (\begin{DoxyParamCaption}\item[{std\+::string}]{param\+\_\+client\+\_\+name,  }\item[{std\+::string}]{param\+\_\+name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+thread safe function for making a param client request 
+
+This just takes the asynchronous call and waits for the future making it a synchronous wrapper.
+
+
+\begin{DoxyParams}{Parameters}
+{\em request\+\_\+from} & the param client ptr to make a thread safe request on\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+std\+::shared\+\_\+future to the response efrom the server 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_a5fe68f8108237701dda81c6ee0cd128b}\label{classdhtt_1_1CommunicationAggregator_a5fe68f8108237701dda81c6ee0cd128b}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!get\_parameter\_sync@{get\_parameter\_sync}}
+\index{get\_parameter\_sync@{get\_parameter\_sync}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{get\_parameter\_sync()}{get\_parameter\_sync()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily rclcpp\+::\+Parameter dhtt\+::\+Communication\+Aggregator\+::get\+\_\+parameter\+\_\+sync (\begin{DoxyParamCaption}\item[{std\+::string}]{param\+\_\+name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+synchronously grabs a parameter from this nodes param server 
+
+A wrapper on the overloaded method that uses a mutex for thread safety with read/write to params.
+
+
+\begin{DoxyParams}{Parameters}
+{\em param\+\_\+name} & name of the reqested param\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+rclcpp\+::\+Parameter containing the requested param (Empty if param doesn\textquotesingle{}t exist on server) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_ab1558112cd82af56e9f71ac6e02b5d13}\label{classdhtt_1_1CommunicationAggregator_ab1558112cd82af56e9f71ac6e02b5d13}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!log\_stream@{log\_stream}}
+\index{log\_stream@{log\_stream}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{log\_stream()}{log\_stream()}}
+{\footnotesize\ttfamily void dhtt\+::\+Communication\+Aggregator\+::log\+\_\+stream (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290}{LOG\+\_\+\+LEVEL}}}]{severity,  }\item[{std\+::stringstream \&}]{to\+\_\+print }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+wrapper on RCLCPP\+\_\+blank\+\_\+\+STREAM functions to allow non-\/nodes to utilize them 
+
+This function is intended to be called through the macros shown in \mbox{\hyperlink{node_8hpp}{node.\+hpp}}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em severity} & level to log at (INFO, WARN, ...) \\
+\hline
+{\em to\+\_\+print} & string stream of desired output\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_a4c3f4ed6dfb9f99c1f9d69b0560247d4}\label{classdhtt_1_1CommunicationAggregator_a4c3f4ed6dfb9f99c1f9d69b0560247d4}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!register\_param\_client@{register\_param\_client}}
+\index{register\_param\_client@{register\_param\_client}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{register\_param\_client()}{register\_param\_client()}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ rclcpp\+::\+Sync\+Parameters\+Client $>$ dhtt\+::\+Communication\+Aggregator\+::register\+\_\+param\+\_\+client (\begin{DoxyParamCaption}\item[{std\+::string}]{node\+\_\+name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns a Sync\+Parameters\+Client ptr to the given node\+\_\+name. 
+
+This method only creates a new Sync\+Parameters\+Client if one does not already exist for the given node\+\_\+name.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node\+\_\+name} & string name of the node which we are grabbing params from\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+ptr to the param client or nullptr if it couldn\textquotesingle{}t be reached 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_a116647ead2427b4ddf70fd42c555132b}\label{classdhtt_1_1CommunicationAggregator_a116647ead2427b4ddf70fd42c555132b}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!register\_publisher@{register\_publisher}}
+\index{register\_publisher@{register\_publisher}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{register\_publisher()}{register\_publisher()}}
+{\footnotesize\ttfamily template$<$typename msg\+\_\+type $>$ \\
+std\+::shared\+\_\+ptr$<$ rclcpp\+::\+Publisher$<$ msg\+\_\+type $>$ $>$ dhtt\+::\+Communication\+Aggregator\+::register\+\_\+publisher (\begin{DoxyParamCaption}\item[{std\+::string}]{topic\+\_\+name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+registers a publisher with the given topic name and returns a ptr to the publisher for outside use 
+
+After creating the publisher a weak\+\_\+ptr will be kept locally which means that when the last ptr falls out of scope outside of this class it will destruct the publisher automatically and the weak\+\_\+ptr here will be considered expired. This will only ever create a single publisher per topic name.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em msg\+\_\+type} & ROS message for the publisher type\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em topic\+\_\+name} & string name of the topic to register a publisher on\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+shared\+\_\+ptr to the registered publisher (or the publisher that was previously created) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_adcf6656d3274f4064f6926c820f428c1}\label{classdhtt_1_1CommunicationAggregator_adcf6656d3274f4064f6926c820f428c1}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!register\_service\_client@{register\_service\_client}}
+\index{register\_service\_client@{register\_service\_client}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{register\_service\_client()}{register\_service\_client()}}
+{\footnotesize\ttfamily template$<$typename service\+\_\+type $>$ \\
+std\+::shared\+\_\+ptr$<$ rclcpp\+::\+Client$<$ service\+\_\+type $>$ $>$ dhtt\+::\+Communication\+Aggregator\+::register\+\_\+service\+\_\+client (\begin{DoxyParamCaption}\item[{std\+::string}]{service\+\_\+topic\+\_\+name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+registers service client unless it\textquotesingle{}s already registered and returns a shared\+\_\+ptr to that publisher 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em service\+\_\+type} & name of the message type used by the server (requires service\+\_\+like)\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em service\+\_\+topic\+\_\+name} & name of the service to register\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+shared\+\_\+ptr to the service client at the topic name. Returns nullptr if the server cannot be reached 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_aed9ac2a365b7a1d0e3e362a86fe84e10}\label{classdhtt_1_1CommunicationAggregator_aed9ac2a365b7a1d0e3e362a86fe84e10}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!register\_subscription@{register\_subscription}}
+\index{register\_subscription@{register\_subscription}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{register\_subscription()}{register\_subscription()}}
+{\footnotesize\ttfamily template$<$typename msg\+\_\+type $>$ \\
+std\+::string dhtt\+::\+Communication\+Aggregator\+::register\+\_\+subscription (\begin{DoxyParamCaption}\item[{std\+::string}]{topic\+\_\+name,  }\item[{std\+::string}]{subscriber\+\_\+name,  }\item[{std\+::function$<$ void(std\+::shared\+\_\+ptr$<$ msg\+\_\+type $>$)$>$}]{to\+\_\+register }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+registers a subscriber callback 
+
+If the subscriber does not already exist this function instantiates it through ROS. Otherwise, this function just registers a new callback which will be called by the generic subscriber function.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em msg\+\_\+type} & The message type of the subscriber topic\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em topic\+\_\+name} & the name of the topic to subscribe to \\
+\hline
+{\em subscriber\+\_\+name} & to save the callback to (each unique name can have one callback) (leave blank to create a unique name here) \\
+\hline
+{\em to\+\_\+register} & a function to call whenever the topic receives a message\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+name of subscriber\+\_\+name the function is saved under. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_a3f10d7cf8813517a2f1b83791ec5291a}\label{classdhtt_1_1CommunicationAggregator_a3f10d7cf8813517a2f1b83791ec5291a}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!request\_mutex@{request\_mutex}}
+\index{request\_mutex@{request\_mutex}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{request\_mutex()}{request\_mutex()}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ std\+::mutex $>$ dhtt\+::\+Communication\+Aggregator\+::request\+\_\+mutex (\begin{DoxyParamCaption}\item[{std\+::string}]{mut\+\_\+name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+creates or returns a local copy of a mutex under the given name 
+
+These mutexes are meant for global synchronization through the com\+\_\+agg, mostly synchronization is local to given nodes so in those cases it should be done using a local mutex not one of these.
+
+
+\begin{DoxyParams}{Parameters}
+{\em mut\+\_\+name} & name of the mutex request\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+shared\+\_\+ptr to the locally stored mutex 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_a1bfadf9c836182647566096dd40a1811}\label{classdhtt_1_1CommunicationAggregator_a1bfadf9c836182647566096dd40a1811}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!set\_parameter\_sync@{set\_parameter\_sync}}
+\index{set\_parameter\_sync@{set\_parameter\_sync}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{set\_parameter\_sync()}{set\_parameter\_sync()}}
+{\footnotesize\ttfamily void dhtt\+::\+Communication\+Aggregator\+::set\+\_\+parameter\+\_\+sync (\begin{DoxyParamCaption}\item[{rclcpp\+::\+Parameter}]{n\+\_\+val }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+synchronously sets the value of a param on the param server 
+
+Grabs a local mutex so that there are no async problems.
+
+
+\begin{DoxyParams}{Parameters}
+{\em param\+\_\+name} & name of the param to change \\
+\hline
+{\em n\+\_\+val} & new value of the parameter\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_a9b7443c141dea8cde83e8a5b23802c08}\label{classdhtt_1_1CommunicationAggregator_a9b7443c141dea8cde83e8a5b23802c08}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!set\_parameters\_sync@{set\_parameters\_sync}}
+\index{set\_parameters\_sync@{set\_parameters\_sync}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{set\_parameters\_sync()}{set\_parameters\_sync()}}
+{\footnotesize\ttfamily void dhtt\+::\+Communication\+Aggregator\+::set\+\_\+parameters\+\_\+sync (\begin{DoxyParamCaption}\item[{std\+::vector$<$ rclcpp\+::\+Parameter $>$}]{n\+\_\+vals }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+async safe wrapper for the set\+\_\+parameters function 
+
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_a635f55d5ea0b08da5e833045935ad2ac}\label{classdhtt_1_1CommunicationAggregator_a635f55d5ea0b08da5e833045935ad2ac}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!unregister\_subscription@{unregister\_subscription}}
+\index{unregister\_subscription@{unregister\_subscription}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{unregister\_subscription()}{unregister\_subscription()}}
+{\footnotesize\ttfamily template$<$typename msg\+\_\+type $>$ \\
+bool dhtt\+::\+Communication\+Aggregator\+::unregister\+\_\+subscription (\begin{DoxyParamCaption}\item[{std\+::string}]{topic\+\_\+name,  }\item[{std\+::string}]{subscriber\+\_\+name = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+unregisters callback on given topic name 
+
+This method either unregisters a single callback under topic\+\_\+name and subscriber name, or unregisters all callbacks on a given topic if the subscriber name is left blank.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em msg\+\_\+type} & The message type of the subscriber topic\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em topic\+\_\+name} & string name of the subscriber\textquotesingle{}s topic \\
+\hline
+{\em subscriber\+\_\+name} & string given to the callback to delete (if blank completely clears the list of callbacks)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if callback was removed, false if not 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_ae04a1d6cdb2b1290d3c08e8123bc3e45}\label{classdhtt_1_1CommunicationAggregator_ae04a1d6cdb2b1290d3c08e8123bc3e45}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!function\_tables@{function\_tables}}
+\index{function\_tables@{function\_tables}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{function\_tables}{function\_tables}}
+{\footnotesize\ttfamily std\+::map$<$std\+::string, std\+::any$>$ dhtt\+::\+Communication\+Aggregator\+::function\+\_\+tables\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_abd8fb68e67dd9f06ca359e7fb65cf03f}\label{classdhtt_1_1CommunicationAggregator_abd8fb68e67dd9f06ca359e7fb65cf03f}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!local\_ex\_ptr@{local\_ex\_ptr}}
+\index{local\_ex\_ptr@{local\_ex\_ptr}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{local\_ex\_ptr}{local\_ex\_ptr}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$rclcpp\+::executors\+::\+Multi\+Threaded\+Executor$>$ dhtt\+::\+Communication\+Aggregator\+::local\+\_\+ex\+\_\+ptr\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_a72ca8ed77659aa81f5f13d204e256a30}\label{classdhtt_1_1CommunicationAggregator_a72ca8ed77659aa81f5f13d204e256a30}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!local\_param\_mutex@{local\_param\_mutex}}
+\index{local\_param\_mutex@{local\_param\_mutex}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{local\_param\_mutex}{local\_param\_mutex}}
+{\footnotesize\ttfamily std\+::mutex dhtt\+::\+Communication\+Aggregator\+::local\+\_\+param\+\_\+mutex\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_ae0c08141c4cba7819749fe04afdc772a}\label{classdhtt_1_1CommunicationAggregator_ae0c08141c4cba7819749fe04afdc772a}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!mutex\_ptrs@{mutex\_ptrs}}
+\index{mutex\_ptrs@{mutex\_ptrs}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{mutex\_ptrs}{mutex\_ptrs}}
+{\footnotesize\ttfamily std\+::map$<$std\+::string, std\+::weak\+\_\+ptr$<$std\+::mutex$>$ $>$ dhtt\+::\+Communication\+Aggregator\+::mutex\+\_\+ptrs\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_ae271734d5ea759d958e9290eccba7604}\label{classdhtt_1_1CommunicationAggregator_ae271734d5ea759d958e9290eccba7604}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!param\_client\_node\_ptr@{param\_client\_node\_ptr}}
+\index{param\_client\_node\_ptr@{param\_client\_node\_ptr}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{param\_client\_node\_ptr}{param\_client\_node\_ptr}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$rclcpp\+::\+Node$>$ dhtt\+::\+Communication\+Aggregator\+::param\+\_\+client\+\_\+node\+\_\+ptr = nullptr\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_abc605d72f5a3fcbab83ff56697d2d5b8}\label{classdhtt_1_1CommunicationAggregator_abc605d72f5a3fcbab83ff56697d2d5b8}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!param\_client\_ptrs@{param\_client\_ptrs}}
+\index{param\_client\_ptrs@{param\_client\_ptrs}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{param\_client\_ptrs}{param\_client\_ptrs}}
+{\footnotesize\ttfamily std\+::map$<$std\+::string, std\+::weak\+\_\+ptr$<$rclcpp\+::\+Sync\+Parameters\+Client$>$ $>$ dhtt\+::\+Communication\+Aggregator\+::param\+\_\+client\+\_\+ptrs\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_ac158ec9a6767909237eb83c88b3259ac}\label{classdhtt_1_1CommunicationAggregator_ac158ec9a6767909237eb83c88b3259ac}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!param\_mutex@{param\_mutex}}
+\index{param\_mutex@{param\_mutex}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{param\_mutex}{param\_mutex}}
+{\footnotesize\ttfamily std\+::mutex dhtt\+::\+Communication\+Aggregator\+::param\+\_\+mutex\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_ab1622872d91966245f52f742df581dcd}\label{classdhtt_1_1CommunicationAggregator_ab1622872d91966245f52f742df581dcd}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!publisher\_ptrs@{publisher\_ptrs}}
+\index{publisher\_ptrs@{publisher\_ptrs}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{publisher\_ptrs}{publisher\_ptrs}}
+{\footnotesize\ttfamily std\+::map$<$std\+::string, std\+::any$>$ dhtt\+::\+Communication\+Aggregator\+::publisher\+\_\+ptrs\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_afc6f2d70f227d70a38d3aabcbd70043f}\label{classdhtt_1_1CommunicationAggregator_afc6f2d70f227d70a38d3aabcbd70043f}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!register\_mutex@{register\_mutex}}
+\index{register\_mutex@{register\_mutex}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{register\_mutex}{register\_mutex}}
+{\footnotesize\ttfamily std\+::mutex dhtt\+::\+Communication\+Aggregator\+::register\+\_\+mutex\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_a614c2dcf089d7dc143623a333ef07971}\label{classdhtt_1_1CommunicationAggregator_a614c2dcf089d7dc143623a333ef07971}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!service\_client\_ptrs@{service\_client\_ptrs}}
+\index{service\_client\_ptrs@{service\_client\_ptrs}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{service\_client\_ptrs}{service\_client\_ptrs}}
+{\footnotesize\ttfamily std\+::map$<$std\+::string, std\+::any$>$ dhtt\+::\+Communication\+Aggregator\+::service\+\_\+client\+\_\+ptrs\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_af51f1f98e5695daf9b4d81aa007e8b41}\label{classdhtt_1_1CommunicationAggregator_af51f1f98e5695daf9b4d81aa007e8b41}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!sub\_qos@{sub\_qos}}
+\index{sub\_qos@{sub\_qos}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{sub\_qos}{sub\_qos}}
+{\footnotesize\ttfamily rclcpp\+::\+QoS dhtt\+::\+Communication\+Aggregator\+::sub\+\_\+qos\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_aa11fb00ed1a80b2a26b1926434ec9954}\label{classdhtt_1_1CommunicationAggregator_aa11fb00ed1a80b2a26b1926434ec9954}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!subscription\_ptrs@{subscription\_ptrs}}
+\index{subscription\_ptrs@{subscription\_ptrs}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{subscription\_ptrs}{subscription\_ptrs}}
+{\footnotesize\ttfamily std\+::map$<$std\+::string, std\+::any$>$ dhtt\+::\+Communication\+Aggregator\+::subscription\+\_\+ptrs\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1CommunicationAggregator_a89a2a79f44ec11ee2e0e51c545c23e62}\label{classdhtt_1_1CommunicationAggregator_a89a2a79f44ec11ee2e0e51c545c23e62}} 
+\index{dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}!unique\_id@{unique\_id}}
+\index{unique\_id@{unique\_id}!dhtt::CommunicationAggregator@{dhtt::CommunicationAggregator}}
+\doxysubsubsection{\texorpdfstring{unique\_id}{unique\_id}}
+{\footnotesize\ttfamily int dhtt\+::\+Communication\+Aggregator\+::unique\+\_\+id\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt/include/dhtt/server/\mbox{\hyperlink{communication__aggregator_8hpp}{communication\+\_\+aggregator.\+hpp}}\end{DoxyCompactItemize}

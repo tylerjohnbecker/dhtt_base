@@ -1,0 +1,318 @@
+\hypertarget{classdhtt_1_1BranchPlugType}{}\doxysection{dhtt\+::Branch\+Plug\+Type Class Reference}
+\label{classdhtt_1_1BranchPlugType}\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+
+
+Base class for the plugs which provides the necessary multithreading capabilities.  
+
+
+
+
+{\ttfamily \#include $<$branch\+\_\+type.\+hpp$>$}
+
+
+
+Collaboration diagram for dhtt\+::Branch\+Plug\+Type\+:
+% FIG 0
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a673acf9405c5d1d1f4a5374384d2926d}{initialize}} (\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$constructor\+\_\+ptr, std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1BranchSocketType}{Branch\+Socket\+Type}} $>$ socket\+\_\+ptr, std\+::string child\+\_\+name)=0
+\begin{DoxyCompactList}\small\item\em general initializer for the plug type \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classdhtt_1_1BranchPlugType_abda9e11339d0dbfd3db0238a46be1987}{destruct}} ()
+\begin{DoxyCompactList}\small\item\em collects resources and joins threads \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a0322707816c4cdcba29f2685712db1b9}{async\+\_\+send\+\_\+activate}} (\mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\+\_\+goal}} to\+\_\+send)
+\begin{DoxyCompactList}\small\item\em activate the child node attached to this plug\textquotesingle{}s socket \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1BranchPlugType_aed9edb23848408592e1423106a336048}{block\+\_\+for\+\_\+activation\+\_\+response}} ()
+\begin{DoxyCompactList}\small\item\em block for the activation response \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\+\_\+result}} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a35c825380c8c8578c25c6edc04814350}{get\+\_\+activation\+\_\+result}} ()
+\begin{DoxyCompactList}\small\item\em returns the activation result received from child \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classdhtt_1_1BranchPlugType_ae2a2d18088d943f9e074ceabeb7e2247}{async\+\_\+send\+\_\+maintain}} (\mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\+\_\+goal}} to\+\_\+send)
+\begin{DoxyCompactList}\small\item\em essentially the same as the activate function analogue \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt_1_1BranchPlugType_ad0c62993abeea24136eac370b6a0af98}{block\+\_\+for\+\_\+maintain\+\_\+response}} ()
+\begin{DoxyCompactList}\small\item\em essentially the same as the activation block method \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\+\_\+result}} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a9be7ed2409f64e38cbfed9eb5561f472}{get\+\_\+maintain\+\_\+result}} ()
+\begin{DoxyCompactList}\small\item\em returns maitnenance result from child. Shares the same restrictions as the activation analogue method \end{DoxyCompactList}\item 
+virtual bool \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a52d70d97cabd9504fcdd6f643061507e}{connection\+\_\+is\+\_\+good}} ()
+\begin{DoxyCompactList}\small\item\em returns whether this plug can connect to its socket \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\+\_\+result}} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_adf20411eb6ee10f954802f0971a485ff}{send\+\_\+activate}} (\mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\+\_\+goal}} to\+\_\+send)=0
+\begin{DoxyCompactList}\small\item\em Method to activate child. \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\+\_\+result}} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a08eb798e41a7a5ae39f1203abbc19906}{send\+\_\+maintain}} (\mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\+\_\+goal}} to\+\_\+send)=0
+\begin{DoxyCompactList}\small\item\em Method to perform condition maintenance on child. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$ \mbox{\hyperlink{classdhtt_1_1BranchPlugType_ab8ca4c194e93f45debb988214545c733}{container}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::shared\+\_\+ptr$<$ std\+::packaged\+\_\+task$<$ \mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\+\_\+result}}(\mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\+\_\+goal}})$>$ $>$ \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a3ed26499f827c3500a07526ce7e11993}{activation\+\_\+task\+\_\+ptr}}
+\item 
+std\+::future$<$ \mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\+\_\+result}} $>$ \mbox{\hyperlink{classdhtt_1_1BranchPlugType_aa3d541a7e87852a157f98429c4abce3a}{activation\+\_\+result\+\_\+future}}
+\item 
+std\+::shared\+\_\+ptr$<$ std\+::thread $>$ \mbox{\hyperlink{classdhtt_1_1BranchPlugType_abbfff3607910c937e5071b53e8bedaec}{activation\+\_\+thread\+\_\+ptr}}
+\item 
+std\+::shared\+\_\+ptr$<$ std\+::packaged\+\_\+task$<$ \mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\+\_\+result}}(\mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\+\_\+goal}})$>$ $>$ \mbox{\hyperlink{classdhtt_1_1BranchPlugType_acfe269b0285a908f36eb2b45adbb392a}{condition\+\_\+task\+\_\+ptr}}
+\item 
+std\+::future$<$ \mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\+\_\+result}} $>$ \mbox{\hyperlink{classdhtt_1_1BranchPlugType_aeef933a095d8a23f35a392e31011c806}{condition\+\_\+result\+\_\+future}}
+\item 
+std\+::shared\+\_\+ptr$<$ std\+::thread $>$ \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a61273760d731fd3aeb809253fb34791b}{condition\+\_\+thread\+\_\+ptr}}
+\item 
+int \mbox{\hyperlink{classdhtt_1_1BranchPlugType_ae9572b9c270bd3b67f854b9bd6245fdc}{activate\+\_\+state}} = 0
+\item 
+int \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a9753a4f3a35087f25f00939b0ed3fb61}{condition\+\_\+state}} = 0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Base class for the plugs which provides the necessary multithreading capabilities. 
+
+This class facilitates the communication between nodes by giving a general interface of methods they can call. For now, all calls are asynchronous and the synchronous calls are obfuscated from the user. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_a0322707816c4cdcba29f2685712db1b9}\label{classdhtt_1_1BranchPlugType_a0322707816c4cdcba29f2685712db1b9}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!async\_send\_activate@{async\_send\_activate}}
+\index{async\_send\_activate@{async\_send\_activate}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{async\_send\_activate()}{async\_send\_activate()}}
+{\footnotesize\ttfamily bool dhtt\+::\+Branch\+Plug\+Type\+::async\+\_\+send\+\_\+activate (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\+\_\+goal}}}]{to\+\_\+send }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+activate the child node attached to this plug\textquotesingle{}s socket 
+
+The general method for getting responses should always be async\+\_\+activate -\/\texorpdfstring{$>$}{>} block\+\_\+for\+\_\+response -\/\texorpdfstring{$>$}{>} get response. This will ensure that the state is managed correctly. If performed incorrectly some of these methods will fail. This essentially just starts the send\+\_\+activate function below in another thread and keeps track of it through a thread\+\_\+ptr and a future.
+
+
+\begin{DoxyParams}{Parameters}
+{\em to\+\_\+send} & activation goal to send to child\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool true if activation thread was created successfully false otherwise 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_ae2a2d18088d943f9e074ceabeb7e2247}\label{classdhtt_1_1BranchPlugType_ae2a2d18088d943f9e074ceabeb7e2247}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!async\_send\_maintain@{async\_send\_maintain}}
+\index{async\_send\_maintain@{async\_send\_maintain}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{async\_send\_maintain()}{async\_send\_maintain()}}
+{\footnotesize\ttfamily bool dhtt\+::\+Branch\+Plug\+Type\+::async\+\_\+send\+\_\+maintain (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\+\_\+goal}}}]{to\+\_\+send }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+essentially the same as the activate function analogue 
+
+
+\begin{DoxyParams}{Parameters}
+{\em to\+\_\+send} & maintenance goal msg to send to child\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_aed9edb23848408592e1423106a336048}\label{classdhtt_1_1BranchPlugType_aed9edb23848408592e1423106a336048}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!block\_for\_activation\_response@{block\_for\_activation\_response}}
+\index{block\_for\_activation\_response@{block\_for\_activation\_response}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{block\_for\_activation\_response()}{block\_for\_activation\_response()}}
+{\footnotesize\ttfamily void dhtt\+::\+Branch\+Plug\+Type\+::block\+\_\+for\+\_\+activation\+\_\+response (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+block for the activation response 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_ad0c62993abeea24136eac370b6a0af98}\label{classdhtt_1_1BranchPlugType_ad0c62993abeea24136eac370b6a0af98}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!block\_for\_maintain\_response@{block\_for\_maintain\_response}}
+\index{block\_for\_maintain\_response@{block\_for\_maintain\_response}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{block\_for\_maintain\_response()}{block\_for\_maintain\_response()}}
+{\footnotesize\ttfamily void dhtt\+::\+Branch\+Plug\+Type\+::block\+\_\+for\+\_\+maintain\+\_\+response (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+essentially the same as the activation block method 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_a52d70d97cabd9504fcdd6f643061507e}\label{classdhtt_1_1BranchPlugType_a52d70d97cabd9504fcdd6f643061507e}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!connection\_is\_good@{connection\_is\_good}}
+\index{connection\_is\_good@{connection\_is\_good}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{connection\_is\_good()}{connection\_is\_good()}}
+{\footnotesize\ttfamily virtual bool dhtt\+::\+Branch\+Plug\+Type\+::connection\+\_\+is\+\_\+good (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+returns whether this plug can connect to its socket 
+
+This method will be run from the parent node, and should be overloaded for each different connection type
+
+\begin{DoxyReturn}{Returns}
+true if it can connect, false otherwise 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_abda9e11339d0dbfd3db0238a46be1987}\label{classdhtt_1_1BranchPlugType_abda9e11339d0dbfd3db0238a46be1987}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!destruct@{destruct}}
+\index{destruct@{destruct}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{destruct()}{destruct()}}
+{\footnotesize\ttfamily virtual void dhtt\+::\+Branch\+Plug\+Type\+::destruct (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+collects resources and joins threads 
+
+This should be called in the destructor of the node class and can be overriden in the case that child classes have more resources to collect \mbox{\Hypertarget{classdhtt_1_1BranchPlugType_a35c825380c8c8578c25c6edc04814350}\label{classdhtt_1_1BranchPlugType_a35c825380c8c8578c25c6edc04814350}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!get\_activation\_result@{get\_activation\_result}}
+\index{get\_activation\_result@{get\_activation\_result}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{get\_activation\_result()}{get\_activation\_result()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\+\_\+result}} dhtt\+::\+Branch\+Plug\+Type\+::get\+\_\+activation\+\_\+result (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+returns the activation result received from child 
+
+If this was not called after blocking then a blank result is returned instead
+
+\begin{DoxyReturn}{Returns}
+activation result received from child 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_a9be7ed2409f64e38cbfed9eb5561f472}\label{classdhtt_1_1BranchPlugType_a9be7ed2409f64e38cbfed9eb5561f472}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!get\_maintain\_result@{get\_maintain\_result}}
+\index{get\_maintain\_result@{get\_maintain\_result}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{get\_maintain\_result()}{get\_maintain\_result()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\+\_\+result}} dhtt\+::\+Branch\+Plug\+Type\+::get\+\_\+maintain\+\_\+result (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+returns maitnenance result from child. Shares the same restrictions as the activation analogue method 
+
+\begin{DoxyReturn}{Returns}
+condition result received from child 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_a673acf9405c5d1d1f4a5374384d2926d}\label{classdhtt_1_1BranchPlugType_a673acf9405c5d1d1f4a5374384d2926d}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!initialize@{initialize}}
+\index{initialize@{initialize}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily virtual void dhtt\+::\+Branch\+Plug\+Type\+::initialize (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$}]{constructor\+\_\+ptr,  }\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1BranchSocketType}{Branch\+Socket\+Type}} $>$}]{socket\+\_\+ptr,  }\item[{std\+::string}]{child\+\_\+name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+general initializer for the plug type 
+
+This class is meant to be created for each child and facilitates all communication from parent to child by connecting to its corresponding socket type. This class should contain all necessary systems for communication with the socket.
+
+
+\begin{DoxyParams}{Parameters}
+{\em constructor\+\_\+ptr} & will be saved and will enable this class to call public functions of the owner node \\
+\hline
+{\em socket\+\_\+ptr} & for ptr based communication this will be the actual address of the socket, but for network it will be nullptr \\
+\hline
+{\em child\+\_\+name} & actual node name for the child connection, useful for network based communication\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_adf20411eb6ee10f954802f0971a485ff}\label{classdhtt_1_1BranchPlugType_adf20411eb6ee10f954802f0971a485ff}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!send\_activate@{send\_activate}}
+\index{send\_activate@{send\_activate}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{send\_activate()}{send\_activate()}}
+{\footnotesize\ttfamily virtual \mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\+\_\+result}} dhtt\+::\+Branch\+Plug\+Type\+::send\+\_\+activate (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\+\_\+goal}}}]{to\+\_\+send }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}}
+
+
+
+Method to activate child. 
+
+This is the method where overloaded activation code should exist to hit the right functionality from the socket. This method will be called from a separate thread so that should be taken into account in design.
+
+
+\begin{DoxyParams}{Parameters}
+{\em to\+\_\+send} & activation goal for the child\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+activation result from the child 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_a08eb798e41a7a5ae39f1203abbc19906}\label{classdhtt_1_1BranchPlugType_a08eb798e41a7a5ae39f1203abbc19906}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!send\_maintain@{send\_maintain}}
+\index{send\_maintain@{send\_maintain}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{send\_maintain()}{send\_maintain()}}
+{\footnotesize\ttfamily virtual \mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\+\_\+result}} dhtt\+::\+Branch\+Plug\+Type\+::send\+\_\+maintain (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\+\_\+goal}}}]{to\+\_\+send }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}}
+
+
+
+Method to perform condition maintenance on child. 
+
+This is the method where overloaded maintenance code should exist to hit the right functionality from the socket. This method will be called from a separate thread so that should be taken into account in design.
+
+
+\begin{DoxyParams}{Parameters}
+{\em to\+\_\+send} & condition goal for the child\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+condition result from the child 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_ae9572b9c270bd3b67f854b9bd6245fdc}\label{classdhtt_1_1BranchPlugType_ae9572b9c270bd3b67f854b9bd6245fdc}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!activate\_state@{activate\_state}}
+\index{activate\_state@{activate\_state}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{activate\_state}{activate\_state}}
+{\footnotesize\ttfamily int dhtt\+::\+Branch\+Plug\+Type\+::activate\+\_\+state = 0\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_aa3d541a7e87852a157f98429c4abce3a}\label{classdhtt_1_1BranchPlugType_aa3d541a7e87852a157f98429c4abce3a}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!activation\_result\_future@{activation\_result\_future}}
+\index{activation\_result\_future@{activation\_result\_future}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{activation\_result\_future}{activation\_result\_future}}
+{\footnotesize\ttfamily std\+::future$<$\mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\+\_\+result}}$>$ dhtt\+::\+Branch\+Plug\+Type\+::activation\+\_\+result\+\_\+future\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_a3ed26499f827c3500a07526ce7e11993}\label{classdhtt_1_1BranchPlugType_a3ed26499f827c3500a07526ce7e11993}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!activation\_task\_ptr@{activation\_task\_ptr}}
+\index{activation\_task\_ptr@{activation\_task\_ptr}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{activation\_task\_ptr}{activation\_task\_ptr}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$std\+::packaged\+\_\+task$<$\mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\+\_\+result}}(\mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\+\_\+goal}})$>$ $>$ dhtt\+::\+Branch\+Plug\+Type\+::activation\+\_\+task\+\_\+ptr\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_abbfff3607910c937e5071b53e8bedaec}\label{classdhtt_1_1BranchPlugType_abbfff3607910c937e5071b53e8bedaec}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!activation\_thread\_ptr@{activation\_thread\_ptr}}
+\index{activation\_thread\_ptr@{activation\_thread\_ptr}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{activation\_thread\_ptr}{activation\_thread\_ptr}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$std\+::thread$>$ dhtt\+::\+Branch\+Plug\+Type\+::activation\+\_\+thread\+\_\+ptr\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_aeef933a095d8a23f35a392e31011c806}\label{classdhtt_1_1BranchPlugType_aeef933a095d8a23f35a392e31011c806}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!condition\_result\_future@{condition\_result\_future}}
+\index{condition\_result\_future@{condition\_result\_future}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{condition\_result\_future}{condition\_result\_future}}
+{\footnotesize\ttfamily std\+::future$<$\mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\+\_\+result}}$>$ dhtt\+::\+Branch\+Plug\+Type\+::condition\+\_\+result\+\_\+future\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_a9753a4f3a35087f25f00939b0ed3fb61}\label{classdhtt_1_1BranchPlugType_a9753a4f3a35087f25f00939b0ed3fb61}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!condition\_state@{condition\_state}}
+\index{condition\_state@{condition\_state}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{condition\_state}{condition\_state}}
+{\footnotesize\ttfamily int dhtt\+::\+Branch\+Plug\+Type\+::condition\+\_\+state = 0\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_acfe269b0285a908f36eb2b45adbb392a}\label{classdhtt_1_1BranchPlugType_acfe269b0285a908f36eb2b45adbb392a}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!condition\_task\_ptr@{condition\_task\_ptr}}
+\index{condition\_task\_ptr@{condition\_task\_ptr}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{condition\_task\_ptr}{condition\_task\_ptr}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$std\+::packaged\+\_\+task$<$\mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\+\_\+result}}(\mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\+\_\+goal}})$>$ $>$ dhtt\+::\+Branch\+Plug\+Type\+::condition\+\_\+task\+\_\+ptr\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_a61273760d731fd3aeb809253fb34791b}\label{classdhtt_1_1BranchPlugType_a61273760d731fd3aeb809253fb34791b}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!condition\_thread\_ptr@{condition\_thread\_ptr}}
+\index{condition\_thread\_ptr@{condition\_thread\_ptr}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{condition\_thread\_ptr}{condition\_thread\_ptr}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$std\+::thread$>$ dhtt\+::\+Branch\+Plug\+Type\+::condition\+\_\+thread\+\_\+ptr\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_ab8ca4c194e93f45debb988214545c733}\label{classdhtt_1_1BranchPlugType_ab8ca4c194e93f45debb988214545c733}} 
+\index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!container@{container}}
+\index{container@{container}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
+\doxysubsubsection{\texorpdfstring{container}{container}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classdhtt_1_1Node}{Node}}$\ast$ dhtt\+::\+Branch\+Plug\+Type\+::container\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt/include/dhtt/tree/\mbox{\hyperlink{branch__type_8hpp}{branch\+\_\+type.\+hpp}}\end{DoxyCompactItemize}

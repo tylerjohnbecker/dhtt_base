@@ -77,6 +77,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="classdhtt_1_1Node-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">dhtt::Node Class Reference</div></div>
@@ -87,30 +88,12 @@ $(function() {
  <a href="classdhtt_1_1Node.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="node_8hpp_source.html">node.hpp</a>&gt;</code></p>
-<div class="dynheader">
-Inheritance diagram for dhtt::Node:</div>
-<div class="dyncontent">
-<div class="center"><img src="classdhtt_1_1Node__inherit__graph.png" border="0" usemap="#adhtt_1_1Node_inherit__map" alt="Inheritance graph"/></div>
-<map name="adhtt_1_1Node_inherit__map" id="adhtt_1_1Node_inherit__map">
-<area shape="rect" title="dHTT Node class for all nodes on the tree" alt="" coords="12,79,93,104"/>
-<area shape="rect" title=" " alt="" coords="5,5,100,31"/>
-</map>
-<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
-<div class="dynheader">
-Collaboration diagram for dhtt::Node:</div>
-<div class="dyncontent">
-<div class="center"><img src="classdhtt_1_1Node__coll__graph.png" border="0" usemap="#adhtt_1_1Node_coll__map" alt="Collaboration graph"/></div>
-<map name="adhtt_1_1Node_coll__map" id="adhtt_1_1Node_coll__map">
-<area shape="rect" title="dHTT Node class for all nodes on the tree" alt="" coords="12,79,93,104"/>
-<area shape="rect" title=" " alt="" coords="5,5,100,31"/>
-</map>
-<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad92bd3188be032af09313bdc5f533650"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ad92bd3188be032af09313bdc5f533650">Node</a> (std::string <a class="el" href="classdhtt_1_1Node.html#a115da70a32b17f9913d7bfb57180afe3">name</a>, std::string type, std::vector&lt; std::string &gt; params, std::string <a class="el" href="classdhtt_1_1Node.html#a4f3abfadbbda36594d1976a3d960fc09">parent_name</a>)</td></tr>
-<tr class="memdesc:ad92bd3188be032af09313bdc5f533650"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the node class.  <a href="classdhtt_1_1Node.html#ad92bd3188be032af09313bdc5f533650">More...</a><br /></td></tr>
-<tr class="separator:ad92bd3188be032af09313bdc5f533650"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf967bffe5bde331fc03fbf961c8514a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#adf967bffe5bde331fc03fbf961c8514a">Node</a> (std::shared_ptr&lt; <a class="el" href="classdhtt_1_1CommunicationAggregator.html">CommunicationAggregator</a> &gt; com_agg, std::string <a class="el" href="classdhtt_1_1Node.html#a115da70a32b17f9913d7bfb57180afe3">name</a>, std::string type, std::vector&lt; std::string &gt; params, std::string <a class="el" href="classdhtt_1_1Node.html#a4f3abfadbbda36594d1976a3d960fc09">parent_name</a>, std::string socket_type=&quot;dhtt_plugins::PtrBranchSocket&quot;, std::string goitr_type=&quot;&quot;, std::string potential_type=&quot;dhtt_plugins::EfficiencyPotential&quot;)</td></tr>
+<tr class="memdesc:adf967bffe5bde331fc03fbf961c8514a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the node class.  <a href="classdhtt_1_1Node.html#adf967bffe5bde331fc03fbf961c8514a">More...</a><br /></td></tr>
+<tr class="separator:adf967bffe5bde331fc03fbf961c8514a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36bce3e0e7d7593a5b63b637f39cfee1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a36bce3e0e7d7593a5b63b637f39cfee1">~Node</a> ()</td></tr>
 <tr class="separator:a36bce3e0e7d7593a5b63b637f39cfee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37e3f9bfad1ce41f0279baa58f0c91cf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a37e3f9bfad1ce41f0279baa58f0c91cf">loaded_successfully</a> ()</td></tr>
@@ -119,6 +102,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aaa42c6f51d16f6e9840765b18ec01feb"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#aaa42c6f51d16f6e9840765b18ec01feb">get_error_msg</a> ()</td></tr>
 <tr class="memdesc:aaa42c6f51d16f6e9840765b18ec01feb"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter method for error msg  <a href="classdhtt_1_1Node.html#aaa42c6f51d16f6e9840765b18ec01feb">More...</a><br /></td></tr>
 <tr class="separator:aaa42c6f51d16f6e9840765b18ec01feb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a4d1d56bad5edb66932470a9b6b1cf4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a7a4d1d56bad5edb66932470a9b6b1cf4">get_subtree_resources</a> ()</td></tr>
+<tr class="memdesc:a7a4d1d56bad5edb66932470a9b6b1cf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the number of resources owned in the subtree starting at this node  <a href="classdhtt_1_1Node.html#a7a4d1d56bad5edb66932470a9b6b1cf4">More...</a><br /></td></tr>
+<tr class="separator:a7a4d1d56bad5edb66932470a9b6b1cf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33b8aeec2ee92d5e4d1cb829f6f34515"><td class="memItemLeft" align="right" valign="top">std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a33b8aeec2ee92d5e4d1cb829f6f34515">get_owned_resources</a> ()</td></tr>
 <tr class="memdesc:a33b8aeec2ee92d5e4d1cb829f6f34515"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns all currently owned resources of the node.  <a href="classdhtt_1_1Node.html#a33b8aeec2ee92d5e4d1cb829f6f34515">More...</a><br /></td></tr>
 <tr class="separator:a33b8aeec2ee92d5e4d1cb829f6f34515"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -128,30 +114,51 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5808acf03ace257d187a6e5b1bafc0b5"><td class="memItemLeft" align="right" valign="top">std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a5808acf03ace257d187a6e5b1bafc0b5">get_resource_state</a> ()</td></tr>
 <tr class="memdesc:a5808acf03ace257d187a6e5b1bafc0b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the node's copy of the resource state.  <a href="classdhtt_1_1Node.html#a5808acf03ace257d187a6e5b1bafc0b5">More...</a><br /></td></tr>
 <tr class="separator:a5808acf03ace257d187a6e5b1bafc0b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4053e0cdd7f6a59416f7998514e7df1b"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1BranchSocketType.html">BranchSocketType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a4053e0cdd7f6a59416f7998514e7df1b">get_socket_ptr</a> ()</td></tr>
+<tr class="memdesc:a4053e0cdd7f6a59416f7998514e7df1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a shared ptr to the socket_ptr of this node  <a href="classdhtt_1_1Node.html#a4053e0cdd7f6a59416f7998514e7df1b">More...</a><br /></td></tr>
+<tr class="separator:a4053e0cdd7f6a59416f7998514e7df1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a4c6262498b5d2d479b5602e2268c3a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1CommunicationAggregator.html">CommunicationAggregator</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a1a4c6262498b5d2d479b5602e2268c3a">get_com_agg</a> ()</td></tr>
+<tr class="memdesc:a1a4c6262498b5d2d479b5602e2268c3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a shared ptr to the global communication aggregator for the tree  <a href="classdhtt_1_1Node.html#a1a4c6262498b5d2d479b5602e2268c3a">More...</a><br /></td></tr>
+<tr class="separator:a1a4c6262498b5d2d479b5602e2268c3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ab033be060188ca420788f68d944ba8"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1NodeType.html">NodeType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a1ab033be060188ca420788f68d944ba8">get_logic</a> ()</td></tr>
+<tr class="memdesc:a1ab033be060188ca420788f68d944ba8"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a ptr to the logic plugin of this node  <a href="classdhtt_1_1Node.html#a1ab033be060188ca420788f68d944ba8">More...</a><br /></td></tr>
+<tr class="separator:a1ab033be060188ca420788f68d944ba8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abea1f61420a615e9ee1eca5e9e0be309"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#abea1f61420a615e9ee1eca5e9e0be309">set_passed_resources</a> (std::vector&lt; dhtt_msgs::msg::Resource &gt; set_to)</td></tr>
 <tr class="memdesc:abea1f61420a615e9ee1eca5e9e0be309"><td class="mdescLeft">&#160;</td><td class="mdescRight">setter method for passsed resources  <a href="classdhtt_1_1Node.html#abea1f61420a615e9ee1eca5e9e0be309">More...</a><br /></td></tr>
 <tr class="separator:abea1f61420a615e9ee1eca5e9e0be309"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08edd24fae1fac092d475d664518ad79"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a08edd24fae1fac092d475d664518ad79">register_with_parent</a> ()</td></tr>
-<tr class="memdesc:a08edd24fae1fac092d475d664518ad79"><td class="mdescLeft">&#160;</td><td class="mdescRight">registers this node with it's parent  <a href="classdhtt_1_1Node.html#a08edd24fae1fac092d475d664518ad79">More...</a><br /></td></tr>
-<tr class="separator:a08edd24fae1fac092d475d664518ad79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81eec6c70d038bbafc18f01948e1accb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a81eec6c70d038bbafc18f01948e1accb">register_servers</a> ()</td></tr>
 <tr class="memdesc:a81eec6c70d038bbafc18f01948e1accb"><td class="mdescLeft">&#160;</td><td class="mdescRight">registers the necessary servers, publishers, action servers, etc. of this node.  <a href="classdhtt_1_1Node.html#a81eec6c70d038bbafc18f01948e1accb">More...</a><br /></td></tr>
 <tr class="separator:a81eec6c70d038bbafc18f01948e1accb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49251937ab548755209a96270ecd72c5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a49251937ab548755209a96270ecd72c5">add_child</a> (std::shared_ptr&lt; <a class="el" href="classdhtt_1_1BranchSocketType.html">BranchSocketType</a> &gt; socket_ptr, std::string child_name, std::string plug_type=&quot;dhtt_plugins::PtrBranchPlug&quot;, int index=-1)</td></tr>
+<tr class="memdesc:a49251937ab548755209a96270ecd72c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">registers a new child with this node  <a href="classdhtt_1_1Node.html#a49251937ab548755209a96270ecd72c5">More...</a><br /></td></tr>
+<tr class="separator:a49251937ab548755209a96270ecd72c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ab197eb83045145e50502a968ea217d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a4ab197eb83045145e50502a968ea217d">remove_child</a> (std::string child_name)</td></tr>
 <tr class="memdesc:a4ab197eb83045145e50502a968ea217d"><td class="mdescLeft">&#160;</td><td class="mdescRight">removes a child from this node's list of children  <a href="classdhtt_1_1Node.html#a4ab197eb83045145e50502a968ea217d">More...</a><br /></td></tr>
 <tr class="separator:a4ab197eb83045145e50502a968ea217d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add5be2961f87d9ee2e539e35505194c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#add5be2961f87d9ee2e539e35505194c0">async_activate_child</a> (std::string child_name, dhtt_msgs::action::Activation::Goal activation_goal)</td></tr>
-<tr class="memdesc:add5be2961f87d9ee2e539e35505194c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">spreads activation to child without busy wait  <a href="classdhtt_1_1Node.html#add5be2961f87d9ee2e539e35505194c0">More...</a><br /></td></tr>
-<tr class="separator:add5be2961f87d9ee2e539e35505194c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43572741c70d55807c8b434ac52954d4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a43572741c70d55807c8b434ac52954d4">activate_all_children</a> (dhtt_msgs::action::Activation::Goal activation_goal)</td></tr>
+<tr class="memitem:af678bdb4273ecefcafd8d240a389e644"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#af678bdb4273ecefcafd8d240a389e644">async_activate_child</a> (std::string child_name, dhtt_msgs::action::Activation::Goal <a class="el" href="namespacedhtt.html#a4c8b4cf5d1d5a5a949c78117ed356359">activation_goal</a>)</td></tr>
+<tr class="memdesc:af678bdb4273ecefcafd8d240a389e644"><td class="mdescLeft">&#160;</td><td class="mdescRight">spreads activation to child without busy wait  <a href="classdhtt_1_1Node.html#af678bdb4273ecefcafd8d240a389e644">More...</a><br /></td></tr>
+<tr class="separator:af678bdb4273ecefcafd8d240a389e644"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a5389d01c458cd7499e1bcbd1bd4c99"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a5a5389d01c458cd7499e1bcbd1bd4c99">async_request_conditions</a> (std::string child_name, dhtt_msgs::action::Condition::Goal <a class="el" href="namespacedhtt.html#a519efb18d9fa3b2973f67597d1b53a41">condition_goal</a>)</td></tr>
+<tr class="memdesc:a5a5389d01c458cd7499e1bcbd1bd4c99"><td class="mdescLeft">&#160;</td><td class="mdescRight">propogates maintain conditions request to given child  <a href="classdhtt_1_1Node.html#a5a5389d01c458cd7499e1bcbd1bd4c99">More...</a><br /></td></tr>
+<tr class="separator:a5a5389d01c458cd7499e1bcbd1bd4c99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43572741c70d55807c8b434ac52954d4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a43572741c70d55807c8b434ac52954d4">activate_all_children</a> (dhtt_msgs::action::Activation::Goal <a class="el" href="namespacedhtt.html#a4c8b4cf5d1d5a5a949c78117ed356359">activation_goal</a>)</td></tr>
 <tr class="memdesc:a43572741c70d55807c8b434ac52954d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">spreads activation to all children  <a href="classdhtt_1_1Node.html#a43572741c70d55807c8b434ac52954d4">More...</a><br /></td></tr>
 <tr class="separator:a43572741c70d55807c8b434ac52954d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5d6810ec6bdac8d5b24fffe656b64a4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ad5d6810ec6bdac8d5b24fffe656b64a4">block_for_responses_from_children</a> ()</td></tr>
-<tr class="memdesc:ad5d6810ec6bdac8d5b24fffe656b64a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">busy waits until the number of responses equals the number of activations sent out  <a href="classdhtt_1_1Node.html#ad5d6810ec6bdac8d5b24fffe656b64a4">More...</a><br /></td></tr>
-<tr class="separator:ad5d6810ec6bdac8d5b24fffe656b64a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada935ab4d0264b8ac07ba6bc44fa5415"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, dhtt_msgs::action::Activation::Result::SharedPtr &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ada935ab4d0264b8ac07ba6bc44fa5415">get_activation_results</a> ()</td></tr>
-<tr class="memdesc:ada935ab4d0264b8ac07ba6bc44fa5415"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the responses from children  <a href="classdhtt_1_1Node.html#ada935ab4d0264b8ac07ba6bc44fa5415">More...</a><br /></td></tr>
-<tr class="separator:ada935ab4d0264b8ac07ba6bc44fa5415"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84e4d7d57da54c6c1f7445bd96605ce9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a84e4d7d57da54c6c1f7445bd96605ce9">request_conditions_from_children</a> ()</td></tr>
+<tr class="memdesc:a84e4d7d57da54c6c1f7445bd96605ce9"><td class="mdescLeft">&#160;</td><td class="mdescRight">propogates condition maintenance to children  <a href="classdhtt_1_1Node.html#a84e4d7d57da54c6c1f7445bd96605ce9">More...</a><br /></td></tr>
+<tr class="separator:a84e4d7d57da54c6c1f7445bd96605ce9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ae0fa5f47963646513a13deecbecb0e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a2ae0fa5f47963646513a13deecbecb0e">block_for_activation_from_children</a> ()</td></tr>
+<tr class="memdesc:a2ae0fa5f47963646513a13deecbecb0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">busy waits until the number of responses equals the number of activations sent out  <a href="classdhtt_1_1Node.html#a2ae0fa5f47963646513a13deecbecb0e">More...</a><br /></td></tr>
+<tr class="separator:a2ae0fa5f47963646513a13deecbecb0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82c8f32feefc3d055715d8a470cd20fa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a82c8f32feefc3d055715d8a470cd20fa">block_for_conditions_from_children</a> ()</td></tr>
+<tr class="memdesc:a82c8f32feefc3d055715d8a470cd20fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">busy waits until all condition responses are received from children  <a href="classdhtt_1_1Node.html#a82c8f32feefc3d055715d8a470cd20fa">More...</a><br /></td></tr>
+<tr class="separator:a82c8f32feefc3d055715d8a470cd20fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35e576532c6ecb0b7002f0e145727420"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, dhtt_msgs::action::Activation::Result &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a35e576532c6ecb0b7002f0e145727420">get_activation_results</a> ()</td></tr>
+<tr class="memdesc:a35e576532c6ecb0b7002f0e145727420"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the responses from children  <a href="classdhtt_1_1Node.html#a35e576532c6ecb0b7002f0e145727420">More...</a><br /></td></tr>
+<tr class="separator:a35e576532c6ecb0b7002f0e145727420"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac40686c3346010368cb5976756b67a29"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, dhtt_msgs::action::Condition::Result &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ac40686c3346010368cb5976756b67a29">get_condition_results</a> ()</td></tr>
+<tr class="memdesc:ac40686c3346010368cb5976756b67a29"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the condition responses from children  <a href="classdhtt_1_1Node.html#ac40686c3346010368cb5976756b67a29">More...</a><br /></td></tr>
+<tr class="separator:ac40686c3346010368cb5976756b67a29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86e8ecc379d3d878c380341885c1f97a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a86e8ecc379d3d878c380341885c1f97a">get_child_names</a> ()</td></tr>
 <tr class="memdesc:a86e8ecc379d3d878c380341885c1f97a"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the list of child_names  <a href="classdhtt_1_1Node.html#a86e8ecc379d3d878c380341885c1f97a">More...</a><br /></td></tr>
 <tr class="separator:a86e8ecc379d3d878c380341885c1f97a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,30 +174,30 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad2dbd4ea3713bc091c3fdf9fa0b02378"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ad2dbd4ea3713bc091c3fdf9fa0b02378">update_status</a> (int8_t n_state)</td></tr>
 <tr class="memdesc:ad2dbd4ea3713bc091c3fdf9fa0b02378"><td class="mdescLeft">&#160;</td><td class="mdescRight">updates the internal status and reports to <a class="el" href="classdhtt_1_1MainServer.html" title="main communication to manipulate and get information from the dHTT">MainServer</a>  <a href="classdhtt_1_1Node.html#ad2dbd4ea3713bc091c3fdf9fa0b02378">More...</a><br /></td></tr>
 <tr class="separator:ad2dbd4ea3713bc091c3fdf9fa0b02378"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a957616b196a4f3602abf9f4192c43569"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a957616b196a4f3602abf9f4192c43569">fire_knowledge_updated</a> ()</td></tr>
+<tr class="memdesc:a957616b196a4f3602abf9f4192c43569"><td class="mdescLeft">&#160;</td><td class="mdescRight">notifies any knowledge sensitive nodes that there have been changes to the param server  <a href="classdhtt_1_1Node.html#a957616b196a4f3602abf9f4192c43569">More...</a><br /></td></tr>
+<tr class="separator:a957616b196a4f3602abf9f4192c43569"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9108ed5afb76cb5455fa2a59ff57c1ca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a9108ed5afb76cb5455fa2a59ff57c1ca">set_resource_status_updated</a> (bool to_set)</td></tr>
 <tr class="memdesc:a9108ed5afb76cb5455fa2a59ff57c1ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">setter for internal resource_status_updated flag  <a href="classdhtt_1_1Node.html#a9108ed5afb76cb5455fa2a59ff57c1ca">More...</a><br /></td></tr>
 <tr class="separator:a9108ed5afb76cb5455fa2a59ff57c1ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58eeae51773f99af8fa5bdf5a98b1c99"><td class="memItemLeft" align="right" valign="top">dhtt_msgs::action::Activation::Result&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a58eeae51773f99af8fa5bdf5a98b1c99">activate</a> (dhtt_msgs::action::Activation::Goal goal)</td></tr>
+<tr class="memdesc:a58eeae51773f99af8fa5bdf5a98b1c99"><td class="mdescLeft">&#160;</td><td class="mdescRight">activates the auction mechanism of task nodes and behavior nodes  <a href="classdhtt_1_1Node.html#a58eeae51773f99af8fa5bdf5a98b1c99">More...</a><br /></td></tr>
+<tr class="separator:a58eeae51773f99af8fa5bdf5a98b1c99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f1827437f2a62ab86b24e1a0a5961db"><td class="memItemLeft" align="right" valign="top">dhtt_msgs::action::Condition::Result&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a2f1827437f2a62ab86b24e1a0a5961db">combine_child_conditions</a> (dhtt_msgs::action::Condition::Goal goal)</td></tr>
+<tr class="memdesc:a2f1827437f2a62ab86b24e1a0a5961db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a request to the children to get pre and postconditions, then combines them based on logic in the node_type and saves and returns the result.  <a href="classdhtt_1_1Node.html#a2f1827437f2a62ab86b24e1a0a5961db">More...</a><br /></td></tr>
+<tr class="separator:a2f1827437f2a62ab86b24e1a0a5961db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a088e686379b26a12886d524c2c038328"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a088e686379b26a12886d524c2c038328">print_resources</a> (std::vector&lt; dhtt_msgs::msg::Resource &gt; compare)</td></tr>
+<tr class="memdesc:a088e686379b26a12886d524c2c038328"><td class="mdescLeft">&#160;</td><td class="mdescRight">debugging tool to print the resources that this tree thinks are canonical  <a href="classdhtt_1_1Node.html#a088e686379b26a12886d524c2c038328">More...</a><br /></td></tr>
+<tr class="separator:a088e686379b26a12886d524c2c038328"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a319b19005ee7e941f138ad152d28c9a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a319b19005ee7e941f138ad152d28c9a2">set_changed_flag</a> (bool n_val)</td></tr>
+<tr class="memdesc:a319b19005ee7e941f138ad152d28c9a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the changed flag to maintain on the next call to maintain pre/postconditions.  <a href="classdhtt_1_1Node.html#a319b19005ee7e941f138ad152d28c9a2">More...</a><br /></td></tr>
+<tr class="separator:a319b19005ee7e941f138ad152d28c9a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af076bd9765a3485834f110cde0683eb6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#af076bd9765a3485834f110cde0683eb6">set_child_changed</a> (std::string child, bool n_val)</td></tr>
+<tr class="memdesc:af076bd9765a3485834f110cde0683eb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets internal flag to maint pre/postconditions on child on next call  <a href="classdhtt_1_1Node.html#af076bd9765a3485834f110cde0683eb6">More...</a><br /></td></tr>
+<tr class="separator:af076bd9765a3485834f110cde0683eb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:ae24d6923631c252ec3801f73e204dc93"><td class="memItemLeft" align="right" valign="top">rclcpp_action::GoalResponse&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ae24d6923631c252ec3801f73e204dc93">goal_activation_callback</a> (const rclcpp_action::GoalUUID &amp;uuid, std::shared_ptr&lt; const dhtt_msgs::action::Activation::Goal &gt; goal)</td></tr>
-<tr class="memdesc:ae24d6923631c252ec3801f73e204dc93"><td class="mdescLeft">&#160;</td><td class="mdescRight">goal callback for activation action server  <a href="classdhtt_1_1Node.html#ae24d6923631c252ec3801f73e204dc93">More...</a><br /></td></tr>
-<tr class="separator:ae24d6923631c252ec3801f73e204dc93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ed7038713a59e3526fdbf034cd73e9e"><td class="memItemLeft" align="right" valign="top">rclcpp_action::CancelResponse&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a1ed7038713a59e3526fdbf034cd73e9e">cancel_activation_callback</a> (const std::shared_ptr&lt; rclcpp_action::ServerGoalHandle&lt; dhtt_msgs::action::Activation &gt; &gt; goal_handle)</td></tr>
-<tr class="memdesc:a1ed7038713a59e3526fdbf034cd73e9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">cancel callback for activation action server  <a href="classdhtt_1_1Node.html#a1ed7038713a59e3526fdbf034cd73e9e">More...</a><br /></td></tr>
-<tr class="separator:a1ed7038713a59e3526fdbf034cd73e9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf2ede9121a77dfc37a07867125b7b5f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#aaf2ede9121a77dfc37a07867125b7b5f">activation_accepted_callback</a> (const std::shared_ptr&lt; rclcpp_action::ServerGoalHandle&lt; dhtt_msgs::action::Activation &gt; &gt; goal_handle)</td></tr>
-<tr class="memdesc:aaf2ede9121a77dfc37a07867125b7b5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">maintains the finite state machine status of the node after activation is received  <a href="classdhtt_1_1Node.html#aaf2ede9121a77dfc37a07867125b7b5f">More...</a><br /></td></tr>
-<tr class="separator:aaf2ede9121a77dfc37a07867125b7b5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a8ca21dcee3cf3bb135e65025652089"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a5a8ca21dcee3cf3bb135e65025652089">store_result_callback</a> (const rclcpp_action::ClientGoalHandle&lt; dhtt_msgs::action::Activation &gt;::WrappedResult &amp;result, std::string node_name)</td></tr>
-<tr class="memdesc:a5a8ca21dcee3cf3bb135e65025652089"><td class="mdescLeft">&#160;</td><td class="mdescRight">stores results received from activating children  <a href="classdhtt_1_1Node.html#a5a8ca21dcee3cf3bb135e65025652089">More...</a><br /></td></tr>
-<tr class="separator:a5a8ca21dcee3cf3bb135e65025652089"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae95f75aa26af308add5662cea5d38acc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ae95f75aa26af308add5662cea5d38acc">activate</a> (const std::shared_ptr&lt; rclcpp_action::ServerGoalHandle&lt; dhtt_msgs::action::Activation &gt; &gt; goal_handle)</td></tr>
-<tr class="memdesc:ae95f75aa26af308add5662cea5d38acc"><td class="mdescLeft">&#160;</td><td class="mdescRight">activates the auction mechanism of task nodes and behavior nodes  <a href="classdhtt_1_1Node.html#ae95f75aa26af308add5662cea5d38acc">More...</a><br /></td></tr>
-<tr class="separator:ae95f75aa26af308add5662cea5d38acc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a897a837a45fc8244c894a6af4e90e3e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a897a837a45fc8244c894a6af4e90e3e6">register_child_callback</a> (std::shared_ptr&lt; dhtt_msgs::srv::InternalServiceRegistration::Request &gt; request, std::shared_ptr&lt; dhtt_msgs::srv::InternalServiceRegistration::Response &gt; response)</td></tr>
-<tr class="memdesc:a897a837a45fc8244c894a6af4e90e3e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">registers a new child with this node  <a href="classdhtt_1_1Node.html#a897a837a45fc8244c894a6af4e90e3e6">More...</a><br /></td></tr>
-<tr class="separator:a897a837a45fc8244c894a6af4e90e3e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83e3d2d35fe6b2fa44ada2cfc3ba9ab1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a83e3d2d35fe6b2fa44ada2cfc3ba9ab1">modify</a> (std::shared_ptr&lt; dhtt_msgs::srv::ModifyRequest::Request &gt; request, std::shared_ptr&lt; dhtt_msgs::srv::ModifyRequest::Response &gt; response)</td></tr>
 <tr class="memdesc:a83e3d2d35fe6b2fa44ada2cfc3ba9ab1"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback to modify the parameters or nodetype of this node  <a href="classdhtt_1_1Node.html#a83e3d2d35fe6b2fa44ada2cfc3ba9ab1">More...</a><br /></td></tr>
 <tr class="separator:a83e3d2d35fe6b2fa44ada2cfc3ba9ab1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -200,71 +207,115 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a424d19e6aa8d4ef7ec6b64921c75917e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a424d19e6aa8d4ef7ec6b64921c75917e">check_preconditions</a> ()</td></tr>
 <tr class="memdesc:a424d19e6aa8d4ef7ec6b64921c75917e"><td class="mdescLeft">&#160;</td><td class="mdescRight">checks if the preconditions of the node are met  <a href="classdhtt_1_1Node.html#a424d19e6aa8d4ef7ec6b64921c75917e">More...</a><br /></td></tr>
 <tr class="separator:a424d19e6aa8d4ef7ec6b64921c75917e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1151a6cc73db9b9b410d8271039c82e3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a1151a6cc73db9b9b410d8271039c82e3">apply_postconditions</a> ()</td></tr>
+<tr class="memdesc:a1151a6cc73db9b9b410d8271039c82e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">applies postconditions to world state  <a href="classdhtt_1_1Node.html#a1151a6cc73db9b9b410d8271039c82e3">More...</a><br /></td></tr>
+<tr class="separator:a1151a6cc73db9b9b410d8271039c82e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45a2c5747ea46bbaa1e8156a988010a1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a45a2c5747ea46bbaa1e8156a988010a1">calculate_activation_potential</a> ()</td></tr>
 <tr class="memdesc:a45a2c5747ea46bbaa1e8156a988010a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculates activation potential as a function of the estimate from the <a class="el" href="classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes.">NodeType</a> plugin  <a href="classdhtt_1_1Node.html#a45a2c5747ea46bbaa1e8156a988010a1">More...</a><br /></td></tr>
 <tr class="separator:a45a2c5747ea46bbaa1e8156a988010a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb92c70ed98b5c511d83714c8e6c6e8b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#afb92c70ed98b5c511d83714c8e6c6e8b">propogate_failure_down</a> ()</td></tr>
-<tr class="memdesc:afb92c70ed98b5c511d83714c8e6c6e8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">sends failure to the currently active child  <a href="classdhtt_1_1Node.html#afb92c70ed98b5c511d83714c8e6c6e8b">More...</a><br /></td></tr>
-<tr class="separator:afb92c70ed98b5c511d83714c8e6c6e8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0562d67388d66aab26c145862461eea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ae0562d67388d66aab26c145862461eea">pull_resources</a> ()</td></tr>
+<tr class="memdesc:ae0562d67388d66aab26c145862461eea"><td class="mdescLeft">&#160;</td><td class="mdescRight">update the currently available resources with the resources list on the parameter server  <a href="classdhtt_1_1Node.html#ae0562d67388d66aab26c145862461eea">More...</a><br /></td></tr>
+<tr class="separator:ae0562d67388d66aab26c145862461eea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a9e98e92fe184135277cc7049d5a63496"><td class="memItemLeft" align="right" valign="top">rclcpp_action::Server&lt; dhtt_msgs::action::Activation &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a9e98e92fe184135277cc7049d5a63496">activation_server</a></td></tr>
-<tr class="separator:a9e98e92fe184135277cc7049d5a63496"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79ba86630915946a9dac86fce50fce61"><td class="memItemLeft" align="right" valign="top">std::vector&lt; rclcpp_action::Client&lt; dhtt_msgs::action::Activation &gt;::SharedPtr &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a79ba86630915946a9dac86fce50fce61">activation_clients</a></td></tr>
-<tr class="separator:a79ba86630915946a9dac86fce50fce61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09debead42c6b70e4123399287fb93fc"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, dhtt_msgs::action::Activation::Result::SharedPtr &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a09debead42c6b70e4123399287fb93fc">responses</a></td></tr>
-<tr class="separator:a09debead42c6b70e4123399287fb93fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9cf5a4107d5904d93cfa6944711a3f9b"><td class="memItemLeft" align="right" valign="top">rclcpp::Service&lt; dhtt_msgs::srv::InternalServiceRegistration &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a9cf5a4107d5904d93cfa6944711a3f9b">register_server</a></td></tr>
-<tr class="separator:a9cf5a4107d5904d93cfa6944711a3f9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:affb2cbd2fcf92c8febb91c0faeb004b8"><td class="memItemLeft" align="right" valign="top">pluginlib::ClassLoader&lt; <a class="el" href="classdhtt_1_1NodeType.html">NodeType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#affb2cbd2fcf92c8febb91c0faeb004b8">node_type_loader</a></td></tr>
-<tr class="separator:affb2cbd2fcf92c8febb91c0faeb004b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0130f80212b348e627f0f481842579cc"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1NodeType.html">NodeType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a0130f80212b348e627f0f481842579cc">logic</a></td></tr>
-<tr class="separator:a0130f80212b348e627f0f481842579cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeae83bf58d1fde65b0a0c881896ee719"><td class="memItemLeft" align="right" valign="top">dhtt_msgs::msg::NodeStatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#aeae83bf58d1fde65b0a0c881896ee719">status</a></td></tr>
-<tr class="separator:aeae83bf58d1fde65b0a0c881896ee719"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a119338ce91c40e37c71ec68a69f3f860"><td class="memItemLeft" align="right" valign="top">rclcpp::CallbackGroup::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a119338ce91c40e37c71ec68a69f3f860">conc_group</a></td></tr>
+<tr class="separator:a119338ce91c40e37c71ec68a69f3f860"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c3cbe63e202b9a21a00d5529b92c06f"><td class="memItemLeft" align="right" valign="top">rclcpp::SubscriptionOptions&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a8c3cbe63e202b9a21a00d5529b92c06f">sub_opts</a></td></tr>
+<tr class="separator:a8c3cbe63e202b9a21a00d5529b92c06f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d36f0aeba568920c9b4cd44ee565db4"><td class="memItemLeft" align="right" valign="top">rclcpp::PublisherOptions&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a0d36f0aeba568920c9b4cd44ee565db4">pub_opts</a></td></tr>
+<tr class="separator:a0d36f0aeba568920c9b4cd44ee565db4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88afcf53bea2ad042b46021880ace44d"><td class="memItemLeft" align="right" valign="top">rclcpp::Publisher&lt; dhtt_msgs::msg::Node &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a88afcf53bea2ad042b46021880ace44d">status_pub</a></td></tr>
 <tr class="separator:a88afcf53bea2ad042b46021880ace44d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cd647e1614a7bf2b7e62026dfb34a33"><td class="memItemLeft" align="right" valign="top">rclcpp::Publisher&lt; std_msgs::msg::String &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a7cd647e1614a7bf2b7e62026dfb34a33">knowledge_pub</a></td></tr>
+<tr class="separator:a7cd647e1614a7bf2b7e62026dfb34a33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d2fbe7dd850b48bd9c19f8f1a6a6bb7"><td class="memItemLeft" align="right" valign="top">rclcpp::Subscription&lt; dhtt_msgs::msg::Resources &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a3d2fbe7dd850b48bd9c19f8f1a6a6bb7">resources_sub</a></td></tr>
 <tr class="separator:a3d2fbe7dd850b48bd9c19f8f1a6a6bb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adacbb4c5cc6ab3a8207c3bbb323ef835"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; std::thread &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#adacbb4c5cc6ab3a8207c3bbb323ef835">work_thread</a></td></tr>
-<tr class="separator:adacbb4c5cc6ab3a8207c3bbb323ef835"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf28761993492b849f1b7c9e12596038"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; std::thread &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#adf28761993492b849f1b7c9e12596038">fail_thread</a></td></tr>
-<tr class="separator:adf28761993492b849f1b7c9e12596038"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a611c254a7c2831453947591025448c14"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1CommunicationAggregator.html">CommunicationAggregator</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a611c254a7c2831453947591025448c14">global_com</a></td></tr>
+<tr class="separator:a611c254a7c2831453947591025448c14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:affb2cbd2fcf92c8febb91c0faeb004b8"><td class="memItemLeft" align="right" valign="top">pluginlib::ClassLoader&lt; <a class="el" href="classdhtt_1_1NodeType.html">NodeType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#affb2cbd2fcf92c8febb91c0faeb004b8">node_type_loader</a></td></tr>
+<tr class="separator:affb2cbd2fcf92c8febb91c0faeb004b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68173cb4c91166db87d70706467f8245"><td class="memItemLeft" align="right" valign="top">pluginlib::ClassLoader&lt; GoitrType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a68173cb4c91166db87d70706467f8245">goitr_type_loader</a></td></tr>
+<tr class="separator:a68173cb4c91166db87d70706467f8245"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7773fd9d1c7b3b107d50651dfaf1828"><td class="memItemLeft" align="right" valign="top">pluginlib::ClassLoader&lt; <a class="el" href="classdhtt_1_1BranchSocketType.html">BranchSocketType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ae7773fd9d1c7b3b107d50651dfaf1828">branch_socket_type_loader</a></td></tr>
+<tr class="separator:ae7773fd9d1c7b3b107d50651dfaf1828"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a054818950ff05ec15d4ab31bf5043b"><td class="memItemLeft" align="right" valign="top">pluginlib::ClassLoader&lt; <a class="el" href="classdhtt_1_1BranchPlugType.html">BranchPlugType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a1a054818950ff05ec15d4ab31bf5043b">branch_plug_type_loader</a></td></tr>
+<tr class="separator:a1a054818950ff05ec15d4ab31bf5043b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b61aab13dac4569e6e9737d824cd0cf"><td class="memItemLeft" align="right" valign="top">pluginlib::ClassLoader&lt; <a class="el" href="classdhtt_1_1PotentialType.html">PotentialType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a2b61aab13dac4569e6e9737d824cd0cf">potential_type_loader</a></td></tr>
+<tr class="separator:a2b61aab13dac4569e6e9737d824cd0cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0130f80212b348e627f0f481842579cc"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1NodeType.html">NodeType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a0130f80212b348e627f0f481842579cc">logic</a></td></tr>
+<tr class="separator:a0130f80212b348e627f0f481842579cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15cb36ddc9d66379ca53ede6354149e3"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; GoitrType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a15cb36ddc9d66379ca53ede6354149e3">replanner</a></td></tr>
+<tr class="separator:a15cb36ddc9d66379ca53ede6354149e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a980c580fdba440348b903658bd81e803"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1BranchSocketType.html">BranchSocketType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a980c580fdba440348b903658bd81e803">parent_communication_socket</a></td></tr>
+<tr class="separator:a980c580fdba440348b903658bd81e803"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd5df67cc0f03a72d6875697aa084f87"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, std::pair&lt; bool, std::shared_ptr&lt; <a class="el" href="classdhtt_1_1BranchPlugType.html">BranchPlugType</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#acd5df67cc0f03a72d6875697aa084f87">child_communication_plugs</a></td></tr>
+<tr class="separator:acd5df67cc0f03a72d6875697aa084f87"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6661935386c178f4a86e516e31d95c65"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1PotentialType.html">PotentialType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a6661935386c178f4a86e516e31d95c65">potential</a></td></tr>
+<tr class="separator:a6661935386c178f4a86e516e31d95c65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeae83bf58d1fde65b0a0c881896ee719"><td class="memItemLeft" align="right" valign="top">dhtt_msgs::msg::NodeStatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#aeae83bf58d1fde65b0a0c881896ee719">status</a></td></tr>
+<tr class="separator:aeae83bf58d1fde65b0a0c881896ee719"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09debead42c6b70e4123399287fb93fc"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, dhtt_msgs::action::Activation::Result::SharedPtr &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a09debead42c6b70e4123399287fb93fc">responses</a></td></tr>
+<tr class="separator:a09debead42c6b70e4123399287fb93fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a060a49965aa46f3ca71ee14758f09003"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, dhtt_msgs::action::Condition::Result::SharedPtr &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a060a49965aa46f3ca71ee14758f09003">child_conditions</a></td></tr>
+<tr class="separator:a060a49965aa46f3ca71ee14758f09003"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affbfc7bfc2c776c5a425cb5984029773"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#affbfc7bfc2c776c5a425cb5984029773">logic_mut</a></td></tr>
 <tr class="separator:affbfc7bfc2c776c5a425cb5984029773"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afffed749f9d56c8b4c4034a321f6d8fd"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#afffed749f9d56c8b4c4034a321f6d8fd">maintenance_mut</a></td></tr>
+<tr class="separator:afffed749f9d56c8b4c4034a321f6d8fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d04b8e16dc92145adcca9ac096d3858"><td class="memItemLeft" align="right" valign="top">std::condition_variable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a8d04b8e16dc92145adcca9ac096d3858">resource_condition</a></td></tr>
+<tr class="separator:a8d04b8e16dc92145adcca9ac096d3858"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abdd751af66b71c886d2161cf7328355f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#abdd751af66b71c886d2161cf7328355f">owned_resources</a></td></tr>
 <tr class="separator:abdd751af66b71c886d2161cf7328355f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad80c0534f216a1096edf5445249b8d64"><td class="memItemLeft" align="right" valign="top">std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ad80c0534f216a1096edf5445249b8d64">available_resources</a></td></tr>
 <tr class="separator:ad80c0534f216a1096edf5445249b8d64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae27cd76b756f33a2227b41ca1b326107"><td class="memItemLeft" align="right" valign="top">std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ae27cd76b756f33a2227b41ca1b326107">passed_resources</a></td></tr>
 <tr class="separator:ae27cd76b756f33a2227b41ca1b326107"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a715ad132629488cbde3a18b07a698469"><td class="memItemLeft" align="right" valign="top">std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a715ad132629488cbde3a18b07a698469">subtree_owned_resources</a></td></tr>
+<tr class="separator:a715ad132629488cbde3a18b07a698469"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7de5cfc418a185d27f950202e533137"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#aa7de5cfc418a185d27f950202e533137">child_names</a></td></tr>
 <tr class="separator:aa7de5cfc418a185d27f950202e533137"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a45cc38c83e88696d0cc55142c31583"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a4a45cc38c83e88696d0cc55142c31583">child_changed</a></td></tr>
+<tr class="separator:a4a45cc38c83e88696d0cc55142c31583"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a115da70a32b17f9913d7bfb57180afe3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a115da70a32b17f9913d7bfb57180afe3">name</a></td></tr>
 <tr class="separator:a115da70a32b17f9913d7bfb57180afe3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f3abfadbbda36594d1976a3d960fc09"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a4f3abfadbbda36594d1976a3d960fc09">parent_name</a></td></tr>
 <tr class="separator:a4f3abfadbbda36594d1976a3d960fc09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abcacf32d8e8065c230f844eb918001f4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#abcacf32d8e8065c230f844eb918001f4">plugin_name</a></td></tr>
 <tr class="separator:abcacf32d8e8065c230f844eb918001f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea1dff7090963eb66504e2440d4a1f55"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#aea1dff7090963eb66504e2440d4a1f55">socket_name</a></td></tr>
+<tr class="separator:aea1dff7090963eb66504e2440d4a1f55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f15b140c2aa274f2019d13266fbd773"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a0f15b140c2aa274f2019d13266fbd773">goitr_name</a></td></tr>
+<tr class="separator:a0f15b140c2aa274f2019d13266fbd773"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae11459053c91e69999dedff767c56a05"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ae11459053c91e69999dedff767c56a05">active_child_name</a></td></tr>
 <tr class="separator:ae11459053c91e69999dedff767c56a05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b49263c05ba78bb41cd3336e8e9e02c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a1b49263c05ba78bb41cd3336e8e9e02c">activation_potential</a></td></tr>
 <tr class="separator:a1b49263c05ba78bb41cd3336e8e9e02c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a1f2aa9088813141a9ede68feb08ea6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a5a1f2aa9088813141a9ede68feb08ea6">activation_level</a></td></tr>
-<tr class="separator:a5a1f2aa9088813141a9ede68feb08ea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac64f1fd3395011657540ee61f2e8a62a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ac64f1fd3395011657540ee61f2e8a62a">stored_responses</a></td></tr>
-<tr class="separator:ac64f1fd3395011657540ee61f2e8a62a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a8dbb0d9b10b3c0b5c9786b0b359566"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a0a8dbb0d9b10b3c0b5c9786b0b359566">expected_responses</a></td></tr>
-<tr class="separator:a0a8dbb0d9b10b3c0b5c9786b0b359566"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72b463e4482459cd0169730186d7c33c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a72b463e4482459cd0169730186d7c33c">priority</a></td></tr>
 <tr class="separator:a72b463e4482459cd0169730186d7c33c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa76f51b40e4e16ea3ef77e2c8686210d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#aa76f51b40e4e16ea3ef77e2c8686210d">resource_status_updated</a></td></tr>
-<tr class="separator:aa76f51b40e4e16ea3ef77e2c8686210d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a282a7a079bc283b3857cf951f083a99c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a282a7a079bc283b3857cf951f083a99c">resources_owned_by_subtree</a></td></tr>
+<tr class="separator:a282a7a079bc283b3857cf951f083a99c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76adb1fcf3351f0713fe4fab6792e888"><td class="memItemLeft" align="right" valign="top">std::atomic_bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a76adb1fcf3351f0713fe4fab6792e888">resource_status_updated</a></td></tr>
+<tr class="separator:a76adb1fcf3351f0713fe4fab6792e888"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f2b135a2d313526290ee627552fc91f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a9f2b135a2d313526290ee627552fc91f">has_goitr</a></td></tr>
+<tr class="separator:a9f2b135a2d313526290ee627552fc91f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09a7f8514f4235c756d483c44b05bb29"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a09a7f8514f4235c756d483c44b05bb29">first_activation</a></td></tr>
+<tr class="separator:a09a7f8514f4235c756d483c44b05bb29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29b7adc1db38a46cd0404a15b2302ee3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a29b7adc1db38a46cd0404a15b2302ee3">active</a></td></tr>
+<tr class="separator:a29b7adc1db38a46cd0404a15b2302ee3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3430751813d6a7209b5ed281b1728c7b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a3430751813d6a7209b5ed281b1728c7b">subtree_has_changed</a></td></tr>
+<tr class="separator:a3430751813d6a7209b5ed281b1728c7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a6d05d6ac1e66dc3644019f0e14c950"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a6a6d05d6ac1e66dc3644019f0e14c950">successful_load</a></td></tr>
 <tr class="separator:a6a6d05d6ac1e66dc3644019f0e14c950"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afaf15d27c12996d5a6da426c4383e7a2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#afaf15d27c12996d5a6da426c4383e7a2">error_msg</a></td></tr>
 <tr class="separator:afaf15d27c12996d5a6da426c4383e7a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:af19daf2ae2ae8252dc11dcd8b69f1c7e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#af19daf2ae2ae8252dc11dcd8b69f1c7e">add_unique_resources</a> (std::vector&lt; dhtt_msgs::msg::Resource &gt; to_count)</td></tr>
+<tr class="separator:af19daf2ae2ae8252dc11dcd8b69f1c7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a217f822ae378634535939eb0bcfb8503"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a217f822ae378634535939eb0bcfb8503">remove_unique_resources</a> (std::vector&lt; dhtt_msgs::msg::Resource &gt; to_count)</td></tr>
+<tr class="separator:a217f822ae378634535939eb0bcfb8503"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -273,10 +324,10 @@ Friends</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >dHTT <a class="el" href="classdhtt_1_1Node.html" title="dHTT Node class for all nodes on the tree">Node</a> class for all nodes on the tree </p>
-<p >Main <a class="el" href="classdhtt_1_1Node.html" title="dHTT Node class for all nodes on the tree">Node</a> class for behaviors and tasks on the tree. Facilitates auction behavior, activation spreading behavior, basic resource management, status updates and maintenance, and communication with the Main Server. All node specific logic is kept as a private plugin member that is loaded when the object is created (<a class="el" href="classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes.">dhtt::NodeType</a>). </p>
+<p >Main <a class="el" href="classdhtt_1_1Node.html" title="dHTT Node class for all nodes on the tree">Node</a> class for behaviors and tasks on the tree. Facilitates auction behavior, activation spreading behavior, basic resource management, status updates and maintenance, and communication with the Main Server. All node specific logic is kept as a private plugin member that is loaded when the object is created (<a class="el" href="classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes.">dhtt::NodeType</a>). All node communication mechanisms are also kept as a private plugin member (dhtt::BranchType's) so that the communication is modular. Finally, the activation potential computation of the node is relegated to another plugin (<a class="el" href="classdhtt_1_1PotentialType.html" title="a lightweight plugin for computing the activation potential of a node">dhtt::PotentialType</a>). </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ad92bd3188be032af09313bdc5f533650" name="ad92bd3188be032af09313bdc5f533650"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad92bd3188be032af09313bdc5f533650">&#9670;&#160;</a></span>Node()</h2>
+<a id="adf967bffe5bde331fc03fbf961c8514a" name="adf967bffe5bde331fc03fbf961c8514a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf967bffe5bde331fc03fbf961c8514a">&#9670;&#160;</a></span>Node()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -284,6 +335,12 @@ Friends</h2></td></tr>
         <tr>
           <td class="memname">dhtt::Node::Node </td>
           <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1CommunicationAggregator.html">CommunicationAggregator</a> &gt;&#160;</td>
+          <td class="paramname"><em>com_agg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">std::string&#160;</td>
           <td class="paramname"><em>name</em>, </td>
         </tr>
@@ -303,7 +360,25 @@ Friends</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>parent_name</em>&#160;</td>
+          <td class="paramname"><em>parent_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>socket_type</em> = <code>&quot;dhtt_plugins::PtrBranchSocket&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>goitr_type</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>potential_type</em> = <code>&quot;dhtt_plugins::EfficiencyPotential&quot;</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -314,13 +389,16 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Constructor for the node class. </p>
-<p >Initializes all values simply. If the given plugin name cannot be loaded for some reason does not construct. Errors are flagged through successful_load and error messages are stored in error_msg.</p>
+<p >Initializes all values simply. If the given plugin names cannot be loaded for some reason does not construct. Errors are flagged through successful_load and error messages are stored in error_msg.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>name of the node being created (should be unique) </td></tr>
     <tr><td class="paramname">type</td><td>exact name of the plugin to load (ex. <a class="el" href="classdhtt__plugins_1_1AndBehavior.html" title="Implementation of the AND node for dHTTs.">dhtt_plugins::AndBehavior</a>) </td></tr>
     <tr><td class="paramname">params</td><td>parameter list for the given plugin (a list of string parameters) </td></tr>
-    <tr><td class="paramname">parent_name</td><td>name of this nodes parent (parent is notified of new child through <a class="el" href="classdhtt_1_1MainServer.html" title="main communication to manipulate and get information from the dHTT">dhtt::MainServer</a>)</td></tr>
+    <tr><td class="paramname">parent_name</td><td>name of this nodes parent (parent is notified of new child through <a class="el" href="classdhtt_1_1MainServer.html" title="main communication to manipulate and get information from the dHTT">dhtt::MainServer</a>) </td></tr>
+    <tr><td class="paramname">socket_type</td><td>name of the plugin to use for this node's parent socket </td></tr>
+    <tr><td class="paramname">goitr_type</td><td>name of the goitr plugin to load for this node (if empty no goitr is loaded) </td></tr>
+    <tr><td class="paramname">potential_type</td><td>name of the activation potential plugin for this node (dhtt_plugins::EfficiencyPotential by default)</td></tr>
   </table>
   </dd>
 </dl>
@@ -346,28 +424,20 @@ Friends</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae95f75aa26af308add5662cea5d38acc" name="ae95f75aa26af308add5662cea5d38acc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae95f75aa26af308add5662cea5d38acc">&#9670;&#160;</a></span>activate()</h2>
+<a id="a58eeae51773f99af8fa5bdf5a98b1c99" name="a58eeae51773f99af8fa5bdf5a98b1c99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58eeae51773f99af8fa5bdf5a98b1c99">&#9670;&#160;</a></span>activate()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void dhtt::Node::activate </td>
+          <td class="memname">dhtt_msgs::action::Activation::Result dhtt::Node::activate </td>
           <td>(</td>
-          <td class="paramtype">const std::shared_ptr&lt; rclcpp_action::ServerGoalHandle&lt; dhtt_msgs::action::Activation &gt; &gt;&#160;</td>
-          <td class="paramname"><em>goal_handle</em></td><td>)</td>
+          <td class="paramtype">dhtt_msgs::action::Activation::Goal&#160;</td>
+          <td class="paramname"><em>goal</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>activates the auction mechanism of task nodes and behavior nodes </p>
@@ -377,11 +447,10 @@ Friends</h2></td></tr>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">goal_handle</td><td>internal action_server representation of the current goal</td></tr>
+    <tr><td class="paramname">goal_handle</td><td>internal action_server representation of the current goal </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
 </div>
 </div>
@@ -402,7 +471,7 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>spreads activation to all children </p>
-<p >iterates through list and utilizes the async_activate_child method</p>
+<p >iterates through list of children and utilizes the async_activate_child method</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">activation_goal</td><td>goal to send to children</td></tr>
@@ -413,8 +482,52 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="aaf2ede9121a77dfc37a07867125b7b5f" name="aaf2ede9121a77dfc37a07867125b7b5f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaf2ede9121a77dfc37a07867125b7b5f">&#9670;&#160;</a></span>activation_accepted_callback()</h2>
+<a id="a49251937ab548755209a96270ecd72c5" name="a49251937ab548755209a96270ecd72c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49251937ab548755209a96270ecd72c5">&#9670;&#160;</a></span>add_child()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dhtt::Node::add_child </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1BranchSocketType.html">BranchSocketType</a> &gt;&#160;</td>
+          <td class="paramname"><em>socket_ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>child_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>plug_type</em> = <code>&quot;dhtt_plugins::PtrBranchPlug&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em> = <code>-1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>registers a new child with this node </p>
+<p >Adds child at the end of the child name list (or at the given index), and attempts to create a branch plug for the child. If the plugin fails to load the function will return false and an error message will be place in the error_msg member.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if the operation worked false if a failure occured </dd></dl>
+
+</div>
+</div>
+<a id="af19daf2ae2ae8252dc11dcd8b69f1c7e" name="af19daf2ae2ae8252dc11dcd8b69f1c7e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af19daf2ae2ae8252dc11dcd8b69f1c7e">&#9670;&#160;</a></span>add_unique_resources()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -423,10 +536,35 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void dhtt::Node::activation_accepted_callback </td>
+          <td class="memname">void dhtt::Node::add_unique_resources </td>
           <td>(</td>
-          <td class="paramtype">const std::shared_ptr&lt; rclcpp_action::ServerGoalHandle&lt; dhtt_msgs::action::Activation &gt; &gt;&#160;</td>
-          <td class="paramname"><em>goal_handle</em></td><td>)</td>
+          <td class="paramtype">std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td>
+          <td class="paramname"><em>to_count</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1151a6cc73db9b9b410d8271039c82e3" name="a1151a6cc73db9b9b410d8271039c82e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1151a6cc73db9b9b410d8271039c82e3">&#9670;&#160;</a></span>apply_postconditions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dhtt::Node::apply_postconditions </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -437,32 +575,20 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>maintains the finite state machine status of the node after activation is received </p>
-<p >The activation mechanism of a node is described extensively in the paper for dHTT's, however, it essentially does:</p><ul>
-<li>if the node is waiting it becomes active</li>
-<li>if the node is active and gets a successful activation it begins working</li>
-<li>if the node is active and gets a unsuccessful activation it goes back to waiting</li>
-<li>if the node is done it just immediately sends a response and stops</li>
-</ul>
-<p >if the node becomes active or working it starts a separate thread and runs the activate function. if it goes back to waiting it propogates the unsuccessful activation down to it's children as well.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">goal_handle</td><td>internal action server representation of the goal</td></tr>
-  </table>
-  </dd>
-</dl>
+<p>applies postconditions to world state </p>
+<p >Postconditions are defined in the node type of this class. This changes the parameter server to reflect this behavior's postconditions.</p>
 <dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
 </div>
 </div>
-<a id="add5be2961f87d9ee2e539e35505194c0" name="add5be2961f87d9ee2e539e35505194c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add5be2961f87d9ee2e539e35505194c0">&#9670;&#160;</a></span>async_activate_child()</h2>
+<a id="af678bdb4273ecefcafd8d240a389e644" name="af678bdb4273ecefcafd8d240a389e644"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af678bdb4273ecefcafd8d240a389e644">&#9670;&#160;</a></span>async_activate_child()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void dhtt::Node::async_activate_child </td>
+          <td class="memname">bool dhtt::Node::async_activate_child </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
           <td class="paramname"><em>child_name</em>, </td>
@@ -490,18 +616,56 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if child was activated successfully </dd></dl>
 
 </div>
 </div>
-<a id="ad5d6810ec6bdac8d5b24fffe656b64a4" name="ad5d6810ec6bdac8d5b24fffe656b64a4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5d6810ec6bdac8d5b24fffe656b64a4">&#9670;&#160;</a></span>block_for_responses_from_children()</h2>
+<a id="a5a5389d01c458cd7499e1bcbd1bd4c99" name="a5a5389d01c458cd7499e1bcbd1bd4c99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a5389d01c458cd7499e1bcbd1bd4c99">&#9670;&#160;</a></span>async_request_conditions()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool dhtt::Node::block_for_responses_from_children </td>
+          <td class="memname">bool dhtt::Node::async_request_conditions </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>child_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">dhtt_msgs::action::Condition::Goal&#160;</td>
+          <td class="paramname"><em>condition_goal</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>propogates maintain conditions request to given child </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">child_name</td><td>name of child to request </td></tr>
+    <tr><td class="paramname">condition_goal</td><td>goal to send child</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if maintenance request was sent correctly </dd></dl>
+
+</div>
+</div>
+<a id="a2ae0fa5f47963646513a13deecbecb0e" name="a2ae0fa5f47963646513a13deecbecb0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ae0fa5f47963646513a13deecbecb0e">&#9670;&#160;</a></span>block_for_activation_from_children()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dhtt::Node::block_for_activation_from_children </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -511,6 +675,26 @@ Friends</h2></td></tr>
 
 <p>busy waits until the number of responses equals the number of activations sent out </p>
 <p >number of activations is incremented with each call of async_activate_child, number of responses is counted in the store_result_callback</p>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
+<a id="a82c8f32feefc3d055715d8a470cd20fa" name="a82c8f32feefc3d055715d8a470cd20fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82c8f32feefc3d055715d8a470cd20fa">&#9670;&#160;</a></span>block_for_conditions_from_children()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dhtt::Node::block_for_conditions_from_children </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>busy waits until all condition responses are received from children </p>
 <dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
 </div>
@@ -544,42 +728,6 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a1ed7038713a59e3526fdbf034cd73e9e" name="a1ed7038713a59e3526fdbf034cd73e9e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ed7038713a59e3526fdbf034cd73e9e">&#9670;&#160;</a></span>cancel_activation_callback()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">rclcpp_action::CancelResponse dhtt::Node::cancel_activation_callback </td>
-          <td>(</td>
-          <td class="paramtype">const std::shared_ptr&lt; rclcpp_action::ServerGoalHandle&lt; dhtt_msgs::action::Activation &gt; &gt;&#160;</td>
-          <td class="paramname"><em>goal_handle</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>cancel callback for activation action server </p>
-<p >currently accepts any cancel request. This should perform some logic to immediately stop the node from activating and propogate the cancellation down, however, this is currently not implemented.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">goal_handle</td><td>internal action server representation of the goal which is to be cancelled</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>always accepts the cancel request for now </dd></dl>
-
-</div>
-</div>
 <a id="a424d19e6aa8d4ef7ec6b64921c75917e" name="a424d19e6aa8d4ef7ec6b64921c75917e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a424d19e6aa8d4ef7ec6b64921c75917e">&#9670;&#160;</a></span>check_preconditions()</h2>
 
@@ -604,19 +752,60 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>checks if the preconditions of the node are met </p>
-<p >Currently this is not implemented until preconditions are being checked by the tree.</p>
-<dl class="section return"><dt>Returns</dt><dd>True always for now </dd></dl>
+<p >Checks key value pairs stored by the <a class="el" href="classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes.">NodeType</a> against those on the param server. If they are the same returns True.</p>
+<dl class="section return"><dt>Returns</dt><dd>True if preconditions are met </dd></dl>
 
 </div>
 </div>
-<a id="ada935ab4d0264b8ac07ba6bc44fa5415" name="ada935ab4d0264b8ac07ba6bc44fa5415"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ada935ab4d0264b8ac07ba6bc44fa5415">&#9670;&#160;</a></span>get_activation_results()</h2>
+<a id="a2f1827437f2a62ab86b24e1a0a5961db" name="a2f1827437f2a62ab86b24e1a0a5961db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f1827437f2a62ab86b24e1a0a5961db">&#9670;&#160;</a></span>combine_child_conditions()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt; std::string, dhtt_msgs::action::Activation::Result::SharedPtr &gt; dhtt::Node::get_activation_results </td>
+          <td class="memname">dhtt_msgs::action::Condition::Result dhtt::Node::combine_child_conditions </td>
+          <td>(</td>
+          <td class="paramtype">dhtt_msgs::action::Condition::Goal&#160;</td>
+          <td class="paramname"><em>goal</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sends a request to the children to get pre and postconditions, then combines them based on logic in the node_type and saves and returns the result. </p>
+
+</div>
+</div>
+<a id="a957616b196a4f3602abf9f4192c43569" name="a957616b196a4f3602abf9f4192c43569"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a957616b196a4f3602abf9f4192c43569">&#9670;&#160;</a></span>fire_knowledge_updated()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dhtt::Node::fire_knowledge_updated </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>notifies any knowledge sensitive nodes that there have been changes to the param server </p>
+<p >For some nodes new knowledge can change how they should behave (for instance a find action will change destination to the correct one if the object is found when looking for something else). This publishes an empty message on the /updated_knowledge topic that will then utilize the callbacks in GOiTRs to have them update their own state.</p>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
+<a id="a35e576532c6ecb0b7002f0e145727420" name="a35e576532c6ecb0b7002f0e145727420"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35e576532c6ecb0b7002f0e145727420">&#9670;&#160;</a></span>get_activation_results()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt; std::string, dhtt_msgs::action::Activation::Result &gt; dhtt::Node::get_activation_results </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -670,6 +859,47 @@ Friends</h2></td></tr>
 
 </div>
 </div>
+<a id="a1a4c6262498b5d2d479b5602e2268c3a" name="a1a4c6262498b5d2d479b5602e2268c3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a4c6262498b5d2d479b5602e2268c3a">&#9670;&#160;</a></span>get_com_agg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1CommunicationAggregator.html">CommunicationAggregator</a> &gt; dhtt::Node::get_com_agg </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>returns a shared ptr to the global communication aggregator for the tree </p>
+<p >This is meant so that the logic and other plugins can create publishers and subscribers in a way that is scalable with respect to the DDS ROS uses. Otherwise there is a hard upper limit on the amount of subscriptions allowed per node for example.</p>
+<dl class="section return"><dt>Returns</dt><dd>shared ptr to the global communication aggregator </dd></dl>
+
+</div>
+</div>
+<a id="ac40686c3346010368cb5976756b67a29" name="ac40686c3346010368cb5976756b67a29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac40686c3346010368cb5976756b67a29">&#9670;&#160;</a></span>get_condition_results()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt; std::string, dhtt_msgs::action::Condition::Result &gt; dhtt::Node::get_condition_results </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>getter for the condition responses from children </p>
+<dl class="section return"><dt>Returns</dt><dd>map of child_names to their corresponding pre and post conditions </dd></dl>
+
+</div>
+</div>
 <a id="aaa42c6f51d16f6e9840765b18ec01feb" name="aaa42c6f51d16f6e9840765b18ec01feb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaa42c6f51d16f6e9840765b18ec01feb">&#9670;&#160;</a></span>get_error_msg()</h2>
 
@@ -687,6 +917,27 @@ Friends</h2></td></tr>
 
 <p>getter method for error msg </p>
 <dl class="section return"><dt>Returns</dt><dd>error message from loading the plugin (blank if no error occurred) </dd></dl>
+
+</div>
+</div>
+<a id="a1ab033be060188ca420788f68d944ba8" name="a1ab033be060188ca420788f68d944ba8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ab033be060188ca420788f68d944ba8">&#9670;&#160;</a></span>get_logic()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1NodeType.html">NodeType</a> &gt; dhtt::Node::get_logic </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>returns a ptr to the logic plugin of this node </p>
+<p >This is useful for making considerations for activation potential for example from outside of this node.</p>
+<dl class="section return"><dt>Returns</dt><dd>a ptr to the logic plugin of this node </dd></dl>
 
 </div>
 </div>
@@ -768,55 +1019,49 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the node's copy of the resource state. </p>
-<p >the state of the available resources on the robot is maintained by the root node of the tree. The state is also given to each node in the tree through an internal topic each time the state of the resources is changed.</p>
+<p >the state of the available resources on the robot is maintained by the root node of the tree. The state is pulled from a shared param server on the communication aggregator during the activation of this node. The root node pushes any changes to the resource state as a part of its activation.</p>
 <dl class="section return"><dt>Returns</dt><dd>list of all resources on the robot (owned or otherwise) </dd></dl>
 
 </div>
 </div>
-<a id="ae24d6923631c252ec3801f73e204dc93" name="ae24d6923631c252ec3801f73e204dc93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae24d6923631c252ec3801f73e204dc93">&#9670;&#160;</a></span>goal_activation_callback()</h2>
+<a id="a4053e0cdd7f6a59416f7998514e7df1b" name="a4053e0cdd7f6a59416f7998514e7df1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4053e0cdd7f6a59416f7998514e7df1b">&#9670;&#160;</a></span>get_socket_ptr()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">rclcpp_action::GoalResponse dhtt::Node::goal_activation_callback </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1BranchSocketType.html">BranchSocketType</a> &gt; dhtt::Node::get_socket_ptr </td>
           <td>(</td>
-          <td class="paramtype">const rclcpp_action::GoalUUID &amp;&#160;</td>
-          <td class="paramname"><em>uuid</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
-          <td class="paramtype">std::shared_ptr&lt; const dhtt_msgs::action::Activation::Goal &gt;&#160;</td>
-          <td class="paramname"><em>goal</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
-<p>goal callback for activation action server </p>
-<p >Just accepts any goal that is given as activation will only be sent by the parent and only one at a time for now. The actual handling of whether the node should become active is performed in the activation_accepted_callback</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">uuid</td><td>internal action server param (not used in this callback) </td></tr>
-    <tr><td class="paramname">goal</td><td>goal passed in for activation (not used in this callback)</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>always accept the goal right now </dd></dl>
+<p>returns a shared ptr to the socket_ptr of this node </p>
+<p >Mostly used for constructing the corresponding plug but could be useful outside of this case.</p>
+<dl class="section return"><dt>Returns</dt><dd>shared_ptr to this node's parent socket </dd></dl>
+
+</div>
+</div>
+<a id="a7a4d1d56bad5edb66932470a9b6b1cf4" name="a7a4d1d56bad5edb66932470a9b6b1cf4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a4d1d56bad5edb66932470a9b6b1cf4">&#9670;&#160;</a></span>get_subtree_resources()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int dhtt::Node::get_subtree_resources </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>get the number of resources owned in the subtree starting at this node </p>
+<dl class="section return"><dt>Returns</dt><dd>number of resource used by this subtree </dd></dl>
 
 </div>
 </div>
@@ -916,8 +1161,35 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="afb92c70ed98b5c511d83714c8e6c6e8b" name="afb92c70ed98b5c511d83714c8e6c6e8b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afb92c70ed98b5c511d83714c8e6c6e8b">&#9670;&#160;</a></span>propogate_failure_down()</h2>
+<a id="a088e686379b26a12886d524c2c038328" name="a088e686379b26a12886d524c2c038328"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a088e686379b26a12886d524c2c038328">&#9670;&#160;</a></span>print_resources()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dhtt::Node::print_resources </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td>
+          <td class="paramname"><em>compare</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>debugging tool to print the resources that this tree thinks are canonical </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">compare</td><td>vector to print alongside the available resources for comparison</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
+<a id="ae0562d67388d66aab26c145862461eea" name="ae0562d67388d66aab26c145862461eea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0562d67388d66aab26c145862461eea">&#9670;&#160;</a></span>pull_resources()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -926,7 +1198,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void dhtt::Node::propogate_failure_down </td>
+          <td class="memname">void dhtt::Node::pull_resources </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -939,55 +1211,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>sends failure to the currently active child </p>
-<p >essentially just build a failure activation goal, sends it down to the active child, and blocks for a response.</p>
-<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
-
-</div>
-</div>
-<a id="a897a837a45fc8244c894a6af4e90e3e6" name="a897a837a45fc8244c894a6af4e90e3e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a897a837a45fc8244c894a6af4e90e3e6">&#9670;&#160;</a></span>register_child_callback()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void dhtt::Node::register_child_callback </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; dhtt_msgs::srv::InternalServiceRegistration::Request &gt;&#160;</td>
-          <td class="paramname"><em>request</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::shared_ptr&lt; dhtt_msgs::srv::InternalServiceRegistration::Response &gt;&#160;</td>
-          <td class="paramname"><em>response</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>registers a new child with this node </p>
-<p >Adds the name of the child to the list and creates an ActionClient to activate that child (the topic is constructed from the child's name)</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">request</td><td>the InternalServiceRegistration request </td></tr>
-    <tr><td class="paramname">response</td><td>the InternalServiceRegistration response</td></tr>
-  </table>
-  </dd>
-</dl>
+<p>update the currently available resources with the resources list on the parameter server </p>
 <dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
 </div>
@@ -1009,27 +1233,6 @@ Friends</h2></td></tr>
 
 <p>registers the necessary servers, publishers, action servers, etc. of this node. </p>
 <p >should only be used by <a class="el" href="classdhtt_1_1MainServer.html" title="main communication to manipulate and get information from the dHTT">MainServer</a>.</p>
-<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
-
-</div>
-</div>
-<a id="a08edd24fae1fac092d475d664518ad79" name="a08edd24fae1fac092d475d664518ad79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a08edd24fae1fac092d475d664518ad79">&#9670;&#160;</a></span>register_with_parent()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void dhtt::Node::register_with_parent </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>registers this node with it's parent </p>
-<p >sends a service request to the the registration topic of the parent node (found through the given parent name). If this fails then the succesful_load flag is flipped and an error_msg is saved.</p>
 <dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
 </div>
@@ -1062,6 +1265,53 @@ Friends</h2></td></tr>
 
 </div>
 </div>
+<a id="a217f822ae378634535939eb0bcfb8503" name="a217f822ae378634535939eb0bcfb8503"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a217f822ae378634535939eb0bcfb8503">&#9670;&#160;</a></span>remove_unique_resources()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dhtt::Node::remove_unique_resources </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td>
+          <td class="paramname"><em>to_count</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a84e4d7d57da54c6c1f7445bd96605ce9" name="a84e4d7d57da54c6c1f7445bd96605ce9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84e4d7d57da54c6c1f7445bd96605ce9">&#9670;&#160;</a></span>request_conditions_from_children()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dhtt::Node::request_conditions_from_children </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>propogates condition maintenance to children </p>
+<p >sends a Condition action to all children, and counts the number of expected responses for the block function.</p>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
 <a id="a805bd21c787aa191ad0a3dd409e1a6e3" name="a805bd21c787aa191ad0a3dd409e1a6e3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a805bd21c787aa191ad0a3dd409e1a6e3">&#9670;&#160;</a></span>resource_availability_callback()</h2>
 
@@ -1091,6 +1341,71 @@ Friends</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">canonical_list</td><td>Resources message sent from the root node.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
+<a id="a319b19005ee7e941f138ad152d28c9a2" name="a319b19005ee7e941f138ad152d28c9a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a319b19005ee7e941f138ad152d28c9a2">&#9670;&#160;</a></span>set_changed_flag()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dhtt::Node::set_changed_flag </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>n_val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the changed flag to maintain on the next call to maintain pre/postconditions. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n_val</td><td>value to the set the internal flag to</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
+<a id="af076bd9765a3485834f110cde0683eb6" name="af076bd9765a3485834f110cde0683eb6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af076bd9765a3485834f110cde0683eb6">&#9670;&#160;</a></span>set_child_changed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dhtt::Node::set_child_changed </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>child</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>n_val</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>sets internal flag to maint pre/postconditions on child on next call </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">child</td><td>name of child to change flag for </td></tr>
+    <tr><td class="paramname">n_val</td><td>value to set the internal flag to</td></tr>
   </table>
   </dd>
 </dl>
@@ -1154,53 +1469,6 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a5a8ca21dcee3cf3bb135e65025652089" name="a5a8ca21dcee3cf3bb135e65025652089"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a8ca21dcee3cf3bb135e65025652089">&#9670;&#160;</a></span>store_result_callback()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void dhtt::Node::store_result_callback </td>
-          <td>(</td>
-          <td class="paramtype">const rclcpp_action::ClientGoalHandle&lt; dhtt_msgs::action::Activation &gt;::WrappedResult &amp;&#160;</td>
-          <td class="paramname"><em>result</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>node_name</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>stores results received from activating children </p>
-<p >Also increments the number of results gotten back so that the busy wait can end after enough responses are received.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">result</td><td>action server result sent back from child to be saved </td></tr>
-    <tr><td class="paramname">node_name</td><td>child from which the result was received (saved when the result callback was bound)</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
-
-</div>
-</div>
 <a id="ad2dbd4ea3713bc091c3fdf9fa0b02378" name="ad2dbd4ea3713bc091c3fdf9fa0b02378"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad2dbd4ea3713bc091c3fdf9fa0b02378">&#9670;&#160;</a></span>update_status()</h2>
 
@@ -1253,50 +1521,6 @@ Friends</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a79ba86630915946a9dac86fce50fce61" name="a79ba86630915946a9dac86fce50fce61"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79ba86630915946a9dac86fce50fce61">&#9670;&#160;</a></span>activation_clients</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;rclcpp_action::Client&lt;dhtt_msgs::action::Activation&gt;::SharedPtr&gt; dhtt::Node::activation_clients</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a5a1f2aa9088813141a9ede68feb08ea6" name="a5a1f2aa9088813141a9ede68feb08ea6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a1f2aa9088813141a9ede68feb08ea6">&#9670;&#160;</a></span>activation_level</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int dhtt::Node::activation_level</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a1b49263c05ba78bb41cd3336e8e9e02c" name="a1b49263c05ba78bb41cd3336e8e9e02c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1b49263c05ba78bb41cd3336e8e9e02c">&#9670;&#160;</a></span>activation_potential</h2>
 
@@ -1319,8 +1543,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a9e98e92fe184135277cc7049d5a63496" name="a9e98e92fe184135277cc7049d5a63496"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e98e92fe184135277cc7049d5a63496">&#9670;&#160;</a></span>activation_server</h2>
+<a id="a29b7adc1db38a46cd0404a15b2302ee3" name="a29b7adc1db38a46cd0404a15b2302ee3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29b7adc1db38a46cd0404a15b2302ee3">&#9670;&#160;</a></span>active</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1329,7 +1553,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">rclcpp_action::Server&lt;dhtt_msgs::action::Activation&gt;::SharedPtr dhtt::Node::activation_server</td>
+          <td class="memname">bool dhtt::Node::active</td>
         </tr>
       </table>
   </td>
@@ -1385,6 +1609,116 @@ Friends</h2></td></tr>
 
 </div>
 </div>
+<a id="a1a054818950ff05ec15d4ab31bf5043b" name="a1a054818950ff05ec15d4ab31bf5043b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a054818950ff05ec15d4ab31bf5043b">&#9670;&#160;</a></span>branch_plug_type_loader</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">pluginlib::ClassLoader&lt;<a class="el" href="classdhtt_1_1BranchPlugType.html">BranchPlugType</a>&gt; dhtt::Node::branch_plug_type_loader</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae7773fd9d1c7b3b107d50651dfaf1828" name="ae7773fd9d1c7b3b107d50651dfaf1828"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7773fd9d1c7b3b107d50651dfaf1828">&#9670;&#160;</a></span>branch_socket_type_loader</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">pluginlib::ClassLoader&lt;<a class="el" href="classdhtt_1_1BranchSocketType.html">BranchSocketType</a>&gt; dhtt::Node::branch_socket_type_loader</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4a45cc38c83e88696d0cc55142c31583" name="a4a45cc38c83e88696d0cc55142c31583"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a45cc38c83e88696d0cc55142c31583">&#9670;&#160;</a></span>child_changed</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;std::string, bool&gt; dhtt::Node::child_changed</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acd5df67cc0f03a72d6875697aa084f87" name="acd5df67cc0f03a72d6875697aa084f87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd5df67cc0f03a72d6875697aa084f87">&#9670;&#160;</a></span>child_communication_plugs</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;std::string, std::pair&lt;bool, std::shared_ptr&lt;<a class="el" href="classdhtt_1_1BranchPlugType.html">BranchPlugType</a>&gt; &gt; &gt; dhtt::Node::child_communication_plugs</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a060a49965aa46f3ca71ee14758f09003" name="a060a49965aa46f3ca71ee14758f09003"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a060a49965aa46f3ca71ee14758f09003">&#9670;&#160;</a></span>child_conditions</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;std::string, dhtt_msgs::action::Condition::Result::SharedPtr&gt; dhtt::Node::child_conditions</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aa7de5cfc418a185d27f950202e533137" name="aa7de5cfc418a185d27f950202e533137"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa7de5cfc418a185d27f950202e533137">&#9670;&#160;</a></span>child_names</h2>
 
@@ -1396,6 +1730,28 @@ Friends</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">std::vector&lt;std::string&gt; dhtt::Node::child_names</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a119338ce91c40e37c71ec68a69f3f860" name="a119338ce91c40e37c71ec68a69f3f860"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a119338ce91c40e37c71ec68a69f3f860">&#9670;&#160;</a></span>conc_group</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">rclcpp::CallbackGroup::SharedPtr dhtt::Node::conc_group</td>
         </tr>
       </table>
   </td>
@@ -1429,8 +1785,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a0a8dbb0d9b10b3c0b5c9786b0b359566" name="a0a8dbb0d9b10b3c0b5c9786b0b359566"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0a8dbb0d9b10b3c0b5c9786b0b359566">&#9670;&#160;</a></span>expected_responses</h2>
+<a id="a09a7f8514f4235c756d483c44b05bb29" name="a09a7f8514f4235c756d483c44b05bb29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09a7f8514f4235c756d483c44b05bb29">&#9670;&#160;</a></span>first_activation</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1439,7 +1795,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int dhtt::Node::expected_responses</td>
+          <td class="memname">bool dhtt::Node::first_activation</td>
         </tr>
       </table>
   </td>
@@ -1451,8 +1807,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="adf28761993492b849f1b7c9e12596038" name="adf28761993492b849f1b7c9e12596038"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf28761993492b849f1b7c9e12596038">&#9670;&#160;</a></span>fail_thread</h2>
+<a id="a611c254a7c2831453947591025448c14" name="a611c254a7c2831453947591025448c14"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a611c254a7c2831453947591025448c14">&#9670;&#160;</a></span>global_com</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1461,7 +1817,95 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;std::thread&gt; dhtt::Node::fail_thread</td>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classdhtt_1_1CommunicationAggregator.html">CommunicationAggregator</a>&gt; dhtt::Node::global_com</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0f15b140c2aa274f2019d13266fbd773" name="a0f15b140c2aa274f2019d13266fbd773"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f15b140c2aa274f2019d13266fbd773">&#9670;&#160;</a></span>goitr_name</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string dhtt::Node::goitr_name</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a68173cb4c91166db87d70706467f8245" name="a68173cb4c91166db87d70706467f8245"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68173cb4c91166db87d70706467f8245">&#9670;&#160;</a></span>goitr_type_loader</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">pluginlib::ClassLoader&lt;GoitrType&gt; dhtt::Node::goitr_type_loader</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9f2b135a2d313526290ee627552fc91f" name="a9f2b135a2d313526290ee627552fc91f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f2b135a2d313526290ee627552fc91f">&#9670;&#160;</a></span>has_goitr</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dhtt::Node::has_goitr</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7cd647e1614a7bf2b7e62026dfb34a33" name="a7cd647e1614a7bf2b7e62026dfb34a33"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cd647e1614a7bf2b7e62026dfb34a33">&#9670;&#160;</a></span>knowledge_pub</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">rclcpp::Publisher&lt;std_msgs::msg::String&gt;::SharedPtr dhtt::Node::knowledge_pub</td>
         </tr>
       </table>
   </td>
@@ -1506,6 +1950,28 @@ Friends</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">std::mutex dhtt::Node::logic_mut</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afffed749f9d56c8b4c4034a321f6d8fd" name="afffed749f9d56c8b4c4034a321f6d8fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afffed749f9d56c8b4c4034a321f6d8fd">&#9670;&#160;</a></span>maintenance_mut</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::mutex dhtt::Node::maintenance_mut</td>
         </tr>
       </table>
   </td>
@@ -1583,6 +2049,28 @@ Friends</h2></td></tr>
 
 </div>
 </div>
+<a id="a980c580fdba440348b903658bd81e803" name="a980c580fdba440348b903658bd81e803"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a980c580fdba440348b903658bd81e803">&#9670;&#160;</a></span>parent_communication_socket</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classdhtt_1_1BranchSocketType.html">BranchSocketType</a>&gt; dhtt::Node::parent_communication_socket</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a4f3abfadbbda36594d1976a3d960fc09" name="a4f3abfadbbda36594d1976a3d960fc09"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4f3abfadbbda36594d1976a3d960fc09">&#9670;&#160;</a></span>parent_name</h2>
 
@@ -1649,6 +2137,50 @@ Friends</h2></td></tr>
 
 </div>
 </div>
+<a id="a6661935386c178f4a86e516e31d95c65" name="a6661935386c178f4a86e516e31d95c65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6661935386c178f4a86e516e31d95c65">&#9670;&#160;</a></span>potential</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classdhtt_1_1PotentialType.html">PotentialType</a>&gt; dhtt::Node::potential</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2b61aab13dac4569e6e9737d824cd0cf" name="a2b61aab13dac4569e6e9737d824cd0cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b61aab13dac4569e6e9737d824cd0cf">&#9670;&#160;</a></span>potential_type_loader</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">pluginlib::ClassLoader&lt;<a class="el" href="classdhtt_1_1PotentialType.html">PotentialType</a>&gt; dhtt::Node::potential_type_loader</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a72b463e4482459cd0169730186d7c33c" name="a72b463e4482459cd0169730186d7c33c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a72b463e4482459cd0169730186d7c33c">&#9670;&#160;</a></span>priority</h2>
 
@@ -1671,8 +2203,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a9cf5a4107d5904d93cfa6944711a3f9b" name="a9cf5a4107d5904d93cfa6944711a3f9b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9cf5a4107d5904d93cfa6944711a3f9b">&#9670;&#160;</a></span>register_server</h2>
+<a id="a0d36f0aeba568920c9b4cd44ee565db4" name="a0d36f0aeba568920c9b4cd44ee565db4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d36f0aeba568920c9b4cd44ee565db4">&#9670;&#160;</a></span>pub_opts</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1681,7 +2213,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">rclcpp::Service&lt;dhtt_msgs::srv::InternalServiceRegistration&gt;::SharedPtr dhtt::Node::register_server</td>
+          <td class="memname">rclcpp::PublisherOptions dhtt::Node::pub_opts</td>
         </tr>
       </table>
   </td>
@@ -1693,8 +2225,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="aa76f51b40e4e16ea3ef77e2c8686210d" name="aa76f51b40e4e16ea3ef77e2c8686210d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa76f51b40e4e16ea3ef77e2c8686210d">&#9670;&#160;</a></span>resource_status_updated</h2>
+<a id="a15cb36ddc9d66379ca53ede6354149e3" name="a15cb36ddc9d66379ca53ede6354149e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15cb36ddc9d66379ca53ede6354149e3">&#9670;&#160;</a></span>replanner</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1703,7 +2235,73 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool dhtt::Node::resource_status_updated</td>
+          <td class="memname">std::shared_ptr&lt;GoitrType&gt; dhtt::Node::replanner</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8d04b8e16dc92145adcca9ac096d3858" name="a8d04b8e16dc92145adcca9ac096d3858"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d04b8e16dc92145adcca9ac096d3858">&#9670;&#160;</a></span>resource_condition</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::condition_variable dhtt::Node::resource_condition</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a76adb1fcf3351f0713fe4fab6792e888" name="a76adb1fcf3351f0713fe4fab6792e888"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76adb1fcf3351f0713fe4fab6792e888">&#9670;&#160;</a></span>resource_status_updated</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::atomic_bool dhtt::Node::resource_status_updated</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a282a7a079bc283b3857cf951f083a99c" name="a282a7a079bc283b3857cf951f083a99c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a282a7a079bc283b3857cf951f083a99c">&#9670;&#160;</a></span>resources_owned_by_subtree</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int dhtt::Node::resources_owned_by_subtree</td>
         </tr>
       </table>
   </td>
@@ -1759,6 +2357,28 @@ Friends</h2></td></tr>
 
 </div>
 </div>
+<a id="aea1dff7090963eb66504e2440d4a1f55" name="aea1dff7090963eb66504e2440d4a1f55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea1dff7090963eb66504e2440d4a1f55">&#9670;&#160;</a></span>socket_name</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string dhtt::Node::socket_name</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aeae83bf58d1fde65b0a0c881896ee719" name="aeae83bf58d1fde65b0a0c881896ee719"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aeae83bf58d1fde65b0a0c881896ee719">&#9670;&#160;</a></span>status</h2>
 
@@ -1803,8 +2423,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="ac64f1fd3395011657540ee61f2e8a62a" name="ac64f1fd3395011657540ee61f2e8a62a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac64f1fd3395011657540ee61f2e8a62a">&#9670;&#160;</a></span>stored_responses</h2>
+<a id="a8c3cbe63e202b9a21a00d5529b92c06f" name="a8c3cbe63e202b9a21a00d5529b92c06f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c3cbe63e202b9a21a00d5529b92c06f">&#9670;&#160;</a></span>sub_opts</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1813,7 +2433,51 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int dhtt::Node::stored_responses</td>
+          <td class="memname">rclcpp::SubscriptionOptions dhtt::Node::sub_opts</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3430751813d6a7209b5ed281b1728c7b" name="a3430751813d6a7209b5ed281b1728c7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3430751813d6a7209b5ed281b1728c7b">&#9670;&#160;</a></span>subtree_has_changed</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dhtt::Node::subtree_has_changed</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a715ad132629488cbde3a18b07a698469" name="a715ad132629488cbde3a18b07a698469"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a715ad132629488cbde3a18b07a698469">&#9670;&#160;</a></span>subtree_owned_resources</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;dhtt_msgs::msg::Resource&gt; dhtt::Node::subtree_owned_resources</td>
         </tr>
       </table>
   </td>
@@ -1836,28 +2500,6 @@ Friends</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">bool dhtt::Node::successful_load</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="adacbb4c5cc6ab3a8207c3bbb323ef835" name="adacbb4c5cc6ab3a8207c3bbb323ef835"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adacbb4c5cc6ab3a8207c3bbb323ef835">&#9670;&#160;</a></span>work_thread</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;std::thread&gt; dhtt::Node::work_thread</td>
         </tr>
       </table>
   </td>

@@ -23,24 +23,34 @@
 \DoxyCodeLine{25 }
 \DoxyCodeLine{26         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a30cad3c2a60361f4c466b48f73a0cedc}{initialize}}(std::vector<std::string> \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) \textcolor{keyword}{override};}
 \DoxyCodeLine{27 }
-\DoxyCodeLine{38         std::shared\_ptr<dhtt\_msgs::action::Activation::Result> \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a86b264bee7ad6c1e3b75dd317aebebcf}{auction\_callback}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
-\DoxyCodeLine{39 }
+\DoxyCodeLine{40         std::shared\_ptr<dhtt\_msgs::action::Activation::Result> \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a86b264bee7ad6c1e3b75dd317aebebcf}{auction\_callback}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
+\DoxyCodeLine{41 }
 \DoxyCodeLine{45         std::shared\_ptr<dhtt\_msgs::action::Activation::Result> \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a9f76f12b4ceedc96bf82261f1a0da449}{work\_callback}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
 \DoxyCodeLine{46 }
-\DoxyCodeLine{50         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a2fd6b86b0ec6b7ce3d3b175681693d0e}{parse\_params}}( std::vector<std::string> \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}} ) \textcolor{keyword}{override};}
+\DoxyCodeLine{50         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_afa49d29d0bba7da319c209d390fabb03}{maintain\_conditions}}(\mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container) \textcolor{keyword}{override};}
 \DoxyCodeLine{51 }
-\DoxyCodeLine{59         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a5e95d5ca715b6b7bef822c4344ea0c72}{get\_perceived\_efficiency}}() \textcolor{keyword}{override};}
-\DoxyCodeLine{60 }
-\DoxyCodeLine{64         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a157f515115c440e6e56b365aa335331d}{is\_done}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{55         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a2fd6b86b0ec6b7ce3d3b175681693d0e}{parse\_params}}( std::vector<std::string> \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}} ) \textcolor{keyword}{override};}
+\DoxyCodeLine{56 }
+\DoxyCodeLine{64         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_ac07d143011ed8e64a0b961219d44f362}{get\_perceived\_efficiency}}(\mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container) \textcolor{keyword}{override};}
 \DoxyCodeLine{65 }
-\DoxyCodeLine{66     \textcolor{keyword}{protected}:}
-\DoxyCodeLine{67         \textcolor{keywordtype}{int} \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a510a59780f4baf52d550623f37519e39}{num\_active\_children}};}
-\DoxyCodeLine{68         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_afa3ab43c3f0c1924c84482a45ec6d61a}{activation\_potential}};}
-\DoxyCodeLine{69 }
-\DoxyCodeLine{70     \textcolor{keyword}{private}:}
-\DoxyCodeLine{71     \};}
-\DoxyCodeLine{72 \}}
-\DoxyCodeLine{73 }
-\DoxyCodeLine{74 \textcolor{preprocessor}{\#endif }\textcolor{comment}{//AND\_BEHAVIOR\_HPP}}
+\DoxyCodeLine{69         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a157f515115c440e6e56b365aa335331d}{is\_done}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{70 }
+\DoxyCodeLine{71     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{72 }
+\DoxyCodeLine{80         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_ade1da8fb9d20217fc92bd388e1916b1c}{update\_total\_passed}}(dhtt\_msgs::action::Activation::Result result);}
+\DoxyCodeLine{81     }
+\DoxyCodeLine{82         \textcolor{keywordtype}{int} \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a510a59780f4baf52d550623f37519e39}{num\_active\_children}};}
+\DoxyCodeLine{83         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_afa3ab43c3f0c1924c84482a45ec6d61a}{activation\_potential}};}
+\DoxyCodeLine{84 }
+\DoxyCodeLine{85         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a32d42177ec570da5be09277180b96359}{first\_activation}};}
+\DoxyCodeLine{86 }
+\DoxyCodeLine{87         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a33d7b8a7fec08958ef93e5aab96c3074}{initially\_passed}};}
+\DoxyCodeLine{88         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a9196de313631a7cd21786c4e505cabfe}{total\_passed}};}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{90     \textcolor{keyword}{private}:}
+\DoxyCodeLine{91     \};}
+\DoxyCodeLine{92 \}}
+\DoxyCodeLine{93 }
+\DoxyCodeLine{94 \textcolor{preprocessor}{\#endif }\textcolor{comment}{//AND\_BEHAVIOR\_HPP}}
 
 \end{DoxyCode}

@@ -3,19 +3,76 @@
 \doxysubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
+class \mbox{\hyperlink{classdhtt_1_1BranchPlugType}{Branch\+Plug\+Type}}
+\begin{DoxyCompactList}\small\item\em Base class for the plugs which provides the necessary multithreading capabilities. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classdhtt_1_1BranchSocketType}{Branch\+Socket\+Type}}
+\begin{DoxyCompactList}\small\item\em base class for the branch socket \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator}{Communication\+Aggregator}}
+\begin{DoxyCompactList}\small\item\em Communication Aggregator for subscription and service calls coming from behaviors in the tree. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classdhtt_1_1MainServer}{Main\+Server}}
 \begin{DoxyCompactList}\small\item\em main communication to manipulate and get information from the d\+HTT \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classdhtt_1_1Node}{Node}}
 \begin{DoxyCompactList}\small\item\em d\+HTT \mbox{\hyperlink{classdhtt_1_1Node}{Node}} class for all nodes on the tree \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classdhtt_1_1NodeType}{Node\+Type}}
-\begin{DoxyCompactList}\small\item\em Base class describing the logic of the nodes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Base class describing the logic of the nodes. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classdhtt_1_1PotentialType}{Potential\+Type}}
+\begin{DoxyCompactList}\small\item\em a lightweight plugin for computing the activation potential of a node \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classdhtt_1_1SubServer}{Sub\+Server}}
+\begin{DoxyCompactList}\small\item\em sub server for a subtree in the d\+HTT \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\+\_\+goal}} = dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Goal
+\item 
+using \mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\+\_\+result}} = dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result
+\item 
+using \mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\+\_\+goal}} = dhtt\+\_\+msgs\+::action\+::\+Condition\+::\+Goal
+\item 
+using \mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\+\_\+result}} = dhtt\+\_\+msgs\+::action\+::\+Condition\+::\+Result
+\end{DoxyCompactItemize}
 \doxysubsection*{Enumerations}
 \begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290}{LOG\+\_\+\+LEVEL}} \{ \newline
+\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a76b0f5e7632157ad6e29e0f685efee0a}{DEBUG}} =0
+, \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a468584cf28a806aa97e5fa88c9aa3081}{INFO}} =1
+, \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a324f59f46cb62eb300ba345b96778f4c}{WARN}} =2
+, \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a52d2eff9fc4fe7097d3d3f3f45f14bf3}{ERROR}} =3
+, \newline
+\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a3578cd2b4420dfefc809479b329d0a0e}{FATAL}} =4
+ \}
 \item 
 enum \mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008}{goal\+\_\+t}} \{ \mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008adb421c8b35e9d91c2e0f520567fac9b7}{PERSISTENT}}
 , \mbox{\hyperlink{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008af55e59f27e9e45b89ea75d002cdb496f}{TRANSIENT}}
  \}
 \begin{DoxyCompactList}\small\item\em enum for the different types of goals \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}\label{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}} 
+\index{dhtt@{dhtt}!activation\_goal@{activation\_goal}}
+\index{activation\_goal@{activation\_goal}!dhtt@{dhtt}}
+\doxysubsubsection{\texorpdfstring{activation\_goal}{activation\_goal}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{dhtt\+::activation\+\_\+goal}} = typedef dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Goal}
+
+\mbox{\Hypertarget{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}\label{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}} 
+\index{dhtt@{dhtt}!activation\_result@{activation\_result}}
+\index{activation\_result@{activation\_result}!dhtt@{dhtt}}
+\doxysubsubsection{\texorpdfstring{activation\_result}{activation\_result}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{dhtt\+::activation\+\_\+result}} = typedef dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result}
+
+\mbox{\Hypertarget{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}\label{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}} 
+\index{dhtt@{dhtt}!condition\_goal@{condition\_goal}}
+\index{condition\_goal@{condition\_goal}!dhtt@{dhtt}}
+\doxysubsubsection{\texorpdfstring{condition\_goal}{condition\_goal}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{dhtt\+::condition\+\_\+goal}} = typedef dhtt\+\_\+msgs\+::action\+::\+Condition\+::\+Goal}
+
+\mbox{\Hypertarget{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}\label{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}} 
+\index{dhtt@{dhtt}!condition\_result@{condition\_result}}
+\index{condition\_result@{condition\_result}!dhtt@{dhtt}}
+\doxysubsubsection{\texorpdfstring{condition\_result}{condition\_result}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{dhtt\+::condition\+\_\+result}} = typedef dhtt\+\_\+msgs\+::action\+::\+Condition\+::\+Result}
+
 
 
 \doxysubsection{Enumeration Type Documentation}
@@ -36,6 +93,34 @@ PERSISTENT&\\
 
 \raisebox{\heightof{T}}[0pt][0pt]{\index{TRANSIENT@{TRANSIENT}!dhtt@{dhtt}}\index{dhtt@{dhtt}!TRANSIENT@{TRANSIENT}}}\mbox{\Hypertarget{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008af55e59f27e9e45b89ea75d002cdb496f}\label{namespacedhtt_a3a17868f4d160b0f36d56ebd2027e008af55e59f27e9e45b89ea75d002cdb496f}} 
 TRANSIENT&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290}\label{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290}} 
+\index{dhtt@{dhtt}!LOG\_LEVEL@{LOG\_LEVEL}}
+\index{LOG\_LEVEL@{LOG\_LEVEL}!dhtt@{dhtt}}
+\doxysubsubsection{\texorpdfstring{LOG\_LEVEL}{LOG\_LEVEL}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290}{dhtt\+::\+LOG\+\_\+\+LEVEL}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DEBUG@{DEBUG}!dhtt@{dhtt}}\index{dhtt@{dhtt}!DEBUG@{DEBUG}}}\mbox{\Hypertarget{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a76b0f5e7632157ad6e29e0f685efee0a}\label{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a76b0f5e7632157ad6e29e0f685efee0a}} 
+DEBUG&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{INFO@{INFO}!dhtt@{dhtt}}\index{dhtt@{dhtt}!INFO@{INFO}}}\mbox{\Hypertarget{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a468584cf28a806aa97e5fa88c9aa3081}\label{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a468584cf28a806aa97e5fa88c9aa3081}} 
+INFO&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{WARN@{WARN}!dhtt@{dhtt}}\index{dhtt@{dhtt}!WARN@{WARN}}}\mbox{\Hypertarget{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a324f59f46cb62eb300ba345b96778f4c}\label{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a324f59f46cb62eb300ba345b96778f4c}} 
+WARN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ERROR@{ERROR}!dhtt@{dhtt}}\index{dhtt@{dhtt}!ERROR@{ERROR}}}\mbox{\Hypertarget{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a52d2eff9fc4fe7097d3d3f3f45f14bf3}\label{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a52d2eff9fc4fe7097d3d3f3f45f14bf3}} 
+ERROR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FATAL@{FATAL}!dhtt@{dhtt}}\index{dhtt@{dhtt}!FATAL@{FATAL}}}\mbox{\Hypertarget{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a3578cd2b4420dfefc809479b329d0a0e}\label{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a3578cd2b4420dfefc809479b329d0a0e}} 
+FATAL&\\
 \hline
 
 \end{DoxyEnumFields}

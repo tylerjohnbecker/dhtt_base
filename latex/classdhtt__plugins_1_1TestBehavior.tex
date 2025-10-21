@@ -28,8 +28,20 @@ std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $
 \begin{DoxyCompactList}\small\item\em functionality for performing work \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_ad0b02769b0caebc9a9f3fb3d6ebb7f0d}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
 \begin{DoxyCompactList}\small\item\em method to parse the input parameters for the Node\+Type \end{DoxyCompactList}\item 
-double \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a41df48ed3feab14f2139cf7a0e40c3db}{get\+\_\+perceived\+\_\+efficiency}} () override
+double \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a5bb55bfeb5cf9f2abbc0615b17f6a8eb}{get\+\_\+perceived\+\_\+efficiency}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
 \begin{DoxyCompactList}\small\item\em calculates the activation potential of the node locally \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a2580bc3be934ae1d30935ed6f728cd99}{is\+\_\+done}} () override
+\begin{DoxyCompactList}\small\item\em check for if the node is finished running \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a34c108b8860540d505d0476525a92ac6}{initialize}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
+\begin{DoxyCompactList}\small\item\em abstract initialize function for all Node\+Type classes \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_aae9cdfe2c52650867d780d21d5e69bcd}{auction\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em functionality for completing an auction \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_afa00322a98999a964b482a8b35f9a57a}{work\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em functionality for performing work \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_ad0b02769b0caebc9a9f3fb3d6ebb7f0d}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
+\begin{DoxyCompactList}\small\item\em method to parse the input parameters for the Node\+Type \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a41df48ed3feab14f2139cf7a0e40c3db}{get\+\_\+perceived\+\_\+efficiency}} () override
+\item 
 bool \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a2580bc3be934ae1d30935ed6f728cd99}{is\+\_\+done}} () override
 \begin{DoxyCompactList}\small\item\em check for if the node is finished running \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Protected Attributes}
@@ -39,7 +51,7 @@ bool \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_aee42da4d67b88c1b2cb5a6
 \item 
 double \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a79f8b4cc3a6f35b13b18385026d31a1d}{activation\+\_\+potential}}
 \item 
-std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_a80d15729435952d77aaf185350fe8cb3}{necessary\+\_\+resources}}
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1TestBehavior_aa73502ec967d1e75c7d01fe75f58c6ab}{necessary\+\_\+resources}}
 \end{DoxyCompactItemize}
 \doxysubsection*{Additional Inherited Members}
 
@@ -51,7 +63,31 @@ A behavior which is just utilized for testing the functionality of the tree.
 \mbox{\Hypertarget{classdhtt__plugins_1_1TestBehavior_aae9cdfe2c52650867d780d21d5e69bcd}\label{classdhtt__plugins_1_1TestBehavior_aae9cdfe2c52650867d780d21d5e69bcd}} 
 \index{dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}!auction\_callback@{auction\_callback}}
 \index{auction\_callback@{auction\_callback}!dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}}
-\doxysubsubsection{\texorpdfstring{auction\_callback()}{auction\_callback()}}
+\doxysubsubsection{\texorpdfstring{auction\_callback()}{auction\_callback()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ dhtt\+\_\+plugins\+::\+Test\+Behavior\+::auction\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+functionality for completing an auction 
+
+This describes what the node should consider when it is first activated (i.\+e. when it starts an auction). Behavior nodes should request any resources that they need to begin working, and task nodes should spread activation to their children and propogate their choice up afterwards
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & pointer to the node class which owns the node type in order to give use of the public methods.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns the result part of the Activation action in order to function with the Node class. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5e52}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1TestBehavior_aae9cdfe2c52650867d780d21d5e69bcd}\label{classdhtt__plugins_1_1TestBehavior_aae9cdfe2c52650867d780d21d5e69bcd}} 
+\index{dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}!auction\_callback@{auction\_callback}}
+\index{auction\_callback@{auction\_callback}!dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}}
+\doxysubsubsection{\texorpdfstring{auction\_callback()}{auction\_callback()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ dhtt\+\_\+plugins\+::\+Test\+Behavior\+::auction\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
 
@@ -75,8 +111,14 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5
 \mbox{\Hypertarget{classdhtt__plugins_1_1TestBehavior_a41df48ed3feab14f2139cf7a0e40c3db}\label{classdhtt__plugins_1_1TestBehavior_a41df48ed3feab14f2139cf7a0e40c3db}} 
 \index{dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
 \index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}}
-\doxysubsubsection{\texorpdfstring{get\_perceived\_efficiency()}{get\_perceived\_efficiency()}}
-{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Test\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+\doxysubsubsection{\texorpdfstring{get\_perceived\_efficiency()}{get\_perceived\_efficiency()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Test\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1TestBehavior_a5bb55bfeb5cf9f2abbc0615b17f6a8eb}\label{classdhtt__plugins_1_1TestBehavior_a5bb55bfeb5cf9f2abbc0615b17f6a8eb}} 
+\index{dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
+\index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}}
+\doxysubsubsection{\texorpdfstring{get\_perceived\_efficiency()}{get\_perceived\_efficiency()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Test\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
 
 
@@ -89,12 +131,36 @@ activation potential value (0 -\/\texorpdfstring{$>$}{>} 1 by convention)
 \end{DoxyReturn}
 
 
-Implements \mbox{\hyperlink{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c845}{dhtt\+::\+Node\+Type}}.
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a6d70a5e6c0d832a32249795463e45a57}{dhtt\+::\+Node\+Type}}.
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1TestBehavior_a34c108b8860540d505d0476525a92ac6}\label{classdhtt__plugins_1_1TestBehavior_a34c108b8860540d505d0476525a92ac6}} 
 \index{dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}!initialize@{initialize}}
 \index{initialize@{initialize}!dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}}
-\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Test\+Behavior\+::initialize (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$}]{params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+abstract initialize function for all Node\+Type classes 
+
+Node\+Types can only initialize with some params given in a vector. The params should be described in the description file as shown in the sample\+\_\+tasks in the dhtt package. the params should also in general be parsed in the parse\+\_\+params function which is also used when parameters are modified.
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & the params to initialize the Node\+Type with (taken from description file usually)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8242}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1TestBehavior_a34c108b8860540d505d0476525a92ac6}\label{classdhtt__plugins_1_1TestBehavior_a34c108b8860540d505d0476525a92ac6}} 
+\index{dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}!initialize@{initialize}}
+\index{initialize@{initialize}!dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Test\+Behavior\+::initialize (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$}]{params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
 
@@ -118,7 +184,26 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a032e89c0ab0f0bab69d1816ccabc8
 \mbox{\Hypertarget{classdhtt__plugins_1_1TestBehavior_a2580bc3be934ae1d30935ed6f728cd99}\label{classdhtt__plugins_1_1TestBehavior_a2580bc3be934ae1d30935ed6f728cd99}} 
 \index{dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}!is\_done@{is\_done}}
 \index{is\_done@{is\_done}!dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}}
-\doxysubsubsection{\texorpdfstring{is\_done()}{is\_done()}}
+\doxysubsubsection{\texorpdfstring{is\_done()}{is\_done()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Test\+Behavior\+::is\+\_\+done (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+check for if the node is finished running 
+
+just uses the logic of the node to find out if it is done running already. For behaviors this returns true once the work is complete, and for tasks this is complete when the logic dictates (AND is done when all children are done, etc.).
+
+\begin{DoxyReturn}{Returns}
+true if the node is done. false otherwise. 
+\end{DoxyReturn}
+
+
+Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1TestBehavior_a2580bc3be934ae1d30935ed6f728cd99}\label{classdhtt__plugins_1_1TestBehavior_a2580bc3be934ae1d30935ed6f728cd99}} 
+\index{dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}!is\_done@{is\_done}}
+\index{is\_done@{is\_done}!dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}}
+\doxysubsubsection{\texorpdfstring{is\_done()}{is\_done()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Test\+Behavior\+::is\+\_\+done (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
 
@@ -137,7 +222,31 @@ Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4d
 \mbox{\Hypertarget{classdhtt__plugins_1_1TestBehavior_ad0b02769b0caebc9a9f3fb3d6ebb7f0d}\label{classdhtt__plugins_1_1TestBehavior_ad0b02769b0caebc9a9f3fb3d6ebb7f0d}} 
 \index{dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}!parse\_params@{parse\_params}}
 \index{parse\_params@{parse\_params}!dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}}
-\doxysubsubsection{\texorpdfstring{parse\_params()}{parse\_params()}}
+\doxysubsubsection{\texorpdfstring{parse\_params()}{parse\_params()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Test\+Behavior\+::parse\+\_\+params (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$}]{params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+method to parse the input parameters for the Node\+Type 
+
+generally should take the parameters from the description file and parse them in some way. This could include just setting flags, getting topic names for information retrieval, etc.
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & list of params taken from the description file (usually in key, value pairs by convention)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1TestBehavior_ad0b02769b0caebc9a9f3fb3d6ebb7f0d}\label{classdhtt__plugins_1_1TestBehavior_ad0b02769b0caebc9a9f3fb3d6ebb7f0d}} 
+\index{dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}!parse\_params@{parse\_params}}
+\index{parse\_params@{parse\_params}!dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}}
+\doxysubsubsection{\texorpdfstring{parse\_params()}{parse\_params()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Test\+Behavior\+::parse\+\_\+params (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$}]{params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
 
@@ -161,7 +270,31 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d
 \mbox{\Hypertarget{classdhtt__plugins_1_1TestBehavior_afa00322a98999a964b482a8b35f9a57a}\label{classdhtt__plugins_1_1TestBehavior_afa00322a98999a964b482a8b35f9a57a}} 
 \index{dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}!work\_callback@{work\_callback}}
 \index{work\_callback@{work\_callback}!dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}}
-\doxysubsubsection{\texorpdfstring{work\_callback()}{work\_callback()}}
+\doxysubsubsection{\texorpdfstring{work\_callback()}{work\_callback()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ dhtt\+\_\+plugins\+::\+Test\+Behavior\+::work\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+functionality for performing work 
+
+This describes what a node should do when it\textquotesingle{}s request for resources is approved and it can begin working. Behaviors should perform some action and then return the success of that action and tasks should propogate the message down and wait for the response (or perform some other action first in special cases). For an example of how to pass resources the d\+HTT plugins actions should suffice.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & pointer to the node class which owns the node type in order to give use of the public methods.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns the result part of the Activation action in order to function with the Node class. For behaviors this should contain the resources that need to be released. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610e91}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1TestBehavior_afa00322a98999a964b482a8b35f9a57a}\label{classdhtt__plugins_1_1TestBehavior_afa00322a98999a964b482a8b35f9a57a}} 
+\index{dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}!work\_callback@{work\_callback}}
+\index{work\_callback@{work\_callback}!dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}}
+\doxysubsubsection{\texorpdfstring{work\_callback()}{work\_callback()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ dhtt\+\_\+plugins\+::\+Test\+Behavior\+::work\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
 
@@ -197,14 +330,15 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610
 \doxysubsubsection{\texorpdfstring{done}{done}}
 {\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Test\+Behavior\+::done\hspace{0.3cm}{\ttfamily [protected]}}
 
-\mbox{\Hypertarget{classdhtt__plugins_1_1TestBehavior_a80d15729435952d77aaf185350fe8cb3}\label{classdhtt__plugins_1_1TestBehavior_a80d15729435952d77aaf185350fe8cb3}} 
+\mbox{\Hypertarget{classdhtt__plugins_1_1TestBehavior_aa73502ec967d1e75c7d01fe75f58c6ab}\label{classdhtt__plugins_1_1TestBehavior_aa73502ec967d1e75c7d01fe75f58c6ab}} 
 \index{dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}!necessary\_resources@{necessary\_resources}}
 \index{necessary\_resources@{necessary\_resources}!dhtt\_plugins::TestBehavior@{dhtt\_plugins::TestBehavior}}
 \doxysubsubsection{\texorpdfstring{necessary\_resources}{necessary\_resources}}
-{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+\_\+plugins\+::\+Test\+Behavior\+::necessary\+\_\+resources\hspace{0.3cm}{\ttfamily [protected]}}
+{\footnotesize\ttfamily std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Test\+Behavior\+::necessary\+\_\+resources\hspace{0.3cm}{\ttfamily [protected]}}
 
 
 
-The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
+dhtt\+\_\+plugins/include/dhtt\+\_\+plugins/behaviors/test/\mbox{\hyperlink{test_2test__behavior_8hpp}{test\+\_\+behavior.\+hpp}}\item 
 dhtt\+\_\+plugins/include/dhtt\+\_\+plugins/behaviors/\mbox{\hyperlink{test__behavior_8hpp}{test\+\_\+behavior.\+hpp}}\end{DoxyCompactItemize}

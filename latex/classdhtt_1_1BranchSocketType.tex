@@ -1,0 +1,142 @@
+\hypertarget{classdhtt_1_1BranchSocketType}{}\doxysection{dhtt\+::Branch\+Socket\+Type Class Reference}
+\label{classdhtt_1_1BranchSocketType}\index{dhtt::BranchSocketType@{dhtt::BranchSocketType}}
+
+
+base class for the branch socket  
+
+
+
+
+{\ttfamily \#include $<$branch\+\_\+type.\+hpp$>$}
+
+
+
+Collaboration diagram for dhtt\+::Branch\+Socket\+Type\+:
+% FIG 0
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{classdhtt_1_1BranchSocketType_a6323fef56616461214b60464d67f0f2a}{initialize}} (\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$constructor\+\_\+ptr)=0
+\begin{DoxyCompactList}\small\item\em initialize function for the socket type \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classdhtt_1_1BranchSocketType_abf53ac4601da3bb63ae19d8dc39afb28}{destruct}} ()
+\begin{DoxyCompactList}\small\item\em empty for this class \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\+\_\+result}} \mbox{\hyperlink{classdhtt_1_1BranchSocketType_add4fa4d6e143b7bf1e5a15a589fcb2b7}{activation\+\_\+received\+\_\+callback}} (\mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\+\_\+goal}} goal)=0
+\begin{DoxyCompactList}\small\item\em activation recieved callback \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\+\_\+result}} \mbox{\hyperlink{classdhtt_1_1BranchSocketType_a688c0dcb09ab29a130b4c6bc5cbed5b1}{maintain\+\_\+received\+\_\+callback}} (\mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\+\_\+goal}} goal)=0
+\begin{DoxyCompactList}\small\item\em maintenance request received callback \end{DoxyCompactList}\item 
+virtual bool \mbox{\hyperlink{classdhtt_1_1BranchSocketType_aabe5e9184dffe824f6bf99a7c4ce288a}{test\+\_\+connection}} ()
+\begin{DoxyCompactList}\small\item\em method to test whether the plug socket connection functions as intended \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$ \mbox{\hyperlink{classdhtt_1_1BranchSocketType_a97530353c009d6f63c9552abcab5ca7b}{container}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+base class for the branch socket 
+
+Realistically this class is only relevant for the plug because it is intended to call the public methods of the node class and otherwise isn\textquotesingle{}t necessary to be anywhere else. Added two base methods for posterity I guess in case we want heterogeneous plug/socket pairs. This facilitates communication for the activation pipeline and the maitnenance pipeline.
+
+Note\+: I think I could make this more generalized to facilitate one of each communication pipeline, however, I\textquotesingle{}m not sure that this is the best way forward for the class representation. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt_1_1BranchSocketType_add4fa4d6e143b7bf1e5a15a589fcb2b7}\label{classdhtt_1_1BranchSocketType_add4fa4d6e143b7bf1e5a15a589fcb2b7}} 
+\index{dhtt::BranchSocketType@{dhtt::BranchSocketType}!activation\_received\_callback@{activation\_received\_callback}}
+\index{activation\_received\_callback@{activation\_received\_callback}!dhtt::BranchSocketType@{dhtt::BranchSocketType}}
+\doxysubsubsection{\texorpdfstring{activation\_received\_callback()}{activation\_received\_callback()}}
+{\footnotesize\ttfamily virtual \mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\+\_\+result}} dhtt\+::\+Branch\+Socket\+Type\+::activation\+\_\+received\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\+\_\+goal}}}]{goal }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+activation recieved callback 
+
+Overall, it shouldn\textquotesingle{}t matter that this exists or not as the paired plug for this class will always know what to call in the child, however, if we have heterogeneous plug socket pairs this might be a useful interface design.
+
+
+\begin{DoxyParams}{Parameters}
+{\em goal} & activation goal msg to pass to the node class\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+activation result msg 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1BranchSocketType_abf53ac4601da3bb63ae19d8dc39afb28}\label{classdhtt_1_1BranchSocketType_abf53ac4601da3bb63ae19d8dc39afb28}} 
+\index{dhtt::BranchSocketType@{dhtt::BranchSocketType}!destruct@{destruct}}
+\index{destruct@{destruct}!dhtt::BranchSocketType@{dhtt::BranchSocketType}}
+\doxysubsubsection{\texorpdfstring{destruct()}{destruct()}}
+{\footnotesize\ttfamily virtual void dhtt\+::\+Branch\+Socket\+Type\+::destruct (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+empty for this class 
+
+This should be called in the destructor of the node class and can be overriden in the case that child classes have more resources to collect \mbox{\Hypertarget{classdhtt_1_1BranchSocketType_a6323fef56616461214b60464d67f0f2a}\label{classdhtt_1_1BranchSocketType_a6323fef56616461214b60464d67f0f2a}} 
+\index{dhtt::BranchSocketType@{dhtt::BranchSocketType}!initialize@{initialize}}
+\index{initialize@{initialize}!dhtt::BranchSocketType@{dhtt::BranchSocketType}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily virtual void dhtt\+::\+Branch\+Socket\+Type\+::initialize (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$}]{constructor\+\_\+ptr }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+initialize function for the socket type 
+
+This method should construct everything the socket needs to function which might involve essentially nothing, but for instance also might make an action server etc.
+
+
+\begin{DoxyParams}{Parameters}
+{\em constructor\+\_\+ptr} & shared\+\_\+ptr of the constructing node that is meant to allow this class to call the public nodes.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1BranchSocketType_a688c0dcb09ab29a130b4c6bc5cbed5b1}\label{classdhtt_1_1BranchSocketType_a688c0dcb09ab29a130b4c6bc5cbed5b1}} 
+\index{dhtt::BranchSocketType@{dhtt::BranchSocketType}!maintain\_received\_callback@{maintain\_received\_callback}}
+\index{maintain\_received\_callback@{maintain\_received\_callback}!dhtt::BranchSocketType@{dhtt::BranchSocketType}}
+\doxysubsubsection{\texorpdfstring{maintain\_received\_callback()}{maintain\_received\_callback()}}
+{\footnotesize\ttfamily virtual \mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\+\_\+result}} dhtt\+::\+Branch\+Socket\+Type\+::maintain\+\_\+received\+\_\+callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\+\_\+goal}}}]{goal }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+maintenance request received callback 
+
+Again all work for maitenance will be resolved through the node class. The comments for activation received apply here as well.
+
+
+\begin{DoxyParams}{Parameters}
+{\em goal} & activation goal msg to pass to the node class\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+activation result msg 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1BranchSocketType_aabe5e9184dffe824f6bf99a7c4ce288a}\label{classdhtt_1_1BranchSocketType_aabe5e9184dffe824f6bf99a7c4ce288a}} 
+\index{dhtt::BranchSocketType@{dhtt::BranchSocketType}!test\_connection@{test\_connection}}
+\index{test\_connection@{test\_connection}!dhtt::BranchSocketType@{dhtt::BranchSocketType}}
+\doxysubsubsection{\texorpdfstring{test\_connection()}{test\_connection()}}
+{\footnotesize\ttfamily virtual bool dhtt\+::\+Branch\+Socket\+Type\+::test\+\_\+connection (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+method to test whether the plug socket connection functions as intended 
+
+This is meant to be called after construction to help with testing. This really should only be accessed by the corresponding plug as this socket has no knowledge or way to contact the paired plug.
+
+\begin{DoxyReturn}{Returns}
+true if the connection is functional, false otherwise. 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classdhtt_1_1BranchSocketType_a97530353c009d6f63c9552abcab5ca7b}\label{classdhtt_1_1BranchSocketType_a97530353c009d6f63c9552abcab5ca7b}} 
+\index{dhtt::BranchSocketType@{dhtt::BranchSocketType}!container@{container}}
+\index{container@{container}!dhtt::BranchSocketType@{dhtt::BranchSocketType}}
+\doxysubsubsection{\texorpdfstring{container}{container}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classdhtt_1_1Node}{Node}}$\ast$ dhtt\+::\+Branch\+Socket\+Type\+::container\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt/include/dhtt/tree/\mbox{\hyperlink{branch__type_8hpp}{branch\+\_\+type.\+hpp}}\end{DoxyCompactItemize}

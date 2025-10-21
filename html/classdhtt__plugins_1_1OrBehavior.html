@@ -115,12 +115,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ada2499282514c8a53c52703419a5b6e1"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; dhtt_msgs::action::Activation::Result &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1OrBehavior.html#ada2499282514c8a53c52703419a5b6e1">work_callback</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container) override</td></tr>
 <tr class="memdesc:ada2499282514c8a53c52703419a5b6e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Work behavior for the OR node.  <a href="classdhtt__plugins_1_1OrBehavior.html#ada2499282514c8a53c52703419a5b6e1">More...</a><br /></td></tr>
 <tr class="separator:ada2499282514c8a53c52703419a5b6e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4c211794c2e1d2c377f3d7832c15d2b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1OrBehavior.html#af4c211794c2e1d2c377f3d7832c15d2b">maintain_conditions</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container) override</td></tr>
+<tr class="memdesc:af4c211794c2e1d2c377f3d7832c15d2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">the OR node performs a logical or of the predicates of its children for both pre and post conditions  <a href="classdhtt__plugins_1_1OrBehavior.html#af4c211794c2e1d2c377f3d7832c15d2b">More...</a><br /></td></tr>
+<tr class="separator:af4c211794c2e1d2c377f3d7832c15d2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0da23d587157936fe57313a799545556"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1OrBehavior.html#a0da23d587157936fe57313a799545556">parse_params</a> (std::vector&lt; std::string &gt; <a class="el" href="classdhtt_1_1NodeType.html#a2cf719d31abbbad3a06e6c0ecc4915cf">params</a>) override</td></tr>
 <tr class="memdesc:a0da23d587157936fe57313a799545556"><td class="mdescLeft">&#160;</td><td class="mdescRight">this behavior takes no parameters  <a href="classdhtt__plugins_1_1OrBehavior.html#a0da23d587157936fe57313a799545556">More...</a><br /></td></tr>
 <tr class="separator:a0da23d587157936fe57313a799545556"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a329f1af3a1e7653c9ba47ef1887eb678"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1OrBehavior.html#a329f1af3a1e7653c9ba47ef1887eb678">get_perceived_efficiency</a> () override</td></tr>
-<tr class="memdesc:a329f1af3a1e7653c9ba47ef1887eb678"><td class="mdescLeft">&#160;</td><td class="mdescRight">gives the activation potential of this subtask  <a href="classdhtt__plugins_1_1OrBehavior.html#a329f1af3a1e7653c9ba47ef1887eb678">More...</a><br /></td></tr>
-<tr class="separator:a329f1af3a1e7653c9ba47ef1887eb678"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7748fc03a847405d30d42ffb9afbede7"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1OrBehavior.html#a7748fc03a847405d30d42ffb9afbede7">get_perceived_efficiency</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container) override</td></tr>
+<tr class="memdesc:a7748fc03a847405d30d42ffb9afbede7"><td class="mdescLeft">&#160;</td><td class="mdescRight">gives the activation potential of this subtask  <a href="classdhtt__plugins_1_1OrBehavior.html#a7748fc03a847405d30d42ffb9afbede7">More...</a><br /></td></tr>
+<tr class="separator:a7748fc03a847405d30d42ffb9afbede7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92c4a1767ead32d681ac925f1422e4b7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1OrBehavior.html#a92c4a1767ead32d681ac925f1422e4b7">is_done</a> () override</td></tr>
 <tr class="memdesc:a92c4a1767ead32d681ac925f1422e4b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">this behavior is done when a child is done.  <a href="classdhtt__plugins_1_1OrBehavior.html#a92c4a1767ead32d681ac925f1422e4b7">More...</a><br /></td></tr>
 <tr class="separator:a92c4a1767ead32d681ac925f1422e4b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -128,24 +131,41 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a032e89c0ab0f0bab69d1816ccabc8242 inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a032e89c0ab0f0bab69d1816ccabc8242">initialize</a> (std::vector&lt; std::string &gt; <a class="el" href="classdhtt_1_1NodeType.html#a2cf719d31abbbad3a06e6c0ecc4915cf">params</a>)=0</td></tr>
 <tr class="memdesc:a032e89c0ab0f0bab69d1816ccabc8242 inherit pub_methods_classdhtt_1_1NodeType"><td class="mdescLeft">&#160;</td><td class="mdescRight">abstract initialize function for all <a class="el" href="classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes.">NodeType</a> classes  <a href="classdhtt_1_1NodeType.html#a032e89c0ab0f0bab69d1816ccabc8242">More...</a><br /></td></tr>
 <tr class="separator:a032e89c0ab0f0bab69d1816ccabc8242 inherit pub_methods_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad30ea49bb3361fe79058cc9e10d705f5 inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#ad30ea49bb3361fe79058cc9e10d705f5">destruct</a> ()</td></tr>
+<tr class="memdesc:ad30ea49bb3361fe79058cc9e10d705f5 inherit pub_methods_classdhtt_1_1NodeType"><td class="mdescLeft">&#160;</td><td class="mdescRight">just available in case there are any non-trivial resource cleanups in any nodetypes  <a href="classdhtt_1_1NodeType.html#ad30ea49bb3361fe79058cc9e10d705f5">More...</a><br /></td></tr>
+<tr class="separator:ad30ea49bb3361fe79058cc9e10d705f5 inherit pub_methods_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade96117263a722919bf770a1c74e5e52 inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; dhtt_msgs::action::Activation::Result &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#ade96117263a722919bf770a1c74e5e52">auction_callback</a> (<a class="el" href="classdhtt_1_1Node.html">Node</a> *container)=0</td></tr>
 <tr class="memdesc:ade96117263a722919bf770a1c74e5e52 inherit pub_methods_classdhtt_1_1NodeType"><td class="mdescLeft">&#160;</td><td class="mdescRight">functionality for completing an auction  <a href="classdhtt_1_1NodeType.html#ade96117263a722919bf770a1c74e5e52">More...</a><br /></td></tr>
 <tr class="separator:ade96117263a722919bf770a1c74e5e52 inherit pub_methods_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a746c54085a57734a637a30a05c610e91 inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; dhtt_msgs::action::Activation::Result &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a746c54085a57734a637a30a05c610e91">work_callback</a> (<a class="el" href="classdhtt_1_1Node.html">Node</a> *container)=0</td></tr>
 <tr class="memdesc:a746c54085a57734a637a30a05c610e91 inherit pub_methods_classdhtt_1_1NodeType"><td class="mdescLeft">&#160;</td><td class="mdescRight">functionality for performing work  <a href="classdhtt_1_1NodeType.html#a746c54085a57734a637a30a05c610e91">More...</a><br /></td></tr>
 <tr class="separator:a746c54085a57734a637a30a05c610e91 inherit pub_methods_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac002d98a8bba7540f55566826e862dc9 inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#ac002d98a8bba7540f55566826e862dc9">maintain_conditions</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container)</td></tr>
+<tr class="memdesc:ac002d98a8bba7540f55566826e862dc9 inherit pub_methods_classdhtt_1_1NodeType"><td class="mdescLeft">&#160;</td><td class="mdescRight">top down maintainer for pre and post conditions of this node  <a href="classdhtt_1_1NodeType.html#ac002d98a8bba7540f55566826e862dc9">More...</a><br /></td></tr>
+<tr class="separator:ac002d98a8bba7540f55566826e862dc9 inherit pub_methods_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3299445c97c34ecf0b8e120cd59d412 inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#ab3299445c97c34ecf0b8e120cd59d412">parse_params</a> (std::vector&lt; std::string &gt; <a class="el" href="classdhtt_1_1NodeType.html#a2cf719d31abbbad3a06e6c0ecc4915cf">params</a>)=0</td></tr>
 <tr class="memdesc:ab3299445c97c34ecf0b8e120cd59d412 inherit pub_methods_classdhtt_1_1NodeType"><td class="mdescLeft">&#160;</td><td class="mdescRight">method to parse the input parameters for the <a class="el" href="classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes.">NodeType</a>  <a href="classdhtt_1_1NodeType.html#ab3299445c97c34ecf0b8e120cd59d412">More...</a><br /></td></tr>
 <tr class="separator:ab3299445c97c34ecf0b8e120cd59d412 inherit pub_methods_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe0033b3654dba4ac7e00cc44b99c845 inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#abe0033b3654dba4ac7e00cc44b99c845">get_perceived_efficiency</a> ()=0</td></tr>
-<tr class="memdesc:abe0033b3654dba4ac7e00cc44b99c845 inherit pub_methods_classdhtt_1_1NodeType"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculates the activation potential of the node locally  <a href="classdhtt_1_1NodeType.html#abe0033b3654dba4ac7e00cc44b99c845">More...</a><br /></td></tr>
-<tr class="separator:abe0033b3654dba4ac7e00cc44b99c845 inherit pub_methods_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d70a5e6c0d832a32249795463e45a57 inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a6d70a5e6c0d832a32249795463e45a57">get_perceived_efficiency</a> (<a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *container)=0</td></tr>
+<tr class="memdesc:a6d70a5e6c0d832a32249795463e45a57 inherit pub_methods_classdhtt_1_1NodeType"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculates the activation potential of the node locally  <a href="classdhtt_1_1NodeType.html#a6d70a5e6c0d832a32249795463e45a57">More...</a><br /></td></tr>
+<tr class="separator:a6d70a5e6c0d832a32249795463e45a57 inherit pub_methods_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad6d899627452745cede4dc723ef57b70 inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#ad6d899627452745cede4dc723ef57b70">is_done</a> ()</td></tr>
 <tr class="memdesc:ad6d899627452745cede4dc723ef57b70 inherit pub_methods_classdhtt_1_1NodeType"><td class="mdescLeft">&#160;</td><td class="mdescRight">check for if the node is finished running  <a href="classdhtt_1_1NodeType.html#ad6d899627452745cede4dc723ef57b70">More...</a><br /></td></tr>
 <tr class="separator:ad6d899627452745cede4dc723ef57b70 inherit pub_methods_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27786baa37dcfb24f406bf0becf5d428 inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a27786baa37dcfb24f406bf0becf5d428">can_add_child</a> ()</td></tr>
 <tr class="memdesc:a27786baa37dcfb24f406bf0becf5d428 inherit pub_methods_classdhtt_1_1NodeType"><td class="mdescLeft">&#160;</td><td class="mdescRight">whether or not this node can have children  <a href="classdhtt_1_1NodeType.html#a27786baa37dcfb24f406bf0becf5d428">More...</a><br /></td></tr>
 <tr class="separator:a27786baa37dcfb24f406bf0becf5d428 inherit pub_methods_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83731130208082ea0bfe6b5ca55b63d2 inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual dhtt_utils::PredicateConjunction&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a83731130208082ea0bfe6b5ca55b63d2">get_preconditions</a> ()</td></tr>
+<tr class="memdesc:a83731130208082ea0bfe6b5ca55b63d2 inherit pub_methods_classdhtt_1_1NodeType"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the preconditions of the behavior  <a href="classdhtt_1_1NodeType.html#a83731130208082ea0bfe6b5ca55b63d2">More...</a><br /></td></tr>
+<tr class="separator:a83731130208082ea0bfe6b5ca55b63d2 inherit pub_methods_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b4e2269bb11b08d7da5782cd66955c4 inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual dhtt_utils::PredicateConjunction&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a5b4e2269bb11b08d7da5782cd66955c4">get_postconditions</a> ()</td></tr>
+<tr class="memdesc:a5b4e2269bb11b08d7da5782cd66955c4 inherit pub_methods_classdhtt_1_1NodeType"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the postconditions of the behavior  <a href="classdhtt_1_1NodeType.html#a5b4e2269bb11b08d7da5782cd66955c4">More...</a><br /></td></tr>
+<tr class="separator:a5b4e2269bb11b08d7da5782cd66955c4 inherit pub_methods_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6398aa95ffae2bafaf46d7946e9f8ddc inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a6398aa95ffae2bafaf46d7946e9f8ddc">release_all_resources</a> ()</td></tr>
+<tr class="memdesc:a6398aa95ffae2bafaf46d7946e9f8ddc inherit pub_methods_classdhtt_1_1NodeType"><td class="mdescLeft">&#160;</td><td class="mdescRight">releases all node resources  <a href="classdhtt_1_1NodeType.html#a6398aa95ffae2bafaf46d7946e9f8ddc">More...</a><br /></td></tr>
+<tr class="separator:a6398aa95ffae2bafaf46d7946e9f8ddc inherit pub_methods_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13c6ceba906a5ed7ed76f37bba9ad8ac inherit pub_methods_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a13c6ceba906a5ed7ed76f37bba9ad8ac">set_name</a> (std::string <a class="el" href="classdhtt_1_1NodeType.html#ae4c017feba5d310ade4d1c32a86d13cf">name</a>)</td></tr>
+<tr class="separator:a13c6ceba906a5ed7ed76f37bba9ad8ac inherit pub_methods_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -160,8 +180,14 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a4aff8507c71ff92d829cd64805a01cdf"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt__plugins_1_1OrBehavior.html#a4aff8507c71ff92d829cd64805a01cdf">activated_child_name</a></td></tr>
 <tr class="separator:a4aff8507c71ff92d829cd64805a01cdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classdhtt_1_1NodeType"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classdhtt_1_1NodeType')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classdhtt_1_1NodeType.html">dhtt::NodeType</a></td></tr>
+<tr class="memitem:a09f44dea50dea76741516405a5cdffe6 inherit pro_attribs_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">dhtt_utils::PredicateConjunction&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a09f44dea50dea76741516405a5cdffe6">preconditions</a></td></tr>
+<tr class="separator:a09f44dea50dea76741516405a5cdffe6 inherit pro_attribs_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1709abe730c2ec5d62c95fdf2d75a20b inherit pro_attribs_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">dhtt_utils::PredicateConjunction&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a1709abe730c2ec5d62c95fdf2d75a20b">postconditions</a></td></tr>
+<tr class="separator:a1709abe730c2ec5d62c95fdf2d75a20b inherit pro_attribs_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19ba84ac2216554b7830b2be2eb0f3d4 inherit pro_attribs_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a19ba84ac2216554b7830b2be2eb0f3d4">children_allowed</a></td></tr>
 <tr class="separator:a19ba84ac2216554b7830b2be2eb0f3d4 inherit pro_attribs_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4c017feba5d310ade4d1c32a86d13cf inherit pro_attribs_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#ae4c017feba5d310ade4d1c32a86d13cf">name</a></td></tr>
+<tr class="separator:ae4c017feba5d310ade4d1c32a86d13cf inherit pro_attribs_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -172,8 +198,8 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a425a99e3ab63a286168b02cac8e2ef2d inherit pub_attribs_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2cf719d31abbbad3a06e6c0ecc4915cf inherit pub_attribs_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a2cf719d31abbbad3a06e6c0ecc4915cf">params</a></td></tr>
 <tr class="separator:a2cf719d31abbbad3a06e6c0ecc4915cf inherit pub_attribs_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeeef5c0db14ade9f9babe3f532195abe inherit pub_attribs_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#aeeef5c0db14ade9f9babe3f532195abe">preconditions</a></td></tr>
-<tr class="separator:aeeef5c0db14ade9f9babe3f532195abe inherit pub_attribs_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27113bd279ce2e62687be35e95603910 inherit pub_attribs_classdhtt_1_1NodeType"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1CommunicationAggregator.html">CommunicationAggregator</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1NodeType.html#a27113bd279ce2e62687be35e95603910">com_agg</a></td></tr>
+<tr class="separator:a27113bd279ce2e62687be35e95603910 inherit pub_attribs_classdhtt_1_1NodeType"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Implementation of the OR node for dHTTs. </p>
@@ -217,8 +243,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a329f1af3a1e7653c9ba47ef1887eb678" name="a329f1af3a1e7653c9ba47ef1887eb678"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a329f1af3a1e7653c9ba47ef1887eb678">&#9670;&#160;</a></span>get_perceived_efficiency()</h2>
+<a id="a7748fc03a847405d30d42ffb9afbede7" name="a7748fc03a847405d30d42ffb9afbede7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7748fc03a847405d30d42ffb9afbede7">&#9670;&#160;</a></span>get_perceived_efficiency()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -229,7 +255,8 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">double dhtt_plugins::OrBehavior::get_perceived_efficiency </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *&#160;</td>
+          <td class="paramname"><em>container</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -244,7 +271,7 @@ Additional Inherited Members</h2></td></tr>
 <p >Activation Potential for an OR node is calculated as the highest activation potential of it's children if one hasn't already run, or the active child's activation potential otherwise.</p>
 <dl class="section return"><dt>Returns</dt><dd>activation potential of this subtask </dd></dl>
 
-<p>Implements <a class="el" href="classdhtt_1_1NodeType.html#abe0033b3654dba4ac7e00cc44b99c845">dhtt::NodeType</a>.</p>
+<p>Implements <a class="el" href="classdhtt_1_1NodeType.html#a6d70a5e6c0d832a32249795463e45a57">dhtt::NodeType</a>.</p>
 
 </div>
 </div>
@@ -312,6 +339,36 @@ Additional Inherited Members</h2></td></tr>
 <p>this behavior is done when a child is done. </p>
 
 <p>Reimplemented from <a class="el" href="classdhtt_1_1NodeType.html#ad6d899627452745cede4dc723ef57b70">dhtt::NodeType</a>.</p>
+
+</div>
+</div>
+<a id="af4c211794c2e1d2c377f3d7832c15d2b" name="af4c211794c2e1d2c377f3d7832c15d2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4c211794c2e1d2c377f3d7832c15d2b">&#9670;&#160;</a></span>maintain_conditions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dhtt_plugins::OrBehavior::maintain_conditions </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> *&#160;</td>
+          <td class="paramname"><em>container</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>the OR node performs a logical or of the predicates of its children for both pre and post conditions </p>
+
+<p>Reimplemented from <a class="el" href="classdhtt_1_1NodeType.html#ac002d98a8bba7540f55566826e862dc9">dhtt::NodeType</a>.</p>
 
 </div>
 </div>

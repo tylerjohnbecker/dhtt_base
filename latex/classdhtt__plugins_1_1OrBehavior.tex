@@ -26,9 +26,11 @@ std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $
 \begin{DoxyCompactList}\small\item\em Auction behavior for the OR node. \end{DoxyCompactList}\item 
 std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_ada2499282514c8a53c52703419a5b6e1}{work\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
 \begin{DoxyCompactList}\small\item\em Work behavior for the OR node. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_af4c211794c2e1d2c377f3d7832c15d2b}{maintain\+\_\+conditions}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em the OR node performs a logical or of the predicates of its children for both pre and post conditions \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a0da23d587157936fe57313a799545556}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
 \begin{DoxyCompactList}\small\item\em this behavior takes no parameters \end{DoxyCompactList}\item 
-double \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a329f1af3a1e7653c9ba47ef1887eb678}{get\+\_\+perceived\+\_\+efficiency}} () override
+double \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a7748fc03a847405d30d42ffb9afbede7}{get\+\_\+perceived\+\_\+efficiency}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
 \begin{DoxyCompactList}\small\item\em gives the activation potential of this subtask \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{classdhtt__plugins_1_1OrBehavior_a92c4a1767ead32d681ac925f1422e4b7}{is\+\_\+done}} () override
 \begin{DoxyCompactList}\small\item\em this behavior is done when a child is done. \end{DoxyCompactList}\end{DoxyCompactItemize}
@@ -78,11 +80,11 @@ Activation\+Result for the Node class\textquotesingle{} activation action server
 
 Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5e52}{dhtt\+::\+Node\+Type}}.
 
-\mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_a329f1af3a1e7653c9ba47ef1887eb678}\label{classdhtt__plugins_1_1OrBehavior_a329f1af3a1e7653c9ba47ef1887eb678}} 
+\mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_a7748fc03a847405d30d42ffb9afbede7}\label{classdhtt__plugins_1_1OrBehavior_a7748fc03a847405d30d42ffb9afbede7}} 
 \index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
 \index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}}
 \doxysubsubsection{\texorpdfstring{get\_perceived\_efficiency()}{get\_perceived\_efficiency()}}
-{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Or\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Or\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
 
 
@@ -95,7 +97,7 @@ activation potential of this subtask
 \end{DoxyReturn}
 
 
-Implements \mbox{\hyperlink{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c845}{dhtt\+::\+Node\+Type}}.
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a6d70a5e6c0d832a32249795463e45a57}{dhtt\+::\+Node\+Type}}.
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_a907a6b140ea345f4924d0bc770a73baa}\label{classdhtt__plugins_1_1OrBehavior_a907a6b140ea345f4924d0bc770a73baa}} 
 \index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!initialize@{initialize}}
@@ -134,6 +136,20 @@ this behavior is done when a child is done.
 
 
 Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_af4c211794c2e1d2c377f3d7832c15d2b}\label{classdhtt__plugins_1_1OrBehavior_af4c211794c2e1d2c377f3d7832c15d2b}} 
+\index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!maintain\_conditions@{maintain\_conditions}}
+\index{maintain\_conditions@{maintain\_conditions}!dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}}
+\doxysubsubsection{\texorpdfstring{maintain\_conditions()}{maintain\_conditions()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Or\+Behavior\+::maintain\+\_\+conditions (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+the OR node performs a logical or of the predicates of its children for both pre and post conditions 
+
+
+
+Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ac002d98a8bba7540f55566826e862dc9}{dhtt\+::\+Node\+Type}}.
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1OrBehavior_a0da23d587157936fe57313a799545556}\label{classdhtt__plugins_1_1OrBehavior_a0da23d587157936fe57313a799545556}} 
 \index{dhtt\_plugins::OrBehavior@{dhtt\_plugins::OrBehavior}!parse\_params@{parse\_params}}

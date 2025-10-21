@@ -2,8 +2,11 @@
 \label{node_8hpp}\index{dhtt/include/dhtt/tree/node.hpp@{dhtt/include/dhtt/tree/node.hpp}}
 {\ttfamily \#include $<$memory$>$}\newline
 {\ttfamily \#include $<$chrono$>$}\newline
+{\ttfamily \#include $<$condition\+\_\+variable$>$}\newline
+{\ttfamily \#include $<$mutex$>$}\newline
 {\ttfamily \#include \char`\"{}pluginlib/class\+\_\+loader.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}rclcpp\+\_\+action/rclcpp\+\_\+action.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}std\+\_\+msgs/msg/string.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/msg/node.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/msg/resource.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/msg/resources.\+hpp\char`\"{}}\newline
@@ -11,7 +14,12 @@
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/srv/internal\+\_\+service\+\_\+registration.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/srv/modify\+\_\+request.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/action/activation.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/action/condition.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}dhtt/tree/node\+\_\+type.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dhtt/tree/branch\+\_\+type.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dhtt/tree/potential\+\_\+type.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dhtt/planning/goitr\+\_\+type.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dhtt/server/communication\+\_\+aggregator.\+hpp\char`\"{}}\newline
 Include dependency graph for node.\+hpp\+:
 % FIG 0
 This graph shows which files directly or indirectly include this file\+:
@@ -35,9 +43,25 @@ namespace \mbox{\hyperlink{namespacedhtt}{dhtt}}
 \item 
 \#define \mbox{\hyperlink{node_8hpp_afaf57526d195e6c04efce9d8cb8d1082}{ACTIVATION\+\_\+\+POSTFIX}}~\char`\"{}/activate\char`\"{}
 \item 
+\#define \mbox{\hyperlink{node_8hpp_a1477da138b14a32adc845e7d6e7a0be6}{CONDITION\+\_\+\+POSTFIX}}~\char`\"{}/condition\char`\"{}
+\item 
 \#define \mbox{\hyperlink{node_8hpp_ae549cb06a6c0c8989e42b0bbf8d44728}{RESOURCES\+\_\+\+POSTFIX}}~\char`\"{}/resource\char`\"{}
 \item 
 \#define \mbox{\hyperlink{node_8hpp_abe6a7b3393adc1231c17f63de3a3ca0e}{CONTROL\+\_\+\+POSTFIX}}~\char`\"{}/control\char`\"{}
+\item 
+\#define \mbox{\hyperlink{node_8hpp_aea64820a04cecfa368b6fc9fdcac6959}{ACTIVATION\+\_\+\+POTENTIAL\+\_\+\+HIGHEST}}~2.\+0
+\item 
+\#define \mbox{\hyperlink{node_8hpp_afc3f418c484eeca6aa5a5ed73fae419b}{DHTT\+\_\+\+LOG}}(severity,  com\+\_\+ptr,  out)
+\begin{DoxyCompactList}\small\item\em logger functions for dhtt nodes \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{node_8hpp_a02d260609e7f8b55e58f58a3052a7350}{DHTT\+\_\+\+LOG\+\_\+\+DEBUG}}(com\+\_\+ptr,  out)~\mbox{\hyperlink{node_8hpp_afc3f418c484eeca6aa5a5ed73fae419b}{DHTT\+\_\+\+LOG}}(\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a76b0f5e7632157ad6e29e0f685efee0a}{dhtt\+::\+LOG\+\_\+\+LEVEL\+::\+DEBUG}}, com\+\_\+ptr, out)
+\begin{DoxyCompactList}\small\item\em implementation of logger \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{node_8hpp_ae711a53793908b49528084f8ad3c189c}{DHTT\+\_\+\+LOG\+\_\+\+INFO}}(com\+\_\+ptr,  out)~\mbox{\hyperlink{node_8hpp_afc3f418c484eeca6aa5a5ed73fae419b}{DHTT\+\_\+\+LOG}}(\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a468584cf28a806aa97e5fa88c9aa3081}{dhtt\+::\+LOG\+\_\+\+LEVEL\+::\+INFO}}, com\+\_\+ptr, out)
+\item 
+\#define \mbox{\hyperlink{node_8hpp_aa23c6afeec21111dc7c6af64f2a82dca}{DHTT\+\_\+\+LOG\+\_\+\+WARN}}(com\+\_\+ptr,  out)~\mbox{\hyperlink{node_8hpp_afc3f418c484eeca6aa5a5ed73fae419b}{DHTT\+\_\+\+LOG}}(\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a324f59f46cb62eb300ba345b96778f4c}{dhtt\+::\+LOG\+\_\+\+LEVEL\+::\+WARN}}, com\+\_\+ptr, out)
+\item 
+\#define \mbox{\hyperlink{node_8hpp_a4820125279ce7ad91faa4130a34f1146}{DHTT\+\_\+\+LOG\+\_\+\+ERROR}}(com\+\_\+ptr,  out)~\mbox{\hyperlink{node_8hpp_afc3f418c484eeca6aa5a5ed73fae419b}{DHTT\+\_\+\+LOG}}(\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a52d2eff9fc4fe7097d3d3f3f45f14bf3}{dhtt\+::\+LOG\+\_\+\+LEVEL\+::\+ERROR}}, com\+\_\+ptr, out)
+\item 
+\#define \mbox{\hyperlink{node_8hpp_ac99184137697d23be5edebef3935f6db}{DHTT\+\_\+\+LOG\+\_\+\+FATAL}}(com\+\_\+ptr,  out)~\mbox{\hyperlink{node_8hpp_afc3f418c484eeca6aa5a5ed73fae419b}{DHTT\+\_\+\+LOG}}(\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a3578cd2b4420dfefc809479b329d0a0e}{dhtt\+::\+LOG\+\_\+\+LEVEL\+::\+FATAL}}, com\+\_\+ptr, out)
 \end{DoxyCompactItemize}
 
 
@@ -48,11 +72,102 @@ namespace \mbox{\hyperlink{namespacedhtt}{dhtt}}
 \doxysubsubsection{\texorpdfstring{ACTIVATION\_POSTFIX}{ACTIVATION\_POSTFIX}}
 {\footnotesize\ttfamily \#define ACTIVATION\+\_\+\+POSTFIX~\char`\"{}/activate\char`\"{}}
 
+\mbox{\Hypertarget{node_8hpp_aea64820a04cecfa368b6fc9fdcac6959}\label{node_8hpp_aea64820a04cecfa368b6fc9fdcac6959}} 
+\index{node.hpp@{node.hpp}!ACTIVATION\_POTENTIAL\_HIGHEST@{ACTIVATION\_POTENTIAL\_HIGHEST}}
+\index{ACTIVATION\_POTENTIAL\_HIGHEST@{ACTIVATION\_POTENTIAL\_HIGHEST}!node.hpp@{node.hpp}}
+\doxysubsubsection{\texorpdfstring{ACTIVATION\_POTENTIAL\_HIGHEST}{ACTIVATION\_POTENTIAL\_HIGHEST}}
+{\footnotesize\ttfamily \#define ACTIVATION\+\_\+\+POTENTIAL\+\_\+\+HIGHEST~2.\+0}
+
+\mbox{\Hypertarget{node_8hpp_a1477da138b14a32adc845e7d6e7a0be6}\label{node_8hpp_a1477da138b14a32adc845e7d6e7a0be6}} 
+\index{node.hpp@{node.hpp}!CONDITION\_POSTFIX@{CONDITION\_POSTFIX}}
+\index{CONDITION\_POSTFIX@{CONDITION\_POSTFIX}!node.hpp@{node.hpp}}
+\doxysubsubsection{\texorpdfstring{CONDITION\_POSTFIX}{CONDITION\_POSTFIX}}
+{\footnotesize\ttfamily \#define CONDITION\+\_\+\+POSTFIX~\char`\"{}/condition\char`\"{}}
+
 \mbox{\Hypertarget{node_8hpp_abe6a7b3393adc1231c17f63de3a3ca0e}\label{node_8hpp_abe6a7b3393adc1231c17f63de3a3ca0e}} 
 \index{node.hpp@{node.hpp}!CONTROL\_POSTFIX@{CONTROL\_POSTFIX}}
 \index{CONTROL\_POSTFIX@{CONTROL\_POSTFIX}!node.hpp@{node.hpp}}
 \doxysubsubsection{\texorpdfstring{CONTROL\_POSTFIX}{CONTROL\_POSTFIX}}
 {\footnotesize\ttfamily \#define CONTROL\+\_\+\+POSTFIX~\char`\"{}/control\char`\"{}}
+
+\mbox{\Hypertarget{node_8hpp_afc3f418c484eeca6aa5a5ed73fae419b}\label{node_8hpp_afc3f418c484eeca6aa5a5ed73fae419b}} 
+\index{node.hpp@{node.hpp}!DHTT\_LOG@{DHTT\_LOG}}
+\index{DHTT\_LOG@{DHTT\_LOG}!node.hpp@{node.hpp}}
+\doxysubsubsection{\texorpdfstring{DHTT\_LOG}{DHTT\_LOG}}
+{\footnotesize\ttfamily \#define DHTT\+\_\+\+LOG(\begin{DoxyParamCaption}\item[{}]{severity,  }\item[{}]{com\+\_\+ptr,  }\item[{}]{out }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{        \{ \(\backslash\)}
+\DoxyCodeLine{            std::stringstream ss; \(\backslash\)}
+\DoxyCodeLine{            ss <<  \textcolor{stringliteral}{"{}["{}} << this-\/>name << \textcolor{stringliteral}{"{}]: "{}} << out; \(\backslash\)}
+\DoxyCodeLine{            com\_ptr-\/>log\_stream(severity,  ss); \(\backslash\)}
+\DoxyCodeLine{        \}}
+
+\end{DoxyCode}
+
+
+logger functions for dhtt nodes 
+
+Because dhtt nodes do not have their own logger (they are not rclcpp\+::\+Node\textquotesingle{}s) this serves as a wrapper function which allows them to use the stream syntax and utilize the communication aggregator\textquotesingle{}s logger with their own name appended.
+
+
+\begin{DoxyParams}{Parameters}
+{\em severity} & set by calling function to DEBUG, INFO, WARN, ERROR, or FATAL \\
+\hline
+{\em com\+\_\+ptr} & ptr to the communication aggregator which the node class is attached to \\
+\hline
+{\em out} & stream information to log\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{node_8hpp_a02d260609e7f8b55e58f58a3052a7350}\label{node_8hpp_a02d260609e7f8b55e58f58a3052a7350}} 
+\index{node.hpp@{node.hpp}!DHTT\_LOG\_DEBUG@{DHTT\_LOG\_DEBUG}}
+\index{DHTT\_LOG\_DEBUG@{DHTT\_LOG\_DEBUG}!node.hpp@{node.hpp}}
+\doxysubsubsection{\texorpdfstring{DHTT\_LOG\_DEBUG}{DHTT\_LOG\_DEBUG}}
+{\footnotesize\ttfamily \#define DHTT\+\_\+\+LOG\+\_\+\+DEBUG(\begin{DoxyParamCaption}\item[{}]{com\+\_\+ptr,  }\item[{}]{out }\end{DoxyParamCaption})~\mbox{\hyperlink{node_8hpp_afc3f418c484eeca6aa5a5ed73fae419b}{DHTT\+\_\+\+LOG}}(\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a76b0f5e7632157ad6e29e0f685efee0a}{dhtt\+::\+LOG\+\_\+\+LEVEL\+::\+DEBUG}}, com\+\_\+ptr, out)}
+
+
+
+implementation of logger 
+
+DHTT\+\_\+\+LOG should not be used, and instead one of DHTT\+\_\+\+LOG\+\_\+\+DEBUG, DHTT\+\_\+\+LOG\+\_\+\+INFO, etc. should be used by the Node class and the Node\+Type plugins. Each macro wraps DHTT\+\_\+\+LOG with a given severity so that the user does not need to use that parameter when logging.
+
+
+\begin{DoxyParams}{Parameters}
+{\em com\+\_\+ptr} & ptr to the communication aggregator which the node class is attached to \\
+\hline
+{\em out} & stream information to log\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{node_8hpp_a4820125279ce7ad91faa4130a34f1146}\label{node_8hpp_a4820125279ce7ad91faa4130a34f1146}} 
+\index{node.hpp@{node.hpp}!DHTT\_LOG\_ERROR@{DHTT\_LOG\_ERROR}}
+\index{DHTT\_LOG\_ERROR@{DHTT\_LOG\_ERROR}!node.hpp@{node.hpp}}
+\doxysubsubsection{\texorpdfstring{DHTT\_LOG\_ERROR}{DHTT\_LOG\_ERROR}}
+{\footnotesize\ttfamily \#define DHTT\+\_\+\+LOG\+\_\+\+ERROR(\begin{DoxyParamCaption}\item[{}]{com\+\_\+ptr,  }\item[{}]{out }\end{DoxyParamCaption})~\mbox{\hyperlink{node_8hpp_afc3f418c484eeca6aa5a5ed73fae419b}{DHTT\+\_\+\+LOG}}(\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a52d2eff9fc4fe7097d3d3f3f45f14bf3}{dhtt\+::\+LOG\+\_\+\+LEVEL\+::\+ERROR}}, com\+\_\+ptr, out)}
+
+\mbox{\Hypertarget{node_8hpp_ac99184137697d23be5edebef3935f6db}\label{node_8hpp_ac99184137697d23be5edebef3935f6db}} 
+\index{node.hpp@{node.hpp}!DHTT\_LOG\_FATAL@{DHTT\_LOG\_FATAL}}
+\index{DHTT\_LOG\_FATAL@{DHTT\_LOG\_FATAL}!node.hpp@{node.hpp}}
+\doxysubsubsection{\texorpdfstring{DHTT\_LOG\_FATAL}{DHTT\_LOG\_FATAL}}
+{\footnotesize\ttfamily \#define DHTT\+\_\+\+LOG\+\_\+\+FATAL(\begin{DoxyParamCaption}\item[{}]{com\+\_\+ptr,  }\item[{}]{out }\end{DoxyParamCaption})~\mbox{\hyperlink{node_8hpp_afc3f418c484eeca6aa5a5ed73fae419b}{DHTT\+\_\+\+LOG}}(\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a3578cd2b4420dfefc809479b329d0a0e}{dhtt\+::\+LOG\+\_\+\+LEVEL\+::\+FATAL}}, com\+\_\+ptr, out)}
+
+\mbox{\Hypertarget{node_8hpp_ae711a53793908b49528084f8ad3c189c}\label{node_8hpp_ae711a53793908b49528084f8ad3c189c}} 
+\index{node.hpp@{node.hpp}!DHTT\_LOG\_INFO@{DHTT\_LOG\_INFO}}
+\index{DHTT\_LOG\_INFO@{DHTT\_LOG\_INFO}!node.hpp@{node.hpp}}
+\doxysubsubsection{\texorpdfstring{DHTT\_LOG\_INFO}{DHTT\_LOG\_INFO}}
+{\footnotesize\ttfamily \#define DHTT\+\_\+\+LOG\+\_\+\+INFO(\begin{DoxyParamCaption}\item[{}]{com\+\_\+ptr,  }\item[{}]{out }\end{DoxyParamCaption})~\mbox{\hyperlink{node_8hpp_afc3f418c484eeca6aa5a5ed73fae419b}{DHTT\+\_\+\+LOG}}(\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a468584cf28a806aa97e5fa88c9aa3081}{dhtt\+::\+LOG\+\_\+\+LEVEL\+::\+INFO}}, com\+\_\+ptr, out)}
+
+\mbox{\Hypertarget{node_8hpp_aa23c6afeec21111dc7c6af64f2a82dca}\label{node_8hpp_aa23c6afeec21111dc7c6af64f2a82dca}} 
+\index{node.hpp@{node.hpp}!DHTT\_LOG\_WARN@{DHTT\_LOG\_WARN}}
+\index{DHTT\_LOG\_WARN@{DHTT\_LOG\_WARN}!node.hpp@{node.hpp}}
+\doxysubsubsection{\texorpdfstring{DHTT\_LOG\_WARN}{DHTT\_LOG\_WARN}}
+{\footnotesize\ttfamily \#define DHTT\+\_\+\+LOG\+\_\+\+WARN(\begin{DoxyParamCaption}\item[{}]{com\+\_\+ptr,  }\item[{}]{out }\end{DoxyParamCaption})~\mbox{\hyperlink{node_8hpp_afc3f418c484eeca6aa5a5ed73fae419b}{DHTT\+\_\+\+LOG}}(\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a324f59f46cb62eb300ba345b96778f4c}{dhtt\+::\+LOG\+\_\+\+LEVEL\+::\+WARN}}, com\+\_\+ptr, out)}
 
 \mbox{\Hypertarget{node_8hpp_ae32a692deaa3a778c25d52f2b63322bc}\label{node_8hpp_ae32a692deaa3a778c25d52f2b63322bc}} 
 \index{node.hpp@{node.hpp}!REGISTER\_CHILD\_POSTFIX@{REGISTER\_CHILD\_POSTFIX}}

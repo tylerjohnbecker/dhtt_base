@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['node_0',['Node',['../classdhtt_1_1Node.html',1,'dhtt']]],
-  ['nodetype_1',['NodeType',['../classdhtt_1_1NodeType.html',1,'dhtt']]]
+  ['communicationaggregator_0',['CommunicationAggregator',['../classdhtt_1_1CommunicationAggregator.html',1,'dhtt']]]
 ];

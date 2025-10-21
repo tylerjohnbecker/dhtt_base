@@ -1,0 +1,35 @@
+\hypertarget{mock__look__behavior_8hpp_source}{}\doxysection{mock\+\_\+look\+\_\+behavior.\+hpp}
+\label{mock__look__behavior_8hpp_source}\index{dhtt\_plugins/include/dhtt\_plugins/behaviors/test/mock\_look\_behavior.hpp@{dhtt\_plugins/include/dhtt\_plugins/behaviors/test/mock\_look\_behavior.hpp}}
+\mbox{\hyperlink{mock__look__behavior_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef MOCK\_LOOK\_BEHAVIOR\_HPP\_}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define MOCK\_LOOK\_BEHAVIOR\_HPP\_}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{action__type_8hpp}{dhtt\_plugins/behaviors/action\_type.hpp}}"{}}}
+\DoxyCodeLine{5 }
+\DoxyCodeLine{6 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedhtt__plugins}{dhtt\_plugins}}}
+\DoxyCodeLine{7 \{}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9     \textcolor{keyword}{class }\mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior}{MockLookBehavior}} : \textcolor{keyword}{public} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType}{dhtt\_plugins::ActionType}}}
+\DoxyCodeLine{10     \{}
+\DoxyCodeLine{11     \textcolor{keyword}{public}:}
+\DoxyCodeLine{12         \textcolor{keyword}{virtual} \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_a8ef883fcafcc6274fc2a511112f42adf}{parse\_params}}(std::vector<std::string> \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) \textcolor{keyword}{override};}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14         \textcolor{keyword}{virtual} \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_a18b795dfc0fcd89b8e09185852c4f506}{do\_work}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
+\DoxyCodeLine{15         }
+\DoxyCodeLine{16         \textcolor{keyword}{virtual} std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_a1f25bf1a21e4ce491dfc2cdaea102e53}{get\_retained\_resources}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
+\DoxyCodeLine{17         \textcolor{keyword}{virtual} std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_aee31d025823c331488e763d272da2250}{get\_released\_resources}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
+\DoxyCodeLine{18         \textcolor{keyword}{virtual} std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_ab46bc419208669f9a9825ca36e20beec}{get\_necessary\_resources}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20         \textcolor{keyword}{virtual} \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_a2c8e05dcc8e0821777d621c7a3b0620f}{get\_perceived\_efficiency}}(\mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container) \textcolor{keyword}{override};}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22     \textcolor{keyword}{private}:}
+\DoxyCodeLine{23         std::string \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_a0527f386a1f246e1bcc8f8af3790f480}{object\_target}};}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25     \};}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{27 \}}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29 \textcolor{preprocessor}{\#endif }\textcolor{comment}{//MOCK\_LOOK\_BEHAVIOR\_HPP\_}}
+
+\end{DoxyCode}

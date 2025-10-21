@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['mainserver_0',['MainServer',['../classdhtt_1_1MainServer.html',1,'dhtt']]],
-  ['movebehavior_1',['MoveBehavior',['../classdhtt__plugins_1_1MoveBehavior.html',1,'dhtt_plugins']]]
+  ['branchplugtype_0',['BranchPlugType',['../classdhtt_1_1BranchPlugType.html',1,'dhtt']]],
+  ['branchsockettype_1',['BranchSocketType',['../classdhtt_1_1BranchSocketType.html',1,'dhtt']]]
 ];

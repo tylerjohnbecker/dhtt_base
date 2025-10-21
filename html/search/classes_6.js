@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['testbehavior_0',['TestBehavior',['../classdhtt__plugins_1_1TestBehavior.html',1,'dhtt_plugins']]],
-  ['thenbehavior_1',['ThenBehavior',['../classdhtt__plugins_1_1ThenBehavior.html',1,'dhtt_plugins']]]
+  ['pickbehavior_0',['PickBehavior',['../classdhtt__plugins_1_1PickBehavior.html',1,'dhtt_plugins']]],
+  ['placebehavior_1',['PlaceBehavior',['../classdhtt__plugins_1_1PlaceBehavior.html',1,'dhtt_plugins']]],
+  ['potentialtype_2',['PotentialType',['../classdhtt_1_1PotentialType.html',1,'dhtt']]]
 ];

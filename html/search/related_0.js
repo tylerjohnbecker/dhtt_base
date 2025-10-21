@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mainserver_0',['MainServer',['../classdhtt_1_1Node.html#ad3110d30a2ea101864dce37006de54f1',1,'dhtt::Node']]]
+  ['goitrtype_0',['GoitrType',['../classdhtt_1_1SubServer.html#acd92668299ac4a2d02fd8ac7e5da9b19',1,'dhtt::SubServer']]]
 ];

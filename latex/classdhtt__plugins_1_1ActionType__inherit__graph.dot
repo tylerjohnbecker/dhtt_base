@@ -4,13 +4,18 @@ digraph "dhtt_plugins::ActionType"
   bgcolor="transparent";
   edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
   node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
   Node1 [label="dhtt_plugins::ActionType",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="parent class of all behavior/action type nodes"];
   Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
   Node2 [label="dhtt::NodeType",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classdhtt_1_1NodeType.html",tooltip="Base class describing the logic of the nodes."];
   Node1 -> Node3 [dir="back",color="steelblue1",style="solid"];
-  Node3 [label="dhtt_plugins::MoveBehavior",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classdhtt__plugins_1_1MoveBehavior.html",tooltip="Moves to a semantically specified location on a given map."];
+  Node3 [label="dhtt_plugins::MockLookBehavior",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classdhtt__plugins_1_1MockLookBehavior.html",tooltip=" "];
   Node1 -> Node4 [dir="back",color="steelblue1",style="solid"];
-  Node4 [label="dhtt_plugins::PickBehavior",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classdhtt__plugins_1_1PickBehavior.html",tooltip="Action behavior to pick up the first object detected in front of the robot at the current position."];
+  Node4 [label="dhtt_plugins::MockMoveBehavior",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classdhtt__plugins_1_1MockMoveBehavior.html",tooltip=" "];
   Node1 -> Node5 [dir="back",color="steelblue1",style="solid"];
-  Node5 [label="dhtt_plugins::PlaceBehavior",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classdhtt__plugins_1_1PlaceBehavior.html",tooltip="Place behavior implementation."];
+  Node5 [label="dhtt_plugins::MoveBehavior",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classdhtt__plugins_1_1MoveBehavior.html",tooltip="Moves to a semantically specified location on a given map."];
+  Node1 -> Node6 [dir="back",color="steelblue1",style="solid"];
+  Node6 [label="dhtt_plugins::PickBehavior",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classdhtt__plugins_1_1PickBehavior.html",tooltip="Action behavior to pick up the first object detected in front of the robot at the current position."];
+  Node1 -> Node7 [dir="back",color="steelblue1",style="solid"];
+  Node7 [label="dhtt_plugins::PlaceBehavior",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classdhtt__plugins_1_1PlaceBehavior.html",tooltip="Place behavior implementation."];
 }

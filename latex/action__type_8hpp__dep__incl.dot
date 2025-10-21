@@ -11,4 +11,8 @@ digraph "dhtt_plugins/include/dhtt_plugins/behaviors/action_type.hpp"
   Node3 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/pick_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$pick__behavior_8hpp.html",tooltip=" "];
   Node1 -> Node4 [dir="back",color="steelblue1",style="solid"];
   Node4 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/place_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$place__behavior_8hpp.html",tooltip=" "];
+  Node1 -> Node5 [dir="back",color="steelblue1",style="solid"];
+  Node5 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/test/mock_look_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$mock__look__behavior_8hpp.html",tooltip=" "];
+  Node1 -> Node6 [dir="back",color="steelblue1",style="solid"];
+  Node6 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/test/mock_move_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$mock__move__behavior_8hpp.html",tooltip=" "];
 }

@@ -32,24 +32,43 @@
 \DoxyCodeLine{73 }
 \DoxyCodeLine{85         \textcolor{keyword}{virtual} std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468d32558133e56b6}{get\_retained\_resources}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) = 0;}
 \DoxyCodeLine{86 }
-\DoxyCodeLine{96         \textcolor{keyword}{virtual} std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}{get\_released\_resources}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) = 0;}
+\DoxyCodeLine{96         \textcolor{keyword}{virtual} std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a94317f0309ad2e88c82bb3cb8583a93d}{get\_released\_resources}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container );}
 \DoxyCodeLine{97 }
-\DoxyCodeLine{105         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a5dada7d97dfbd1bed5abfb9ccb295a62}{is\_done}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{105         \textcolor{keyword}{virtual} std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a377f39e56dbe8868d8f8ed29eb9b82d8}{get\_necessary\_resources}}() = 0;}
 \DoxyCodeLine{106 }
-\DoxyCodeLine{107     \textcolor{keyword}{protected}:}
-\DoxyCodeLine{108 }
-\DoxyCodeLine{109         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a9b84d261334eb62f46f486d32d921619}{done}};}
-\DoxyCodeLine{110 }
-\DoxyCodeLine{111         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a002adba9f472d4b3bdf329cd49824d98}{activation\_potential}};}
-\DoxyCodeLine{112         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_aa23c79790c31c709b956dd2f3a1f6990}{necessary\_resources}}; }
-\DoxyCodeLine{113 }
-\DoxyCodeLine{114         std::shared\_ptr<rclcpp::Node> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4ba037e1b5e2f516742154581775d237}{pub\_node\_ptr}};}
-\DoxyCodeLine{115         std::shared\_ptr<rclcpp::executors::SingleThreadedExecutor> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_accb37da08c81000f71808aff42ce434e}{executor}};}
-\DoxyCodeLine{116 }
-\DoxyCodeLine{117     \textcolor{keyword}{private}:}
-\DoxyCodeLine{118     \};}
-\DoxyCodeLine{119 \}}
-\DoxyCodeLine{120 }
-\DoxyCodeLine{121 \textcolor{preprocessor}{\#endif }\textcolor{comment}{//ACTION\_TYPE\_HPP}}
+\DoxyCodeLine{114         \textcolor{keyword}{virtual} std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ab1230464d47771e26ad8a9691db21b7a}{get\_added\_resources}}()}
+\DoxyCodeLine{115         \{}
+\DoxyCodeLine{116             \textcolor{keywordflow}{return} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a8537fb7273e0394be55165f5a27b211d}{add\_resources}};}
+\DoxyCodeLine{117         \};}
+\DoxyCodeLine{118 }
+\DoxyCodeLine{126         \textcolor{keyword}{virtual} std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ac252230fcde44cdda76c66010c7add32}{get\_removed\_resources}}()}
+\DoxyCodeLine{127         \{}
+\DoxyCodeLine{128             \textcolor{keywordflow}{return} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a1c56af0009a00a4e4c1e0e6b69b8fcd7}{remove\_resources}};}
+\DoxyCodeLine{129         \};}
+\DoxyCodeLine{130 }
+\DoxyCodeLine{138         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a5dada7d97dfbd1bed5abfb9ccb295a62}{is\_done}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{139 }
+\DoxyCodeLine{150         \textcolor{keyword}{virtual} \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a2d2d189e7a9865ff3a2d8332754f04f6}{populate\_resource\_lists}}(\mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container) \{ (void) container; \};}
+\DoxyCodeLine{151 }
+\DoxyCodeLine{152     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{153 }
+\DoxyCodeLine{154         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a332bbbd5263a5ceb31a59b43979567ba}{send\_state\_updated}}();}
+\DoxyCodeLine{155 }
+\DoxyCodeLine{156         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a9b84d261334eb62f46f486d32d921619}{done}};}
+\DoxyCodeLine{157 }
+\DoxyCodeLine{158         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a002adba9f472d4b3bdf329cd49824d98}{activation\_potential}};}
+\DoxyCodeLine{159         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_aa23c79790c31c709b956dd2f3a1f6990}{necessary\_resources}}; }
+\DoxyCodeLine{160         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ad71306ea28bc959667f837b860b26311}{necessary\_world\_resources}};}
+\DoxyCodeLine{161 }
+\DoxyCodeLine{162         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a8537fb7273e0394be55165f5a27b211d}{add\_resources}};}
+\DoxyCodeLine{163         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a1c56af0009a00a4e4c1e0e6b69b8fcd7}{remove\_resources}};}
+\DoxyCodeLine{164 }
+\DoxyCodeLine{165         rclcpp::Publisher<std\_msgs::msg::String>::SharedPtr \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3e074e53eda9f8a55ad29b741025c8e}{knowledge\_pub}};}
+\DoxyCodeLine{166 }
+\DoxyCodeLine{167     \textcolor{keyword}{private}:}
+\DoxyCodeLine{168     \};}
+\DoxyCodeLine{169 \}}
+\DoxyCodeLine{170 }
+\DoxyCodeLine{171 \textcolor{preprocessor}{\#endif }\textcolor{comment}{//ACTION\_TYPE\_HPP}}
 
 \end{DoxyCode}

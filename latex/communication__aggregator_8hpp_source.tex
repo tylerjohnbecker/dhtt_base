@@ -1,0 +1,387 @@
+\hypertarget{communication__aggregator_8hpp_source}{}\doxysection{communication\+\_\+aggregator.\+hpp}
+\label{communication__aggregator_8hpp_source}\index{dhtt/include/dhtt/server/communication\_aggregator.hpp@{dhtt/include/dhtt/server/communication\_aggregator.hpp}}
+\mbox{\hyperlink{communication__aggregator_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef COMMUNICATION\_AGGREGATOR\_HPP\_}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define COMMUNICATION\_AGGREGATOR\_HPP\_}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include <memory>}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include <any>}}
+\DoxyCodeLine{6 \textcolor{preprocessor}{\#include <thread>}}
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#include <future>}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include <mutex>}}
+\DoxyCodeLine{9 }
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#include "{}rclcpp/rclcpp.hpp"{}}}
+\DoxyCodeLine{11 }
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#define SUBSCRIBER\_CB\_MAX 64}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{comment}{// this file also includes the implementation due to templating shenanigans being frustrating to deal with}}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedhtt}{dhtt}}}
+\DoxyCodeLine{17 \{}
+\DoxyCodeLine{18     \textcolor{keyword}{enum} \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290}{LOG\_LEVEL}}}
+\DoxyCodeLine{19     \{}
+\DoxyCodeLine{20         \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a76b0f5e7632157ad6e29e0f685efee0a}{DEBUG}}=0,}
+\DoxyCodeLine{21         \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a468584cf28a806aa97e5fa88c9aa3081}{INFO}}=1,}
+\DoxyCodeLine{22         \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a324f59f46cb62eb300ba345b96778f4c}{WARN}}=2,}
+\DoxyCodeLine{23         \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a52d2eff9fc4fe7097d3d3f3f45f14bf3}{ERROR}}=3,}
+\DoxyCodeLine{24         \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a3578cd2b4420dfefc809479b329d0a0e}{FATAL}}=4}
+\DoxyCodeLine{25     \};}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{39     \textcolor{keyword}{class }\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator}{CommunicationAggregator}} : \textcolor{keyword}{public} rclcpp::Node}
+\DoxyCodeLine{40     \{}
+\DoxyCodeLine{41     \textcolor{keyword}{public}:}
+\DoxyCodeLine{42         \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_af0f5fbfce2a54b455e37dfc0c7307af8}{CommunicationAggregator}}(std::shared\_ptr<rclcpp::executors::MultiThreadedExecutor> exec\_ptr, \textcolor{keywordtype}{int} queue\_size = 10) : }
+\DoxyCodeLine{43                                 \mbox{\hyperlink{classdhtt_1_1Node}{Node}}(\textcolor{stringliteral}{"{}ComAgg"{}}, rclcpp::NodeOptions().allow\_undeclared\_parameters(true).automatically\_declare\_parameters\_from\_overrides(true)),}
+\DoxyCodeLine{44                                  \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_af51f1f98e5695daf9b4d81aa007e8b41}{sub\_qos}}(queue\_size), \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a89a2a79f44ec11ee2e0e51c545c23e62}{unique\_id}}(0), \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_abd8fb68e67dd9f06ca359e7fb65cf03f}{local\_ex\_ptr}}(exec\_ptr) }
+\DoxyCodeLine{45         \{}
+\DoxyCodeLine{46             this-\/>declare\_parameter(\textcolor{stringliteral}{"{}world.marked\_objects\_taints"{}}, std::vector<std::string>());}
+\DoxyCodeLine{47             this-\/>declare\_parameter(\textcolor{stringliteral}{"{}world.marked\_objects\_types"{}}, std::vector<std::string>());}
+\DoxyCodeLine{48             this-\/>declare\_parameter(\textcolor{stringliteral}{"{}world.marked\_objects\_ids"{}}, std::vector<long int>());}
+\DoxyCodeLine{49         \};}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{65         \textcolor{keyword}{template} <\textcolor{keyword}{typename} msg\_type>}
+\DoxyCodeLine{66         std::string \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_aed9ac2a365b7a1d0e3e362a86fe84e10}{register\_subscription}}(std::string topic\_name, std::string subscriber\_name, std::function<\textcolor{keywordtype}{void}(std::shared\_ptr<msg\_type>)> to\_register)}
+\DoxyCodeLine{67         \{}
+\DoxyCodeLine{68             \textcolor{comment}{// grab the mutex first}}
+\DoxyCodeLine{69             std::lock\_guard<std::mutex> lock(this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_afc6f2d70f227d70a38d3aabcbd70043f}{register\_mutex}});}
+\DoxyCodeLine{70 }
+\DoxyCodeLine{71             \textcolor{comment}{// if it's an empty name then assign it a unique identifier}}
+\DoxyCodeLine{72             std::string local\_subscriber\_name = subscriber\_name;}
+\DoxyCodeLine{73 }
+\DoxyCodeLine{74             \textcolor{keywordflow}{if} ( not strcmp(local\_subscriber\_name.c\_str(), \textcolor{stringliteral}{"{}"{}}) )}
+\DoxyCodeLine{75             \{}
+\DoxyCodeLine{76                 local\_subscriber\_name = topic\_name + \textcolor{stringliteral}{"{}\_subscriber\_"{}} + std::to\_string(this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a89a2a79f44ec11ee2e0e51c545c23e62}{unique\_id}});}
+\DoxyCodeLine{77                 this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a89a2a79f44ec11ee2e0e51c545c23e62}{unique\_id}}++;}
+\DoxyCodeLine{78             \}}
+\DoxyCodeLine{79             }
+\DoxyCodeLine{80             \textcolor{comment}{// we have not yet registered a subscriber to this topic so we initialize the first one}}
+\DoxyCodeLine{81             \textcolor{keywordflow}{if} ( this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae04a1d6cdb2b1290d3c08e8123bc3e45}{function\_tables}}.find(topic\_name) == this-\/>function\_tables.end() )}
+\DoxyCodeLine{82             \{}
+\DoxyCodeLine{83                 std::vector<std::map<std::string, std::function<void(std::shared\_ptr<msg\_type>)>>> n\_function\_table\{\{\{local\_subscriber\_name, to\_register\}\}\};}
+\DoxyCodeLine{84                 this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae04a1d6cdb2b1290d3c08e8123bc3e45}{function\_tables}}[topic\_name] = n\_function\_table;\textcolor{comment}{// realistically we should statically size this to the max to avoid copy constructor slow downs ( for now it should be fine )}}
+\DoxyCodeLine{85 }
+\DoxyCodeLine{86                 std::function<void(std::shared\_ptr<msg\_type>)> n\_cb = std::bind(\&CommunicationAggregator::generic\_subscriber\_callback<msg\_type>, \textcolor{keyword}{this}, topic\_name, std::placeholders::\_1, 0);}
+\DoxyCodeLine{87                 std::vector<std::shared\_ptr<rclcpp::Subscription<msg\_type>>> n\_subscription = \{this-\/>create\_subscription<msg\_type>(topic\_name, this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_af51f1f98e5695daf9b4d81aa007e8b41}{sub\_qos}}, n\_cb)\};}
+\DoxyCodeLine{88 }
+\DoxyCodeLine{89                 this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_aa11fb00ed1a80b2a26b1926434ec9954}{subscription\_ptrs}}[topic\_name] = n\_subscription;}
+\DoxyCodeLine{90 }
+\DoxyCodeLine{91                 \textcolor{keywordflow}{return} local\_subscriber\_name;}
+\DoxyCodeLine{92             \}}
+\DoxyCodeLine{93 }
+\DoxyCodeLine{95                                                             \textcolor{comment}{// std::map<std::string, std::function<void(std::shared\_ptr<msg\_type>)>>}}
+\DoxyCodeLine{96             \textcolor{keyword}{auto} tmp\_func\_vector = std::any\_cast< std::vector< std::map< std::string, std::function< void( std::shared\_ptr<msg\_type> ) > > > > ( this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae04a1d6cdb2b1290d3c08e8123bc3e45}{function\_tables}}[topic\_name] );}
+\DoxyCodeLine{97 }
+\DoxyCodeLine{98             \textcolor{comment}{// find the first available index}}
+\DoxyCodeLine{99             \textcolor{keywordtype}{int} n\_index = 0;}
+\DoxyCodeLine{100 }
+\DoxyCodeLine{101             \textcolor{keywordflow}{for} ( ; n\_index < (int) tmp\_func\_vector.size() ; n\_index++ )}
+\DoxyCodeLine{102                 \textcolor{keywordflow}{if} ( (\textcolor{keywordtype}{int}) tmp\_func\_vector[n\_index].size() < \mbox{\hyperlink{communication__aggregator_8hpp_a975911a7811539d9e34eb2681780f821}{SUBSCRIBER\_CB\_MAX}} )}
+\DoxyCodeLine{103                     \textcolor{keywordflow}{break};}
+\DoxyCodeLine{104 }
+\DoxyCodeLine{105             \textcolor{comment}{// found an existing subscriber with room}}
+\DoxyCodeLine{106             \textcolor{keywordflow}{if} ( n\_index < (\textcolor{keywordtype}{int}) tmp\_func\_vector.size() )}
+\DoxyCodeLine{107             \{}
+\DoxyCodeLine{108                 tmp\_func\_vector[n\_index][local\_subscriber\_name] = to\_register;}
+\DoxyCodeLine{109             \}}
+\DoxyCodeLine{110             \textcolor{keywordflow}{else} \textcolor{comment}{// have to create a new one}}
+\DoxyCodeLine{111             \{}
+\DoxyCodeLine{112                 std::function<void(std::shared\_ptr<msg\_type>)> n\_cb = std::bind(\&CommunicationAggregator::generic\_subscriber\_callback<msg\_type>, \textcolor{keyword}{this}, topic\_name, std::placeholders::\_1, n\_index);}
+\DoxyCodeLine{113                 std::shared\_ptr<rclcpp::Subscription<msg\_type>> n\_subscription = this-\/>create\_subscription<msg\_type>(topic\_name, this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_af51f1f98e5695daf9b4d81aa007e8b41}{sub\_qos}}, n\_cb);}
+\DoxyCodeLine{114 }
+\DoxyCodeLine{115                 \textcolor{comment}{// register the new subscription}}
+\DoxyCodeLine{116                 \textcolor{keyword}{auto} tmp\_sub\_vector = std::any\_cast< std::vector< std::shared\_ptr< rclcpp::Subscription< msg\_type > > > > (this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_aa11fb00ed1a80b2a26b1926434ec9954}{subscription\_ptrs}}[topic\_name]);}
+\DoxyCodeLine{117                 tmp\_sub\_vector.push\_back(n\_subscription);}
+\DoxyCodeLine{118 }
+\DoxyCodeLine{119                 this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_aa11fb00ed1a80b2a26b1926434ec9954}{subscription\_ptrs}}[topic\_name] = tmp\_sub\_vector;}
+\DoxyCodeLine{120 }
+\DoxyCodeLine{121                 tmp\_func\_vector.push\_back(\{\{local\_subscriber\_name, to\_register\}\});}
+\DoxyCodeLine{122             \}}
+\DoxyCodeLine{123 }
+\DoxyCodeLine{124             this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae04a1d6cdb2b1290d3c08e8123bc3e45}{function\_tables}}[topic\_name] = tmp\_func\_vector;}
+\DoxyCodeLine{125 }
+\DoxyCodeLine{126             \textcolor{keywordflow}{return} local\_subscriber\_name;}
+\DoxyCodeLine{127         \}}
+\DoxyCodeLine{128 }
+\DoxyCodeLine{142         \textcolor{keyword}{template} <\textcolor{keyword}{typename} msg\_type>}
+\DoxyCodeLine{143         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a635f55d5ea0b08da5e833045935ad2ac}{unregister\_subscription}}(std::string topic\_name, std::string subscriber\_name = \textcolor{stringliteral}{"{}"{}})}
+\DoxyCodeLine{144         \{}
+\DoxyCodeLine{145             \textcolor{comment}{// grab the mutex first}}
+\DoxyCodeLine{146             std::lock\_guard<std::mutex> lock(this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_afc6f2d70f227d70a38d3aabcbd70043f}{register\_mutex}});}
+\DoxyCodeLine{147             }
+\DoxyCodeLine{148             \textcolor{keywordflow}{if} ( this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae04a1d6cdb2b1290d3c08e8123bc3e45}{function\_tables}}.find(topic\_name) == this-\/>function\_tables.end() )}
+\DoxyCodeLine{149                 \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{150 }
+\DoxyCodeLine{151             \textcolor{keyword}{auto} tmp\_func\_vector = std::any\_cast< std::vector < std::map < std::string,  std::function< void( std::shared\_ptr< msg\_type > ) > > > > (this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae04a1d6cdb2b1290d3c08e8123bc3e45}{function\_tables}}[topic\_name]);}
+\DoxyCodeLine{152             \textcolor{keyword}{auto} tmp\_sub\_vector = std::any\_cast< std::vector< std::shared\_ptr< rclcpp::Subscription< msg\_type > > > > (this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_aa11fb00ed1a80b2a26b1926434ec9954}{subscription\_ptrs}}[topic\_name]);}
+\DoxyCodeLine{153 }
+\DoxyCodeLine{154             \textcolor{keywordflow}{if} ( not strcmp(subscriber\_name.c\_str(), \textcolor{stringliteral}{"{}"{}}) )}
+\DoxyCodeLine{155             \{}
+\DoxyCodeLine{156                 \textcolor{comment}{// deleting everything is easy doing the any cast first to ensure that destructors are called}}
+\DoxyCodeLine{157                 tmp\_func\_vector.clear();}
+\DoxyCodeLine{158                 this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae04a1d6cdb2b1290d3c08e8123bc3e45}{function\_tables}}.erase(topic\_name);}
+\DoxyCodeLine{159 }
+\DoxyCodeLine{160                 tmp\_sub\_vector.clear();}
+\DoxyCodeLine{161                 this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_aa11fb00ed1a80b2a26b1926434ec9954}{subscription\_ptrs}}.erase(topic\_name);}
+\DoxyCodeLine{162 }
+\DoxyCodeLine{163                 \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{164             \}}
+\DoxyCodeLine{165 }
+\DoxyCodeLine{166             \textcolor{comment}{// look in each of the different dictionaries for the guy}}
+\DoxyCodeLine{167             \textcolor{keyword}{typename} std::vector<std::map<std::string, std::function< void( std::shared\_ptr<msg\_type> ) > > >::iterator to\_delete = tmp\_func\_vector.begin(); }
+\DoxyCodeLine{168 }
+\DoxyCodeLine{169             \textcolor{keywordflow}{for} ( ; to\_delete != tmp\_func\_vector.end() ; to\_delete++ )}
+\DoxyCodeLine{170             \{}
+\DoxyCodeLine{171                 \textcolor{keywordflow}{if} ( (*to\_delete).find(subscriber\_name) != (*to\_delete).end() )}
+\DoxyCodeLine{172                 \{}
+\DoxyCodeLine{173                     (*to\_delete).erase(subscriber\_name);}
+\DoxyCodeLine{174                     \textcolor{keywordflow}{break};}
+\DoxyCodeLine{175                 \}}
+\DoxyCodeLine{176             \}}
+\DoxyCodeLine{177 }
+\DoxyCodeLine{178             \textcolor{comment}{// if we didn't find the subscriber\_name just return}}
+\DoxyCodeLine{179             \textcolor{keywordflow}{if} ( to\_delete == tmp\_func\_vector.end() )}
+\DoxyCodeLine{180                 \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{181 }
+\DoxyCodeLine{182             \textcolor{comment}{// if the resulting function table is empty free the memory from the subscriber}}
+\DoxyCodeLine{183             \textcolor{keywordflow}{if} ( (*to\_delete).empty() )}
+\DoxyCodeLine{184             \{}
+\DoxyCodeLine{185                 \textcolor{keywordtype}{int} index = (int) std::distance(tmp\_func\_vector.begin(), to\_delete);}
+\DoxyCodeLine{186 }
+\DoxyCodeLine{187                 tmp\_func\_vector.erase(to\_delete);}
+\DoxyCodeLine{188                 tmp\_sub\_vector.erase(tmp\_sub\_vector.begin() + index);}
+\DoxyCodeLine{189             \}}
+\DoxyCodeLine{190             }
+\DoxyCodeLine{191             \textcolor{comment}{// finally save the changes}}
+\DoxyCodeLine{192             this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae04a1d6cdb2b1290d3c08e8123bc3e45}{function\_tables}}[topic\_name] = tmp\_func\_vector;}
+\DoxyCodeLine{193             this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_aa11fb00ed1a80b2a26b1926434ec9954}{subscription\_ptrs}}[topic\_name] = tmp\_sub\_vector;}
+\DoxyCodeLine{194 }
+\DoxyCodeLine{195             \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{196         \}}
+\DoxyCodeLine{197 }
+\DoxyCodeLine{210         \textcolor{keyword}{template}<\textcolor{keyword}{typename} msg\_type>}
+\DoxyCodeLine{211         std::shared\_ptr<rclcpp::Publisher<msg\_type>> \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a116647ead2427b4ddf70fd42c555132b}{register\_publisher}}(std::string topic\_name)}
+\DoxyCodeLine{212         \{}
+\DoxyCodeLine{213             \textcolor{comment}{// grab the mutex first}}
+\DoxyCodeLine{214             std::lock\_guard<std::mutex> lock(this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_afc6f2d70f227d70a38d3aabcbd70043f}{register\_mutex}});}
+\DoxyCodeLine{215 }
+\DoxyCodeLine{216             \textcolor{comment}{// either we never added it, or the last shared\_ptr to the old publisher has fallen out of scope}}
+\DoxyCodeLine{217             \textcolor{keywordflow}{if} ( this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ab1622872d91966245f52f742df581dcd}{publisher\_ptrs}}.find(topic\_name) == this-\/>publisher\_ptrs.end() or }
+\DoxyCodeLine{218                     std::any\_cast< std::weak\_ptr < rclcpp::Publisher < msg\_type > > >(this-\/>publisher\_ptrs[topic\_name]).expired() )}
+\DoxyCodeLine{219             \{}
+\DoxyCodeLine{220                 \textcolor{keyword}{auto} n\_publisher = this-\/>create\_publisher<msg\_type>(topic\_name, this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_af51f1f98e5695daf9b4d81aa007e8b41}{sub\_qos}});}
+\DoxyCodeLine{221                 this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ab1622872d91966245f52f742df581dcd}{publisher\_ptrs}}[topic\_name] = std::weak\_ptr<rclcpp::Publisher<msg\_type>>(n\_publisher);}
+\DoxyCodeLine{222 }
+\DoxyCodeLine{223                 \textcolor{keywordflow}{return} n\_publisher;}
+\DoxyCodeLine{224             \}}
+\DoxyCodeLine{225 }
+\DoxyCodeLine{226             \textcolor{keyword}{auto} tmp = std::any\_cast< std::weak\_ptr<rclcpp::Publisher<msg\_type>> >(this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ab1622872d91966245f52f742df581dcd}{publisher\_ptrs}}[topic\_name]);}
+\DoxyCodeLine{227 }
+\DoxyCodeLine{228             \textcolor{keywordflow}{return} tmp.lock();}
+\DoxyCodeLine{229         \}}
+\DoxyCodeLine{230 }
+\DoxyCodeLine{240         \textcolor{keyword}{template} <\textcolor{keyword}{typename} service\_type>}
+\DoxyCodeLine{241         std::shared\_ptr<rclcpp::Client<service\_type>> \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_adcf6656d3274f4064f6926c820f428c1}{register\_service\_client}}(std::string service\_topic\_name)}
+\DoxyCodeLine{242         \{}
+\DoxyCodeLine{243             \textcolor{comment}{// grab the mutex first}}
+\DoxyCodeLine{244             std::lock\_guard<std::mutex> lock(this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_afc6f2d70f227d70a38d3aabcbd70043f}{register\_mutex}});}
+\DoxyCodeLine{245 }
+\DoxyCodeLine{246             \textcolor{comment}{// if it doesn't exist}}
+\DoxyCodeLine{247             \textcolor{keywordflow}{if} ( this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a614c2dcf089d7dc143623a333ef07971}{service\_client\_ptrs}}.find(service\_topic\_name) == this-\/>service\_client\_ptrs.end() or }
+\DoxyCodeLine{248                     std::any\_cast< std::weak\_ptr < rclcpp::Client < service\_type > > >(this-\/>service\_client\_ptrs[service\_topic\_name]).expired() )}
+\DoxyCodeLine{249             \{}
+\DoxyCodeLine{250                 \textcolor{keyword}{auto} n\_client = this-\/>create\_client<service\_type>(service\_topic\_name);}
+\DoxyCodeLine{251 }
+\DoxyCodeLine{252                 \{\textcolor{comment}{// new scope to prevent the using statement from annoying me later}}
+\DoxyCodeLine{253                     \textcolor{keyword}{using namespace }std::chrono\_literals;}
+\DoxyCodeLine{254 }
+\DoxyCodeLine{255                     \textcolor{keywordflow}{if} ( not n\_client-\/>wait\_for\_service(10s) )}
+\DoxyCodeLine{256                         \textcolor{keywordflow}{return} \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{257                 \}}
+\DoxyCodeLine{258 }
+\DoxyCodeLine{259                 this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a614c2dcf089d7dc143623a333ef07971}{service\_client\_ptrs}}[service\_topic\_name] = std::weak\_ptr<rclcpp::Client<service\_type>>(n\_client);}
+\DoxyCodeLine{260 }
+\DoxyCodeLine{261                 \textcolor{keywordflow}{return} n\_client;}
+\DoxyCodeLine{262             \}}
+\DoxyCodeLine{263 }
+\DoxyCodeLine{264             \textcolor{comment}{// else we don't need to do anything}}
+\DoxyCodeLine{265             \textcolor{keyword}{auto} tmp = std::any\_cast< std::weak\_ptr<rclcpp::Client<service\_type>> >(this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a614c2dcf089d7dc143623a333ef07971}{service\_client\_ptrs}}[service\_topic\_name]);}
+\DoxyCodeLine{266 }
+\DoxyCodeLine{267             \textcolor{keywordflow}{return} tmp.lock();}
+\DoxyCodeLine{268         \}}
+\DoxyCodeLine{269 }
+\DoxyCodeLine{279         std::shared\_ptr<rclcpp::SyncParametersClient> \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a4c3f4ed6dfb9f99c1f9d69b0560247d4}{register\_param\_client}}(std::string node\_name)}
+\DoxyCodeLine{280         \{}
+\DoxyCodeLine{281             \textcolor{keywordflow}{if} ( not this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae271734d5ea759d958e9290eccba7604}{param\_client\_node\_ptr}} )}
+\DoxyCodeLine{282                 this-\/>param\_client\_node\_ptr = std::make\_shared<rclcpp::Node>(\textcolor{stringliteral}{"{}param\_client\_node"{}});}
+\DoxyCodeLine{283 }
+\DoxyCodeLine{284             \textcolor{comment}{// if it doesn't exist already or has been deleted}}
+\DoxyCodeLine{285             \textcolor{keywordflow}{if} ( this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_abc605d72f5a3fcbab83ff56697d2d5b8}{param\_client\_ptrs}}.find(node\_name) == this-\/>param\_client\_ptrs.end() or}
+\DoxyCodeLine{286                     this-\/>param\_client\_ptrs[node\_name].expired() )}
+\DoxyCodeLine{287             \{}
+\DoxyCodeLine{288                 \textcolor{keyword}{auto} n\_param\_client = std::make\_shared<rclcpp::SyncParametersClient>(this-\/>param\_client\_node\_ptr, node\_name);}
+\DoxyCodeLine{289 }
+\DoxyCodeLine{290                 \{\textcolor{comment}{// new scope to prevent the using statement from annoying me later}}
+\DoxyCodeLine{291                     \textcolor{keyword}{using namespace }std::chrono\_literals;}
+\DoxyCodeLine{292 }
+\DoxyCodeLine{293                     \textcolor{keywordflow}{if} ( not n\_param\_client-\/>wait\_for\_service(1s) )}
+\DoxyCodeLine{294                         \textcolor{keywordflow}{return} \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{295                 \}}
+\DoxyCodeLine{296 }
+\DoxyCodeLine{297                 this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_abc605d72f5a3fcbab83ff56697d2d5b8}{param\_client\_ptrs}}[node\_name] = std::weak\_ptr<rclcpp::SyncParametersClient>(n\_param\_client);}
+\DoxyCodeLine{298 }
+\DoxyCodeLine{299                 \textcolor{keywordflow}{return} n\_param\_client;}
+\DoxyCodeLine{300             \}}
+\DoxyCodeLine{301 }
+\DoxyCodeLine{302             \textcolor{comment}{// otherwise just return a ptr to the params client}}
+\DoxyCodeLine{303             \textcolor{keywordflow}{return} this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_abc605d72f5a3fcbab83ff56697d2d5b8}{param\_client\_ptrs}}[node\_name].lock();}
+\DoxyCodeLine{304         \}}
+\DoxyCodeLine{305 }
+\DoxyCodeLine{315         rclcpp::Parameter \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_afef206bc4109747d22c5526b6a4aacec}{get\_parameter\_sync}}(std::string param\_client\_name, std::string param\_name)}
+\DoxyCodeLine{316         \{}
+\DoxyCodeLine{317             \textcolor{keywordflow}{if} ( this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_abc605d72f5a3fcbab83ff56697d2d5b8}{param\_client\_ptrs}}[param\_client\_name].expired() )}
+\DoxyCodeLine{318                 \textcolor{keywordflow}{return} rclcpp::Parameter();}
+\DoxyCodeLine{319             }
+\DoxyCodeLine{320             std::lock\_guard<std::mutex> lock(this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ac158ec9a6767909237eb83c88b3259ac}{param\_mutex}});}
+\DoxyCodeLine{321 }
+\DoxyCodeLine{322             std::shared\_ptr<rclcpp::SyncParametersClient> local\_ptr = this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_abc605d72f5a3fcbab83ff56697d2d5b8}{param\_client\_ptrs}}[param\_client\_name].lock();}
+\DoxyCodeLine{323 }
+\DoxyCodeLine{324             std::vector<rclcpp::Parameter> to\_ret = local\_ptr-\/>get\_parameters(\{ param\_name \});}
+\DoxyCodeLine{325             }
+\DoxyCodeLine{326             \textcolor{keywordflow}{return} to\_ret[0];}
+\DoxyCodeLine{327         \}}
+\DoxyCodeLine{328 }
+\DoxyCodeLine{338         rclcpp::Parameter \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a5fe68f8108237701dda81c6ee0cd128b}{get\_parameter\_sync}}(std::string param\_name)}
+\DoxyCodeLine{339         \{}
+\DoxyCodeLine{340             std::lock\_guard<std::mutex> lock(this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a72ca8ed77659aa81f5f13d204e256a30}{local\_param\_mutex}});}
+\DoxyCodeLine{341             }
+\DoxyCodeLine{342             rclcpp::Parameter to\_ret = this-\/>get\_parameter(param\_name);}
+\DoxyCodeLine{343 }
+\DoxyCodeLine{344             \textcolor{keywordflow}{return} to\_ret;}
+\DoxyCodeLine{345         \}}
+\DoxyCodeLine{346 }
+\DoxyCodeLine{357         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a1bfadf9c836182647566096dd40a1811}{set\_parameter\_sync}}(rclcpp::Parameter n\_val)}
+\DoxyCodeLine{358         \{}
+\DoxyCodeLine{359             std::lock\_guard<std::mutex> lock(this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a72ca8ed77659aa81f5f13d204e256a30}{local\_param\_mutex}});}
+\DoxyCodeLine{360 }
+\DoxyCodeLine{361             this-\/>set\_parameter(n\_val);}
+\DoxyCodeLine{362         \}}
+\DoxyCodeLine{363 }
+\DoxyCodeLine{367         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a9b7443c141dea8cde83e8a5b23802c08}{set\_parameters\_sync}}(std::vector<rclcpp::Parameter> n\_vals)}
+\DoxyCodeLine{368         \{}
+\DoxyCodeLine{369             std::lock\_guard<std::mutex> lock(this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a72ca8ed77659aa81f5f13d204e256a30}{local\_param\_mutex}});}
+\DoxyCodeLine{370 }
+\DoxyCodeLine{371             \textcolor{comment}{// sometimes set\_parameters is failing, so maybe we can just try until it works. (not sure what a better solutions looks like)}}
+\DoxyCodeLine{372             \textcolor{keywordtype}{bool} done;}
+\DoxyCodeLine{373             \textcolor{keywordflow}{do}}
+\DoxyCodeLine{374             \{}
+\DoxyCodeLine{375                 \textcolor{keyword}{auto} ret\_val = this-\/>set\_parameters(n\_vals);}
+\DoxyCodeLine{376 }
+\DoxyCodeLine{377                 done = \textcolor{keyword}{true};}
+\DoxyCodeLine{378 }
+\DoxyCodeLine{379                 \textcolor{keywordflow}{for} ( \textcolor{keyword}{auto} iter : ret\_val )}
+\DoxyCodeLine{380                     done \&= iter.successful;}
+\DoxyCodeLine{381 }
+\DoxyCodeLine{382             \} \textcolor{keywordflow}{while} ( not done );}
+\DoxyCodeLine{383         \}}
+\DoxyCodeLine{384 }
+\DoxyCodeLine{395         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ab1558112cd82af56e9f71ac6e02b5d13}{log\_stream}} (\mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290}{LOG\_LEVEL}} severity, std::stringstream\& to\_print )}
+\DoxyCodeLine{396         \{}
+\DoxyCodeLine{397             std::string out = to\_print.str();}
+\DoxyCodeLine{398 }
+\DoxyCodeLine{399             \textcolor{keywordflow}{switch} (severity)}
+\DoxyCodeLine{400             \{}
+\DoxyCodeLine{401             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a76b0f5e7632157ad6e29e0f685efee0a}{LOG\_LEVEL::DEBUG}}:}
+\DoxyCodeLine{402                 RCLCPP\_DEBUG(this-\/>get\_logger(), \textcolor{stringliteral}{"{}\%s"{}}, out.c\_str());}
+\DoxyCodeLine{403                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{404             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a468584cf28a806aa97e5fa88c9aa3081}{LOG\_LEVEL::INFO}}:}
+\DoxyCodeLine{405                 RCLCPP\_INFO(this-\/>get\_logger(), \textcolor{stringliteral}{"{}\%s"{}}, out.c\_str());}
+\DoxyCodeLine{406                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{407             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a324f59f46cb62eb300ba345b96778f4c}{LOG\_LEVEL::WARN}}:}
+\DoxyCodeLine{408                 RCLCPP\_WARN(this-\/>get\_logger(), \textcolor{stringliteral}{"{}\%s"{}}, out.c\_str());}
+\DoxyCodeLine{409                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{410             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a52d2eff9fc4fe7097d3d3f3f45f14bf3}{LOG\_LEVEL::ERROR}}:}
+\DoxyCodeLine{411                 RCLCPP\_ERROR(this-\/>get\_logger(), \textcolor{stringliteral}{"{}\%s"{}}, out.c\_str());}
+\DoxyCodeLine{412                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{413             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedhtt_aed1585e5c084d00cd0f452ae750c4290a3578cd2b4420dfefc809479b329d0a0e}{LOG\_LEVEL::FATAL}}:}
+\DoxyCodeLine{414                 RCLCPP\_FATAL(this-\/>get\_logger(), \textcolor{stringliteral}{"{}\%s"{}}, out.c\_str());}
+\DoxyCodeLine{415                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{416             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{417                 \textcolor{keywordflow}{throw} std::runtime\_error(\textcolor{stringliteral}{"{}Unknown logging level chosen. Was this run through a macro?"{}});}
+\DoxyCodeLine{418             \}}
+\DoxyCodeLine{419         \}}
+\DoxyCodeLine{420 }
+\DoxyCodeLine{431         std::shared\_ptr<std::mutex> \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a3f10d7cf8813517a2f1b83791ec5291a}{request\_mutex}}(std::string mut\_name)}
+\DoxyCodeLine{432         \{}
+\DoxyCodeLine{433             \textcolor{comment}{// first check if we have registered it before or if it has since expired}}
+\DoxyCodeLine{434             \textcolor{keywordflow}{if} ( this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae0c08141c4cba7819749fe04afdc772a}{mutex\_ptrs}}.find(mut\_name) == this-\/>mutex\_ptrs.end() or this-\/>mutex\_ptrs[mut\_name].expired() )}
+\DoxyCodeLine{435             \{}
+\DoxyCodeLine{436                 std::shared\_ptr<std::mutex> n\_mut\_ptr = std::make\_shared<std::mutex>();}
+\DoxyCodeLine{437                 this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae0c08141c4cba7819749fe04afdc772a}{mutex\_ptrs}}[mut\_name] = std::weak\_ptr<std::mutex>(n\_mut\_ptr);}
+\DoxyCodeLine{438 }
+\DoxyCodeLine{439                 \textcolor{keywordflow}{return} n\_mut\_ptr;}
+\DoxyCodeLine{440             \}}
+\DoxyCodeLine{441 }
+\DoxyCodeLine{442             \textcolor{keywordflow}{return} this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae0c08141c4cba7819749fe04afdc772a}{mutex\_ptrs}}[mut\_name].lock();}
+\DoxyCodeLine{443         \}}
+\DoxyCodeLine{444 }
+\DoxyCodeLine{445     \textcolor{keyword}{private}:}
+\DoxyCodeLine{446 }
+\DoxyCodeLine{464         \textcolor{keyword}{template} <\textcolor{keyword}{typename} msg\_type>}
+\DoxyCodeLine{465         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a0a979ec1f93eec92ce654eab37542011}{generic\_subscriber\_callback}}(std::string topic\_name, std::shared\_ptr<msg\_type> msg, \textcolor{keywordtype}{int} function\_table\_index)}
+\DoxyCodeLine{466         \{}
+\DoxyCodeLine{467             \textcolor{comment}{// in case we unregister the subscriber during this callback being called (Not perfect but this should be safe enough)}}
+\DoxyCodeLine{468             \textcolor{keywordflow}{if} ( this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae04a1d6cdb2b1290d3c08e8123bc3e45}{function\_tables}}.find(topic\_name) == this-\/>function\_tables.end() )}
+\DoxyCodeLine{469                 \textcolor{keywordflow}{return};}
+\DoxyCodeLine{470 }
+\DoxyCodeLine{471             \textcolor{comment}{// now cast the function table to the correct type}}
+\DoxyCodeLine{472             \textcolor{keyword}{auto} table = std::any\_cast< std::vector < std::map < std::string , std::function < void(std::shared\_ptr< msg\_type > ) > > > > (this-\/>\mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae04a1d6cdb2b1290d3c08e8123bc3e45}{function\_tables}}[topic\_name])[function\_table\_index]; }
+\DoxyCodeLine{473 }
+\DoxyCodeLine{474             \textcolor{comment}{// initialize and start a thread for every registered callback of this subscriber}}
+\DoxyCodeLine{475             std::list<std::shared\_ptr<std::thread>> thread\_list;}
+\DoxyCodeLine{476             \textcolor{keywordflow}{for} ( \textcolor{keyword}{const} \textcolor{keyword}{auto}\& pair : table )}
+\DoxyCodeLine{477             \{}
+\DoxyCodeLine{478                 \textcolor{keyword}{auto} thread\_ptr = std::make\_shared<std::thread>(pair.second, msg);}
+\DoxyCodeLine{479 }
+\DoxyCodeLine{480                 thread\_list.push\_back(thread\_ptr);}
+\DoxyCodeLine{481             \}}
+\DoxyCodeLine{482 }
+\DoxyCodeLine{483             \textcolor{comment}{// join all threads before returning}}
+\DoxyCodeLine{484             \textcolor{keywordflow}{for} ( \textcolor{keyword}{auto} iter : thread\_list )}
+\DoxyCodeLine{485                 iter-\/>join();}
+\DoxyCodeLine{486         \}}
+\DoxyCodeLine{487 }
+\DoxyCodeLine{489         \textcolor{comment}{// subscriber members}}
+\DoxyCodeLine{490         std::map<std::string, std::any> \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae04a1d6cdb2b1290d3c08e8123bc3e45}{function\_tables}}; \textcolor{comment}{// std::any = std::vector < std::map < std::string,  std::function< void( std::shared\_ptr< msg\_type > ) > > >}}
+\DoxyCodeLine{491         std::map<std::string, std::any> \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_aa11fb00ed1a80b2a26b1926434ec9954}{subscription\_ptrs}}; \textcolor{comment}{// std::any = std::vector < std::shared\_ptr < rclcpp::Subscription < msg\_type > > >}}
+\DoxyCodeLine{492 }
+\DoxyCodeLine{493         rclcpp::QoS \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_af51f1f98e5695daf9b4d81aa007e8b41}{sub\_qos}};}
+\DoxyCodeLine{494         \textcolor{keywordtype}{int} \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a89a2a79f44ec11ee2e0e51c545c23e62}{unique\_id}};}
+\DoxyCodeLine{495 }
+\DoxyCodeLine{496         \textcolor{comment}{// publisher members}}
+\DoxyCodeLine{497         std::map<std::string, std::any> \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a614c2dcf089d7dc143623a333ef07971}{service\_client\_ptrs}}; \textcolor{comment}{// std::any = std::weak\_ptr < rclcpp::Client < service\_type > >}}
+\DoxyCodeLine{498         }
+\DoxyCodeLine{499         \textcolor{comment}{// service client members}}
+\DoxyCodeLine{500         std::map<std::string, std::any> \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ab1622872d91966245f52f742df581dcd}{publisher\_ptrs}}; \textcolor{comment}{// std::any = std::weak\_ptr < rclcpp::Publisher < msg\_type > >}}
+\DoxyCodeLine{501 }
+\DoxyCodeLine{502         \textcolor{comment}{// param client members}}
+\DoxyCodeLine{503         std::shared\_ptr<rclcpp::Node> \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae271734d5ea759d958e9290eccba7604}{param\_client\_node\_ptr}} = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{504         std::map<std::string, std::weak\_ptr<rclcpp::SyncParametersClient>> \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_abc605d72f5a3fcbab83ff56697d2d5b8}{param\_client\_ptrs}}; }
+\DoxyCodeLine{505                 }
+\DoxyCodeLine{506         \textcolor{comment}{// mutex sharing}}
+\DoxyCodeLine{507         std::map<std::string, std::weak\_ptr<std::mutex>> \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ae0c08141c4cba7819749fe04afdc772a}{mutex\_ptrs}};}
+\DoxyCodeLine{508 }
+\DoxyCodeLine{509         \textcolor{comment}{// general thread safety}}
+\DoxyCodeLine{510         std::mutex \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_afc6f2d70f227d70a38d3aabcbd70043f}{register\_mutex}};}
+\DoxyCodeLine{511         std::mutex \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_ac158ec9a6767909237eb83c88b3259ac}{param\_mutex}};}
+\DoxyCodeLine{512         std::mutex \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_a72ca8ed77659aa81f5f13d204e256a30}{local\_param\_mutex}};}
+\DoxyCodeLine{513 }
+\DoxyCodeLine{514         \textcolor{comment}{// executor ptr}}
+\DoxyCodeLine{515         std::shared\_ptr<rclcpp::executors::MultiThreadedExecutor> \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator_abd8fb68e67dd9f06ca359e7fb65cf03f}{local\_ex\_ptr}};}
+\DoxyCodeLine{516     \};}
+\DoxyCodeLine{517 }
+\DoxyCodeLine{518 \}}
+\DoxyCodeLine{519 }
+\DoxyCodeLine{520 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// COMMUNICATION\_AGGREGATOR\_HPP\_}}
+
+\end{DoxyCode}

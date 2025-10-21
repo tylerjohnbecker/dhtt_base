@@ -1,6 +1,9 @@
 var searchData=
 [
-  ['work_5fcallback_0',['work_callback',['../classdhtt_1_1NodeType.html#a746c54085a57734a637a30a05c610e91',1,'dhtt::NodeType::work_callback()'],['../classdhtt__plugins_1_1ActionType.html#a56a3ef4023591aef5d034b6355a39715',1,'dhtt_plugins::ActionType::work_callback()'],['../classdhtt__plugins_1_1TestBehavior.html#afa00322a98999a964b482a8b35f9a57a',1,'dhtt_plugins::TestBehavior::work_callback()'],['../classdhtt__plugins_1_1AndBehavior.html#a9f76f12b4ceedc96bf82261f1a0da449',1,'dhtt_plugins::AndBehavior::work_callback()'],['../classdhtt__plugins_1_1OrBehavior.html#ada2499282514c8a53c52703419a5b6e1',1,'dhtt_plugins::OrBehavior::work_callback()'],['../classdhtt__plugins_1_1RootBehavior.html#a85c6d010658071484e6aa8c597fc85d3',1,'dhtt_plugins::RootBehavior::work_callback()'],['../classdhtt__plugins_1_1ThenBehavior.html#ab656aa2dc5076b61108d97d6871800ec',1,'dhtt_plugins::ThenBehavior::work_callback()']]],
-  ['work_5fdone_1',['work_done',['../classdhtt__plugins_1_1MoveBehavior.html#aa64eaa2146270f0cf851b2d919630d77',1,'dhtt_plugins::MoveBehavior::work_done()'],['../classdhtt__plugins_1_1PickBehavior.html#a7ae2f31d5595e61ed42b7f769f81615b',1,'dhtt_plugins::PickBehavior::work_done()'],['../classdhtt__plugins_1_1PlaceBehavior.html#a98d628174b31e159d4281a536d6d0cbd',1,'dhtt_plugins::PlaceBehavior::work_done()']]],
-  ['work_5fthread_2',['work_thread',['../classdhtt_1_1Node.html#adacbb4c5cc6ab3a8207c3bbb323ef835',1,'dhtt::Node']]]
+  ['unique_5fid_0',['unique_id',['../classdhtt_1_1CommunicationAggregator.html#a89a2a79f44ec11ee2e0e51c545c23e62',1,'dhtt::CommunicationAggregator']]],
+  ['unregister_5fsubscription_1',['unregister_subscription',['../classdhtt_1_1CommunicationAggregator.html#a635f55d5ea0b08da5e833045935ad2ac',1,'dhtt::CommunicationAggregator']]],
+  ['update_5fstatus_2',['update_status',['../classdhtt_1_1Node.html#ad2dbd4ea3713bc091c3fdf9fa0b02378',1,'dhtt::Node']]],
+  ['update_5fto_5ffit_5frequest_3',['update_to_fit_request',['../classdhtt_1_1SubServer.html#a19d79b91f0c95482f50da348e0f91bf9',1,'dhtt::SubServer']]],
+  ['update_5ftotal_5fpassed_4',['update_total_passed',['../classdhtt__plugins_1_1AndBehavior.html#ade1da8fb9d20217fc92bd388e1916b1c',1,'dhtt_plugins::AndBehavior']]],
+  ['used_5fid_5',['used_id',['../classdhtt_1_1MainServer.html#a9235374ed5977ae647e2ff0155a8e51e',1,'dhtt::MainServer']]]
 ];

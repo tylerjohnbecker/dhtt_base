@@ -1,10 +1,19 @@
 var searchData=
 [
   ['calculate_5factivation_5fpotential_0',['calculate_activation_potential',['../classdhtt_1_1Node.html#a45a2c5747ea46bbaa1e8156a988010a1',1,'dhtt::Node']]],
-  ['can_5fadd_5fchild_1',['can_add_child',['../classdhtt_1_1NodeType.html#a27786baa37dcfb24f406bf0becf5d428',1,'dhtt::NodeType']]],
-  ['cancel_5factivation_5fcallback_2',['cancel_activation_callback',['../classdhtt_1_1Node.html#a1ed7038713a59e3526fdbf034cd73e9e',1,'dhtt::Node']]],
-  ['change_5fparams_3',['change_params',['../classdhtt_1_1MainServer.html#ae40d57d6711240dd4e603d6aa4259d5d',1,'dhtt::MainServer']]],
-  ['check_5fpreconditions_4',['check_preconditions',['../classdhtt_1_1Node.html#a424d19e6aa8d4ef7ec6b64921c75917e',1,'dhtt::Node']]],
-  ['construct_5fsubtree_5ffrom_5fnode_5fiter_5',['construct_subtree_from_node_iter',['../classdhtt_1_1MainServer.html#aaca8d1df11ec698b7b5761c38639b8bd',1,'dhtt::MainServer']]],
-  ['control_5fcallback_6',['control_callback',['../classdhtt_1_1MainServer.html#a305d4682414cf86aa02193467007b23c',1,'dhtt::MainServer::control_callback()'],['../classdhtt__plugins_1_1RootBehavior.html#ac2d9ef4e683d4380cf56f64432ced502',1,'dhtt_plugins::RootBehavior::control_callback()']]]
+  ['can_5fadd_1',['can_add',['../classdhtt_1_1MainServer.html#a2a4e8caddec43a6b0cd591aee0cc0348',1,'dhtt::MainServer']]],
+  ['can_5fadd_5fchild_2',['can_add_child',['../classdhtt_1_1NodeType.html#a27786baa37dcfb24f406bf0becf5d428',1,'dhtt::NodeType']]],
+  ['can_5fmodify_3',['can_modify',['../classdhtt_1_1MainServer.html#a3c3b8f72cf27ed7c94f25e887c60abda',1,'dhtt::MainServer']]],
+  ['can_5fmutate_4',['can_mutate',['../classdhtt_1_1MainServer.html#a8b26e20c59f42231e4d972951c7e49bf',1,'dhtt::MainServer']]],
+  ['can_5fremove_5',['can_remove',['../classdhtt_1_1MainServer.html#a7b11c43bcce1b80070f6f4b9279caf91',1,'dhtt::MainServer']]],
+  ['change_5fparams_6',['change_params',['../classdhtt_1_1MainServer.html#ae40d57d6711240dd4e603d6aa4259d5d',1,'dhtt::MainServer::change_params()'],['../classdhtt_1_1SubServer.html#a07622fa93e822c486d8fb8b38f732551',1,'dhtt::SubServer::change_params()']]],
+  ['check_5fpreconditions_7',['check_preconditions',['../classdhtt_1_1Node.html#a424d19e6aa8d4ef7ec6b64921c75917e',1,'dhtt::Node']]],
+  ['collect_5fprevious_5fpostconditions_8',['collect_previous_postconditions',['../classdhtt_1_1MainServer.html#a43a8a6a38b488bfe6fa033f739353860',1,'dhtt::MainServer']]],
+  ['combine_5fchild_5fconditions_9',['combine_child_conditions',['../classdhtt_1_1Node.html#a2f1827437f2a62ab86b24e1a0a5961db',1,'dhtt::Node']]],
+  ['communicationaggregator_10',['CommunicationAggregator',['../classdhtt_1_1CommunicationAggregator.html#af0f5fbfce2a54b455e37dfc0c7307af8',1,'dhtt::CommunicationAggregator']]],
+  ['compute_5factivation_5fpotential_11',['compute_activation_potential',['../classdhtt_1_1PotentialType.html#a72fd911b54a2c14a4e942daff8bf3879',1,'dhtt::PotentialType']]],
+  ['connection_5fis_5fgood_12',['connection_is_good',['../classdhtt_1_1BranchPlugType.html#a52d70d97cabd9504fcdd6f643061507e',1,'dhtt::BranchPlugType']]],
+  ['construct_5fsubtree_5ffrom_5fnode_5fiter_13',['construct_subtree_from_node_iter',['../classdhtt_1_1MainServer.html#aaca8d1df11ec698b7b5761c38639b8bd',1,'dhtt::MainServer']]],
+  ['construct_5fsubtree_5ffrom_5fyaml_14',['construct_subtree_from_yaml',['../classdhtt_1_1MainServer.html#a2ef29a85c0dae88b7e02e81b2ba2d5d6',1,'dhtt::MainServer']]],
+  ['control_5fcallback_15',['control_callback',['../classdhtt_1_1MainServer.html#a305d4682414cf86aa02193467007b23c',1,'dhtt::MainServer::control_callback()'],['../classdhtt__plugins_1_1RootBehavior.html#ac2d9ef4e683d4380cf56f64432ced502',1,'dhtt_plugins::RootBehavior::control_callback()']]]
 ];

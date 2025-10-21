@@ -24,12 +24,14 @@ void \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a46e21bf8e3f45d62435a98
 \begin{DoxyCompactList}\small\item\em parses activation\+\_\+potential and destination parameters for the move behavior \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a20c025ec89cb2678f2e08fd55da42bcc}{do\+\_\+work}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
 \begin{DoxyCompactList}\small\item\em moves the robot to the destination \end{DoxyCompactList}\item 
-double \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a681ce76a8fa7e782b207528d42d70948}{get\+\_\+perceived\+\_\+efficiency}} () override
+double \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a466e5b29c26b5387536c174b686c8076}{get\+\_\+perceived\+\_\+efficiency}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
 \begin{DoxyCompactList}\small\item\em calculates activation potential for the move behavior \end{DoxyCompactList}\item 
 std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a080dcf3afc2376066296b00107860dd4}{get\+\_\+retained\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
 \begin{DoxyCompactList}\small\item\em retains all resources \end{DoxyCompactList}\item 
 std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a337349f5a15c96ae5922fb1858a43a1a}{get\+\_\+released\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
 \begin{DoxyCompactList}\small\item\em releases no resources \end{DoxyCompactList}\item 
+virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a40f49cceac6928f6700b5c79f88eab35}{get\+\_\+necessary\+\_\+resources}} () override
+\begin{DoxyCompactList}\small\item\em this behavior needs the move base of the robot \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a24ad9a3a50b844eaa5e9a5f11624a232}{done\+\_\+callback}} (const std\+::shared\+\_\+ptr$<$ std\+\_\+msgs\+::msg\+::\+String $>$ data)
 \begin{DoxyCompactList}\small\item\em callback for receiving done from the ROS1 implementation of \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior}{Move\+Behavior}} \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Protected Attributes}
@@ -92,11 +94,25 @@ For this experiment the actual robot specific implementation had to be done in R
 \begin{DoxyReturn}{Returns}
 void 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classdhtt__plugins_1_1MoveBehavior_a681ce76a8fa7e782b207528d42d70948}\label{classdhtt__plugins_1_1MoveBehavior_a681ce76a8fa7e782b207528d42d70948}} 
+\mbox{\Hypertarget{classdhtt__plugins_1_1MoveBehavior_a40f49cceac6928f6700b5c79f88eab35}\label{classdhtt__plugins_1_1MoveBehavior_a40f49cceac6928f6700b5c79f88eab35}} 
+\index{dhtt\_plugins::MoveBehavior@{dhtt\_plugins::MoveBehavior}!get\_necessary\_resources@{get\_necessary\_resources}}
+\index{get\_necessary\_resources@{get\_necessary\_resources}!dhtt\_plugins::MoveBehavior@{dhtt\_plugins::MoveBehavior}}
+\doxysubsubsection{\texorpdfstring{get\_necessary\_resources()}{get\_necessary\_resources()}}
+{\footnotesize\ttfamily virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Move\+Behavior\+::get\+\_\+necessary\+\_\+resources (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+this behavior needs the move base of the robot 
+
+
+
+Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a377f39e56dbe8868d8f8ed29eb9b82d8}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1MoveBehavior_a466e5b29c26b5387536c174b686c8076}\label{classdhtt__plugins_1_1MoveBehavior_a466e5b29c26b5387536c174b686c8076}} 
 \index{dhtt\_plugins::MoveBehavior@{dhtt\_plugins::MoveBehavior}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
 \index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt\_plugins::MoveBehavior@{dhtt\_plugins::MoveBehavior}}
 \doxysubsubsection{\texorpdfstring{get\_perceived\_efficiency()}{get\_perceived\_efficiency()}}
-{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Move\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Move\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
 
 
@@ -109,7 +125,7 @@ activation\+\_\+potential of the node
 \end{DoxyReturn}
 
 
-Implements \mbox{\hyperlink{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c845}{dhtt\+::\+Node\+Type}}.
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a6d70a5e6c0d832a32249795463e45a57}{dhtt\+::\+Node\+Type}}.
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1MoveBehavior_a337349f5a15c96ae5922fb1858a43a1a}\label{classdhtt__plugins_1_1MoveBehavior_a337349f5a15c96ae5922fb1858a43a1a}} 
 \index{dhtt\_plugins::MoveBehavior@{dhtt\_plugins::MoveBehavior}!get\_released\_resources@{get\_released\_resources}}
@@ -133,7 +149,7 @@ an empty vector of resources
 \end{DoxyReturn}
 
 
-Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
+Reimplemented from \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a94317f0309ad2e88c82bb3cb8583a93d}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1MoveBehavior_a080dcf3afc2376066296b00107860dd4}\label{classdhtt__plugins_1_1MoveBehavior_a080dcf3afc2376066296b00107860dd4}} 
 \index{dhtt\_plugins::MoveBehavior@{dhtt\_plugins::MoveBehavior}!get\_retained\_resources@{get\_retained\_resources}}

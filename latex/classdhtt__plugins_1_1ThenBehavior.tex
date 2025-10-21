@@ -26,14 +26,18 @@ std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $
 \begin{DoxyCompactList}\small\item\em auction behavior for the THEN subtask \end{DoxyCompactList}\item 
 std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_ab656aa2dc5076b61108d97d6871800ec}{work\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
 \begin{DoxyCompactList}\small\item\em work behavior of the THEN subtask \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_afaa41df3a8582ede424f7dffcb225985}{maintain\+\_\+conditions}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em the THEN node logically and\textquotesingle{}s it\textquotesingle{}s child preconditions and then removes any temporal post-\/\texorpdfstring{$>$}{>}preconditions relationships that would be internally satisfied \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a1dfa931dbde1fdba3eeb10e9a30a890e}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
 \begin{DoxyCompactList}\small\item\em this behavior takes no parameters \end{DoxyCompactList}\item 
-double \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a02598da3b388720f1c739263c00dd102}{get\+\_\+perceived\+\_\+efficiency}} () override
+double \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_ae52c17eac0966150912e4ed3dd7e666c}{get\+\_\+perceived\+\_\+efficiency}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
 \begin{DoxyCompactList}\small\item\em gives the activation potential of this subtask \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a01842ab0a7a2626eecb8ef90edf709a9}{is\+\_\+done}} () override
 \begin{DoxyCompactList}\small\item\em this behavior is done when all children are done. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
+\item 
+std\+::mutex \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a6f58afc11ed7f8b32fcd1595bb24b680}{queue\+\_\+index\+\_\+mut}}
 \item 
 double \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a8314d9cb3c9b5313ad2aa60c95d73ba4}{activation\+\_\+potential}}
 \item 
@@ -41,7 +45,13 @@ int \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a41f31f0c10b54e1898c46a8
 \item 
 int \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a5b4141e03b0216555876d4ae59ea8bda}{child\+\_\+queue\+\_\+size}}
 \item 
+int \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_ac0dccf0bd6eae52495b4df02306018f4}{next}}
+\item 
 bool \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a215317ca94407e03e646c04afd3d6345}{started\+\_\+activation}}
+\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a2d41469530a08a6157933d834d4353da}{created}}
+\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1ThenBehavior_a361cef3b53bd72a97c57bc575913d9f7}{enforced\+\_\+sequential}}
 \end{DoxyCompactItemize}
 \doxysubsection*{Additional Inherited Members}
 
@@ -76,11 +86,11 @@ Activation\+Result for the Node class\textquotesingle{} activation action server
 
 Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5e52}{dhtt\+::\+Node\+Type}}.
 
-\mbox{\Hypertarget{classdhtt__plugins_1_1ThenBehavior_a02598da3b388720f1c739263c00dd102}\label{classdhtt__plugins_1_1ThenBehavior_a02598da3b388720f1c739263c00dd102}} 
+\mbox{\Hypertarget{classdhtt__plugins_1_1ThenBehavior_ae52c17eac0966150912e4ed3dd7e666c}\label{classdhtt__plugins_1_1ThenBehavior_ae52c17eac0966150912e4ed3dd7e666c}} 
 \index{dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
 \index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}}
 \doxysubsubsection{\texorpdfstring{get\_perceived\_efficiency()}{get\_perceived\_efficiency()}}
-{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Then\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Then\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
 
 
@@ -93,7 +103,7 @@ activation potential of this subtask
 \end{DoxyReturn}
 
 
-Implements \mbox{\hyperlink{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c845}{dhtt\+::\+Node\+Type}}.
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a6d70a5e6c0d832a32249795463e45a57}{dhtt\+::\+Node\+Type}}.
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1ThenBehavior_a753bc54bd168f168e48ad390c4ec39fe}\label{classdhtt__plugins_1_1ThenBehavior_a753bc54bd168f168e48ad390c4ec39fe}} 
 \index{dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}!initialize@{initialize}}
@@ -132,6 +142,20 @@ this behavior is done when all children are done.
 
 
 Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ThenBehavior_afaa41df3a8582ede424f7dffcb225985}\label{classdhtt__plugins_1_1ThenBehavior_afaa41df3a8582ede424f7dffcb225985}} 
+\index{dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}!maintain\_conditions@{maintain\_conditions}}
+\index{maintain\_conditions@{maintain\_conditions}!dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}}
+\doxysubsubsection{\texorpdfstring{maintain\_conditions()}{maintain\_conditions()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Then\+Behavior\+::maintain\+\_\+conditions (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+the THEN node logically and\textquotesingle{}s it\textquotesingle{}s child preconditions and then removes any temporal post-\/\texorpdfstring{$>$}{>}preconditions relationships that would be internally satisfied 
+
+
+
+Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ac002d98a8bba7540f55566826e862dc9}{dhtt\+::\+Node\+Type}}.
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1ThenBehavior_a1dfa931dbde1fdba3eeb10e9a30a890e}\label{classdhtt__plugins_1_1ThenBehavior_a1dfa931dbde1fdba3eeb10e9a30a890e}} 
 \index{dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}!parse\_params@{parse\_params}}
@@ -191,6 +215,30 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610
 \index{child\_queue\_size@{child\_queue\_size}!dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}}
 \doxysubsubsection{\texorpdfstring{child\_queue\_size}{child\_queue\_size}}
 {\footnotesize\ttfamily int dhtt\+\_\+plugins\+::\+Then\+Behavior\+::child\+\_\+queue\+\_\+size\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ThenBehavior_a2d41469530a08a6157933d834d4353da}\label{classdhtt__plugins_1_1ThenBehavior_a2d41469530a08a6157933d834d4353da}} 
+\index{dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}!created@{created}}
+\index{created@{created}!dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}}
+\doxysubsubsection{\texorpdfstring{created}{created}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Then\+Behavior\+::created\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ThenBehavior_a361cef3b53bd72a97c57bc575913d9f7}\label{classdhtt__plugins_1_1ThenBehavior_a361cef3b53bd72a97c57bc575913d9f7}} 
+\index{dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}!enforced\_sequential@{enforced\_sequential}}
+\index{enforced\_sequential@{enforced\_sequential}!dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}}
+\doxysubsubsection{\texorpdfstring{enforced\_sequential}{enforced\_sequential}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Then\+Behavior\+::enforced\+\_\+sequential\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ThenBehavior_ac0dccf0bd6eae52495b4df02306018f4}\label{classdhtt__plugins_1_1ThenBehavior_ac0dccf0bd6eae52495b4df02306018f4}} 
+\index{dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}!next@{next}}
+\index{next@{next}!dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}}
+\doxysubsubsection{\texorpdfstring{next}{next}}
+{\footnotesize\ttfamily int dhtt\+\_\+plugins\+::\+Then\+Behavior\+::next\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ThenBehavior_a6f58afc11ed7f8b32fcd1595bb24b680}\label{classdhtt__plugins_1_1ThenBehavior_a6f58afc11ed7f8b32fcd1595bb24b680}} 
+\index{dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}!queue\_index\_mut@{queue\_index\_mut}}
+\index{queue\_index\_mut@{queue\_index\_mut}!dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}}
+\doxysubsubsection{\texorpdfstring{queue\_index\_mut}{queue\_index\_mut}}
+{\footnotesize\ttfamily std\+::mutex dhtt\+\_\+plugins\+::\+Then\+Behavior\+::queue\+\_\+index\+\_\+mut\hspace{0.3cm}{\ttfamily [protected]}}
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1ThenBehavior_a215317ca94407e03e646c04afd3d6345}\label{classdhtt__plugins_1_1ThenBehavior_a215317ca94407e03e646c04afd3d6345}} 
 \index{dhtt\_plugins::ThenBehavior@{dhtt\_plugins::ThenBehavior}!started\_activation@{started\_activation}}

@@ -26,18 +26,31 @@ std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $
 \begin{DoxyCompactList}\small\item\em auction behavior for the AND node. \end{DoxyCompactList}\item 
 std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result $>$ \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a9f76f12b4ceedc96bf82261f1a0da449}{work\+\_\+callback}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
 \begin{DoxyCompactList}\small\item\em work behavior for the AND node. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_afa49d29d0bba7da319c209d390fabb03}{maintain\+\_\+conditions}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em the AND node performs a logical and of the predicates of its children for both pre and post conditions \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a2fd6b86b0ec6b7ce3d3b175681693d0e}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
 \begin{DoxyCompactList}\small\item\em this behavior takes no parameters \end{DoxyCompactList}\item 
-double \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a5e95d5ca715b6b7bef822c4344ea0c72}{get\+\_\+perceived\+\_\+efficiency}} () override
+double \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_ac07d143011ed8e64a0b961219d44f362}{get\+\_\+perceived\+\_\+efficiency}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
 \begin{DoxyCompactList}\small\item\em gives the activation potential of this subtask \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a157f515115c440e6e56b365aa335331d}{is\+\_\+done}} () override
 \begin{DoxyCompactList}\small\item\em this behavior is done when all children are done \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_ade1da8fb9d20217fc92bd388e1916b1c}{update\+\_\+total\+\_\+passed}} (dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result result)
+\begin{DoxyCompactList}\small\item\em updates the total passed resources from an Activation result message \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
 int \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a510a59780f4baf52d550623f37519e39}{num\+\_\+active\+\_\+children}}
 \item 
 double \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_afa3ab43c3f0c1924c84482a45ec6d61a}{activation\+\_\+potential}}
+\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a32d42177ec570da5be09277180b96359}{first\+\_\+activation}}
+\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a33d7b8a7fec08958ef93e5aab96c3074}{initially\+\_\+passed}}
+\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior_a9196de313631a7cd21786c4e505cabfe}{total\+\_\+passed}}
 \end{DoxyCompactItemize}
 \doxysubsection*{Additional Inherited Members}
 
@@ -58,7 +71,7 @@ The AND node has no constraint on the ordering of the children and so it just ru
 
 auction behavior for the AND node. 
 
-An AND node runs all of it\textquotesingle{}s children in an unspecified order. The auction activates all children and collects their requests. Then, the request with the highest activation potential is chosen and sent up the tree. All other children are returned to the WAITING state.
+An AND node runs all of it\textquotesingle{}s children in an unspecified order. The auction activates all children and collects their requests. Then, the request with the highest activation potential is chosen and sent up the tree. All other children are returned to the WAITING state. When the AND node is first activated it saves the resources that were passed and always passes those to the children. When each child is finished the AND adds the passed resources to a full list and then when it finishes passes the entire list of resources from the children.
 
 
 \begin{DoxyParams}{Parameters}
@@ -72,11 +85,11 @@ Activation\+Result for the Node class\textquotesingle{} activation action server
 
 Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5e52}{dhtt\+::\+Node\+Type}}.
 
-\mbox{\Hypertarget{classdhtt__plugins_1_1AndBehavior_a5e95d5ca715b6b7bef822c4344ea0c72}\label{classdhtt__plugins_1_1AndBehavior_a5e95d5ca715b6b7bef822c4344ea0c72}} 
+\mbox{\Hypertarget{classdhtt__plugins_1_1AndBehavior_ac07d143011ed8e64a0b961219d44f362}\label{classdhtt__plugins_1_1AndBehavior_ac07d143011ed8e64a0b961219d44f362}} 
 \index{dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
 \index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}}
 \doxysubsubsection{\texorpdfstring{get\_perceived\_efficiency()}{get\_perceived\_efficiency()}}
-{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+And\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+And\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
 
 
 
@@ -89,7 +102,7 @@ activation potential of this subtask
 \end{DoxyReturn}
 
 
-Implements \mbox{\hyperlink{classdhtt_1_1NodeType_abe0033b3654dba4ac7e00cc44b99c845}{dhtt\+::\+Node\+Type}}.
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a6d70a5e6c0d832a32249795463e45a57}{dhtt\+::\+Node\+Type}}.
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1AndBehavior_a30cad3c2a60361f4c466b48f73a0cedc}\label{classdhtt__plugins_1_1AndBehavior_a30cad3c2a60361f4c466b48f73a0cedc}} 
 \index{dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}!initialize@{initialize}}
@@ -129,6 +142,20 @@ this behavior is done when all children are done
 
 Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}{dhtt\+::\+Node\+Type}}.
 
+\mbox{\Hypertarget{classdhtt__plugins_1_1AndBehavior_afa49d29d0bba7da319c209d390fabb03}\label{classdhtt__plugins_1_1AndBehavior_afa49d29d0bba7da319c209d390fabb03}} 
+\index{dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}!maintain\_conditions@{maintain\_conditions}}
+\index{maintain\_conditions@{maintain\_conditions}!dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}}
+\doxysubsubsection{\texorpdfstring{maintain\_conditions()}{maintain\_conditions()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+And\+Behavior\+::maintain\+\_\+conditions (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+the AND node performs a logical and of the predicates of its children for both pre and post conditions 
+
+
+
+Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ac002d98a8bba7540f55566826e862dc9}{dhtt\+::\+Node\+Type}}.
+
 \mbox{\Hypertarget{classdhtt__plugins_1_1AndBehavior_a2fd6b86b0ec6b7ce3d3b175681693d0e}\label{classdhtt__plugins_1_1AndBehavior_a2fd6b86b0ec6b7ce3d3b175681693d0e}} 
 \index{dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}!parse\_params@{parse\_params}}
 \index{parse\_params@{parse\_params}!dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}}
@@ -143,6 +170,24 @@ this behavior takes no parameters
 
 Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}{dhtt\+::\+Node\+Type}}.
 
+\mbox{\Hypertarget{classdhtt__plugins_1_1AndBehavior_ade1da8fb9d20217fc92bd388e1916b1c}\label{classdhtt__plugins_1_1AndBehavior_ade1da8fb9d20217fc92bd388e1916b1c}} 
+\index{dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}!update\_total\_passed@{update\_total\_passed}}
+\index{update\_total\_passed@{update\_total\_passed}!dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}}
+\doxysubsubsection{\texorpdfstring{update\_total\_passed()}{update\_total\_passed()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+And\+Behavior\+::update\+\_\+total\+\_\+passed (\begin{DoxyParamCaption}\item[{dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result}]{result }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+updates the total passed resources from an Activation result message 
+
+
+\begin{DoxyParams}{Parameters}
+{\em result} & used to update total\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
 \mbox{\Hypertarget{classdhtt__plugins_1_1AndBehavior_a9f76f12b4ceedc96bf82261f1a0da449}\label{classdhtt__plugins_1_1AndBehavior_a9f76f12b4ceedc96bf82261f1a0da449}} 
 \index{dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}!work\_callback@{work\_callback}}
 \index{work\_callback@{work\_callback}!dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}}
@@ -153,7 +198,7 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d
 
 work behavior for the AND node. 
 
-The AND node 
+
 
 Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610e91}{dhtt\+::\+Node\+Type}}.
 
@@ -166,11 +211,29 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610
 \doxysubsubsection{\texorpdfstring{activation\_potential}{activation\_potential}}
 {\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+And\+Behavior\+::activation\+\_\+potential\hspace{0.3cm}{\ttfamily [protected]}}
 
+\mbox{\Hypertarget{classdhtt__plugins_1_1AndBehavior_a32d42177ec570da5be09277180b96359}\label{classdhtt__plugins_1_1AndBehavior_a32d42177ec570da5be09277180b96359}} 
+\index{dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}!first\_activation@{first\_activation}}
+\index{first\_activation@{first\_activation}!dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}}
+\doxysubsubsection{\texorpdfstring{first\_activation}{first\_activation}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+And\+Behavior\+::first\+\_\+activation\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1AndBehavior_a33d7b8a7fec08958ef93e5aab96c3074}\label{classdhtt__plugins_1_1AndBehavior_a33d7b8a7fec08958ef93e5aab96c3074}} 
+\index{dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}!initially\_passed@{initially\_passed}}
+\index{initially\_passed@{initially\_passed}!dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}}
+\doxysubsubsection{\texorpdfstring{initially\_passed}{initially\_passed}}
+{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+\_\+plugins\+::\+And\+Behavior\+::initially\+\_\+passed\hspace{0.3cm}{\ttfamily [protected]}}
+
 \mbox{\Hypertarget{classdhtt__plugins_1_1AndBehavior_a510a59780f4baf52d550623f37519e39}\label{classdhtt__plugins_1_1AndBehavior_a510a59780f4baf52d550623f37519e39}} 
 \index{dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}!num\_active\_children@{num\_active\_children}}
 \index{num\_active\_children@{num\_active\_children}!dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}}
 \doxysubsubsection{\texorpdfstring{num\_active\_children}{num\_active\_children}}
 {\footnotesize\ttfamily int dhtt\+\_\+plugins\+::\+And\+Behavior\+::num\+\_\+active\+\_\+children\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1AndBehavior_a9196de313631a7cd21786c4e505cabfe}\label{classdhtt__plugins_1_1AndBehavior_a9196de313631a7cd21786c4e505cabfe}} 
+\index{dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}!total\_passed@{total\_passed}}
+\index{total\_passed@{total\_passed}!dhtt\_plugins::AndBehavior@{dhtt\_plugins::AndBehavior}}
+\doxysubsubsection{\texorpdfstring{total\_passed}{total\_passed}}
+{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+\_\+plugins\+::\+And\+Behavior\+::total\+\_\+passed\hspace{0.3cm}{\ttfamily [protected]}}
 
 
 

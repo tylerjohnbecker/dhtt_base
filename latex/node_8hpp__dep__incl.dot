@@ -15,14 +15,20 @@ digraph "dhtt/include/dhtt/tree/node.hpp"
   Node5 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/pick_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$pick__behavior_8hpp.html",tooltip=" "];
   Node3 -> Node6 [dir="back",color="steelblue1",style="solid"];
   Node6 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/place_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$place__behavior_8hpp.html",tooltip=" "];
-  Node1 -> Node7 [dir="back",color="steelblue1",style="solid"];
-  Node7 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/test_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$test__behavior_8hpp.html",tooltip=" "];
-  Node1 -> Node8 [dir="back",color="steelblue1",style="solid"];
-  Node8 [label="dhtt_plugins/include\l/dhtt_plugins/tasks/and\l_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$and__behavior_8hpp.html",tooltip=" "];
+  Node3 -> Node7 [dir="back",color="steelblue1",style="solid"];
+  Node7 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/test/mock_look_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$mock__look__behavior_8hpp.html",tooltip=" "];
+  Node3 -> Node8 [dir="back",color="steelblue1",style="solid"];
+  Node8 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/test/mock_move_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$mock__move__behavior_8hpp.html",tooltip=" "];
   Node1 -> Node9 [dir="back",color="steelblue1",style="solid"];
-  Node9 [label="dhtt_plugins/include\l/dhtt_plugins/tasks/or\l_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$or__behavior_8hpp.html",tooltip=" "];
+  Node9 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/test/test_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$test_2test__behavior_8hpp.html",tooltip=" "];
   Node1 -> Node10 [dir="back",color="steelblue1",style="solid"];
-  Node10 [label="dhtt_plugins/include\l/dhtt_plugins/tasks/root\l_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$root__behavior_8hpp.html",tooltip=" "];
+  Node10 [label="dhtt_plugins/include\l/dhtt_plugins/behaviors\l/test_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$test__behavior_8hpp.html",tooltip=" "];
   Node1 -> Node11 [dir="back",color="steelblue1",style="solid"];
-  Node11 [label="dhtt_plugins/include\l/dhtt_plugins/tasks/then\l_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$then__behavior_8hpp.html",tooltip=" "];
+  Node11 [label="dhtt_plugins/include\l/dhtt_plugins/tasks/and\l_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$and__behavior_8hpp.html",tooltip=" "];
+  Node1 -> Node12 [dir="back",color="steelblue1",style="solid"];
+  Node12 [label="dhtt_plugins/include\l/dhtt_plugins/tasks/or\l_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$or__behavior_8hpp.html",tooltip=" "];
+  Node1 -> Node13 [dir="back",color="steelblue1",style="solid"];
+  Node13 [label="dhtt_plugins/include\l/dhtt_plugins/tasks/root\l_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$root__behavior_8hpp.html",tooltip=" "];
+  Node1 -> Node14 [dir="back",color="steelblue1",style="solid"];
+  Node14 [label="dhtt_plugins/include\l/dhtt_plugins/tasks/then\l_behavior.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$then__behavior_8hpp.html",tooltip=" "];
 }

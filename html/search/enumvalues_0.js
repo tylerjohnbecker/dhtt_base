@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['persistent_0',['PERSISTENT',['../namespacedhtt.html#a3a17868f4d160b0f36d56ebd2027e008adb421c8b35e9d91c2e0f520567fac9b7',1,'dhtt']]]
+  ['debug_0',['DEBUG',['../namespacedhtt.html#aed1585e5c084d00cd0f452ae750c4290a76b0f5e7632157ad6e29e0f685efee0a',1,'dhtt']]]
 ];

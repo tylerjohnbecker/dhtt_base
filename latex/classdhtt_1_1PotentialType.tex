@@ -1,0 +1,47 @@
+\hypertarget{classdhtt_1_1PotentialType}{}\doxysection{dhtt\+::Potential\+Type Class Reference}
+\label{classdhtt_1_1PotentialType}\index{dhtt::PotentialType@{dhtt::PotentialType}}
+
+
+a lightweight plugin for computing the activation potential of a node  
+
+
+
+
+{\ttfamily \#include $<$potential\+\_\+type.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual double \mbox{\hyperlink{classdhtt_1_1PotentialType_a72fd911b54a2c14a4e942daff8bf3879}{compute\+\_\+activation\+\_\+potential}} (\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$container)=0
+\begin{DoxyCompactList}\small\item\em computes the activation potential of the node \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+a lightweight plugin for computing the activation potential of a node 
+
+This class is meant to enable the designer to change the computation of the activation potential without dealing with any of the code related to the node logic. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt_1_1PotentialType_a72fd911b54a2c14a4e942daff8bf3879}\label{classdhtt_1_1PotentialType_a72fd911b54a2c14a4e942daff8bf3879}} 
+\index{dhtt::PotentialType@{dhtt::PotentialType}!compute\_activation\_potential@{compute\_activation\_potential}}
+\index{compute\_activation\_potential@{compute\_activation\_potential}!dhtt::PotentialType@{dhtt::PotentialType}}
+\doxysubsubsection{\texorpdfstring{compute\_activation\_potential()}{compute\_activation\_potential()}}
+{\footnotesize\ttfamily virtual double dhtt\+::\+Potential\+Type\+::compute\+\_\+activation\+\_\+potential (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+computes the activation potential of the node 
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & \mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} which contains this plugin for help with computations\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+double of activation potential between 0 -\/ 1 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt/include/dhtt/tree/\mbox{\hyperlink{potential__type_8hpp}{potential\+\_\+type.\+hpp}}\end{DoxyCompactItemize}

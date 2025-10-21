@@ -1,0 +1,187 @@
+\hypertarget{branch__type_8hpp_source}{}\doxysection{branch\+\_\+type.\+hpp}
+\label{branch__type_8hpp_source}\index{dhtt/include/dhtt/tree/branch\_type.hpp@{dhtt/include/dhtt/tree/branch\_type.hpp}}
+\mbox{\hyperlink{branch__type_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef BRANCH\_TYPE\_HPP\_}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define BRANCH\_TYPE\_HPP\_}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{comment}{// INCLUDES}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{6 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#include <string>}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include <functional>}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#include <thread>}}
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#include <future>}}
+\DoxyCodeLine{11 }
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include "{}dhtt\_msgs/action/activation.hpp"{}}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include "{}dhtt\_msgs/action/condition.hpp"{}}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedhtt}{dhtt}}}
+\DoxyCodeLine{16 \{}
+\DoxyCodeLine{17     \textcolor{comment}{//forward declarations}}
+\DoxyCodeLine{18     \textcolor{keyword}{class }Node;}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20     \textcolor{comment}{// using statements for clarity}}
+\DoxyCodeLine{21     \textcolor{keyword}{using }\mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\_goal}} = dhtt\_msgs::action::Activation::Goal;}
+\DoxyCodeLine{22     \textcolor{keyword}{using }\mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\_result}} = dhtt\_msgs::action::Activation::Result;}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24     \textcolor{keyword}{using }\mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\_goal}} = dhtt\_msgs::action::Condition::Goal;}
+\DoxyCodeLine{25     \textcolor{keyword}{using }\mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\_result}} = dhtt\_msgs::action::Condition::Result;}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{37     \textcolor{keyword}{class }\mbox{\hyperlink{classdhtt_1_1BranchSocketType}{BranchSocketType}}}
+\DoxyCodeLine{38     \{}
+\DoxyCodeLine{39     \textcolor{keyword}{public}:}
+\DoxyCodeLine{49         \textcolor{keyword}{virtual} \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1BranchSocketType_a6323fef56616461214b60464d67f0f2a}{initialize}}(\mbox{\hyperlink{classdhtt_1_1Node}{Node}}* constructor\_ptr) = 0;}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{56         \textcolor{keyword}{virtual} \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1BranchSocketType_abf53ac4601da3bb63ae19d8dc39afb28}{destruct}}() \{\};}
+\DoxyCodeLine{57 }
+\DoxyCodeLine{68         \textcolor{keyword}{virtual} \mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\_result}} \mbox{\hyperlink{classdhtt_1_1BranchSocketType_add4fa4d6e143b7bf1e5a15a589fcb2b7}{activation\_received\_callback}}(\mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\_goal}} goal) = 0;}
+\DoxyCodeLine{69 }
+\DoxyCodeLine{79         \textcolor{keyword}{virtual} \mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\_result}} \mbox{\hyperlink{classdhtt_1_1BranchSocketType_a688c0dcb09ab29a130b4c6bc5cbed5b1}{maintain\_received\_callback}}(\mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\_goal}} goal) = 0;}
+\DoxyCodeLine{80 }
+\DoxyCodeLine{89         \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt_1_1BranchSocketType_aabe5e9184dffe824f6bf99a7c4ce288a}{test\_connection}}() \{ \textcolor{keywordflow}{return} \textcolor{keyword}{true}; \};}
+\DoxyCodeLine{90 }
+\DoxyCodeLine{91     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{92         \mbox{\hyperlink{classdhtt_1_1Node}{Node}}* \mbox{\hyperlink{classdhtt_1_1BranchSocketType_a97530353c009d6f63c9552abcab5ca7b}{container}};}
+\DoxyCodeLine{93 }
+\DoxyCodeLine{94     \};}
+\DoxyCodeLine{95 }
+\DoxyCodeLine{102     \textcolor{keyword}{class }\mbox{\hyperlink{classdhtt_1_1BranchPlugType}{BranchPlugType}}}
+\DoxyCodeLine{103     \{}
+\DoxyCodeLine{104     \textcolor{keyword}{public}:}
+\DoxyCodeLine{117         \textcolor{keyword}{virtual} \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a673acf9405c5d1d1f4a5374384d2926d}{initialize}}(\mbox{\hyperlink{classdhtt_1_1Node}{Node}}* constructor\_ptr, std::shared\_ptr<BranchSocketType> socket\_ptr, std::string child\_name) = 0;}
+\DoxyCodeLine{118 }
+\DoxyCodeLine{124         \textcolor{keyword}{virtual} \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_abda9e11339d0dbfd3db0238a46be1987}{destruct}}()}
+\DoxyCodeLine{125         \{}
+\DoxyCodeLine{126             \textcolor{keywordflow}{if} ( this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_abbfff3607910c937e5071b53e8bedaec}{activation\_thread\_ptr}} != \textcolor{keyword}{nullptr} and this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_abbfff3607910c937e5071b53e8bedaec}{activation\_thread\_ptr}}-\/>joinable() )}
+\DoxyCodeLine{127             \{}
+\DoxyCodeLine{128                 this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_abbfff3607910c937e5071b53e8bedaec}{activation\_thread\_ptr}}-\/>join();}
+\DoxyCodeLine{129                 this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_abbfff3607910c937e5071b53e8bedaec}{activation\_thread\_ptr}} = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{130             \}}
+\DoxyCodeLine{131 }
+\DoxyCodeLine{132             \textcolor{keywordflow}{if} ( this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a61273760d731fd3aeb809253fb34791b}{condition\_thread\_ptr}} != \textcolor{keyword}{nullptr} and this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a61273760d731fd3aeb809253fb34791b}{condition\_thread\_ptr}}-\/>joinable() )}
+\DoxyCodeLine{133             \{}
+\DoxyCodeLine{134                 this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a61273760d731fd3aeb809253fb34791b}{condition\_thread\_ptr}}-\/>join(); }
+\DoxyCodeLine{135                 this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a61273760d731fd3aeb809253fb34791b}{condition\_thread\_ptr}} = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{136             \}}
+\DoxyCodeLine{137 }
+\DoxyCodeLine{138             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_ab8ca4c194e93f45debb988214545c733}{container}} = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{139         \};}
+\DoxyCodeLine{140 }
+\DoxyCodeLine{151         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a0322707816c4cdcba29f2685712db1b9}{async\_send\_activate}}(\mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\_goal}} to\_send)}
+\DoxyCodeLine{152         \{}
+\DoxyCodeLine{153             \textcolor{keywordflow}{if} ( this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_abbfff3607910c937e5071b53e8bedaec}{activation\_thread\_ptr}} != \textcolor{keyword}{nullptr} or this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_ae9572b9c270bd3b67f854b9bd6245fdc}{activate\_state}} > 0 )}
+\DoxyCodeLine{154                 \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{155 }
+\DoxyCodeLine{156             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a3ed26499f827c3500a07526ce7e11993}{activation\_task\_ptr}} = std::make\_shared<std::packaged\_task<\mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\_result}}(\mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\_goal}})>>( std::bind( \&\mbox{\hyperlink{classdhtt_1_1BranchPlugType_adf20411eb6ee10f954802f0971a485ff}{BranchPlugType::send\_activate}}, \textcolor{keyword}{this}, to\_send ) );}
+\DoxyCodeLine{157 }
+\DoxyCodeLine{158             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_aa3d541a7e87852a157f98429c4abce3a}{activation\_result\_future}} = this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a3ed26499f827c3500a07526ce7e11993}{activation\_task\_ptr}}-\/>get\_future();}
+\DoxyCodeLine{159 }
+\DoxyCodeLine{160             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_abbfff3607910c937e5071b53e8bedaec}{activation\_thread\_ptr}} = std::make\_shared<std::thread>( std::move(*this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a3ed26499f827c3500a07526ce7e11993}{activation\_task\_ptr}}), to\_send );}
+\DoxyCodeLine{161 }
+\DoxyCodeLine{162             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_ae9572b9c270bd3b67f854b9bd6245fdc}{activate\_state}} = 1;}
+\DoxyCodeLine{163 }
+\DoxyCodeLine{164             \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{165         \};}
+\DoxyCodeLine{166         }
+\DoxyCodeLine{172         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_aed9edb23848408592e1423106a336048}{block\_for\_activation\_response}}()}
+\DoxyCodeLine{173         \{}
+\DoxyCodeLine{174             \textcolor{keywordflow}{if} ( not this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_aa3d541a7e87852a157f98429c4abce3a}{activation\_result\_future}}.valid() or this-\/>activate\_state != 1 )}
+\DoxyCodeLine{175                 \textcolor{keywordflow}{return};}
+\DoxyCodeLine{176 }
+\DoxyCodeLine{177             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_aa3d541a7e87852a157f98429c4abce3a}{activation\_result\_future}}.wait();}
+\DoxyCodeLine{178         }
+\DoxyCodeLine{179             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_abbfff3607910c937e5071b53e8bedaec}{activation\_thread\_ptr}}-\/>join();}
+\DoxyCodeLine{180 }
+\DoxyCodeLine{181             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_ae9572b9c270bd3b67f854b9bd6245fdc}{activate\_state}} = 2;}
+\DoxyCodeLine{182         \};}
+\DoxyCodeLine{183 }
+\DoxyCodeLine{191         \mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\_result}} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a35c825380c8c8578c25c6edc04814350}{get\_activation\_result}}()}
+\DoxyCodeLine{192         \{}
+\DoxyCodeLine{193             \textcolor{keywordflow}{if} ( this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_ae9572b9c270bd3b67f854b9bd6245fdc}{activate\_state}} != 2 )}
+\DoxyCodeLine{194                 \textcolor{keywordflow}{return} \mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\_result}}();}
+\DoxyCodeLine{195 }
+\DoxyCodeLine{196             \textcolor{keyword}{auto} to\_ret = this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_aa3d541a7e87852a157f98429c4abce3a}{activation\_result\_future}}.get();}
+\DoxyCodeLine{197             }
+\DoxyCodeLine{198             \textcolor{comment}{// reset to default future so that it becomes invalid and reset thread to nullptr}}
+\DoxyCodeLine{199             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_abbfff3607910c937e5071b53e8bedaec}{activation\_thread\_ptr}} = \textcolor{keyword}{nullptr}; }
+\DoxyCodeLine{200 }
+\DoxyCodeLine{201             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_ae9572b9c270bd3b67f854b9bd6245fdc}{activate\_state}} = 0;}
+\DoxyCodeLine{202 }
+\DoxyCodeLine{203             \textcolor{keywordflow}{return} to\_ret;}
+\DoxyCodeLine{204         \};}
+\DoxyCodeLine{205 }
+\DoxyCodeLine{213         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_ae2a2d18088d943f9e074ceabeb7e2247}{async\_send\_maintain}}(\mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\_goal}} to\_send)}
+\DoxyCodeLine{214         \{}
+\DoxyCodeLine{215             \textcolor{keywordflow}{if} ( this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a61273760d731fd3aeb809253fb34791b}{condition\_thread\_ptr}} != \textcolor{keyword}{nullptr} or this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a9753a4f3a35087f25f00939b0ed3fb61}{condition\_state}} != 0 )}
+\DoxyCodeLine{216                 \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{217 }
+\DoxyCodeLine{218             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_acfe269b0285a908f36eb2b45adbb392a}{condition\_task\_ptr}} = std::make\_shared<std::packaged\_task<\mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\_result}}(\mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\_goal}})>>( std::bind( \&\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a08eb798e41a7a5ae39f1203abbc19906}{BranchPlugType::send\_maintain}}, \textcolor{keyword}{this}, to\_send ) );}
+\DoxyCodeLine{219 }
+\DoxyCodeLine{220             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_aeef933a095d8a23f35a392e31011c806}{condition\_result\_future}} = this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_acfe269b0285a908f36eb2b45adbb392a}{condition\_task\_ptr}}-\/>get\_future();}
+\DoxyCodeLine{221 }
+\DoxyCodeLine{222             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a61273760d731fd3aeb809253fb34791b}{condition\_thread\_ptr}} = std::make\_shared<std::thread>( std::move(*this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_acfe269b0285a908f36eb2b45adbb392a}{condition\_task\_ptr}}), to\_send );}
+\DoxyCodeLine{223 }
+\DoxyCodeLine{224             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a9753a4f3a35087f25f00939b0ed3fb61}{condition\_state}} = 1;}
+\DoxyCodeLine{225 }
+\DoxyCodeLine{226             \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{227 }
+\DoxyCodeLine{228         \};}
+\DoxyCodeLine{229         }
+\DoxyCodeLine{235         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_ad0c62993abeea24136eac370b6a0af98}{block\_for\_maintain\_response}}()}
+\DoxyCodeLine{236         \{}
+\DoxyCodeLine{237             \textcolor{keywordflow}{if} ( this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a9753a4f3a35087f25f00939b0ed3fb61}{condition\_state}} != 1 )}
+\DoxyCodeLine{238                 \textcolor{keywordflow}{return};}
+\DoxyCodeLine{239 }
+\DoxyCodeLine{240             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_aeef933a095d8a23f35a392e31011c806}{condition\_result\_future}}.wait();}
+\DoxyCodeLine{241         }
+\DoxyCodeLine{242             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a61273760d731fd3aeb809253fb34791b}{condition\_thread\_ptr}}-\/>join();}
+\DoxyCodeLine{243 }
+\DoxyCodeLine{244             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a9753a4f3a35087f25f00939b0ed3fb61}{condition\_state}} = 2;}
+\DoxyCodeLine{245         \};}
+\DoxyCodeLine{246 }
+\DoxyCodeLine{252         \mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\_result}} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a9be7ed2409f64e38cbfed9eb5561f472}{get\_maintain\_result}}()}
+\DoxyCodeLine{253         \{}
+\DoxyCodeLine{254             \textcolor{keywordflow}{if} ( not this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_aeef933a095d8a23f35a392e31011c806}{condition\_result\_future}}.valid() or this-\/>condition\_state != 2 )}
+\DoxyCodeLine{255                 \textcolor{keywordflow}{return} \mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\_result}}();}
+\DoxyCodeLine{256 }
+\DoxyCodeLine{257             \textcolor{keyword}{auto} to\_ret = this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_aeef933a095d8a23f35a392e31011c806}{condition\_result\_future}}.get();}
+\DoxyCodeLine{258             }
+\DoxyCodeLine{259             \textcolor{comment}{// reset to default future so that it becomes invalid and reset thread to nullptr}}
+\DoxyCodeLine{260             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a61273760d731fd3aeb809253fb34791b}{condition\_thread\_ptr}} = \textcolor{keyword}{nullptr}; }
+\DoxyCodeLine{261 }
+\DoxyCodeLine{262             this-\/>\mbox{\hyperlink{classdhtt_1_1BranchPlugType_a9753a4f3a35087f25f00939b0ed3fb61}{condition\_state}} = 0;}
+\DoxyCodeLine{263 }
+\DoxyCodeLine{264             \textcolor{keywordflow}{return} to\_ret;}
+\DoxyCodeLine{265         \}}
+\DoxyCodeLine{266 }
+\DoxyCodeLine{274         \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a52d70d97cabd9504fcdd6f643061507e}{connection\_is\_good}}() \{ \textcolor{keywordflow}{return} \textcolor{keyword}{true}; \};}
+\DoxyCodeLine{275 }
+\DoxyCodeLine{276     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{277 }
+\DoxyCodeLine{288         \textcolor{keyword}{virtual} \mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\_result}} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_adf20411eb6ee10f954802f0971a485ff}{send\_activate}}(\mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\_goal}} to\_send) = 0;}
+\DoxyCodeLine{289 }
+\DoxyCodeLine{300         \textcolor{keyword}{virtual} \mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\_result}} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a08eb798e41a7a5ae39f1203abbc19906}{send\_maintain}}(\mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\_goal}} to\_send) = 0;}
+\DoxyCodeLine{301 }
+\DoxyCodeLine{302         \mbox{\hyperlink{classdhtt_1_1Node}{Node}}* \mbox{\hyperlink{classdhtt_1_1BranchPlugType_ab8ca4c194e93f45debb988214545c733}{container}};}
+\DoxyCodeLine{303 }
+\DoxyCodeLine{304     \textcolor{keyword}{private}:}
+\DoxyCodeLine{305 }
+\DoxyCodeLine{306         \textcolor{comment}{// These parameters are private because they only relate to the multithreading functionality of the plugtype}}
+\DoxyCodeLine{307         std::shared\_ptr<std::packaged\_task<\mbox{\hyperlink{namespacedhtt_a597894051c180c1af8ec2e3d2b748ad4}{activation\_result}}(\mbox{\hyperlink{namespacedhtt_a4c8b4cf5d1d5a5a949c78117ed356359}{activation\_goal}})>> \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a3ed26499f827c3500a07526ce7e11993}{activation\_task\_ptr}};}
+\DoxyCodeLine{308         std::future<activation\_result> \mbox{\hyperlink{classdhtt_1_1BranchPlugType_aa3d541a7e87852a157f98429c4abce3a}{activation\_result\_future}};}
+\DoxyCodeLine{309         std::shared\_ptr<std::thread> \mbox{\hyperlink{classdhtt_1_1BranchPlugType_abbfff3607910c937e5071b53e8bedaec}{activation\_thread\_ptr}};}
+\DoxyCodeLine{310 }
+\DoxyCodeLine{311         std::shared\_ptr<std::packaged\_task<\mbox{\hyperlink{namespacedhtt_a6c01455b2a4f5e1878637aed1e74ef5f}{condition\_result}}(\mbox{\hyperlink{namespacedhtt_a519efb18d9fa3b2973f67597d1b53a41}{condition\_goal}})>> \mbox{\hyperlink{classdhtt_1_1BranchPlugType_acfe269b0285a908f36eb2b45adbb392a}{condition\_task\_ptr}};}
+\DoxyCodeLine{312         std::future<condition\_result> \mbox{\hyperlink{classdhtt_1_1BranchPlugType_aeef933a095d8a23f35a392e31011c806}{condition\_result\_future}};}
+\DoxyCodeLine{313         std::shared\_ptr<std::thread> \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a61273760d731fd3aeb809253fb34791b}{condition\_thread\_ptr}};}
+\DoxyCodeLine{314 }
+\DoxyCodeLine{315         \textcolor{keywordtype}{int} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_ae9572b9c270bd3b67f854b9bd6245fdc}{activate\_state}} = 0;}
+\DoxyCodeLine{316         \textcolor{keywordtype}{int} \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a9753a4f3a35087f25f00939b0ed3fb61}{condition\_state}} = 0;}
+\DoxyCodeLine{317     \};}
+\DoxyCodeLine{318 \}}
+\DoxyCodeLine{319 }
+\DoxyCodeLine{320 }
+\DoxyCodeLine{321 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// BRANCH\_TYPE\_HPP\_}}
+
+\end{DoxyCode}

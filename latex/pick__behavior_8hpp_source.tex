@@ -18,23 +18,25 @@
 \DoxyCodeLine{28 }
 \DoxyCodeLine{38         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a87cad3b5c19a0cf536c6f30e0a1d402c}{do\_work}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
 \DoxyCodeLine{39 }
-\DoxyCodeLine{49         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a76d1eb08379af8dd321b46c8c9aeb5e6}{get\_perceived\_efficiency}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{49         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a44f4b992d907f0c447dea336373fb322}{get\_perceived\_efficiency}}(\mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container) \textcolor{keyword}{override};}
 \DoxyCodeLine{50 }
 \DoxyCodeLine{60         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_aef37bea635b234e661d71cd9deec8c5d}{get\_retained\_resources}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override};}
 \DoxyCodeLine{61 }
 \DoxyCodeLine{72         std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a639226ff83f42910100b6b2a810fddd2}{get\_released\_resources}}( \mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* container ) \textcolor{keyword}{override}; }
 \DoxyCodeLine{73 }
-\DoxyCodeLine{83         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_ab607f5c52f558f409017702ccd02c762}{done\_callback}}( std::shared\_ptr<std\_msgs::msg::String> data );}
-\DoxyCodeLine{84 }
-\DoxyCodeLine{85     \textcolor{keyword}{protected}:}
-\DoxyCodeLine{86         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a7ae2f31d5595e61ed42b7f769f81615b}{work\_done}};}
-\DoxyCodeLine{87 }
-\DoxyCodeLine{88         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a2b00b094369ac02e06ccd84972be34f3}{activation\_potential}};}
-\DoxyCodeLine{89         std::string \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_ad07f8c3bff28048496b73faf9303980e}{object\_name}};}
-\DoxyCodeLine{90     \};}
-\DoxyCodeLine{91 }
-\DoxyCodeLine{92 \}}
-\DoxyCodeLine{93 }
-\DoxyCodeLine{94 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// PICK\_BEHAVIOR\_HPP}}
+\DoxyCodeLine{77         \textcolor{keyword}{virtual} std::vector<dhtt\_msgs::msg::Resource> \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a0d0b43943330bbb257ae5514aed1eee2}{get\_necessary\_resources}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{78 }
+\DoxyCodeLine{88         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_ab607f5c52f558f409017702ccd02c762}{done\_callback}}( std::shared\_ptr<std\_msgs::msg::String> data );}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{90     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{91         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a7ae2f31d5595e61ed42b7f769f81615b}{work\_done}};}
+\DoxyCodeLine{92 }
+\DoxyCodeLine{93         \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a2b00b094369ac02e06ccd84972be34f3}{activation\_potential}};}
+\DoxyCodeLine{94         std::string \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_ad07f8c3bff28048496b73faf9303980e}{object\_name}};}
+\DoxyCodeLine{95     \};}
+\DoxyCodeLine{96 }
+\DoxyCodeLine{97 \}}
+\DoxyCodeLine{98 }
+\DoxyCodeLine{99 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// PICK\_BEHAVIOR\_HPP}}
 
 \end{DoxyCode}

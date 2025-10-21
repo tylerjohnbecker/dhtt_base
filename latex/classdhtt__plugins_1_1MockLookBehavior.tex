@@ -1,0 +1,186 @@
+\hypertarget{classdhtt__plugins_1_1MockLookBehavior}{}\doxysection{dhtt\+\_\+plugins\+::Mock\+Look\+Behavior Class Reference}
+\label{classdhtt__plugins_1_1MockLookBehavior}\index{dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}}
+
+
+{\ttfamily \#include $<$mock\+\_\+look\+\_\+behavior.\+hpp$>$}
+
+
+
+Inheritance diagram for dhtt\+\_\+plugins\+::Mock\+Look\+Behavior\+:
+% FIG 0
+
+
+Collaboration diagram for dhtt\+\_\+plugins\+::Mock\+Look\+Behavior\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_a8ef883fcafcc6274fc2a511112f42adf}{parse\+\_\+params}} (std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classdhtt_1_1NodeType_a2cf719d31abbbad3a06e6c0ecc4915cf}{params}}) override
+\begin{DoxyCompactList}\small\item\em method to parse the input parameters for the Node\+Type \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_a18b795dfc0fcd89b8e09185852c4f506}{do\+\_\+work}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em abstract function for actually sending instructions to the robot \end{DoxyCompactList}\item 
+virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_a1f25bf1a21e4ce491dfc2cdaea102e53}{get\+\_\+retained\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em returns a list of all resources that are meant to be retained \end{DoxyCompactList}\item 
+virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_aee31d025823c331488e763d272da2250}{get\+\_\+released\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em returns the list of resources to release \end{DoxyCompactList}\item 
+virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_ab46bc419208669f9a9825ca36e20beec}{get\+\_\+necessary\+\_\+resources}} () override
+\begin{DoxyCompactList}\small\item\em this is where inheriting classes define the resources they need \end{DoxyCompactList}\item 
+virtual double \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_a2c8e05dcc8e0821777d621c7a3b0620f}{get\+\_\+perceived\+\_\+efficiency}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em calculates the activation potential of the node locally \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_a0527f386a1f246e1bcc8f8af3790f480}{object\+\_\+target}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1MockLookBehavior_a18b795dfc0fcd89b8e09185852c4f506}\label{classdhtt__plugins_1_1MockLookBehavior_a18b795dfc0fcd89b8e09185852c4f506}} 
+\index{dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}!do\_work@{do\_work}}
+\index{do\_work@{do\_work}!dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}}
+\doxysubsubsection{\texorpdfstring{do\_work()}{do\_work()}}
+{\footnotesize\ttfamily virtual void dhtt\+\_\+plugins\+::\+Mock\+Look\+Behavior\+::do\+\_\+work (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+abstract function for actually sending instructions to the robot 
+
+Every action type behavior performs some work (on the robot or otherwise) which should be implemented in this function. If any topics etc. need to be handled their is an executor that is initialized by default which can be used by inheritors to make those connections. Should flip \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a9b84d261334eb62f46f486d32d921619}{Action\+Type.\+done}} when work is done.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & similar to work\+\_\+callback this is a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308d820d358e245a69e}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1MockLookBehavior_ab46bc419208669f9a9825ca36e20beec}\label{classdhtt__plugins_1_1MockLookBehavior_ab46bc419208669f9a9825ca36e20beec}} 
+\index{dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}!get\_necessary\_resources@{get\_necessary\_resources}}
+\index{get\_necessary\_resources@{get\_necessary\_resources}!dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}}
+\doxysubsubsection{\texorpdfstring{get\_necessary\_resources()}{get\_necessary\_resources()}}
+{\footnotesize\ttfamily virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Mock\+Look\+Behavior\+::get\+\_\+necessary\+\_\+resources (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+this is where inheriting classes define the resources they need 
+
+The resources on the robot which an action type behavior needs to run should be defined here by overriding this method.
+
+\begin{DoxyReturn}{Returns}
+the list of resources required to run the behavior 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a377f39e56dbe8868d8f8ed29eb9b82d8}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1MockLookBehavior_a2c8e05dcc8e0821777d621c7a3b0620f}\label{classdhtt__plugins_1_1MockLookBehavior_a2c8e05dcc8e0821777d621c7a3b0620f}} 
+\index{dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}!get\_perceived\_efficiency@{get\_perceived\_efficiency}}
+\index{get\_perceived\_efficiency@{get\_perceived\_efficiency}!dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}}
+\doxysubsubsection{\texorpdfstring{get\_perceived\_efficiency()}{get\_perceived\_efficiency()}}
+{\footnotesize\ttfamily virtual double dhtt\+\_\+plugins\+::\+Mock\+Look\+Behavior\+::get\+\_\+perceived\+\_\+efficiency (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+calculates the activation potential of the node locally 
+
+This looks at the calculation that this node locally uses, meaning some function of the childrens\textquotesingle{} activation potential for task nodes and some function (like distance) for behavior nodes.
+
+\begin{DoxyReturn}{Returns}
+activation potential value (0 -\/\texorpdfstring{$>$}{>} 1 by convention) 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a6d70a5e6c0d832a32249795463e45a57}{dhtt\+::\+Node\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1MockLookBehavior_aee31d025823c331488e763d272da2250}\label{classdhtt__plugins_1_1MockLookBehavior_aee31d025823c331488e763d272da2250}} 
+\index{dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}!get\_released\_resources@{get\_released\_resources}}
+\index{get\_released\_resources@{get\_released\_resources}!dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}}
+\doxysubsubsection{\texorpdfstring{get\_released\_resources()}{get\_released\_resources()}}
+{\footnotesize\ttfamily virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Mock\+Look\+Behavior\+::get\+\_\+released\+\_\+resources (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+returns the list of resources to release 
+
+This function returns everything other than the resources found in retained.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & similar to work\+\_\+callback this is a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+list of all resources to release 
+\end{DoxyReturn}
+
+
+Reimplemented from \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a94317f0309ad2e88c82bb3cb8583a93d}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1MockLookBehavior_a1f25bf1a21e4ce491dfc2cdaea102e53}\label{classdhtt__plugins_1_1MockLookBehavior_a1f25bf1a21e4ce491dfc2cdaea102e53}} 
+\index{dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}!get\_retained\_resources@{get\_retained\_resources}}
+\index{get\_retained\_resources@{get\_retained\_resources}!dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}}
+\doxysubsubsection{\texorpdfstring{get\_retained\_resources()}{get\_retained\_resources()}}
+{\footnotesize\ttfamily virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Mock\+Look\+Behavior\+::get\+\_\+retained\+\_\+resources (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+returns a list of all resources that are meant to be retained 
+
+Retained resources should be kept based on the assumption that the next behavior (only under a THEN node where ordering is guaranteed) will need them. For example, if a robot moves to pick up an object and does not keep control of the base there is a chance that the object would not be picked up which could cause the tree to become uncompletable. Another example is keeping access to an arm after picking up an object so that the arm isn\textquotesingle{}t subsequently used for something else.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & similar to work\+\_\+callback this is a pointer to the node which is running this logic.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+list of any retained resources of this behavior 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468d32558133e56b6}{dhtt\+\_\+plugins\+::\+Action\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1MockLookBehavior_a8ef883fcafcc6274fc2a511112f42adf}\label{classdhtt__plugins_1_1MockLookBehavior_a8ef883fcafcc6274fc2a511112f42adf}} 
+\index{dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}!parse\_params@{parse\_params}}
+\index{parse\_params@{parse\_params}!dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}}
+\doxysubsubsection{\texorpdfstring{parse\_params()}{parse\_params()}}
+{\footnotesize\ttfamily virtual void dhtt\+\_\+plugins\+::\+Mock\+Look\+Behavior\+::parse\+\_\+params (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$}]{params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+method to parse the input parameters for the Node\+Type 
+
+generally should take the parameters from the description file and parse them in some way. This could include just setting flags, getting topic names for information retrieval, etc.
+
+
+\begin{DoxyParams}{Parameters}
+{\em params} & list of params taken from the description file (usually in key, value pairs by convention)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ab3299445c97c34ecf0b8e120cd59d412}{dhtt\+::\+Node\+Type}}.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1MockLookBehavior_a0527f386a1f246e1bcc8f8af3790f480}\label{classdhtt__plugins_1_1MockLookBehavior_a0527f386a1f246e1bcc8f8af3790f480}} 
+\index{dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}!object\_target@{object\_target}}
+\index{object\_target@{object\_target}!dhtt\_plugins::MockLookBehavior@{dhtt\_plugins::MockLookBehavior}}
+\doxysubsubsection{\texorpdfstring{object\_target}{object\_target}}
+{\footnotesize\ttfamily std\+::string dhtt\+\_\+plugins\+::\+Mock\+Look\+Behavior\+::object\+\_\+target\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt\+\_\+plugins/include/dhtt\+\_\+plugins/behaviors/test/\mbox{\hyperlink{mock__look__behavior_8hpp}{mock\+\_\+look\+\_\+behavior.\+hpp}}\end{DoxyCompactItemize}

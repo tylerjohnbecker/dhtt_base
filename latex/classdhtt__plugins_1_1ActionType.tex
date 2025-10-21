@@ -30,10 +30,23 @@ virtual void \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a21045341e10bb308
 \begin{DoxyCompactList}\small\item\em abstract function for actually sending instructions to the robot \end{DoxyCompactList}\item 
 virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468d32558133e56b6}{get\+\_\+retained\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container)=0
 \begin{DoxyCompactList}\small\item\em returns a list of all resources that are meant to be retained \end{DoxyCompactList}\item 
-virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}{get\+\_\+released\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container)=0
+virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a94317f0309ad2e88c82bb3cb8583a93d}{get\+\_\+released\+\_\+resources}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container)
 \begin{DoxyCompactList}\small\item\em returns the list of resources to release \end{DoxyCompactList}\item 
+virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a377f39e56dbe8868d8f8ed29eb9b82d8}{get\+\_\+necessary\+\_\+resources}} ()=0
+\begin{DoxyCompactList}\small\item\em this is where inheriting classes define the resources they need \end{DoxyCompactList}\item 
+virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ab1230464d47771e26ad8a9691db21b7a}{get\+\_\+added\+\_\+resources}} ()
+\begin{DoxyCompactList}\small\item\em this is where the inheriting classes define the resources added after execution \end{DoxyCompactList}\item 
+virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ac252230fcde44cdda76c66010c7add32}{get\+\_\+removed\+\_\+resources}} ()
+\begin{DoxyCompactList}\small\item\em this is where the inheriting classes define the resources destroyed after execution \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a5dada7d97dfbd1bed5abfb9ccb295a62}{is\+\_\+done}} () override
-\begin{DoxyCompactList}\small\item\em getter for the internal done variable \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em getter for the internal done variable \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a2d2d189e7a9865ff3a2d8332754f04f6}{populate\+\_\+resource\+\_\+lists}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container)
+\begin{DoxyCompactList}\small\item\em create the necessary, added, and removed world resource lists for this behavior \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a332bbbd5263a5ceb31a59b43979567ba}{send\+\_\+state\+\_\+updated}} ()
+\end{DoxyCompactItemize}
 \doxysubsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -43,9 +56,13 @@ double \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a002adba9f472d4b3bdf329
 \item 
 std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_aa23c79790c31c709b956dd2f3a1f6990}{necessary\+\_\+resources}}
 \item 
-std\+::shared\+\_\+ptr$<$ rclcpp\+::\+Node $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a4ba037e1b5e2f516742154581775d237}{pub\+\_\+node\+\_\+ptr}}
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ad71306ea28bc959667f837b860b26311}{necessary\+\_\+world\+\_\+resources}}
 \item 
-std\+::shared\+\_\+ptr$<$ rclcpp\+::executors\+::\+Single\+Threaded\+Executor $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_accb37da08c81000f71808aff42ce434e}{executor}}
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a8537fb7273e0394be55165f5a27b211d}{add\+\_\+resources}}
+\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a1c56af0009a00a4e4c1e0e6b69b8fcd7}{remove\+\_\+resources}}
+\item 
+rclcpp\+::\+Publisher$<$ std\+\_\+msgs\+::msg\+::\+String $>$\+::\+Shared\+Ptr \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_ae3e074e53eda9f8a55ad29b741025c8e}{knowledge\+\_\+pub}}
 \end{DoxyCompactItemize}
 \doxysubsection*{Additional Inherited Members}
 
@@ -90,7 +107,7 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_ade96117263a722919bf770a1c74e5
 
 abstract function for actually sending instructions to the robot 
 
-Every action type behavior performs some work (on the robot or otherwise) which should be implemented in this function. If any topics etc. need to be handled their is an executor that is initialized by default which can be used by inheritors to make those connections.
+Every action type behavior performs some work (on the robot or otherwise) which should be implemented in this function. If any topics etc. need to be handled their is an executor that is initialized by default which can be used by inheritors to make those connections. Should flip \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a9b84d261334eb62f46f486d32d921619}{Action\+Type.\+done}} when work is done.
 
 
 \begin{DoxyParams}{Parameters}
@@ -102,19 +119,53 @@ void
 \end{DoxyReturn}
 
 
-Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a20c025ec89cb2678f2e08fd55da42bcc}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a87cad3b5c19a0cf536c6f30e0a1d402c}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a722634e89fd4b4d337abb8e380a0797d}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}.
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a20c025ec89cb2678f2e08fd55da42bcc}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a87cad3b5c19a0cf536c6f30e0a1d402c}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a722634e89fd4b4d337abb8e380a0797d}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_a18b795dfc0fcd89b8e09185852c4f506}{dhtt\+\_\+plugins\+::\+Mock\+Look\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1MockMoveBehavior_ac8cc89dab64466273cbe3e6aa83cb7a7}{dhtt\+\_\+plugins\+::\+Mock\+Move\+Behavior}}.
 
-\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}\label{classdhtt__plugins_1_1ActionType_a4d13f0427472ee48731da1003e23270a}} 
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_ab1230464d47771e26ad8a9691db21b7a}\label{classdhtt__plugins_1_1ActionType_ab1230464d47771e26ad8a9691db21b7a}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!get\_added\_resources@{get\_added\_resources}}
+\index{get\_added\_resources@{get\_added\_resources}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{get\_added\_resources()}{get\_added\_resources()}}
+{\footnotesize\ttfamily virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::get\+\_\+added\+\_\+resources (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+this is where the inheriting classes define the resources added after execution 
+
+The resources added should be maintained in the retained and released resources functions, and will be added before those checks in root behavior.
+
+\begin{DoxyReturn}{Returns}
+the list of resources added as a side effect of executing the behavior 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a377f39e56dbe8868d8f8ed29eb9b82d8}\label{classdhtt__plugins_1_1ActionType_a377f39e56dbe8868d8f8ed29eb9b82d8}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!get\_necessary\_resources@{get\_necessary\_resources}}
+\index{get\_necessary\_resources@{get\_necessary\_resources}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{get\_necessary\_resources()}{get\_necessary\_resources()}}
+{\footnotesize\ttfamily virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::get\+\_\+necessary\+\_\+resources (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+this is where inheriting classes define the resources they need 
+
+The resources on the robot which an action type behavior needs to run should be defined here by overriding this method.
+
+\begin{DoxyReturn}{Returns}
+the list of resources required to run the behavior 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a40f49cceac6928f6700b5c79f88eab35}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a0d0b43943330bbb257ae5514aed1eee2}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_ad36bf75fe344a116ef5e443cbf0f6296}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_ab46bc419208669f9a9825ca36e20beec}{dhtt\+\_\+plugins\+::\+Mock\+Look\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1MockMoveBehavior_a54c9d30ec105e657b3545a9d3b82048f}{dhtt\+\_\+plugins\+::\+Mock\+Move\+Behavior}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a94317f0309ad2e88c82bb3cb8583a93d}\label{classdhtt__plugins_1_1ActionType_a94317f0309ad2e88c82bb3cb8583a93d}} 
 \index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!get\_released\_resources@{get\_released\_resources}}
 \index{get\_released\_resources@{get\_released\_resources}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
 \doxysubsubsection{\texorpdfstring{get\_released\_resources()}{get\_released\_resources()}}
-{\footnotesize\ttfamily virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::get\+\_\+released\+\_\+resources (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+{\footnotesize\ttfamily virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::get\+\_\+released\+\_\+resources (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
 
 
 
 returns the list of resources to release 
 
-Resources are always released by default, so this list should be owned\+\_\+resources -\/ retained\+\_\+resources.
+This function returns everything other than the resources found in retained.
 
 
 \begin{DoxyParams}{Parameters}
@@ -126,8 +177,23 @@ list of all resources to release
 \end{DoxyReturn}
 
 
-Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a337349f5a15c96ae5922fb1858a43a1a}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a639226ff83f42910100b6b2a810fddd2}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a7a12629730d602b9ea3d424935993e7b}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}.
+Reimplemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a337349f5a15c96ae5922fb1858a43a1a}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_a639226ff83f42910100b6b2a810fddd2}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a7a12629730d602b9ea3d424935993e7b}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_aee31d025823c331488e763d272da2250}{dhtt\+\_\+plugins\+::\+Mock\+Look\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1MockMoveBehavior_a0169030e5b64271752c8dbb186f1a303}{dhtt\+\_\+plugins\+::\+Mock\+Move\+Behavior}}.
 
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_ac252230fcde44cdda76c66010c7add32}\label{classdhtt__plugins_1_1ActionType_ac252230fcde44cdda76c66010c7add32}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!get\_removed\_resources@{get\_removed\_resources}}
+\index{get\_removed\_resources@{get\_removed\_resources}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{get\_removed\_resources()}{get\_removed\_resources()}}
+{\footnotesize\ttfamily virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::get\+\_\+removed\+\_\+resources (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+this is where the inheriting classes define the resources destroyed after execution 
+
+The destroyed resources cannot be retained or released as they will no longer be in the canonical resource list in root behavior by the time those checks occur.
+
+\begin{DoxyReturn}{Returns}
+the list of resources destroyed as a side effect of executing the behavior. 
+\end{DoxyReturn}
 \mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468d32558133e56b6}\label{classdhtt__plugins_1_1ActionType_ae3ad0f892ab63af468d32558133e56b6}} 
 \index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!get\_retained\_resources@{get\_retained\_resources}}
 \index{get\_retained\_resources@{get\_retained\_resources}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
@@ -150,7 +216,7 @@ list of any retained resources of this behavior
 \end{DoxyReturn}
 
 
-Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a080dcf3afc2376066296b00107860dd4}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_aef37bea635b234e661d71cd9deec8c5d}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a0f9901857b22b0e429ff737233e4ee10}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}.
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a080dcf3afc2376066296b00107860dd4}{dhtt\+\_\+plugins\+::\+Move\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PickBehavior_aef37bea635b234e661d71cd9deec8c5d}{dhtt\+\_\+plugins\+::\+Pick\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1PlaceBehavior_a0f9901857b22b0e429ff737233e4ee10}{dhtt\+\_\+plugins\+::\+Place\+Behavior}}, \mbox{\hyperlink{classdhtt__plugins_1_1MockLookBehavior_a1f25bf1a21e4ce491dfc2cdaea102e53}{dhtt\+\_\+plugins\+::\+Mock\+Look\+Behavior}}, and \mbox{\hyperlink{classdhtt__plugins_1_1MockMoveBehavior_adb1615590bee0a5a37bd7de8931f44ee}{dhtt\+\_\+plugins\+::\+Mock\+Move\+Behavior}}.
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a381962c71b85e6a8517845db1a737f79}\label{classdhtt__plugins_1_1ActionType_a381962c71b85e6a8517845db1a737f79}} 
 \index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!initialize@{initialize}}
@@ -195,6 +261,32 @@ True if done, false otherwise
 
 Reimplemented from \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef57b70}{dhtt\+::\+Node\+Type}}.
 
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a2d2d189e7a9865ff3a2d8332754f04f6}\label{classdhtt__plugins_1_1ActionType_a2d2d189e7a9865ff3a2d8332754f04f6}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!populate\_resource\_lists@{populate\_resource\_lists}}
+\index{populate\_resource\_lists@{populate\_resource\_lists}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{populate\_resource\_lists()}{populate\_resource\_lists()}}
+{\footnotesize\ttfamily virtual void dhtt\+\_\+plugins\+::\+Action\+Type\+::populate\+\_\+resource\+\_\+lists (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+create the necessary, added, and removed world resource lists for this behavior 
+
+This function should be overloaded by all behaviors which require world resources in order to give an interface to define what types are required. The resource lists should be populated with resource types and names will be given at runtime because they are decided by the server.
+
+
+\begin{DoxyParams}{Parameters}
+{\em container} & useful for getting the canonical resource list etc.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a332bbbd5263a5ceb31a59b43979567ba}\label{classdhtt__plugins_1_1ActionType_a332bbbd5263a5ceb31a59b43979567ba}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!send\_state\_updated@{send\_state\_updated}}
+\index{send\_state\_updated@{send\_state\_updated}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{send\_state\_updated()}{send\_state\_updated()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Action\+Type\+::send\+\_\+state\+\_\+updated (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
 \mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a56a3ef4023591aef5d034b6355a39715}\label{classdhtt__plugins_1_1ActionType_a56a3ef4023591aef5d034b6355a39715}} 
 \index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!work\_callback@{work\_callback}}
 \index{work\_callback@{work\_callback}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
@@ -228,17 +320,23 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610
 \doxysubsubsection{\texorpdfstring{activation\_potential}{activation\_potential}}
 {\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Action\+Type\+::activation\+\_\+potential\hspace{0.3cm}{\ttfamily [protected]}}
 
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a8537fb7273e0394be55165f5a27b211d}\label{classdhtt__plugins_1_1ActionType_a8537fb7273e0394be55165f5a27b211d}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!add\_resources@{add\_resources}}
+\index{add\_resources@{add\_resources}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{add\_resources}{add\_resources}}
+{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::add\+\_\+resources\hspace{0.3cm}{\ttfamily [protected]}}
+
 \mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a9b84d261334eb62f46f486d32d921619}\label{classdhtt__plugins_1_1ActionType_a9b84d261334eb62f46f486d32d921619}} 
 \index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!done@{done}}
 \index{done@{done}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
 \doxysubsubsection{\texorpdfstring{done}{done}}
 {\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Action\+Type\+::done\hspace{0.3cm}{\ttfamily [protected]}}
 
-\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_accb37da08c81000f71808aff42ce434e}\label{classdhtt__plugins_1_1ActionType_accb37da08c81000f71808aff42ce434e}} 
-\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!executor@{executor}}
-\index{executor@{executor}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
-\doxysubsubsection{\texorpdfstring{executor}{executor}}
-{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$rclcpp\+::executors\+::\+Single\+Threaded\+Executor$>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::executor\hspace{0.3cm}{\ttfamily [protected]}}
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_ae3e074e53eda9f8a55ad29b741025c8e}\label{classdhtt__plugins_1_1ActionType_ae3e074e53eda9f8a55ad29b741025c8e}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!knowledge\_pub@{knowledge\_pub}}
+\index{knowledge\_pub@{knowledge\_pub}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{knowledge\_pub}{knowledge\_pub}}
+{\footnotesize\ttfamily rclcpp\+::\+Publisher$<$std\+\_\+msgs\+::msg\+::\+String$>$\+::\+Shared\+Ptr dhtt\+\_\+plugins\+::\+Action\+Type\+::knowledge\+\_\+pub\hspace{0.3cm}{\ttfamily [protected]}}
 
 \mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_aa23c79790c31c709b956dd2f3a1f6990}\label{classdhtt__plugins_1_1ActionType_aa23c79790c31c709b956dd2f3a1f6990}} 
 \index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!necessary\_resources@{necessary\_resources}}
@@ -246,11 +344,17 @@ Implements \mbox{\hyperlink{classdhtt_1_1NodeType_a746c54085a57734a637a30a05c610
 \doxysubsubsection{\texorpdfstring{necessary\_resources}{necessary\_resources}}
 {\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::necessary\+\_\+resources\hspace{0.3cm}{\ttfamily [protected]}}
 
-\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a4ba037e1b5e2f516742154581775d237}\label{classdhtt__plugins_1_1ActionType_a4ba037e1b5e2f516742154581775d237}} 
-\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!pub\_node\_ptr@{pub\_node\_ptr}}
-\index{pub\_node\_ptr@{pub\_node\_ptr}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
-\doxysubsubsection{\texorpdfstring{pub\_node\_ptr}{pub\_node\_ptr}}
-{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$rclcpp\+::\+Node$>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::pub\+\_\+node\+\_\+ptr\hspace{0.3cm}{\ttfamily [protected]}}
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_ad71306ea28bc959667f837b860b26311}\label{classdhtt__plugins_1_1ActionType_ad71306ea28bc959667f837b860b26311}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!necessary\_world\_resources@{necessary\_world\_resources}}
+\index{necessary\_world\_resources@{necessary\_world\_resources}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{necessary\_world\_resources}{necessary\_world\_resources}}
+{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::necessary\+\_\+world\+\_\+resources\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1ActionType_a1c56af0009a00a4e4c1e0e6b69b8fcd7}\label{classdhtt__plugins_1_1ActionType_a1c56af0009a00a4e4c1e0e6b69b8fcd7}} 
+\index{dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}!remove\_resources@{remove\_resources}}
+\index{remove\_resources@{remove\_resources}!dhtt\_plugins::ActionType@{dhtt\_plugins::ActionType}}
+\doxysubsubsection{\texorpdfstring{remove\_resources}{remove\_resources}}
+{\footnotesize\ttfamily std\+::vector$<$dhtt\+\_\+msgs\+::msg\+::\+Resource$>$ dhtt\+\_\+plugins\+::\+Action\+Type\+::remove\+\_\+resources\hspace{0.3cm}{\ttfamily [protected]}}
 
 
 
