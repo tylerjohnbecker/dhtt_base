@@ -4,6 +4,7 @@ import rclpy
 import rclpy.node
 import pathlib
 import yaml
+import sys
 
 from threading import Lock
 

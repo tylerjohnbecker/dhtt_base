@@ -1,0 +1,81 @@
+NodeList: 
+  - 'TopmostThen'
+  - 'A1'
+  - 'MiddleOr'
+  - 'BottomThen'
+  - 'A2'
+  - 'A3'
+  - 'A4'
+  - 'A5'
+  - 'A6'
+  - 'A7'
+  - 'A8'
+
+# the params for each behavior should be filled in wherever there is a n/a
+Nodes:
+  TopmostThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: []
+  MiddleOr:
+    type: 3
+    behavior_type: 'dhtt_plugins::OrBehavior'
+    robot: 0
+    parent: 'TopmostThen'
+    params: []
+  BottomThen:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    robot: 0
+    parent: 'MiddleOr'
+    params: []
+  A1:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'TopmostThen'
+    params: ["activation_potential: 5.0", "c: d"]
+  A2:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'TopmostThen'
+    params: ["activation_potential: 1.0", "!g: h"]
+  A3:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'MiddleOr'
+    params: ["activation_potential: 10.0", "g: h"]
+  A4:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'BottomThen'
+    params: ["activation_potential: 10.0", "e: f"]
+  A5:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'BottomThen'
+    params: ["activation_potential: 10.0", "!c: d"]
+  A6:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'BottomThen'
+    params: ["activation_potential: 10.0", "a: b"]
+  A7:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'BottomThen'
+    params: ["activation_potential: 10.0", "!a: b"]
+  A8:
+    type: 4
+    behavior_type: 'dhtt_plugins::TestBehavior'
+    robot: 0
+    parent: 'TopmostThen'
+    params: ["activation_potential: 10.0", "i: j"]

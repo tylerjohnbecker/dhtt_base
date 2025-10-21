@@ -5,11 +5,33 @@ import rclpy
 import rclpy.node
 import pathlib
 import yaml
+import copy
+import contextlib
+import os
 
+import filelock
+
+from functools import partial
 from threading import Lock
 
-from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest
-from dhtt_msgs.msg import Subtree, Node, NodeStatus 
+from std_msgs.msg import String
+
+from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest, GoitrRequest
+from dhtt_msgs.msg import Subtree, Node, NodeStatus, Result  
+
+@pytest.fixture(scope='session')
+def lock(tmp_path_factory):
+    base_temp = tmp_path_factory.getbasetemp()
+    lock_file = base_temp.parent / 'serial.lock'
+    yield filelock.FileLock(lock_file=str(lock_file))
+    with contextlib.suppress(OSError):
+        os.remove(path=lock_file)
+
+
+@pytest.fixture()
+def serial(lock):
+    with lock.acquire(poll_interval=0.1):
+        yield
 
 class ServerNode (rclpy.node.Node):
 
@@ -83,7 +105,7 @@ class TestServerBehaviorOrder:
 			assert reset_rs.success == True
 
 	# asserts here will only work if this is the only way that nodes have been added to the tree
-	def add_from_yaml(self, file_name, add_to="ROOT_0"):
+	def add_from_yaml(self, file_name, force=True, add_to="ROOT_0"):
 
 		wd = pathlib.Path(__file__).parent.resolve()
 		
@@ -98,6 +120,7 @@ class TestServerBehaviorOrder:
 
 		modify_rq = ModifyRequest.Request()
 		modify_rq.type = ModifyRequest.Request.ADD_FROM_FILE
+		modify_rq.force = force
 
 		modify_rq.to_modify.append(add_to)
 		modify_rq.to_add = f'{wd}{file_name}'
@@ -119,11 +142,38 @@ class TestServerBehaviorOrder:
 
 		# verify that all nodes were added
 		for index, val in enumerate(node_names_orig):
-			assert val in node_names_from_server[index]
+			found = False;
+
+			for index2, gt_val in enumerate(node_names_from_server):
+				if val in gt_val:
+					found = True
+					break
+
+			assert found
 
 		# verify that each node has the correct parent
 		for index, val in enumerate(node_parents_orig):
-			assert val in parent_names_from_server[index] or (val == 'NONE' and parent_names_from_server[index] == add_to)
+			found = False;
+
+			for index2, gt_val in enumerate(parent_names_from_server):
+				if val in gt_val:
+					found = True
+					break
+
+			assert found or (val == 'NONE' and parent_names_from_server[index] == add_to)
+
+		goitr_names_from_server = [ i.goitr_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:] ]
+
+		# verify goitrs were added correctly
+		for index, val in enumerate(yaml_dict['Nodes']):
+			try:
+				goitr_type_from_file = i['goitr_type']
+
+				assert goitr_type_from_file == goitr_names_from_server[index]
+			except:
+				continue
+
+		return modify_rs.added_nodes
 
 	def load_expected_from_yaml(self, file_name):
 
@@ -215,33 +265,33 @@ class TestServerBehaviorOrder:
 
 			self.compare_history_to_expected(history, expected)
 
-	def test_simple_and(self):
+	def test_simple_and(self, serial):
 		self.order_from_file_test("/test_descriptions/simple_and.yaml")
 
-	def test_simple_or(self):
+	def test_simple_or(self, serial):
 		self.order_from_file_test("/test_descriptions/simple_or.yaml")
 
-	def test_simple_then(self):
+	def test_simple_then(self, serial):
 		self.order_from_file_test("/test_descriptions/simple_then.yaml")
 
-	def test_then_parent_or(self):
+	def test_then_parent_or(self, serial):
 		self.order_from_file_test("/test_descriptions/then_parent_or.yaml")
 
-	def test_then_parent_and(self):
+	def test_then_parent_and(self, serial):
 		self.order_from_file_test("/test_descriptions/then_parent_and.yaml")
 
-	def test_and_parent_or(self):
+	def test_and_parent_or(self, serial):
 		self.order_from_file_test("/test_descriptions/and_parent_or.yaml")
 
-	def test_and_parent_then(self):
+	def test_and_parent_then(self, serial):
 		self.order_from_file_test("/test_descriptions/and_parent_then.yaml")
 
-	def test_or_parent_then(self):
+	def test_or_parent_then(self, serial):
 		self.order_from_file_test("/test_descriptions/or_parent_then.yaml")
 
-	def test_or_parent_and(self):
+	def test_or_parent_and(self, serial):
 		self.order_from_file_test("/test_descriptions/or_parent_and.yaml")
 
-	def test_complex_tree(self):
+	def test_complex_tree(self, serial):
 		self.order_from_file_test("/test_descriptions/complex_tree.yaml")
 

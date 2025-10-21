@@ -6,9 +6,11 @@ if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
 endif()
 
-# Default to C++14
+# Default to C++20 ( for reasons )
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
+  # set(CMAKE_CXX_COMPILER g++-10)
+  # set(CMAKE_CXX_FLAGS "-static-libstdc++")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -25,11 +27,12 @@ find_package(pluginlib REQUIRED)
 
 find_package(yaml-cpp REQUIRED)
 
-find_package(Boost REQUIRED COMPONENTS
-  thread)
+find_library(LIBSTDCXX_10 libstdc++.so.6 PATHS)
 
 # make nodes
-add_library(dhtt_lib SHARED src/tree/node.cc)
+add_library(dhtt_lib SHARED 
+                      src/utils/condition_utils.cc src/utils/resource_utils.cc 
+                      src/tree/node.cc src/server/main_server.cc src/planning/goitr_type.cc src/server/sub_server.cc)
 target_include_directories(dhtt_lib PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
@@ -44,15 +47,17 @@ install(
   RUNTIME DESTINATION bin
 )
 
-
-add_executable(start_server src/main.cpp src/server/main_server.cc)
+add_executable(start_server src/main.cpp )
 ament_target_dependencies(start_server rclcpp rclcpp_action rcl_yaml_param_parser dhtt_msgs yaml-cpp pluginlib)
 target_include_directories(start_server PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_link_libraries(start_server dhtt_lib ${YAML_CPP_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(start_server dhtt_lib ${YAML_CPP_LIBRARIES})
 
-install(TARGETS start_server 
+add_executable(param_node src/param_node.cpp)
+ament_target_dependencies(param_node rclcpp)
+
+install(TARGETS start_server param_node
   DESTINATION lib/${PROJECT_NAME})
 
 ament_python_install_package(${PROJECT_NAME})
@@ -64,12 +69,19 @@ install(PROGRAMS
   scripts/visualize_results.py
   DESTINATION lib/${PROJECT_NAME})
 
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
+
 if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
   set(_pytest_tests
     tests/test_add_remove.py
     tests/test_behavior_order.py
     tests/test_dynamic_changes.py
+    tests/test_pre_post.py
+    # tests/test_goitr_basic.py
     )
 
   foreach(_test_path ${_pytest_tests})

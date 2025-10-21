@@ -1,0 +1,27 @@
+NodeList: 
+  - 'moveTo'
+  - 'look'
+
+### Find GOiTR
+# brief: subtree template for the find behavior which finds a target object in the environment
+#
+# params:
+#   - ap: activation potential of the subtree ( set for testing only )
+#   - initial_dest: first destination to check in the environment 
+#   - target: target object to find
+#
+# attach to: THEN node for expected behavior
+          
+Nodes:
+  moveTo:
+    type: 4
+    behavior_type: 'dhtt_plugins::MockMoveBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: ['activation_potential: $ap', 'dest: $initial_dest']
+  look:
+    type: 4
+    behavior_type: 'dhtt_plugins::MockLookBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: ['activation_potential: $ap', 'object: $target']

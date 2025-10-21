@@ -6,6 +6,8 @@
 #include <string>
 
 // #include "dhtt/tree/node.hpp"
+#include "dhtt/utils.hpp"
+#include "dhtt/server/communication_aggregator.hpp"
 
 namespace dhtt
 {
@@ -28,7 +30,7 @@ namespace dhtt
 	 * \brief Base class describing the logic of the nodes
 	 * 
 	 * This is an interface for how to write the logic of a node. This encompasses both task nodes and behavior nodes. Each node needs describe how to initialize, how to perform the auction,
-	 * 	what work to perform, how to parse params, and how to calculate activation_potential.
+	 * 	what work to perform, how to parse params, and how to calculate perceived efficiency.
 	 */
 	class NodeType
 	{
@@ -45,6 +47,13 @@ namespace dhtt
 		 * \return void
 		 */
 		virtual void initialize(std::vector<std::string> params) = 0;
+
+		/**
+		 * \brief just available in case there are any non-trivial resource cleanups in any nodetypes
+		 * 
+		 * \return void
+		 */
+		virtual void destruct() {};
 
 		/**
 		 * \brief functionality for completing an auction
@@ -72,6 +81,18 @@ namespace dhtt
 		virtual std::shared_ptr<dhtt_msgs::action::Activation::Result> work_callback( Node* container ) = 0;
 
 		/**
+		 * \brief top down maintainer for pre and post conditions of this node
+		 * 
+		 * This should describe how the pre and postconditions of this node's children are combined at this node. For behaviors this is left empty as they will not have children, and for tasks 
+		 * 	the combining behavior should be described in detail. 
+		 * 
+		 * \param container pointer to the node class which owns the node type in order to give use of the public methods
+		 * 
+		 * \return void
+		 */
+		virtual void maintain_conditions( dhtt::Node* container ) { (void) container; };
+
+		/**
 		 * \brief method to parse the input parameters for the NodeType
 		 * 
 		 * generally should take the parameters from the description file and parse them in some way. This could include just setting flags, getting topic names for information retrieval, etc.
@@ -89,7 +110,7 @@ namespace dhtt
 		 * 
 		 * \return activation potential value (0 -> 1 by convention) 
 		 */
-		virtual double get_perceived_efficiency() = 0;
+		virtual double get_perceived_efficiency(dhtt::Node* container) = 0;
 		
 		/**
 		 * \brief check for if the node is finished running
@@ -111,16 +132,54 @@ namespace dhtt
 		 */
 		virtual bool can_add_child() {return this->children_allowed;};
 
+		/**
+		 * \brief returns the preconditions of the behavior
+		 * 
+		 * Preconditions should be defined by saving key: val pairs when creating the logic of a node. They should be saved in the preconditions member of this class. 
+		 * 
+		 * \return preconditions in a PredicateConjunction
+		 */
+		virtual dhtt_utils::PredicateConjunction get_preconditions() {return this->preconditions;};
+
+		/**
+		 * \brief returns the postconditions of the behavior
+		 * 
+		 * postconditions should be defined by saving key: val pairs when creating the logic of a node. They should be saved in the postconditions member of this class. Inheriting classes also have the option
+		 * 	of changing their postconditions based on the success/failure of different parts of a behavior.
+		 * 
+		 * \return postconditions in a PredicateConjunction
+		 */
+		virtual dhtt_utils::PredicateConjunction get_postconditions() {return this->postconditions;};
+
+		/**
+		 * \brief releases all node resources
+		 * 
+		 * This is mostly for the root node to release resources on a request from the main server although there might be other uses for it in the future
+		 * 
+		 * \return void
+		 */
+		virtual void release_all_resources() {};
+
+		virtual void set_name(std::string name)
+		{
+			this->name = name;
+		};
+
 		goal_t goal_type = PERSISTENT;
 
 		std::vector<dhtt_msgs::msg::Resource> necessary_resources;
 
 		std::vector<std::string> params;
-		std::vector<std::string> preconditions;
+
+		// I don't know if I want to leave it like this, but... This parameter is set shortly after the factory in dhtt::Node build this NodeType but before initialization
+		std::shared_ptr<CommunicationAggregator> com_agg;
 
 	protected:
-
+		dhtt_utils::PredicateConjunction preconditions;
+		dhtt_utils::PredicateConjunction postconditions;
 		bool children_allowed;
+
+		std::string name;
 	};
 
 }

@@ -6,9 +6,9 @@ if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
 endif()
 
-# Default to C++14
+# Default to C++20
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 20)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -23,8 +23,15 @@ find_package(dhtt REQUIRED)
 find_package(dhtt_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 
-add_library(dhtt_plugins SHARED src/dhtt_plugins.cpp src/behaviors/test_behavior.cc src/behaviors/action_type.cc src/tasks/root_behavior.cc src/tasks/and_behavior.cc 
-                                src/tasks/then_behavior.cc src/tasks/or_behavior.cc src/behaviors/move_behavior.cc src/behaviors/pick_behavior.cc src/behaviors/place_behavior.cc)
+add_library(dhtt_plugins SHARED src/dhtt_plugins.cpp
+                                src/tasks/root_behavior.cc src/tasks/and_behavior.cc src/tasks/then_behavior.cc src/tasks/or_behavior.cc
+                                src/behaviors/test/test_behavior.cc 
+                                # src/behaviors/test/mock_move_behavior.cc src/behaviors/test/mock_look_behavior.cc
+                                src/behaviors/action_type.cc src/behaviors/move_behavior.cc src/behaviors/pick_behavior.cc src/behaviors/place_behavior.cc
+                                # src/goitrs/goitr_test.cc src/goitrs/find_goitr.cc
+                                src/potentials/efficiency_potential.cc src/potentials/resource_potential.cc
+                                src/tree/ptr_branch.cc)
+
 target_include_directories(dhtt_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)

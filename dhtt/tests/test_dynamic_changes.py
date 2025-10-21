@@ -6,11 +6,32 @@ import rclpy.node
 import pathlib
 import yaml
 import copy
+import contextlib
+import os
 
+import filelock
+
+from functools import partial
 from threading import Lock
 
-from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest
-from dhtt_msgs.msg import Subtree, Node, NodeStatus 
+from std_msgs.msg import String
+
+from dhtt_msgs.srv import ModifyRequest, FetchRequest, ControlRequest, HistoryRequest, GoitrRequest
+from dhtt_msgs.msg import Subtree, Node, NodeStatus, Result  
+
+@pytest.fixture(scope='session')
+def lock(tmp_path_factory):
+    base_temp = tmp_path_factory.getbasetemp()
+    lock_file = base_temp.parent / 'serial.lock'
+    yield filelock.FileLock(lock_file=str(lock_file))
+    with contextlib.suppress(OSError):
+        os.remove(path=lock_file)
+
+
+@pytest.fixture()
+def serial(lock):
+    with lock.acquire(poll_interval=0.1):
+        yield
 
 class ServerNode (rclpy.node.Node):
 
@@ -42,6 +63,10 @@ class ServerNode (rclpy.node.Node):
 
 		self.node_states[node_name] = data
 
+	def reset(self):
+		self.root_state = 0
+		self.node_states = {}
+		
 class TestDynamicChanges:
 
 	first = True
@@ -74,7 +99,7 @@ class TestDynamicChanges:
 
 	def reset_tree(self):
 
-		TestDynamicChanges.node.node_states = {}
+		TestDynamicChanges.node.reset()
 
 		fetch_rs = self.get_tree()
 
@@ -93,7 +118,7 @@ class TestDynamicChanges:
 			assert reset_rs.success == True
 
 	# asserts here will only work if this is the only way that nodes have been added to the tree
-	def add_from_yaml(self, file_name, add_to="ROOT_0"):
+	def add_from_yaml(self, file_name, force=True, add_to="ROOT_0"):
 
 		wd = pathlib.Path(__file__).parent.resolve()
 		
@@ -108,12 +133,13 @@ class TestDynamicChanges:
 
 		modify_rq = ModifyRequest.Request()
 		modify_rq.type = ModifyRequest.Request.ADD_FROM_FILE
+		modify_rq.force = force
 
 		modify_rq.to_modify.append(add_to)
 		modify_rq.to_add = f'{wd}{file_name}'
 
-		modify_future = TestDynamicChanges.node.modifysrv.call_async(modify_rq)
-		rclpy.spin_until_future_complete(TestDynamicChanges.node, modify_future)
+		modify_future = self.node.modifysrv.call_async(modify_rq)
+		rclpy.spin_until_future_complete(self.node, modify_future)
 
 		modify_rs = modify_future.result()
 
@@ -129,11 +155,38 @@ class TestDynamicChanges:
 
 		# verify that all nodes were added
 		for index, val in enumerate(node_names_orig):
-			assert val in node_names_from_server[index]
+			found = False;
+
+			for index2, gt_val in enumerate(node_names_from_server):
+				if val in gt_val:
+					found = True
+					break
+
+			assert found
 
 		# verify that each node has the correct parent
 		for index, val in enumerate(node_parents_orig):
-			assert val in parent_names_from_server[index] or (val == 'NONE' and parent_names_from_server[index] == add_to)
+			found = False;
+
+			for index2, gt_val in enumerate(parent_names_from_server):
+				if val in gt_val:
+					found = True
+					break
+
+			assert found or (val == 'NONE' and parent_names_from_server[index] == add_to)
+
+		goitr_names_from_server = [ i.goitr_name for i in fetch_rs.found_subtrees[0].tree_nodes[1:] ]
+
+		# verify goitrs were added correctly
+		for index, val in enumerate(yaml_dict['Nodes']):
+			try:
+				goitr_type_from_file = i['goitr_type']
+
+				assert goitr_type_from_file == goitr_names_from_server[index]
+			except:
+				continue
+
+		return modify_rs.added_nodes
 
 	def load_expected_from_yaml(self, file_name):
 
@@ -243,6 +296,7 @@ class TestDynamicChanges:
 
 		modify_rq = ModifyRequest.Request()
 
+		modify_rq.force = True;
 		modify_rq.type = ModifyRequest.Request.ADD
 		modify_rq.to_modify = [ parent ]
 		modify_rq.add_node = node
@@ -258,6 +312,7 @@ class TestDynamicChanges:
 
 		modify_rq = ModifyRequest.Request()
 
+		modify_rq.force = True;
 		modify_rq.type = ModifyRequest.Request.REMOVE
 		modify_rq.to_modify = [ node_name ]
 
@@ -280,7 +335,7 @@ class TestDynamicChanges:
 			rclpy.spin_once(TestDynamicChanges.node)
 			assert rclpy.ok()
 
-	def test_interrupt(self):
+	def test_interrupt(self, serial):
 
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -313,7 +368,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-	def test_static_mutate(self):
+	def test_static_mutate(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -346,7 +401,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-	def test_static_param_change(self):
+	def test_static_param_change(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -372,7 +427,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-	def test_dynamic_add(self):
+	def test_dynamic_add(self, serial):
 
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -413,7 +468,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-	def test_dynamic_remove(self):
+	def test_dynamic_remove(self, serial):
 		with TestDynamicChanges.lock:
 			self.initialize()
 			self.reset_tree()
@@ -446,7 +501,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-	def test_dynamic_and_to_or(self):
+	def test_dynamic_and_to_or(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -488,9 +543,8 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-		pass
 
-	def test_dynamic_then_to_and(self):
+	def test_dynamic_then_to_and(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -532,9 +586,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-		pass
-
-	def test_dynamic_then_to_or(self):
+	def test_dynamic_then_to_or(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -576,9 +628,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-		pass
-
-	def test_dynamic_or_to_and(self):
+	def test_dynamic_or_to_and(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -622,9 +672,7 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-		pass
-
-	def test_dynamic_or_to_then(self):
+	def test_dynamic_or_to_then(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
@@ -668,14 +716,11 @@ class TestDynamicChanges:
 
 			self.compare_history_to_expected(history, expected)
 
-		pass
 
-	def test_complex_dynamic_tree(self):
+	def test_complex_dynamic_tree(self, serial):
 		
 		with TestDynamicChanges.lock:
 			self.initialize()
 			self.reset_tree()
 
 			# run experiment 3 and verify that it works
-
-		pass

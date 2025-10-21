@@ -1,7 +1,3 @@
-/**
- * insert docs here
- */
-
 // CPP standard libraries
 #include <iostream>
 #include <memory>
@@ -18,7 +14,12 @@ int main (int argc, char** argv)
 
 	std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
 
-	auto my_server = std::make_shared<dhtt::MainServer>("dHTT_server", spinner);
+	bool slow = false;
+
+	if ( argc > 2 )
+		slow = true;
+
+	auto my_server = std::make_shared<dhtt::MainServer>("dHTT_server", spinner, slow);
 
 	RCLCPP_INFO(my_server->get_logger(), "Server started...");
 

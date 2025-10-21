@@ -18,12 +18,21 @@ string[]				params
 # this is the type of each node
 int8 					type
 string					plugin_name
+string					goitr_name
+string                  potential_type
 
 # the resources that the node has been given access to
-dhtt_msgs/Resource[]		owned_resources
+dhtt_msgs/Resource[]	owned_resources
+
+# number of resources controlled by this subtree
+int32                   subtree_owned_resources
 
 # this is an indicator of the status of the node
 dhtt_msgs/NodeStatus	node_status
+
+# this is a list of the local pre and postconditions for this node
+string                  preconditions
+string                  postconditions
 
 # node type declarations (for specific behavior types use the common name parameter as well)
 int8 					ROOT=0
@@ -31,3 +40,4 @@ int8 					AND=1
 int8 					THEN=2
 int8 					OR=3
 int8 					BEHAVIOR=4
+int8                    SUBTREE=5

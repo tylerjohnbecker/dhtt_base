@@ -6,9 +6,9 @@ if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
 endif()
 
-# Default to C++14
+# Default to C++20
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 20)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -19,6 +19,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   # message files
@@ -27,6 +28,9 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Resource.msg"
   "msg/Resources.msg"
   "msg/NodeStatus.msg"
+  "msg/Pair.msg"
+  "msg/UpdateInfo.msg"
+  "msg/Result.msg"
 
   # service files
   "srv/ControlRequest.srv"
@@ -36,12 +40,18 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/InternalControlRequest.srv"
   "srv/InternalModifyRequest.srv"
   "srv/InternalServiceRegistration.srv"
+  "srv/FetchInfo.srv"
+  "srv/GoitrRequest.srv"
+  "srv/ResourceRequest.srv"
+#  "srv/NutreeJsonRequest.srv"
 
   # action files
   "action/Activation.action"
+  "action/Condition.action"
 
   # dependecies for messages
   DEPENDENCIES std_msgs
+  DEPENDENCIES geometry_msgs
   )
 
 if(BUILD_TESTING)

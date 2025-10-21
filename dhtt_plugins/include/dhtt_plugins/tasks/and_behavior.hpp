@@ -29,7 +29,9 @@ namespace dhtt_plugins
 		 * \brief auction behavior for the AND node.
 		 * 
 		 * An AND node runs all of it's children in an unspecified order. The auction activates all children and collects their requests. Then, the request with the
-		 * 	highest activation potential is chosen and sent up the tree. All other children are returned to the WAITING state.
+		 * 	highest activation potential is chosen and sent up the tree. All other children are returned to the WAITING state. When the AND node is first activated
+		 * 	it saves the resources that were passed and always passes those to the children. When each child is finished the AND adds the passed resources to a full
+		 * 	list and then when it finishes passes the entire list of resources from the children.
 		 * 
 		 * \param container see dhtt::NodeType
 		 * 
@@ -39,10 +41,13 @@ namespace dhtt_plugins
 
 		/**
 		 * \brief work behavior for the AND node.
-		 * 
-		 * The AND node 
 		 */
 		std::shared_ptr<dhtt_msgs::action::Activation::Result> work_callback( dhtt::Node* container ) override;
+
+		/**
+		 * \brief the AND node performs a logical and of the predicates of its children for both pre and post conditions
+		 */
+		void maintain_conditions(dhtt::Node* container) override;
 
 		/**
 		 * \brief this behavior takes no parameters
@@ -56,7 +61,7 @@ namespace dhtt_plugins
 		 * 
 		 * \return activation potential of this subtask 
 		 */
-		double get_perceived_efficiency() override;
+		double get_perceived_efficiency(dhtt::Node* container) override;
 
 		/**
 		 * \brief this behavior is done when all children are done
@@ -64,8 +69,23 @@ namespace dhtt_plugins
 		bool is_done() override;
 
 	protected:
+
+		/**
+		 * \brief updates the total passed resources from an Activation result message
+		 * 
+		 * \param result used to update total
+		 * 
+		 * \return void
+		 */
+		void update_total_passed(dhtt_msgs::action::Activation::Result result);
+	
 		int num_active_children;
 		double activation_potential;
+
+		bool first_activation;
+
+		std::vector<dhtt_msgs::msg::Resource> initially_passed;
+		std::vector<dhtt_msgs::msg::Resource> total_passed;
 
 	private:
 	};

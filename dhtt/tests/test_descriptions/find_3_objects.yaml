@@ -1,0 +1,34 @@
+NodeList:
+  - ParentAnd
+  - Find1
+  - Find2
+  - Find3
+
+Nodes:
+  ParentAnd:
+    type: 1
+    behavior_type: 'dhtt_plugins::AndBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: []
+  Find1:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    goitr_type: 'dhtt_plugins::FindGoitr'
+    robot: 0
+    parent: 'ParentAnd'
+    params: ['find_test.yaml', 'ap: 1.0', 'initial_dest: location_0', 'target: object_0']
+  Find2:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    goitr_type: 'dhtt_plugins::FindGoitr'
+    robot: 0
+    parent: 'ParentAnd'
+    params: ['find_test.yaml', 'ap: 2.0', 'initial_dest: location_0', 'target: object_4']
+  Find3:
+    type: 2
+    behavior_type: 'dhtt_plugins::ThenBehavior'
+    goitr_type: 'dhtt_plugins::FindGoitr'
+    robot: 0
+    parent: 'ParentAnd'
+    params: ['find_test.yaml', 'ap: 0.5', 'initial_dest: location_0', 'target: object_2']

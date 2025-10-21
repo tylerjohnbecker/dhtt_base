@@ -2,18 +2,25 @@
 int8 				type
 
 # list of nodes to be modified (added to, removed, or updated)
-string[] 	to_modify
+string[] 			to_modify
+
+# when modifying nodes we can either check if preconditions will be violated (false), or not (true)
+bool				force
 
 # optional: description of node to add to the tree
 dhtt_msgs/Node 		add_node
 
+# optional: index of the position to add the node at in the to_modify's children
+int8				index
+
 # optional: file path and name of the subtree to add to the current tree
 string			 	to_add
+string[] 			file_args # arguments are parameters in the files which look like $arg_name, strings here should look like '$arg_name: val'
 
 # optional: string description of the parameters to change (strings are of the form "param: val")
 string[] 			params
 
-# optional: type of node to mutate into (given by the types in the Node.msg file, or as a literal name in the case of behaviors)
+# optional: type of node to mutate into (actual name of the plugin should be here)
 string			 	mutate_type
 
 # msg constants (self explanatory)

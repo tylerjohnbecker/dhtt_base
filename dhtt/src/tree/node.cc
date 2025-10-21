@@ -2,32 +2,111 @@
 
 namespace dhtt
 {
-	Node::Node(std::string name, std::string type, std::vector<std::string> params, std::string p_name) : rclcpp::Node( name ), node_type_loader("dhtt", "dhtt::NodeType"), 
-			name(name), parent_name(p_name), priority(1), resource_status_updated(false)
+	Node::Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string p_name, std::string branch_socket_type, std::string goitr_type, std::string potential_type) : 
+			conc_group(nullptr), node_type_loader("dhtt", "dhtt::NodeType"), goitr_type_loader("dhtt", "dhtt::GoitrType"), 
+			branch_socket_type_loader("dhtt", "dhtt::BranchSocketType"), branch_plug_type_loader("dhtt", "dhtt::BranchPlugType"), potential_type_loader("dhtt", "dhtt::PotentialType"),
+			name(name), parent_name(p_name), priority(1), resource_status_updated(false), first_activation(true), active(false)
 	{
+		// create a callback group for parallel ones
+		// this->conc_group = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+		// this->sub_opts.callback_group = this->conc_group;
+		// this->pub_opts.callback_group = this->conc_group;
+
+		this->active_child_name = "";
 		this->error_msg = "";
 		this->successful_load = true;
+		this->has_goitr = false;
+		this->resources_owned_by_subtree = 0;
+
+		this->global_com = com_agg;
 
 		try
 		{
-			this->logic = node_type_loader.createSharedInstance(type);
+			this->logic = this->node_type_loader.createSharedInstance(type);
 		}
 		catch (pluginlib::PluginlibException& ex)
 		{
 			this->error_msg = "Error when loading plugin " + type + ": " + ex.what();
 			this->successful_load = false;
 
+			DHTT_LOG_ERROR(this->global_com, this->error_msg);
+
 			return;
 		}
 
-		this->plugin_name = type;
+		try
+		{
+			this->parent_communication_socket = this->branch_socket_type_loader.createSharedInstance(branch_socket_type);
 
+			this->parent_communication_socket->initialize(this);
+		}
+		catch (pluginlib::PluginlibException& ex)
+		{
+			this->error_msg = "Error when loading plugin " + branch_socket_type + ": " + ex.what();
+			this->successful_load = false;
+
+			DHTT_LOG_ERROR(this->global_com, this->error_msg);
+
+			return;
+		}
+
+		try
+		{
+			this->potential = this->potential_type_loader.createSharedInstance(potential_type);
+		}
+		catch (pluginlib::PluginlibException& ex)
+		{
+			this->error_msg = "Error when loading plugin " + potential_type + ": " + ex.what();
+			this->successful_load = false;
+
+			DHTT_LOG_ERROR(this->global_com, this->error_msg);
+
+			return;
+		}
+
+		if ( strcmp(goitr_type.c_str(), "") )
+		{
+			try
+			{
+				this->replanner = goitr_type_loader.createSharedInstance(goitr_type);
+			}
+			catch (pluginlib::PluginlibException& ex)
+			{
+				this->error_msg = "Error when loading plugin " + goitr_type + ": " + ex.what();
+				this->successful_load = false;
+
+				return;
+			}
+
+			this->replanner->initialize(this->name, params);	
+			this->has_goitr = true;
+		}
+
+		this->plugin_name = type;
+		this->socket_name = branch_socket_type;
+		this->goitr_name = goitr_type;
+
+		this->logic->com_agg = this->global_com;
+		this->logic->set_name(name);
 		this->logic->initialize(params);
+		this->subtree_has_changed = true;
 	}
 
 	Node::~Node()
 	{
+		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
+
+		this->global_com->unregister_subscription<dhtt_msgs::msg::Resources>(resources_topic, this->name);
+
 		// empty for now
+		if ( this->has_goitr )	
+			this->replanner->destruct();
+
+		for ( auto& pair : this->child_communication_plugs ) // std::pair< std::string, std::pair< bool , std::shared_ptr<BranchPlugType>>>
+			pair.second.second->destruct();
+
+		this->parent_communication_socket->destruct();
+		this->logic->destruct();
 	}
 
 	bool Node::loaded_successfully()
@@ -38,6 +117,11 @@ namespace dhtt
 	std::string Node::get_error_msg()
 	{
 		return this->error_msg;
+	}
+
+	int Node::get_subtree_resources()
+	{
+		return this->resources_owned_by_subtree;
 	}
 
 	std::vector<dhtt_msgs::msg::Resource> Node::get_owned_resources()
@@ -55,6 +139,21 @@ namespace dhtt
 		return this->available_resources;
 	}
 
+	std::shared_ptr<BranchSocketType> Node::get_socket_ptr()
+	{
+		return this->parent_communication_socket;
+	}
+
+	std::shared_ptr<CommunicationAggregator> Node::get_com_agg()
+	{
+		return this->global_com;
+	}
+		
+	std::shared_ptr<NodeType> Node::get_logic()
+	{
+		return this->logic;
+	}
+
 	void Node::set_passed_resources(std::vector<dhtt_msgs::msg::Resource> set_to)
 	{
 		// this is an unsafe method for now. USE AT YOUR OWN DISCRETION
@@ -63,77 +162,67 @@ namespace dhtt
 		this->passed_resources = set_to;
 	}
 
-	void Node::register_with_parent()
-	{
-		// should only evaluate to false in the case of ROOT
-		if ( strcmp(this->parent_name.c_str(), "NONE") )
-		{
-			std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Request> req = std::make_shared<dhtt_msgs::srv::InternalServiceRegistration::Request>();
-			req->node_name = this->name;
-
-			std::string parent_register_topic = std::string(TREE_PREFIX) + "/" + this->parent_name + REGISTER_CHILD_POSTFIX;
-
-			rclcpp::Client<dhtt_msgs::srv::InternalServiceRegistration>::SharedPtr client = this->create_client<dhtt_msgs::srv::InternalServiceRegistration>(parent_register_topic);
-
-			// utilizing the scope herre to avoid namespacing issues
-			{
-				using namespace std::chrono_literals;
-				while ( not client->wait_for_service(1s) and rclcpp::ok() );
-
-				if (rclcpp::ok())
-				{
-
-					auto result = client->async_send_request(req);
-
-					if ( result.wait_for(2s) == std::future_status::ready)
-					{
-
-						if (not result.get()->success)
-						{
-							this->error_msg = "Failed to register as a child of parent " + parent_name + ". Is it allowed to have children?";
-							this->successful_load = false;
-						}
-					}
-					else
-					{
-						this->error_msg = "Timed out waiting for response from service " + parent_register_topic + ". Returning in error.";
-						this->successful_load = false;
-					}
-				}
-				else
-				{
-					this->error_msg = "Exited while waiting for service " + parent_register_topic + " to start. Returning in error";
-					this->successful_load = false;
-				}
-			}
-		}
-	}
-
 	void Node::register_servers()
 	{
 		// set up services and action servers
-		std::string my_register_topic = std::string(TREE_PREFIX) + "/" + name + REGISTER_CHILD_POSTFIX;
-		std::string my_activation_topic = std::string(TREE_PREFIX) + "/" + name + ACTIVATION_POSTFIX;
 		std::string resources_topic = std::string(TREE_PREFIX) + RESOURCES_POSTFIX;
+		
+		this->status_pub = this->global_com->register_publisher<dhtt_msgs::msg::Node>("/status");
 
-		this->register_server = this->create_service<dhtt_msgs::srv::InternalServiceRegistration>(my_register_topic, std::bind(&Node::register_child_callback, this, std::placeholders::_1, std::placeholders::_2));
+		// this->status_pub = this->create_publisher<dhtt_msgs::msg::Node>("/status", 10, this->pub_opts);
+		// this->knowledge_pub = this->create_publisher<std_msgs::msg::String>("/updated_knowledge", 10);
 
-		this->status_pub = this->create_publisher<dhtt_msgs::msg::Node>("/status", 10);
-
-		this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1));
-
-		this->activation_server = rclcpp_action::create_server<dhtt_msgs::action::Activation>(this, my_activation_topic,
-			std::bind(&Node::goal_activation_callback, this, std::placeholders::_1, std::placeholders::_2),
-			std::bind(&Node::cancel_activation_callback, this, std::placeholders::_1),
-			std::bind(&Node::activation_accepted_callback, this, std::placeholders::_1));
+		// this->global_com->register_subscription<dhtt_msgs::msg::Resources>(resources_topic, this->name, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1) );
+		// this->resources_sub = this->create_subscription<dhtt_msgs::msg::Resources>(resources_topic, 10, std::bind(&Node::resource_availability_callback, this, std::placeholders::_1), this->sub_opts);
 
 		this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
-		RCLCPP_INFO(this->get_logger(), "\tServers registered for node %s", this->name.c_str());
+		DHTT_LOG_INFO(this->global_com, "\tServers registered for node " << this->name);
+	}
+
+	bool Node::add_child(std::shared_ptr<BranchSocketType> socket_ptr, std::string child_name, std::string plug_type, int index)
+	{
+
+		std::lock_guard<std::mutex> guard(this->logic_mut);
+		std::lock_guard<std::mutex> maintenance_guard(this->maintenance_mut);
+
+		if (not this->logic->can_add_child())
+		{
+			this->error_msg = "This node cannot add children.";
+
+			return false;
+		}
+
+		std::shared_ptr<BranchPlugType> n_plug_ptr;
+
+		try
+		{
+			n_plug_ptr = this->branch_plug_type_loader.createSharedInstance(plug_type);
+
+			n_plug_ptr->initialize(this, socket_ptr, child_name);
+		}
+		catch (pluginlib::PluginlibException& ex)
+		{
+			this->error_msg = "Error when loading plugin " + plug_type + ": " + ex.what();
+
+			return false;
+		}
+
+		std::pair<bool, std::shared_ptr<BranchPlugType>> n_pair{false, n_plug_ptr};
+
+		this->child_communication_plugs[child_name] = n_pair;
+
+		auto name_index_iter = (index == -1)? this->child_names.end() : this->child_names.begin() + index;
+		this->child_names.insert(name_index_iter, child_name);
+		this->child_changed[child_name] = true;
+
+		return true;
 	}
 
 	bool Node::remove_child(std::string child_name)
 	{
+		std::lock_guard<std::mutex> lock(this->maintenance_mut);
+
 		auto found_name = [&]( std::string to_check ) { return not strcmp(to_check.c_str(), child_name.c_str()); };
 
 		auto found_iter = std::find_if(this->child_names.begin(), this->child_names.end(), found_name);
@@ -141,36 +230,29 @@ namespace dhtt
 		if ( found_iter == this->child_names.end() )
 			return false;
 
-		int found_index = std::distance(this->child_names.begin(), found_iter);
+		this->child_communication_plugs[child_name].second->destruct();
+		this->child_communication_plugs.erase(child_name);
 
-		this->activation_clients.erase(std::next(this->activation_clients.begin(), found_index));
 		this->child_names.erase(found_iter);
+		this->child_changed.erase(child_name);
 
 		return true;
 	}
 	
-	void Node::async_activate_child(std::string child_name, dhtt_msgs::action::Activation::Goal activation_goal)
+	bool Node::async_activate_child(std::string child_name, dhtt_msgs::action::Activation::Goal activation_goal)
 	{
-		auto found_name = [&]( std::string to_check ) { return not strcmp(to_check.c_str(), child_name.c_str()); };
+		if ( this->child_communication_plugs[child_name].first or not this->child_communication_plugs[child_name].second->async_send_activate(activation_goal) )
+			return false;
 
-		auto found_iter = std::find_if(this->child_names.begin(), this->child_names.end(), found_name);
-		int found_index = std::distance(this->child_names.begin(), found_iter);
+		this->child_communication_plugs[child_name].first = true;
+		return true;
+	}
 
-		auto client_iter = std::next(this->activation_clients.begin(), found_index);
+	bool Node::async_request_conditions(std::string child_name, dhtt_msgs::action::Condition::Goal condition_goal)
+	{
+		DHTT_LOG_DEBUG(this->global_com, "Requesting conditions from [" << child_name << "]");
 
-		if ( not (*client_iter)->wait_for_action_server() )
-		{
-			this->error_msg = "Cannot reach action server of requested child, are you sure it started up?";
-			return;
-		}
-
-		this->expected_responses++;
-
-		auto send_goal_options = rclcpp_action::Client<dhtt_msgs::action::Activation>::SendGoalOptions();
-
-		send_goal_options.result_callback = std::bind(&Node::store_result_callback, this, std::placeholders::_1, child_name);
-
-		(*client_iter)->async_send_goal(activation_goal, send_goal_options);
+		return this->child_communication_plugs[child_name].second->async_send_maintain(condition_goal);
 	}
 
 	void Node::activate_all_children(dhtt_msgs::action::Activation::Goal activation_goal)
@@ -178,32 +260,67 @@ namespace dhtt
 		for (std::string iter : this->child_names)
 			this->async_activate_child(iter, activation_goal);
 	}
-
-	bool Node::block_for_responses_from_children()
+	
+	void Node::request_conditions_from_children()
 	{
-		// RCLCPP_INFO(this->get_logger(), "Waiting for %d responses from children, currently received %d...", this->expected_responses, this->stored_responses );
+		dhtt_msgs::action::Condition::Goal n_goal;
+		n_goal.type = dhtt_msgs::action::Condition::Goal::MAINTAIN;
 
-		while (this->stored_responses < this->expected_responses);
+		for (std::string iter : this->child_names)
+			if ( this->child_changed[iter] )
+				this->async_request_conditions(iter, n_goal);
+	}
 
-		// RCLCPP_INFO(this->get_logger(), "Responses received!");
+	bool Node::block_for_activation_from_children()
+	{
+		for ( auto& pair : this->child_communication_plugs )
+			if ( pair.second.first )
+				pair.second.second->block_for_activation_response();
 
 		return true;
 	}
+	
+	bool Node::block_for_conditions_from_children()
+	{
+		for ( const auto& pair : this->child_communication_plugs )
+		{
+			pair.second.second->block_for_maintain_response();
 
-	std::map<std::string, dhtt_msgs::action::Activation::Result::SharedPtr> Node::get_activation_results()
+			this->child_changed[pair.first] = false;
+		}
+			
+		return true;
+	}
+
+	std::map<std::string, dhtt_msgs::action::Activation::Result> Node::get_activation_results()
 	{	
-		// reset values for storing responses
-		this->stored_responses = 0;
-		this->expected_responses = 0;
+		std::map<std::string, dhtt_msgs::action::Activation::Result> to_ret;
 
-		// RCLCPP_INFO(this->get_logger(), "Responses requested so deleting local values...");
+		for ( auto iter : this->child_names )
+		{
+			if ( this->child_communication_plugs[iter].first )
+			{
+				dhtt_msgs::action::Activation::Result res = this->child_communication_plugs[iter].second->get_activation_result();
+				this->child_communication_plugs[iter].first = false;
 
-		std::map<std::string, dhtt_msgs::action::Activation::Result::SharedPtr> to_ret;
+				to_ret[iter] = res;
+			}
+		}
 
-		for ( auto const& x : this->responses )
-			to_ret[x.first] = x.second;
+		return to_ret;
+	}
 
-		this->responses.clear();
+	std::map<std::string, dhtt_msgs::action::Condition::Result> Node::get_condition_results()
+	{
+		std::map<std::string, dhtt_msgs::action::Condition::Result> to_ret;
+
+		for ( auto iter : this->child_names )
+		{
+			dhtt_msgs::action::Condition::Result res = this->child_communication_plugs[iter].second->get_maintain_result();
+
+			if ( res != dhtt_msgs::action::Condition::Result() )
+				to_ret[iter] = res;
+		}
 
 		return to_ret;
 	}
@@ -228,23 +345,30 @@ namespace dhtt
 		bool is_possible = true;
 	
 		dhtt_msgs::msg::Resource looking_for;
-		auto find_fulfill = [&]( dhtt_msgs::msg::Resource to_check )
+		std::function<bool(dhtt_msgs::msg::Resource)> find_fulfill_by_type = [&]( dhtt_msgs::msg::Resource to_check )
 		{
 			return (looking_for.type == to_check.type) and not to_check.locked;
+		};
+
+		std::function<bool(dhtt_msgs::msg::Resource)> find_fulfill_by_name = [&]( dhtt_msgs::msg::Resource to_check )
+		{
+			return not strcmp(looking_for.name.c_str(), to_check.name.c_str()) and not to_check.locked;
 		};
 
 		for ( dhtt_msgs::msg::Resource check : requested_resources )
 		{
 			looking_for = check;
 
-			std::vector<dhtt_msgs::msg::Resource>::iterator found = std::find_if(this->available_resources.begin(), this->available_resources.end(), find_fulfill);
+			auto find_func = ( not strcmp("", check.name.c_str()) ) ? find_fulfill_by_type : find_fulfill_by_name;
+
+			std::vector<dhtt_msgs::msg::Resource>::iterator found = std::find_if(this->available_resources.begin(), this->available_resources.end(), find_func);
 
 			while ( found != this->available_resources.end() )
 			{
 				if ((*found).locked == false )
 					break;
 				else
-					found = std::find_if(found, this->available_resources.end(), find_fulfill);
+					found = std::find_if(found, this->available_resources.end(), find_func);
 			}
 
 			if ( found == this->available_resources.end() )
@@ -265,11 +389,13 @@ namespace dhtt
 		// send update to status topic
 		dhtt_msgs::msg::Node full_status;
 
-		full_status.head.stamp = this->now();
+		full_status.head.stamp = this->global_com->now();
 		full_status.head.frame_id = "";
 
 		full_status.node_name = this->name;
+
 		full_status.parent = -1;
+
 		full_status.parent_name = this->parent_name;
 
 		full_status.child_name = this->child_names;
@@ -277,11 +403,30 @@ namespace dhtt
 
 		full_status.plugin_name = this->plugin_name;
 
+		full_status.goitr_name = this->goitr_name;
+
 		full_status.owned_resources = this->owned_resources;
+		full_status.subtree_owned_resources = this->resources_owned_by_subtree;
 
 		full_status.node_status = this->status;
 
+		std::shared_ptr<dhtt_utils::PredicateConjunction> tmp1 = std::make_shared<dhtt_utils::PredicateConjunction>(); 
+		std::shared_ptr<dhtt_utils::PredicateConjunction> tmp2 = std::make_shared<dhtt_utils::PredicateConjunction>();
+
+		*tmp1 = this->logic->get_preconditions();
+		*tmp2 = this->logic->get_postconditions();
+
+		full_status.preconditions = dhtt_utils::to_string(tmp1);
+		full_status.postconditions = dhtt_utils::to_string(tmp2);
+
 		this->status_pub->publish(full_status);
+	}
+
+	void Node::fire_knowledge_updated()
+	{
+		// std_msgs::msg::String n_msg;
+
+		// this->knowledge_pub->publish(n_msg);
 	}
 
 	void Node::set_resource_status_updated(bool to_set)
@@ -289,168 +434,224 @@ namespace dhtt
 		this->resource_status_updated = to_set;
 	}
 
-	rclcpp_action::GoalResponse Node::goal_activation_callback(const rclcpp_action::GoalUUID& uuid, std::shared_ptr<const dhtt_msgs::action::Activation::Goal> goal)
-	{
-		RCLCPP_DEBUG(this->get_logger(), "Received activation from parent.");
-		(void) uuid;
-		(void) goal;
-
-		return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
-	}
-
-	rclcpp_action::CancelResponse Node::cancel_activation_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Activation>> goal_handle)
-	{
-		RCLCPP_DEBUG(this->get_logger(), "Received request to cancel activation.");
-		(void) goal_handle;
-
-		// there is definitely room for some logic to cancel the work thread from here
-
-		return rclcpp_action::CancelResponse::ACCEPT;
-	}
-	
-	void Node::activation_accepted_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Activation>> goal_handle)
-	{
-		// make sure the work thread is deconstructed before we make a new one
-		this->work_thread.reset();
-		this->stored_responses = 0;
-		this->expected_responses = 0;
-		
-		if ( this->status.state == dhtt_msgs::msg::NodeStatus::WAITING )
-		{
-			this->update_status(dhtt_msgs::msg::NodeStatus::ACTIVE);
-
-			// spin up the auction activation thread
-			this->work_thread = std::make_shared<std::thread>(&Node::activate, this, goal_handle);
-			this->work_thread->detach();
-		}
-		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::ACTIVE )
-		{
-			if ( goal_handle->get_goal()->success )
-			{
-				this->update_status(dhtt_msgs::msg::NodeStatus::WORKING);
-
-				// spin up the thread for working and detach so that it destructs after it finishes
-				this->work_thread = std::make_shared<std::thread>(&Node::activate, this, goal_handle);
-				this->work_thread->detach();
-			}
-			else
-			{
-				RCLCPP_DEBUG(this->get_logger(), "Request not successful returning to state WAITING");
-
-				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
-
-				this->resource_status_updated = false;
-				
-				dhtt_msgs::action::Activation::Result::SharedPtr blank_result = std::make_shared<dhtt_msgs::action::Activation::Result>();
-
-				if ( (int) this->child_names.size() > 0 )
-				{
-					this->fail_thread.reset();
-
-					this->fail_thread = std::make_shared<std::thread>(&Node::propogate_failure_down, this);
-					this->fail_thread->detach();
-				}
-
-				goal_handle->succeed(blank_result);
-			}
-		}
-		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::DONE )
-		{
-			dhtt_msgs::action::Activation::Result::SharedPtr blank_result = std::make_shared<dhtt_msgs::action::Activation::Result>();
-			blank_result->done = true;
-
-			goal_handle->succeed(blank_result);
-		}
-	}
-
-	void Node::store_result_callback( const rclcpp_action::ClientGoalHandle<dhtt_msgs::action::Activation>::WrappedResult & result, std::string node_name )
-	{
-		this->responses[node_name] = result.result;
-	
-		this->stored_responses++;
-	}
 
 	// simpler than it could be especially with some work in interruption handling
-	void Node::activate(const std::shared_ptr<rclcpp_action::ServerGoalHandle<dhtt_msgs::action::Activation>> goal_handle)
+	dhtt_msgs::action::Activation::Result Node::activate(dhtt_msgs::action::Activation::Goal goal)
 	{
 		// collect result from children or self
-		dhtt_msgs::action::Activation::Result::SharedPtr to_ret;
-
-		std::lock_guard<std::mutex> guard(this->logic_mut);
+		dhtt_msgs::action::Activation::Result to_ret;
 
 		this->owned_resources.clear();
 
-		RCLCPP_INFO(this->get_logger(), "Activation received from parent...");
+		DHTT_LOG_INFO(this->global_com, "Activation received from parent..." );
 
-		if ( this->status.state == dhtt_msgs::msg::NodeStatus::ACTIVE )
+		// I think this is messing with the fsm related to the branch_types
+		// this->block_for_activation_from_children();
+
+		// use a condition variable to only grab the logic_mut once the resources have been updated
+		// auto check_resources_updated = [&](){ return (bool) this->resource_status_updated; };
+
+		std::unique_lock<std::mutex> lock(this->logic_mut);
+
+		if ( this->status.state == dhtt_msgs::msg::NodeStatus::WAITING )
 		{
-			// wait real quick for the status to be updated
-			while (not this->resource_status_updated);
+			// if ( not this->resource_status_updated )
+			// 	this->resource_condition.wait(lock, check_resources_updated);
+			this->pull_resources();
+				
+			this->update_status(dhtt_msgs::msg::NodeStatus::ACTIVE);
 
-			RCLCPP_DEBUG(this->get_logger(), "Resource status updated activating callback");
+			// update subtree owned resources
+			this->add_unique_resources(goal.passed_resources);
 
 			// deal with any passed resources
-			for ( dhtt_msgs::msg::Resource passed_resource : goal_handle->get_goal()->passed_resources )
+			for ( dhtt_msgs::msg::Resource passed_resource : goal.passed_resources )
 				this->owned_resources.push_back( passed_resource );
 
 			// then start auction work
-			to_ret = this->logic->auction_callback(this);
+			to_ret = *this->logic->auction_callback(this);
 
-			this->active_child_name = to_ret->local_best_node;
+			this->active_child_name = to_ret.local_best_node;
+
+			// check preconditions before moving request up
+			to_ret.activation_potential = this->potential->compute_activation_potential(this);
+			to_ret.possible = to_ret.possible and this->check_preconditions() and (to_ret.activation_potential > 0);
+
+			if ( to_ret.possible )
+				this->active = true;
+			else
+				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
 
 			if (this->logic->is_done())
 				this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
 		}
-		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::WORKING )
+		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::ACTIVE )
 		{
-			RCLCPP_WARN(this->get_logger(), "Starting work!");
-
-			// add granted resources to the owned resources for the logic
-			for ( dhtt_msgs::msg::Resource granted_resource : goal_handle->get_goal()->granted_resources )
+			if ( goal.success )
 			{
-				// RCLCPP_WARN(this->get_logger(), "[%s]", granted_resource.name.c_str());
-				this->owned_resources.push_back( granted_resource );
+				DHTT_LOG_WARN(this->global_com, "Starting work!");
+				this->update_status(dhtt_msgs::msg::NodeStatus::WORKING);
+
+				// update owned subtree resources
+				this->add_unique_resources(goal.passed_resources);
+
+				// add granted resources to the owned resources for the logic
+				for ( dhtt_msgs::msg::Resource granted_resource : goal.granted_resources )
+					this->owned_resources.push_back( granted_resource );
+
+				// start work as long as preconditions are met
+				if ( this->check_preconditions() )
+				{
+					to_ret = *this->logic->work_callback(this);
+
+					// add necessary resources and added to the subtree total
+					this->add_unique_resources(to_ret.requested_resources);
+					this->add_unique_resources(to_ret.added_resources);
+
+					// subtract released and removed from the subtree total
+					this->remove_unique_resources(to_ret.released_resources);
+					this->remove_unique_resources(to_ret.removed_resources);
+
+					this->apply_postconditions();
+				}
+				else
+					DHTT_LOG_ERROR(this->global_com, "Preconditions not met, restarting auction!");
+
+				if (this->logic->is_done())
+				{
+					this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
+
+					this->resources_owned_by_subtree = 0;
+				}
+				else
+					this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
+
+				if ( strcmp("", to_ret.last_behavior.c_str() ) and this->has_goitr )
+				{
+					DHTT_LOG_DEBUG(this->global_com, "Child finished, running fault recovery callback"); 
+
+					this->replanner->child_finished_callback(to_ret.last_behavior, to_ret.done);
+
+					to_ret.last_behavior = "";
+				}
+			}
+			else
+			{
+				DHTT_LOG_INFO(this->global_com, "Request not successful returning to state WAITING.");
+
+				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
+
+				// propogate failure down the tree
+				if ( (int) this->child_names.size() > 0 )
+				{
+					this->child_communication_plugs[this->active_child_name].second->async_send_activate(goal);
+					this->child_communication_plugs[this->active_child_name].second->block_for_activation_response();
+					(void) this->child_communication_plugs[this->active_child_name].second->get_activation_result();
+				}
 			}
 
-			// start work 
-			to_ret = this->logic->work_callback(this);
-				
 			this->resource_status_updated = false;
 
-			if (this->logic->is_done())
-				this->update_status(dhtt_msgs::msg::NodeStatus::DONE);
-			else
-				this->update_status(dhtt_msgs::msg::NodeStatus::WAITING);
+			return to_ret; 
 		}
 		else if ( this->status.state == dhtt_msgs::msg::NodeStatus::DONE )
 		{
-			to_ret->done = true;
+			to_ret.done = true;
 		}
 
-		to_ret->activation_potential = this->logic->get_perceived_efficiency();
-		// this->calculate_activation_potential();
+		// this->resource_status_updated = false;
 
 		// then send result back to parent
-		goal_handle->succeed(to_ret);
+		DHTT_LOG_INFO(this->global_com, "Sending request back up the tree...");
+
+		return to_ret;
 	}
 
-	void Node::register_child_callback(std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Request> request, std::shared_ptr<dhtt_msgs::srv::InternalServiceRegistration::Response> response)
+	dhtt_msgs::action::Condition::Result Node::combine_child_conditions(dhtt_msgs::action::Condition::Goal goal)
 	{
-		// std::lock_guard<std::mutex> guard(this->logic_mut);
-
-		if (not this->logic->can_add_child())
+		dhtt_msgs::action::Condition::Result to_ret;
+	
+		if ( goal.type == dhtt_msgs::action::Condition::Goal::MAINTAIN and this->subtree_has_changed )
 		{
-			response->success = false;
 
-			return;
+			std::lock_guard<std::mutex> guard(this->maintenance_mut);
+
+			if ( (int) this->child_names.size() > 0 )
+			{
+				this->request_conditions_from_children();
+
+				this->block_for_conditions_from_children();
+			}
+
+			this->logic->maintain_conditions(this);
+
+			to_ret.success = true;
+			
+			std::shared_ptr<dhtt_utils::PredicateConjunction> tmp1 = std::make_shared<dhtt_utils::PredicateConjunction>();
+			std::shared_ptr<dhtt_utils::PredicateConjunction> tmp2 = std::make_shared<dhtt_utils::PredicateConjunction>();
+
+			*tmp1 = this->logic->get_preconditions();
+			*tmp2 = this->logic->get_postconditions(); 
+
+			to_ret.preconditions = dhtt_utils::to_string(tmp1);
+			to_ret.postconditions = dhtt_utils::to_string(tmp2);
+
+			// outputing updated preconditions on status pub
+			this->update_status(this->status.state);
+
+			this->subtree_has_changed = false;
+
+			return to_ret;
 		}
 
-		// make a client and push back
-		rclcpp_action::Client<dhtt_msgs::action::Activation>::SharedPtr n_client = rclcpp_action::create_client<dhtt_msgs::action::Activation>(this, std::string(TREE_PREFIX) + "/" + request->node_name + ACTIVATION_POSTFIX);
+		to_ret.success = true;
 
-		this->child_names.push_back(request->node_name);
-		this->activation_clients.push_back(n_client);
-		response->success = true;
+		std::shared_ptr<dhtt_utils::PredicateConjunction> tmp1 = std::make_shared<dhtt_utils::PredicateConjunction>();
+		std::shared_ptr<dhtt_utils::PredicateConjunction> tmp2 = std::make_shared<dhtt_utils::PredicateConjunction>();
+
+		*tmp1 = this->logic->get_preconditions();
+		*tmp2 = this->logic->get_postconditions(); 
+
+		to_ret.preconditions = dhtt_utils::to_string(tmp1);
+		to_ret.postconditions = dhtt_utils::to_string(tmp2);
+
+		return to_ret;
+	}
+
+	void Node::print_resources(std::vector<dhtt_msgs::msg::Resource> compare)
+	{
+		DHTT_LOG_FATAL(this->global_com, "\tCurrent state of resources:");
+
+		for ( auto iter : this->available_resources )
+		{
+			DHTT_LOG_FATAL(this->global_com, "\t\t" << iter.name << " -- type: " << iter.type << ", locked: " << iter.locked << ", owners: " << iter.owners << ", channel: " << iter.channel);
+		}
+		
+		DHTT_LOG_FATAL(this->global_com, "\tCompared to:");
+
+		for ( auto iter : compare )
+		{
+			DHTT_LOG_FATAL(this->global_com, "\t\t" << iter.name << " -- type: " << iter.type << ", locked: " << iter.locked << ", owners: " << iter.owners << ", channel: " << iter.channel);
+		}
+		
+	}
+
+	void Node::set_changed_flag( bool n_val )
+	{
+		this->subtree_has_changed = n_val; 
+	}
+
+	void Node::set_child_changed( std::string child, bool n_val )
+	{
+		if ( this->child_changed.find(child) == this->child_changed.end() )
+			return;
+
+		this->child_changed[child] = n_val;
+
+		this->subtree_has_changed = false;
+
+		for ( auto pair : this->child_changed )
+			this->subtree_has_changed |= pair.second;
 	}
 	
 	void Node::modify(std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response)
@@ -467,6 +668,8 @@ namespace dhtt
 			{
 				temp_logic = node_type_loader.createSharedInstance(request->mutate_type);
 
+				temp_logic->com_agg = this->global_com;
+				temp_logic->set_name(this->name);
 				temp_logic->initialize(request->params);
 			}
 			catch (std::exception& ex)
@@ -519,13 +722,19 @@ namespace dhtt
 				response->error_msg = std::string("Error parsing new params: ") + ex.what();
 				response->success = false;
 
+				DHTT_LOG_ERROR(this->global_com, "Error parsing new params: " << ex.what());
+
+				throw ex; 
+
 				return;
 			}
 
 			response->error_msg = "";
 			response->success = true;
 
-			this->update_status(this->status.state);
+			int8_t state = dhtt_msgs::msg::NodeStatus::WAITING;
+
+			this->update_status(state);
 
 			return;
 		}
@@ -534,32 +743,114 @@ namespace dhtt
 
 	void Node::resource_availability_callback( const dhtt_msgs::msg::Resources::SharedPtr canonical_list )
 	{
-		this->available_resources = canonical_list->resource_state;
+		{
+			// std::lock_guard<std::mutex> lock(this->logic_mut);
+		
+			DHTT_LOG_DEBUG(this->global_com, "Resources updated");
+			this->available_resources = canonical_list->resource_state;
 
-		this->resource_status_updated = true;
+			this->resource_status_updated = true;
+		}
+
+		this->resource_condition.notify_one();
 	}
 
-	// preconditions are stored as key: val pairs in a vector of strings in logic. Here we need to check them against world information
 	bool Node::check_preconditions()
 	{
+		// std::vector<std::vector<std::string>> preconditions = this->logic->get_preconditions();
+
+		// for ( auto iter : preconditions )
+		// {
+		// 	// pull corresponding value from the param server
+
+		// 	// check against value from preconditions
+		// 	if ( false )
+		// 		return false;
+		// }
+
 		return true;
+	}
+
+	void Node::apply_postconditions()
+	{
+		// set parameters on the param server
 	}
 
 	double Node::calculate_activation_potential()
 	{
-		return this->logic->get_perceived_efficiency() * (this->priority + (int) this->owned_resources.size());
+		return this->logic->get_perceived_efficiency(this) * (this->priority + (int) this->owned_resources.size());
 	}
 
-	void Node::propogate_failure_down()
+	void Node::pull_resources()
 	{
-		dhtt_msgs::action::Activation::Goal n_goal;
+		std::vector<std::string> names = this->global_com->get_parameter_sync("dhtt_resources.names").as_string_array();
+		std::vector<long int> types = this->global_com->get_parameter_sync("dhtt_resources.types").as_integer_array();
+		std::vector<long int> channels = this->global_com->get_parameter_sync("dhtt_resources.channels").as_integer_array();
+		std::vector<bool> locks = this->global_com->get_parameter_sync("dhtt_resources.locks").as_bool_array();
+		std::vector<long int> owners = this->global_com->get_parameter_sync("dhtt_resources.owners").as_integer_array();
+		
+		this->available_resources.clear();
 
-		n_goal.success = false;
+		for ( int index = 0 ; index < (int) names.size() ; index++ )
+		{
+			dhtt_msgs::msg::Resource to_add;
 
-		this->async_activate_child(this->active_child_name, n_goal);
+			to_add.name = names[index];
+			to_add.type = types[index];
+			to_add.channel = channels[index];
+			to_add.locked = locks[index];
+			to_add.owners = owners[index];
 
-		this->block_for_responses_from_children();
-
-		this->active_child_name = "";
+			this->available_resources.push_back(to_add);
+		}
 	}
+
+	void Node::add_unique_resources(std::vector<dhtt_msgs::msg::Resource> to_count)
+	{
+		dhtt_msgs::msg::Resource to_find;
+		auto same_resource = [&to_find] (dhtt_msgs::msg::Resource to_check) { return not strcmp(to_find.name.c_str(), to_check.name.c_str()); };
+
+		for ( auto resource : to_count )
+		{
+			to_find = resource;
+			std::vector<dhtt_msgs::msg::Resource>::iterator iter;
+
+			if (  ( iter = std::find_if(this->subtree_owned_resources.begin(), this->subtree_owned_resources.end(), same_resource) ) == this->subtree_owned_resources.end())
+				this->subtree_owned_resources.push_back(resource);
+		}
+
+		std::vector<std::vector<dhtt_msgs::msg::Resource>::iterator> to_remove;
+
+		for ( auto resource = this->subtree_owned_resources.begin() ; resource != this->subtree_owned_resources.end() ; resource++)
+		{
+			to_find = *resource;
+			std::vector<dhtt_msgs::msg::Resource>::iterator iter;
+
+			if (  ( iter = std::find_if(this->available_resources.begin(), this->available_resources.end(), same_resource) ) == this->available_resources.end())
+				to_remove.push_back(resource);
+		}
+
+		for ( auto iter = to_remove.rbegin() ; iter != to_remove.rend() ; iter++ )
+			this->subtree_owned_resources.erase(*iter);
+		
+		this->resources_owned_by_subtree = (int) this->subtree_owned_resources.size();
+	}
+
+	void Node::remove_unique_resources(std::vector<dhtt_msgs::msg::Resource> to_count)
+	{
+		dhtt_msgs::msg::Resource to_find;
+		auto same_resource = [&to_find] (dhtt_msgs::msg::Resource to_check) { return not strcmp(to_find.name.c_str(), to_check.name.c_str()); };
+
+		for ( auto resource : to_count )
+		{
+			to_find = resource;
+			std::vector<dhtt_msgs::msg::Resource>::iterator iter;
+
+			if (  ( iter = std::find_if(this->subtree_owned_resources.begin(), this->subtree_owned_resources.end(), same_resource) ) != this->subtree_owned_resources.end() )
+				this->subtree_owned_resources.erase(iter);
+		}
+		
+		this->resources_owned_by_subtree = (int) this->subtree_owned_resources.size();
+	}
+
 }

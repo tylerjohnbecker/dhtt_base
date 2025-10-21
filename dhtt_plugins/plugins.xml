@@ -1,16 +1,14 @@
 <library path="dhtt_plugins">
-	<class type="dhtt_plugins::TestBehavior" base_class_type="dhtt::NodeType">
-		<description>Filler behavior for testing the functionality of dhtts</description>
+
+	<!-- BRANCH TYPES -->
+	<class type="dhtt_plugins::PtrBranchSocket" base_class_type="dhtt::BranchSocketType">
+		<description>Branch type which enables the nodes to communicate through ptr relationships. The Socket is basically empty in this case.</description>
 	</class>
-	<class type="dhtt_plugins::MoveBehavior" base_class_type="dhtt::NodeType">
-		<description>Behavior to move the robot through a ros1 bridge</description>
+	<class type="dhtt_plugins::PtrBranchPlug" base_class_type="dhtt::BranchPlugType">
+		<description>Branch type which enables the nodes to communicate through ptr relationships. The Plug here just calls the public methods in the socket from an internally saved ptr.</description>
 	</class>
-	<class type="dhtt_plugins::PickBehavior" base_class_type="dhtt::NodeType">
-		<description>Behavior to command a robot to pick an object over a ros1 bridge</description>
-	</class>
-	<class type="dhtt_plugins::PlaceBehavior" base_class_type="dhtt::NodeType">
-		<description>Behavior to command a robot to place an object over a ros1 bridge</description>
-	</class>
+	
+	<!-- SUBTASK NODES -->
 	<class type="dhtt_plugins::RootBehavior" base_class_type="dhtt::NodeType">
 		<description>Task node which can only be the topmost node in the tree. A tree can only have one root. The root node's job is to manage the resources of the robot and to begin the activation cycle of the tree. The root node also acts as the major connect with the main server control services.</description>
 	</class>
@@ -23,4 +21,59 @@
 	<class type="dhtt_plugins::OrBehavior" base_class_type="dhtt::NodeType">
 		<description>Task node which executes children in the order specified when the children are added to the tree.</description>
 	</class>
+
+	<!-- TESTING BEHAVIORS -->
+	<class type="dhtt_plugins::TestBehavior" base_class_type="dhtt::NodeType">
+		<description>Filler behavior for testing the functionality of dhtts</description>
+	</class>
+	<!-- <class type="dhtt_plugins::MockMoveBehavior" base_class_type="dhtt::NodeType">
+		<description>Move behavior which just changes the "location of the robot" on the parameter server. Just for testing!</description>
+	</class>
+	<class type="dhtt_plugins::MockLookBehavior" base_class_type="dhtt::NodeType">
+		<description>Move behavior which updates the known location of objects that are in the same location as the robot. Just for testing!</description>
+	</class> -->
+
+	<!-- REAL BEHAVIORS -->
+	<class type="dhtt_plugins::MoveBehavior" base_class_type="dhtt::NodeType">
+		<description>Behavior to move the robot through a ros1 bridge</description>
+	</class>
+	<class type="dhtt_plugins::PickBehavior" base_class_type="dhtt::NodeType">
+		<description>Behavior to command a robot to pick an object over a ros1 bridge</description>
+	</class>
+	<class type="dhtt_plugins::PlaceBehavior" base_class_type="dhtt::NodeType">
+		<description>Behavior to command a robot to place an object over a ros1 bridge</description>
+	</class>
+
+	<!-- TESTING GOiTRS -->
+	<!-- <class type="dhtt_plugins::GoitrTest" base_class_type="dhtt::GoitrType">
+		<description>GOiTR meant just for testing the functionality of the communication with the mainserver etc.</description>
+	</class>	 -->
+
+	<!-- REAL GOiTRS -->
+	<!-- <class type="dhtt_plugins::FindGoitr" base_class_type="dhtt::GoitrType">
+		<description>GOiTR meant for controlling a subtree that finds objects in a list of known locations in the environment.</description>
+	</class> -->
+
+    <!-- TASK NODES -->
+	<class type="dhtt_plugins::RootBehavior" base_class_type="dhtt::NodeType">
+		<description>Task node which can only be the topmost node in the tree. A tree can only have one root. The root node's job is to manage the resources of the robot and to begin the activation cycle of the tree. The root node also acts as the major connect with the main server control services.</description>
+	</class>
+	<class type="dhtt_plugins::AndBehavior" base_class_type="dhtt::NodeType">
+		<description>Task node which executes all of its children in an undefined order.</description>
+	</class>
+	<class type="dhtt_plugins::ThenBehavior" base_class_type="dhtt::NodeType">
+		<description>Task node which executes one of its children and then stops.</description>
+	</class>
+	<class type="dhtt_plugins::OrBehavior" base_class_type="dhtt::NodeType">
+		<description>Task node which executes children in the order specified when the children are added to the tree.</description>
+	</class>
+
+	<!-- Potentials -->
+	<class type="dhtt_plugins::EfficiencyPotential" base_class_type="dhtt::PotentialType">
+		<description> Returns the perceived efficiency computed by the node class </description>
+	</class>
+	<class type="dhtt_plugins::ResourcePotential" base_class_type="dhtt::PotentialType">
+		<description> Returns the perceived efficiency computed by the node class until a threshold is met for resource usage, then returns the proportion of resources used in the attached node's subtree</description>
+	</class>
+	
 </library>

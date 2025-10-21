@@ -63,7 +63,7 @@ namespace dhtt_plugins
 		 * \brief abstract function for actually sending instructions to the robot
 		 * 
 		 * Every action type behavior performs some work (on the robot or otherwise) which should be implemented in this function. If any topics etc. need to be handled their is an executor
-		 * 	that is initialized by default which can be used by inheritors to make those connections.
+		 * 	that is initialized by default which can be used by inheritors to make those connections. Should flip ActionType.done when work is done.
 		 * 
 		 * \param container similar to work_callback this is a pointer to the node which is running this logic.
 		 * 
@@ -87,13 +87,46 @@ namespace dhtt_plugins
 		/**
 		 * \brief returns the list of resources to release
 		 * 
-		 * Resources are always released by default, so this list should be owned_resources - retained_resources.
+		 * This function returns everything other than the resources found in retained.
 		 * 
 		 * \param container similar to work_callback this is a pointer to the node which is running this logic.
 		 * 
 		 * \return list of all resources to release 
 		 */
-		virtual std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container ) = 0;
+		virtual std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container );
+
+		/**
+		 * \brief this is where inheriting classes define the resources they need
+		 * 
+		 * The resources on the robot which an action type behavior needs to run should be defined here by overriding this method.
+		 * 
+		 * \return the list of resources required to run the behavior
+		 */
+		virtual std::vector<dhtt_msgs::msg::Resource> get_necessary_resources() = 0;
+
+		/**
+		 * \brief this is where the inheriting classes define the resources added after execution
+		 * 
+		 * The resources added should be maintained in the retained and released resources functions, and will be added before those checks in root behavior.
+		 * 
+		 * \return the list of resources added as a side effect of executing the behavior
+		 */
+		virtual std::vector<dhtt_msgs::msg::Resource> get_added_resources()
+		{
+			return add_resources;
+		};
+
+		/**
+		 * \brief this is where the inheriting classes define the resources destroyed after execution
+		 * 
+		 * The destroyed resources cannot be retained or released as they will no longer be in the canonical resource list in root behavior by the time those checks occur.
+		 * 
+		 * \return the list of resources destroyed as a side effect of executing the behavior.
+		 */
+		virtual std::vector<dhtt_msgs::msg::Resource> get_removed_resources()
+		{
+			return remove_resources;
+		};
 
 		/**
 		 * \brief getter for the internal done variable
@@ -104,15 +137,32 @@ namespace dhtt_plugins
 		 */
 		bool is_done() override;
 
+		/**
+		 * \brief create the necessary, added, and removed world resource lists for this behavior
+		 * 
+		 * This function should be overloaded by all behaviors which require world resources in order to give an interface to define what types are required. The resource lists should be populated with resource types
+		 * 	and names will be given at runtime because they are decided by the server.
+		 * 
+		 * \param container useful for getting the canonical resource list etc.
+		 * 
+		 * \return void
+		 */
+		virtual void populate_resource_lists(dhtt::Node* container) { (void) container; };
+
 	protected:
+
+		void send_state_updated();
 
 		bool done;
 
 		double activation_potential;
 		std::vector<dhtt_msgs::msg::Resource> necessary_resources; 
+		std::vector<dhtt_msgs::msg::Resource> necessary_world_resources;
 
-		std::shared_ptr<rclcpp::Node> pub_node_ptr;
-		std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
+		std::vector<dhtt_msgs::msg::Resource> add_resources;
+		std::vector<dhtt_msgs::msg::Resource> remove_resources;
+
+		rclcpp::Publisher<std_msgs::msg::String>::SharedPtr knowledge_pub;
 
 	private:
 	};

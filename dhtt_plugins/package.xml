@@ -3,9 +3,9 @@
 <package format="3">
   <name>dhtt_plugins</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="tylerjohnbecker@gmail.com">tylerjbecker</maintainer>
-  <license>TODO: License declaration</license>
+  <description>Collection of default plugins for the dHTT package that describe the basic functionality of the default task nodes, the action behavior template, the default Branches, the default Potentials, etc. To make more plugins create a new package following the template dhtt_plugins provides.</description>
+  <maintainer email="tbecker@unr.edu">Tyler J Becker</maintainer>
+  <license>GNU GENERAL PUBLIC LICENSE</license>
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
 

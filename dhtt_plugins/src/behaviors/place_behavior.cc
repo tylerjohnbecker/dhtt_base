@@ -44,8 +44,8 @@ namespace dhtt_plugins
 			}
 		}
 
-		auto pub_ptr = this->pub_node_ptr->create_publisher<std_msgs::msg::String>((left)? "/dhtt/left_arm" : "/dhtt/right_arm", 10);
-		auto sub_ptr = this->pub_node_ptr->create_subscription<std_msgs::msg::String>("/dhtt/result", 10, std::bind(&PlaceBehavior::done_callback, this, std::placeholders::_1));
+		auto pub_ptr = this->com_agg->register_publisher<std_msgs::msg::String>((left)? "/dhtt/left_arm" : "/dhtt/right_arm");
+		this->com_agg->register_subscription<std_msgs::msg::String>("/dhtt/result", container->get_node_name(), std::bind(&PlaceBehavior::done_callback, this, std::placeholders::_1));
 
 		std_msgs::msg::String go;
 
@@ -55,14 +55,20 @@ namespace dhtt_plugins
 
 		this->work_done = false;
 
-		while ( not this->work_done )
-			this->executor->spin_once();
+		// while ( not this->work_done )
+		// 	this->com_agg->spin_some();
+
+		this->done = true;
+
+		this->com_agg->unregister_subscription<std_msgs::msg::String>("/dhtt/result", container->get_node_name());
 
 		return;
 	}
 
-	double PlaceBehavior::get_perceived_efficiency() 
+	double PlaceBehavior::get_perceived_efficiency(dhtt::Node* container) 
 	{
+		(void) container; 
+		
 		return this->activation_potential;
 	}	
 
@@ -75,6 +81,22 @@ namespace dhtt_plugins
 	std::vector<dhtt_msgs::msg::Resource> PlaceBehavior::get_released_resources( dhtt::Node* container ) 
 	{
 		return container->get_owned_resources();
+	}
+
+	std::vector<dhtt_msgs::msg::Resource> PlaceBehavior::get_necessary_resources()
+	{
+		std::vector<dhtt_msgs::msg::Resource> to_ret;
+
+		dhtt_msgs::msg::Resource base;
+		base.type = dhtt_msgs::msg::Resource::BASE;
+
+		dhtt_msgs::msg::Resource gripper;
+		gripper.type = dhtt_msgs::msg::Resource::GRIPPER;
+
+		to_ret.push_back(base);
+		to_ret.push_back(gripper);
+
+		return to_ret;
 	}
 
 	void PlaceBehavior::done_callback( std::shared_ptr<std_msgs::msg::String> data )

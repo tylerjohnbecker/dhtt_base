@@ -1,4 +1,4 @@
-# type of the resource (gives a hint to how it should be used)
+# class of the resource (gives a hint to how it should be used)
 int8 				type
 
 # whether or not the resource is in use
@@ -13,7 +13,7 @@ string 				name
 # channel for resource usage (control should always be exclusive unless multitasking)
 int8 				channel 
 
-# resource type constants
+# resource class constants
 int8 				GRIPPER=1
 int8				HEAD=2
 int8 				BASE=3

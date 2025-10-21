@@ -43,7 +43,7 @@ namespace dhtt_plugins
 		 * 
 		 * \return activation_potential of the node
 		 */
-		double get_perceived_efficiency() override;
+		double get_perceived_efficiency(dhtt::Node* container) override;
 
 		/**
 		 * \brief retains all resources
@@ -67,6 +67,11 @@ namespace dhtt_plugins
 		 * \return an empty vector of resources 
 		 */
 		std::vector<dhtt_msgs::msg::Resource> get_released_resources( dhtt::Node* container ) override; 
+
+		/**
+		 * \brief this behavior needs the move base of the robot
+		 */
+		virtual std::vector<dhtt_msgs::msg::Resource> get_necessary_resources() override;
 
 		/**
 		 * \brief callback for receiving done from the ROS1 implementation of MoveBehavior
