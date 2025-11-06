@@ -2022,7 +2022,7 @@ namespace dhtt
 					else
 					{
 						// first extract the file location for the proper path
-						std::experimental::filesystem::path file_path = file_name_cur;
+						std::filesystem::path file_path = file_name_cur;
 						file_path.parent_path();
 
 						to_build.plugin_name = file_path.parent_path().native() + "/" + to_build.plugin_name;

@@ -107,7 +107,7 @@ namespace dhtt
 		std::lock_guard<std::mutex> guard(this->thread_mut);
 
 		// get true path to file saved for subtree
-		std::experimental::filesystem::path dhtt_folder_path = __FILE__;
+		std::filesystem::path dhtt_folder_path = __FILE__;
 
 		dhtt_folder_path = dhtt_folder_path.parent_path().parent_path().parent_path();
 
