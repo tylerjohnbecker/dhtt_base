@@ -72,9 +72,7 @@ namespace dhtt
 		MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner, bool slow=false);
 		~MainServer();
 
-	private:
-
-		// *** PRIVATE MEMBER FUNCTIONS ***
+	protected:
 		// server callbacks
 		/**
 		 * \brief callback for handling ModifyRequests. See ModifyRequest.srv for more information.
@@ -101,6 +99,25 @@ namespace dhtt
 		 */
 		void resource_callback( const std::shared_ptr<dhtt_msgs::srv::ResourceRequest::Request> request, std::shared_ptr<dhtt_msgs::srv::ResourceRequest::Response> response );
 
+		/**
+		 * \brief get a copy of the node map. That is, the internal dhtt:Node representations.
+		 */
+		std::unordered_map<std::string, std::shared_ptr<dhtt::Node>> get_node_map() const
+		{
+			return this->node_map;
+		};
+
+		/**
+		 * \brief get a copy of the global communication aggregator
+		 */
+		std::shared_ptr<CommunicationAggregator> get_com_agg() const
+		{
+			return this->global_com;
+		}
+
+	private:
+
+		// *** PRIVATE MEMBER FUNCTIONS ***
 		// modify helpers
 		/**
 		 * \brief helper function for adding new nodes to the tree

@@ -97,6 +97,7 @@ namespace dhtt
 		 * 
 		 * Initializes all values simply. If the given plugin names cannot be loaded for some reason does not construct. Errors are flagged through successful_load and error messages are stored in error_msg.
 		 * 
+		 * \param com_agg interface with ros
 		 * \param name name of the node being created (should be unique)
 		 * \param type exact name of the plugin to load (ex. dhtt_plugins::AndBehavior) 
 		 * \param params parameter list for the given plugin (a list of string parameters)
@@ -109,7 +110,7 @@ namespace dhtt
 		 */
 		Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string parent_name, std::string socket_type="dhtt_plugins::PtrBranchSocket", std::string goitr_type="", std::string potential_type="dhtt_plugins::EfficiencyPotential");
 		
-		~Node();
+		virtual ~Node();
 
 		/**
 		 * \brief returns the value of successful_load
@@ -132,7 +133,7 @@ namespace dhtt
 		 * 
 		 * \return number of resource used by this subtree
 		 */
-		int get_subtree_resources();
+		virtual int get_subtree_resources(); // virtual because dhtt_plugins/test/potential_test.cpp needs to fake it
 
 		/**
 		 * \brief Returns all currently owned resources of the node
@@ -161,7 +162,7 @@ namespace dhtt
 		 * 
 		 * \return list of all resources on the robot (owned or otherwise)
 		 */
-		std::vector<dhtt_msgs::msg::Resource> get_resource_state();
+		virtual std::vector<dhtt_msgs::msg::Resource> get_resource_state(); // virtual because dhtt_plugins/test/potential_test.cpp needs to fake it
 
 		/**
 		 * \brief returns a shared ptr to the socket_ptr of this node
