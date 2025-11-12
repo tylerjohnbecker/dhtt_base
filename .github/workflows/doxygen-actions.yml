@@ -23,7 +23,7 @@ jobs:
       - run: |
           git fetch origin 
           git checkout gh-pages
-          git add -f ./html ./latex ./config
+          git add -f ./html ./latex
           git config --global user.name "Tyler Becker"
           git config --global user.email "tylerjohnbecker@user.noreply.github.com"
           git commit -m "doxygen changes"
