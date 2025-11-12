@@ -6,21 +6,21 @@ namespace dhtt_plugins
     {
         // find number of total locked resources 
         auto resources = container->get_resource_state();
-        int total_num = (int) resources.size();
-        int total_locked = 0;
+        auto total_num = resources.size();
+        size_t total_locked = 0;
         
         for ( auto resource : resources )
             if ( resource.locked )
                 total_locked++;
 
         // check the proportion of locked resources against the threshold
-        double proportion = total_locked / total_num;
+        double proportion = static_cast<double>(total_locked) / static_cast<double>(total_num);
 
         // if above the threshold return our proportion of the resources
         if ( proportion >= RESOURCE_USAGE_THRESHOLD )
         {
             // return our proportion of the total locked resources
-            return container->get_subtree_resources() / total_locked;
+            return static_cast<double>(container->get_subtree_resources()) / static_cast<double>(total_locked);
         }
 
         // else return the perceived efficiency

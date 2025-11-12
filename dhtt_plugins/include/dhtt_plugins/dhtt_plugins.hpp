@@ -24,6 +24,7 @@
 
 #include "dhtt_plugins/potentials/efficiency_potential.hpp"
 #include "dhtt_plugins/potentials/resource_potential.hpp"
+#include "dhtt_plugins/potentials/test_potential.hpp"
 
 #include <pluginlib/class_list_macros.hpp>
 
@@ -52,5 +53,6 @@ PLUGINLIB_EXPORT_CLASS(dhtt_plugins::PtrBranchPlug, dhtt::BranchPlugType)
 // PotentialTypes
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::EfficiencyPotential, dhtt::PotentialType)
 PLUGINLIB_EXPORT_CLASS(dhtt_plugins::ResourcePotential, dhtt::PotentialType)
+PLUGINLIB_EXPORT_CLASS(dhtt_plugins::TestPotential, dhtt::PotentialType)
 
 #endif  // DHTT_PLUGINS__HTT_PLUGINS_HPP_

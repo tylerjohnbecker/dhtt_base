@@ -29,7 +29,7 @@ add_library(dhtt_plugins SHARED src/dhtt_plugins.cpp
                                 # src/behaviors/test/mock_move_behavior.cc src/behaviors/test/mock_look_behavior.cc
                                 src/behaviors/action_type.cc src/behaviors/move_behavior.cc src/behaviors/pick_behavior.cc src/behaviors/place_behavior.cc
                                 # src/goitrs/goitr_test.cc src/goitrs/find_goitr.cc
-                                src/potentials/efficiency_potential.cc src/potentials/resource_potential.cc
+                                src/potentials/efficiency_potential.cc src/potentials/resource_potential.cc src/potentials/test_potential.cc
                                 src/tree/ptr_branch.cc)
 
 target_include_directories(dhtt_plugins PUBLIC
@@ -63,14 +63,23 @@ install(
 )
 
 if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
+#  find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # uncomment the line when a copyright and license is not present in all source files
   #set(ament_cmake_copyright_FOUND TRUE)
   # the following line skips cpplint (only works in a git repo)
   # uncomment the line when this package is not in a git repo
   #set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
+#  ament_lint_auto_find_test_dependencies()
+
+  # gtest
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(${PROJECT_NAME}_test test/potential_test.cpp)
+  target_include_directories(${PROJECT_NAME}_test PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+  )
+  target_link_libraries(${PROJECT_NAME}_test dhtt_plugins)
 endif()
 
 # ament_export_include_directories(

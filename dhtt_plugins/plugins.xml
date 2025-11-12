@@ -75,5 +75,8 @@
 	<class type="dhtt_plugins::ResourcePotential" base_class_type="dhtt::PotentialType">
 		<description> Returns the perceived efficiency computed by the node class until a threshold is met for resource usage, then returns the proportion of resources used in the attached node's subtree</description>
 	</class>
+	<class type="dhtt_plugins::TestPotential" base_class_type="dhtt::PotentialType">
+		<description>dummy activation potential plugin for testing Scales activation potential so that early nodes added have low potential</description>
+	</class>
 	
 </library>

@@ -6,11 +6,9 @@ if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
 endif()
 
-# Default to C++20 ( for reasons )
+# Default to C++17
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
-  # set(CMAKE_CXX_COMPILER g++-10)
-  # set(CMAKE_CXX_FLAGS "-static-libstdc++")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -36,7 +34,11 @@ add_library(dhtt_lib SHARED
 target_include_directories(dhtt_lib PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-ament_target_dependencies(dhtt_lib rclcpp rclcpp_action dhtt_msgs pluginlib)
+
+# use target_link_libraries instead of ament_target_dependencies on Kilted
+# https://docs.ros.org/en/rolling/Releases/Release-Kilted-Kaiju.html#ament-target-dependencies-is-deprecated
+ament_target_dependencies(dhtt_lib rclcpp rclcpp_action rcl_yaml_param_parser dhtt_msgs pluginlib yaml-cpp)
+target_link_libraries(dhtt_lib ${YAML_CPP_LIBRARIES})
 
 install(DIRECTORY include/ DESTINATION include)
 install(
@@ -48,11 +50,10 @@ install(
 )
 
 add_executable(start_server src/main.cpp )
-ament_target_dependencies(start_server rclcpp rclcpp_action rcl_yaml_param_parser dhtt_msgs yaml-cpp pluginlib)
+target_link_libraries(start_server dhtt_lib)
 target_include_directories(start_server PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_link_libraries(start_server dhtt_lib ${YAML_CPP_LIBRARIES})
 
 add_executable(param_node src/param_node.cpp)
 ament_target_dependencies(param_node rclcpp)
@@ -70,7 +71,6 @@ install(PROGRAMS
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY
-  launch
   DESTINATION share/${PROJECT_NAME}/
 )
 
