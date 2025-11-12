@@ -1,0 +1,12 @@
+digraph "dhtt_plugins::PtrBranchSocket"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  Node1 [label="dhtt_plugins::PtrBranchSocket",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node2 [label="dhtt::BranchSocketType",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classdhtt_1_1BranchSocketType.html",tooltip="base class for the branch socket"];
+  Node3 -> Node2 [dir="back",color="darkorchid3",style="dashed",label=" container" ];
+  Node3 [label="dhtt::Node",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classdhtt_1_1Node.html",tooltip="dHTT Node class for all nodes on the tree"];
+}

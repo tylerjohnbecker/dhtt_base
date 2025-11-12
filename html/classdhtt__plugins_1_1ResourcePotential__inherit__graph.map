@@ -1,0 +1,4 @@
+<map id="dhtt_plugins::ResourcePotential" name="dhtt_plugins::ResourcePotential">
+<area shape="rect" id="node1" title="monitors and changes activation potential according to the number of resources used in the tree" alt="" coords="5,79,209,104"/>
+<area shape="rect" id="node2" href="$classdhtt_1_1PotentialType.html" title="a lightweight plugin for computing the activation potential of a node" alt="" coords="43,5,172,31"/>
+</map>

@@ -1,0 +1,75 @@
+\hypertarget{condition__utils_8hpp}{}\doxysection{dhtt/include/dhtt/utils/condition\+\_\+utils.hpp File Reference}
+\label{condition__utils_8hpp}\index{dhtt/include/dhtt/utils/condition\_utils.hpp@{dhtt/include/dhtt/utils/condition\_utils.hpp}}
+{\ttfamily \#include $<$unordered\+\_\+map$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$set$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include \char`\"{}rclcpp/rclcpp.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/action/condition.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/msg/pair.\+hpp\char`\"{}}\newline
+Include dependency graph for condition\+\_\+utils.\+hpp\+:
+% FIG 0
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{dhtt\+\_\+utils\+::\+Pred\+Con}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespacedhtt__utils}{dhtt\+\_\+utils}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{dhtt\+\_\+utils\+::\+Pred\+Con}} \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{dhtt\+\_\+utils\+::\+Predicate\+Conjunction}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99}{dhtt\+\_\+utils\+::logical\+\_\+operators}} \{ \mbox{\hyperlink{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99a1737f886c4ec745728e73a0ef00c98ca}{dhtt\+\_\+utils\+::\+LOGICAL\+\_\+\+AND}} = 1
+, \mbox{\hyperlink{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99ac6068e77d8f6eb09e76f5e98ef8eb5e3}{dhtt\+\_\+utils\+::\+LOGICAL\+\_\+\+OR}} = 2
+, \mbox{\hyperlink{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99a3930bc6e00cd8c0464e8c15710a8b242}{dhtt\+\_\+utils\+::\+LOGICAL\+\_\+\+OTHER}} = 3
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{namespacedhtt__utils_ad4db3bb88da43565a300d3f1b2b53477}{dhtt\+\_\+utils\+::predicate\+\_\+partial\+\_\+equals}} (dhtt\+\_\+msgs\+::msg\+::\+Pair lhs, dhtt\+\_\+msgs\+::msg\+::\+Pair rhs)
+\begin{DoxyCompactList}\small\item\em helper for find\+\_\+partial\+\_\+predicate \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacedhtt__utils_aef94d527d6554aa8ee6f5921319fd3cc}{dhtt\+\_\+utils\+::predicate\+\_\+equals}} (const dhtt\+\_\+msgs\+::msg\+::\+Pair \&lhs, const dhtt\+\_\+msgs\+::msg\+::\+Pair \&rhs)
+\begin{DoxyCompactList}\small\item\em equality function for predicates \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacedhtt__utils_a5e2e055a2ef2b11e27737dafc44a8e19}{dhtt\+\_\+utils\+::compare\+\_\+predicates}} (const dhtt\+\_\+msgs\+::msg\+::\+Pair \&lhs, const dhtt\+\_\+msgs\+::msg\+::\+Pair \&rhs)
+\begin{DoxyCompactList}\small\item\em comparison function for standard library sets \end{DoxyCompactList}\item 
+dhtt\+\_\+msgs\+::msg\+::\+Pair \mbox{\hyperlink{namespacedhtt__utils_ae58c3fee03b148db123bae87a1cf6e63}{dhtt\+\_\+utils\+::predicate\+\_\+copy}} (const dhtt\+\_\+msgs\+::msg\+::\+Pair \&msg)
+\begin{DoxyCompactList}\small\item\em Creates a deep copy of a predicate. \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ Predicate\+Conjunction $>$ \mbox{\hyperlink{namespacedhtt__utils_aa904de9daac68b7b1481f5d4d3007f66}{dhtt\+\_\+utils\+::conjunction\+\_\+copy}} (const Predicate\+Conjunction \&msg)
+\begin{DoxyCompactList}\small\item\em Creates a deep copy of a conjunction of predicates. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{namespacedhtt__utils_a4e19ee406f29d91d050a120242157b3d}{dhtt\+\_\+utils\+::to\+\_\+string}} (std\+::shared\+\_\+ptr$<$ Predicate\+Conjunction $>$ pred)
+\item 
+std\+::string \mbox{\hyperlink{namespacedhtt__utils_a5e385c4e3f823beb0a0bf4336004312d}{dhtt\+\_\+utils\+::to\+\_\+string}} (const Predicate\+Conjunction \&pred)
+\item 
+Predicate\+Conjunction \mbox{\hyperlink{namespacedhtt__utils_ad2943298cb7840480260660b92e8048c}{dhtt\+\_\+utils\+::convert\+\_\+to\+\_\+struct}} (std\+::string to\+\_\+convert)
+\item 
+void \mbox{\hyperlink{namespacedhtt__utils_ae9df4020ee49c30414963fd12962c958}{dhtt\+\_\+utils\+::remove\+\_\+predicate\+\_\+duplicates}} (Predicate\+Conjunction \&msg)
+\begin{DoxyCompactList}\small\item\em removes any duplicate predicates from the given predicate conjunction \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacedhtt__utils_a3d4468f5c02369f0f87d764f15cd5cdb}{dhtt\+\_\+utils\+::remove\+\_\+predicate\+\_\+partial\+\_\+duplicates}} (Predicate\+Conjunction \&msg)
+\begin{DoxyCompactList}\small\item\em removes duplicates of the same information changing in the temporall reverse order \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacedhtt__utils_a93346a4642729dfac216e2728673896d}{dhtt\+\_\+utils\+::violates\+\_\+predicates}} (const Predicate\+Conjunction \&postconditions, const Predicate\+Conjunction \&preconditions)
+\begin{DoxyCompactList}\small\item\em check if the execution of given postconditions would violate the given preconditions \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacedhtt__utils_a2cbc46b79df1b863a6f027da7706b04e}{dhtt\+\_\+utils\+::contains\+\_\+contradiction}} (const Predicate\+Conjunction \&to\+\_\+check)
+\begin{DoxyCompactList}\small\item\em checks given predicate list for internal contradictions \end{DoxyCompactList}\item 
+Predicate\+Conjunction \mbox{\hyperlink{namespacedhtt__utils_a3a009cad25e2ee0b7220767fa3c6d5fe}{dhtt\+\_\+utils\+::flatten\+\_\+predicates}} (const Predicate\+Conjunction \&msg)
+\begin{DoxyCompactList}\small\item\em flattens given predicate conjunction as much as possible \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacedhtt__utils_a9f6e69ab00d21500f9ca3631771838ec}{dhtt\+\_\+utils\+::append\+\_\+predicate\+\_\+conjunction}} (Predicate\+Conjunction \&to, const Predicate\+Conjunction from)
+\begin{DoxyCompactList}\small\item\em combines two predicate conjunctions \end{DoxyCompactList}\item 
+Predicate\+Conjunction \mbox{\hyperlink{namespacedhtt__utils_a1332db8647a55ab96829cafda867e0c9}{dhtt\+\_\+utils\+::combine\+\_\+predicates}} (const Predicate\+Conjunction \&l\+\_\+pred, const Predicate\+Conjunction \&r\+\_\+pred)
+\begin{DoxyCompactList}\small\item\em combines two given lists of predicates \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{dhtt\+\_\+utils\+::\+Predicate\+Conjunction}} $>$ \mbox{\hyperlink{namespacedhtt__utils_aafc2ec4312260dc4291b43440d801c19}{dhtt\+\_\+utils\+::negate\+\_\+predicates}} (const Predicate\+Conjunction \&to\+\_\+negate)
+\begin{DoxyCompactList}\small\item\em recursively negate the predicates of the given predicate conjunction \end{DoxyCompactList}\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Pair $>$\+::iterator \mbox{\hyperlink{namespacedhtt__utils_ab2bf8c57486300111c7f6726bf21bd76}{dhtt\+\_\+utils\+::find\+\_\+partial\+\_\+predicate}} (std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Pair $>$ to\+\_\+search, dhtt\+\_\+msgs\+::msg\+::\+Pair to\+\_\+find)
+\begin{DoxyCompactList}\small\item\em finds a given key value pair in the given vector of predicates \end{DoxyCompactList}\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Pair $>$\+::iterator \mbox{\hyperlink{namespacedhtt__utils_af2b765d33eaa4d1699a3dc0494e2877b}{dhtt\+\_\+utils\+::find\+\_\+predicate}} (std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Pair $>$ \&to\+\_\+search, dhtt\+\_\+msgs\+::msg\+::\+Pair to\+\_\+find)
+\begin{DoxyCompactList}\small\item\em finds a given predicate in a given vector of predicates \end{DoxyCompactList}\item 
+Predicate\+Conjunction \mbox{\hyperlink{namespacedhtt__utils_a6681546e5e1a89c201882d2ac3a626eb}{dhtt\+\_\+utils\+::remove\+\_\+partial\+\_\+dependencies}} (const std\+::vector$<$ Predicate\+Conjunction $>$ post, const Predicate\+Conjunction \&pre)
+\begin{DoxyCompactList}\small\item\em Removes partial temporal dependencies between the given list of postconditions and the given preconditions. \end{DoxyCompactList}\end{DoxyCompactItemize}

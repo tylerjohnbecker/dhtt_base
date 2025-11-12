@@ -1,0 +1,125 @@
+\hypertarget{classdhtt__plugins_1_1PtrBranchPlug}{}\doxysection{dhtt\+\_\+plugins\+::Ptr\+Branch\+Plug Class Reference}
+\label{classdhtt__plugins_1_1PtrBranchPlug}\index{dhtt\_plugins::PtrBranchPlug@{dhtt\_plugins::PtrBranchPlug}}
+
+
+{\ttfamily \#include $<$ptr\+\_\+branch.\+hpp$>$}
+
+
+
+Inheritance diagram for dhtt\+\_\+plugins\+::Ptr\+Branch\+Plug\+:
+% FIG 0
+
+
+Collaboration diagram for dhtt\+\_\+plugins\+::Ptr\+Branch\+Plug\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a0061f2f5a621ef7a91014a5b9d0fc898}{initialize}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$constructor\+\_\+ptr, std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1BranchSocketType}{dhtt\+::\+Branch\+Socket\+Type}} $>$ socket\+\_\+ptr, std\+::string child\+\_\+name) override
+\begin{DoxyCompactList}\small\item\em saves the ptr to the constructor node and the ptr to the socket \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a5d522bc5350c54c57a0f498703d788f3}{destruct}} () override
+\begin{DoxyCompactList}\small\item\em overloaded destructor to kill the socket\+\_\+ptr \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a54eeb30739b2a3274dcd8b7ae9947a56}{send\+\_\+activate}} (dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Goal to\+\_\+send) override
+\begin{DoxyCompactList}\small\item\em just runs the activation\+\_\+received\+\_\+callback in the Socket pair \end{DoxyCompactList}\item 
+dhtt\+\_\+msgs\+::action\+::\+Condition\+::\+Result \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a61fb438038d9506c6396292fcf53d4ee}{send\+\_\+maintain}} (dhtt\+\_\+msgs\+::action\+::\+Condition\+::\+Goal to\+\_\+send) override
+\begin{DoxyCompactList}\small\item\em just runs the maintain\+\_\+received\+\_\+callback in the Socket pair \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a0e4c20164827054bf146355cb30c7c1b}{connection\+\_\+is\+\_\+good}} () override
+\begin{DoxyCompactList}\small\item\em checks the connection with the socket and catches exception if mem error occurs with the ptr \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1BranchSocketType}{dhtt\+::\+Branch\+Socket\+Type}} $>$ \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a07a755bd3620a2c45b999d59a2278b12}{paired\+\_\+socket}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1PtrBranchPlug_a0e4c20164827054bf146355cb30c7c1b}\label{classdhtt__plugins_1_1PtrBranchPlug_a0e4c20164827054bf146355cb30c7c1b}} 
+\index{dhtt\_plugins::PtrBranchPlug@{dhtt\_plugins::PtrBranchPlug}!connection\_is\_good@{connection\_is\_good}}
+\index{connection\_is\_good@{connection\_is\_good}!dhtt\_plugins::PtrBranchPlug@{dhtt\_plugins::PtrBranchPlug}}
+\doxysubsubsection{\texorpdfstring{connection\_is\_good()}{connection\_is\_good()}}
+{\footnotesize\ttfamily bool dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Plug\+::connection\+\_\+is\+\_\+good (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+
+
+checks the connection with the socket and catches exception if mem error occurs with the ptr 
+
+
+
+Reimplemented from \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a52d70d97cabd9504fcdd6f643061507e}{dhtt\+::\+Branch\+Plug\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1PtrBranchPlug_a5d522bc5350c54c57a0f498703d788f3}\label{classdhtt__plugins_1_1PtrBranchPlug_a5d522bc5350c54c57a0f498703d788f3}} 
+\index{dhtt\_plugins::PtrBranchPlug@{dhtt\_plugins::PtrBranchPlug}!destruct@{destruct}}
+\index{destruct@{destruct}!dhtt\_plugins::PtrBranchPlug@{dhtt\_plugins::PtrBranchPlug}}
+\doxysubsubsection{\texorpdfstring{destruct()}{destruct()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Plug\+::destruct (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+overloaded destructor to kill the socket\+\_\+ptr 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Reimplemented from \mbox{\hyperlink{classdhtt_1_1BranchPlugType_abda9e11339d0dbfd3db0238a46be1987}{dhtt\+::\+Branch\+Plug\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1PtrBranchPlug_a0061f2f5a621ef7a91014a5b9d0fc898}\label{classdhtt__plugins_1_1PtrBranchPlug_a0061f2f5a621ef7a91014a5b9d0fc898}} 
+\index{dhtt\_plugins::PtrBranchPlug@{dhtt\_plugins::PtrBranchPlug}!initialize@{initialize}}
+\index{initialize@{initialize}!dhtt\_plugins::PtrBranchPlug@{dhtt\_plugins::PtrBranchPlug}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Plug\+::initialize (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{constructor\+\_\+ptr,  }\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1BranchSocketType}{dhtt\+::\+Branch\+Socket\+Type}} $>$}]{socket\+\_\+ptr,  }\item[{std\+::string}]{child\+\_\+name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+saves the ptr to the constructor node and the ptr to the socket 
+
+This will throw an exception if the socket\+\_\+ptr is nullptr, otherwise the connection should always be checked with connection\+\_\+is\+\_\+good 
+
+Implements \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a673acf9405c5d1d1f4a5374384d2926d}{dhtt\+::\+Branch\+Plug\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1PtrBranchPlug_a54eeb30739b2a3274dcd8b7ae9947a56}\label{classdhtt__plugins_1_1PtrBranchPlug_a54eeb30739b2a3274dcd8b7ae9947a56}} 
+\index{dhtt\_plugins::PtrBranchPlug@{dhtt\_plugins::PtrBranchPlug}!send\_activate@{send\_activate}}
+\index{send\_activate@{send\_activate}!dhtt\_plugins::PtrBranchPlug@{dhtt\_plugins::PtrBranchPlug}}
+\doxysubsubsection{\texorpdfstring{send\_activate()}{send\_activate()}}
+{\footnotesize\ttfamily dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Plug\+::send\+\_\+activate (\begin{DoxyParamCaption}\item[{dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Goal}]{to\+\_\+send }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+
+
+just runs the activation\+\_\+received\+\_\+callback in the Socket pair 
+
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1BranchPlugType_adf20411eb6ee10f954802f0971a485ff}{dhtt\+::\+Branch\+Plug\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1PtrBranchPlug_a61fb438038d9506c6396292fcf53d4ee}\label{classdhtt__plugins_1_1PtrBranchPlug_a61fb438038d9506c6396292fcf53d4ee}} 
+\index{dhtt\_plugins::PtrBranchPlug@{dhtt\_plugins::PtrBranchPlug}!send\_maintain@{send\_maintain}}
+\index{send\_maintain@{send\_maintain}!dhtt\_plugins::PtrBranchPlug@{dhtt\_plugins::PtrBranchPlug}}
+\doxysubsubsection{\texorpdfstring{send\_maintain()}{send\_maintain()}}
+{\footnotesize\ttfamily dhtt\+\_\+msgs\+::action\+::\+Condition\+::\+Result dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Plug\+::send\+\_\+maintain (\begin{DoxyParamCaption}\item[{dhtt\+\_\+msgs\+::action\+::\+Condition\+::\+Goal}]{to\+\_\+send }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+
+
+just runs the maintain\+\_\+received\+\_\+callback in the Socket pair 
+
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1BranchPlugType_a08eb798e41a7a5ae39f1203abbc19906}{dhtt\+::\+Branch\+Plug\+Type}}.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1PtrBranchPlug_a07a755bd3620a2c45b999d59a2278b12}\label{classdhtt__plugins_1_1PtrBranchPlug_a07a755bd3620a2c45b999d59a2278b12}} 
+\index{dhtt\_plugins::PtrBranchPlug@{dhtt\_plugins::PtrBranchPlug}!paired\_socket@{paired\_socket}}
+\index{paired\_socket@{paired\_socket}!dhtt\_plugins::PtrBranchPlug@{dhtt\_plugins::PtrBranchPlug}}
+\doxysubsubsection{\texorpdfstring{paired\_socket}{paired\_socket}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$\mbox{\hyperlink{classdhtt_1_1BranchSocketType}{dhtt\+::\+Branch\+Socket\+Type}}$>$ dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Plug\+::paired\+\_\+socket\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt\+\_\+plugins/include/dhtt\+\_\+plugins/tree/\mbox{\hyperlink{ptr__branch_8hpp}{ptr\+\_\+branch.\+hpp}}\end{DoxyCompactItemize}

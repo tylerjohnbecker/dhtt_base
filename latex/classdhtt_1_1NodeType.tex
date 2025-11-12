@@ -13,6 +13,10 @@ Base class describing the logic of the nodes.
 
 Inheritance diagram for dhtt\+::Node\+Type\+:
 % FIG 0
+
+
+Collaboration diagram for dhtt\+::Node\+Type\+:
+% FIG 1
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -34,9 +38,9 @@ virtual bool \mbox{\hyperlink{classdhtt_1_1NodeType_ad6d899627452745cede4dc723ef
 \begin{DoxyCompactList}\small\item\em check for if the node is finished running \end{DoxyCompactList}\item 
 virtual bool \mbox{\hyperlink{classdhtt_1_1NodeType_a27786baa37dcfb24f406bf0becf5d428}{can\+\_\+add\+\_\+child}} ()
 \begin{DoxyCompactList}\small\item\em whether or not this node can have children \end{DoxyCompactList}\item 
-virtual dhtt\+\_\+utils\+::\+Predicate\+Conjunction \mbox{\hyperlink{classdhtt_1_1NodeType_a83731130208082ea0bfe6b5ca55b63d2}{get\+\_\+preconditions}} ()
+virtual \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{dhtt\+\_\+utils\+::\+Predicate\+Conjunction}} \mbox{\hyperlink{classdhtt_1_1NodeType_a83731130208082ea0bfe6b5ca55b63d2}{get\+\_\+preconditions}} ()
 \begin{DoxyCompactList}\small\item\em returns the preconditions of the behavior \end{DoxyCompactList}\item 
-virtual dhtt\+\_\+utils\+::\+Predicate\+Conjunction \mbox{\hyperlink{classdhtt_1_1NodeType_a5b4e2269bb11b08d7da5782cd66955c4}{get\+\_\+postconditions}} ()
+virtual \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{dhtt\+\_\+utils\+::\+Predicate\+Conjunction}} \mbox{\hyperlink{classdhtt_1_1NodeType_a5b4e2269bb11b08d7da5782cd66955c4}{get\+\_\+postconditions}} ()
 \begin{DoxyCompactList}\small\item\em returns the postconditions of the behavior \end{DoxyCompactList}\item 
 virtual void \mbox{\hyperlink{classdhtt_1_1NodeType_a6398aa95ffae2bafaf46d7946e9f8ddc}{release\+\_\+all\+\_\+resources}} ()
 \begin{DoxyCompactList}\small\item\em releases all node resources \end{DoxyCompactList}\item 
@@ -56,9 +60,9 @@ std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator}
 \doxysubsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
-dhtt\+\_\+utils\+::\+Predicate\+Conjunction \mbox{\hyperlink{classdhtt_1_1NodeType_a09f44dea50dea76741516405a5cdffe6}{preconditions}}
+\mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{dhtt\+\_\+utils\+::\+Predicate\+Conjunction}} \mbox{\hyperlink{classdhtt_1_1NodeType_a09f44dea50dea76741516405a5cdffe6}{preconditions}}
 \item 
-dhtt\+\_\+utils\+::\+Predicate\+Conjunction \mbox{\hyperlink{classdhtt_1_1NodeType_a1709abe730c2ec5d62c95fdf2d75a20b}{postconditions}}
+\mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{dhtt\+\_\+utils\+::\+Predicate\+Conjunction}} \mbox{\hyperlink{classdhtt_1_1NodeType_a1709abe730c2ec5d62c95fdf2d75a20b}{postconditions}}
 \item 
 bool \mbox{\hyperlink{classdhtt_1_1NodeType_a19ba84ac2216554b7830b2be2eb0f3d4}{children\+\_\+allowed}}
 \item 
@@ -147,7 +151,7 @@ Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1MoveBehavior_a466e5b29c26b
 \index{dhtt::NodeType@{dhtt::NodeType}!get\_postconditions@{get\_postconditions}}
 \index{get\_postconditions@{get\_postconditions}!dhtt::NodeType@{dhtt::NodeType}}
 \doxysubsubsection{\texorpdfstring{get\_postconditions()}{get\_postconditions()}}
-{\footnotesize\ttfamily virtual dhtt\+\_\+utils\+::\+Predicate\+Conjunction dhtt\+::\+Node\+Type\+::get\+\_\+postconditions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+{\footnotesize\ttfamily virtual \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{dhtt\+\_\+utils\+::\+Predicate\+Conjunction}} dhtt\+::\+Node\+Type\+::get\+\_\+postconditions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
 
 
 
@@ -162,7 +166,7 @@ postconditions in a Predicate\+Conjunction
 \index{dhtt::NodeType@{dhtt::NodeType}!get\_preconditions@{get\_preconditions}}
 \index{get\_preconditions@{get\_preconditions}!dhtt::NodeType@{dhtt::NodeType}}
 \doxysubsubsection{\texorpdfstring{get\_preconditions()}{get\_preconditions()}}
-{\footnotesize\ttfamily virtual dhtt\+\_\+utils\+::\+Predicate\+Conjunction dhtt\+::\+Node\+Type\+::get\+\_\+preconditions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+{\footnotesize\ttfamily virtual \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{dhtt\+\_\+utils\+::\+Predicate\+Conjunction}} dhtt\+::\+Node\+Type\+::get\+\_\+preconditions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
 
 
 
@@ -356,13 +360,13 @@ Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1ActionType_a56a3ef4023591a
 \index{dhtt::NodeType@{dhtt::NodeType}!postconditions@{postconditions}}
 \index{postconditions@{postconditions}!dhtt::NodeType@{dhtt::NodeType}}
 \doxysubsubsection{\texorpdfstring{postconditions}{postconditions}}
-{\footnotesize\ttfamily dhtt\+\_\+utils\+::\+Predicate\+Conjunction dhtt\+::\+Node\+Type\+::postconditions\hspace{0.3cm}{\ttfamily [protected]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{dhtt\+\_\+utils\+::\+Predicate\+Conjunction}} dhtt\+::\+Node\+Type\+::postconditions\hspace{0.3cm}{\ttfamily [protected]}}
 
 \mbox{\Hypertarget{classdhtt_1_1NodeType_a09f44dea50dea76741516405a5cdffe6}\label{classdhtt_1_1NodeType_a09f44dea50dea76741516405a5cdffe6}} 
 \index{dhtt::NodeType@{dhtt::NodeType}!preconditions@{preconditions}}
 \index{preconditions@{preconditions}!dhtt::NodeType@{dhtt::NodeType}}
 \doxysubsubsection{\texorpdfstring{preconditions}{preconditions}}
-{\footnotesize\ttfamily dhtt\+\_\+utils\+::\+Predicate\+Conjunction dhtt\+::\+Node\+Type\+::preconditions\hspace{0.3cm}{\ttfamily [protected]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{dhtt\+\_\+utils\+::\+Predicate\+Conjunction}} dhtt\+::\+Node\+Type\+::preconditions\hspace{0.3cm}{\ttfamily [protected]}}
 
 
 

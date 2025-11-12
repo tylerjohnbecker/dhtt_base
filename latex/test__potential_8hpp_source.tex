@@ -1,0 +1,29 @@
+\hypertarget{test__potential_8hpp_source}{}\doxysection{test\+\_\+potential.\+hpp}
+\label{test__potential_8hpp_source}\index{dhtt\_plugins/include/dhtt\_plugins/potentials/test\_potential.hpp@{dhtt\_plugins/include/dhtt\_plugins/potentials/test\_potential.hpp}}
+\mbox{\hyperlink{test__potential_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef TEST\_POTENTIAL\_HPP\_}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define TEST\_POTENTIAL\_HPP\_}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{node_8hpp}{dhtt/tree/node.hpp}}"{}}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{potential__type_8hpp}{dhtt/tree/potential\_type.hpp}}"{}}}
+\DoxyCodeLine{6 }
+\DoxyCodeLine{7 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedhtt__plugins}{dhtt\_plugins}}}
+\DoxyCodeLine{8 \{}
+\DoxyCodeLine{14 \textcolor{keyword}{class }\mbox{\hyperlink{classdhtt__plugins_1_1TestPotential}{TestPotential}} : \textcolor{keyword}{public} \mbox{\hyperlink{classdhtt_1_1PotentialType}{dhtt::PotentialType}}}
+\DoxyCodeLine{15 \{}
+\DoxyCodeLine{16   \textcolor{keyword}{public}:}
+\DoxyCodeLine{17     \textcolor{keyword}{virtual} \mbox{\hyperlink{classdhtt__plugins_1_1TestPotential_abb5506bc16c208e311bc8bb8a4f27650}{\string~TestPotential}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{18     \mbox{\hyperlink{classdhtt__plugins_1_1TestPotential_a04fedb9efc0438327fcc0150b001a324}{TestPotential}}();}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{23     \textcolor{keywordtype}{double} \mbox{\hyperlink{classdhtt__plugins_1_1TestPotential_a51c6a88b25529af0788c27ecd1162098}{compute\_activation\_potential}}(\mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}} *container) \textcolor{keyword}{override};}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25   \textcolor{keyword}{private}:}
+\DoxyCodeLine{26     \textcolor{keyword}{static} \textcolor{keyword}{inline} \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classdhtt__plugins_1_1TestPotential_a2baff19ae9000861a6a9905eac2a06c3}{nodes\_added}} = 0;}
+\DoxyCodeLine{27     \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classdhtt__plugins_1_1TestPotential_a3040c6e8d488c595667a5bb16ee4a656}{my\_node\_counter}};}
+\DoxyCodeLine{28 \};}
+\DoxyCodeLine{29 \} \textcolor{comment}{// namespace dhtt\_plugins}}
+\DoxyCodeLine{30 }
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// TEST\_POTENTIAL\_HPP\_}}
+
+\end{DoxyCode}

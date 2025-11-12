@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['verbose_0',['verbose',['../classdhtt_1_1MainServer.html#a760368e748f42ff110b41093dd644c2a',1,'dhtt::MainServer']]]
+  ['vector_5fto_5fmsg_0',['vector_to_msg',['../namespacedhtt__utils.html#a8bb9bbf6456dcbef69dc065c1ee412c3',1,'dhtt_utils::vector_to_msg(VectorResources data)'],['../namespacedhtt__utils.html#ad4ad751f513e7b91c656460757e0e4c2',1,'dhtt_utils::vector_to_msg(std::vector&lt; std::string &gt; names, std::vector&lt; long int &gt; types, std::vector&lt; long int &gt; channels, std::vector&lt; bool &gt; locked, std::vector&lt; long int &gt; owners)']]],
+  ['vectorresources_1',['VectorResources',['../structdhtt__utils_1_1VectorResources.html',1,'dhtt_utils::VectorResources'],['../structdhtt__utils_1_1VectorResources.html#a2cb160c44a0996eb80dcd99312e792c5',1,'dhtt_utils::VectorResources::VectorResources()'],['../structdhtt__utils_1_1VectorResources.html#a018add71d8402d07cb97cf9fe232158a',1,'dhtt_utils::VectorResources::VectorResources(std::vector&lt; std::string &gt; a, std::vector&lt; long int &gt; b, std::vector&lt; long int &gt; c, std::vector&lt; bool &gt; d, std::vector&lt; long int &gt; e)'],['../structdhtt__utils_1_1VectorResources.html#aef95587b137fbcbd4169593e18e5c939',1,'dhtt_utils::VectorResources::VectorResources(std::initializer_list&lt; std::any &gt; tup)'],['../namespacedhtt__utils.html#a6d988440a8a29195c3e457a8b91e9ca0',1,'dhtt_utils::VectorResources()']]],
+  ['verbose_2',['verbose',['../classdhtt_1_1MainServer.html#a760368e748f42ff110b41093dd644c2a',1,'dhtt::MainServer']]],
+  ['violates_5fpredicates_3',['violates_predicates',['../namespacedhtt__utils.html#a93346a4642729dfac216e2728673896d',1,'dhtt_utils']]]
 ];

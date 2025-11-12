@@ -1,0 +1,6 @@
+<map id="dhtt::PotentialType" name="dhtt::PotentialType">
+<area shape="rect" id="node1" title="a lightweight plugin for computing the activation potential of a node" alt="" coords="5,70,135,95"/>
+<area shape="rect" id="node2" href="$classdhtt__plugins_1_1EfficiencyPotential.html" title="Returns the perceived efficiency from the logic of the Node." alt="" coords="209,5,361,45"/>
+<area shape="rect" id="node3" href="$classdhtt__plugins_1_1ResourcePotential.html" title="monitors and changes activation potential according to the number of resources used in the tree" alt="" coords="183,70,387,95"/>
+<area shape="rect" id="node4" href="$classdhtt__plugins_1_1TestPotential.html" title="dummy activation potential plugin for testing" alt="" coords="197,119,372,145"/>
+</map>

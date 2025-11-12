@@ -11,8 +11,12 @@ Base class for the plugs which provides the necessary multithreading capabilitie
 
 
 
-Collaboration diagram for dhtt\+::Branch\+Plug\+Type\+:
+Inheritance diagram for dhtt\+::Branch\+Plug\+Type\+:
 % FIG 0
+
+
+Collaboration diagram for dhtt\+::Branch\+Plug\+Type\+:
+% FIG 1
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -152,6 +156,10 @@ This method will be run from the parent node, and should be overloaded for each 
 \begin{DoxyReturn}{Returns}
 true if it can connect, false otherwise 
 \end{DoxyReturn}
+
+
+Reimplemented in \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a0e4c20164827054bf146355cb30c7c1b}{dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Plug}}.
+
 \mbox{\Hypertarget{classdhtt_1_1BranchPlugType_abda9e11339d0dbfd3db0238a46be1987}\label{classdhtt_1_1BranchPlugType_abda9e11339d0dbfd3db0238a46be1987}} 
 \index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!destruct@{destruct}}
 \index{destruct@{destruct}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
@@ -162,7 +170,11 @@ true if it can connect, false otherwise
 
 collects resources and joins threads 
 
-This should be called in the destructor of the node class and can be overriden in the case that child classes have more resources to collect \mbox{\Hypertarget{classdhtt_1_1BranchPlugType_a35c825380c8c8578c25c6edc04814350}\label{classdhtt_1_1BranchPlugType_a35c825380c8c8578c25c6edc04814350}} 
+This should be called in the destructor of the node class and can be overriden in the case that child classes have more resources to collect 
+
+Reimplemented in \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a5d522bc5350c54c57a0f498703d788f3}{dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Plug}}.
+
+\mbox{\Hypertarget{classdhtt_1_1BranchPlugType_a35c825380c8c8578c25c6edc04814350}\label{classdhtt_1_1BranchPlugType_a35c825380c8c8578c25c6edc04814350}} 
 \index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!get\_activation\_result@{get\_activation\_result}}
 \index{get\_activation\_result@{get\_activation\_result}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
 \doxysubsubsection{\texorpdfstring{get\_activation\_result()}{get\_activation\_result()}}
@@ -214,6 +226,10 @@ This class is meant to be created for each child and facilitates all communicati
 \begin{DoxyReturn}{Returns}
 void 
 \end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a0061f2f5a621ef7a91014a5b9d0fc898}{dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Plug}}.
+
 \mbox{\Hypertarget{classdhtt_1_1BranchPlugType_adf20411eb6ee10f954802f0971a485ff}\label{classdhtt_1_1BranchPlugType_adf20411eb6ee10f954802f0971a485ff}} 
 \index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!send\_activate@{send\_activate}}
 \index{send\_activate@{send\_activate}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
@@ -234,6 +250,10 @@ This is the method where overloaded activation code should exist to hit the righ
 \begin{DoxyReturn}{Returns}
 activation result from the child 
 \end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a54eeb30739b2a3274dcd8b7ae9947a56}{dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Plug}}.
+
 \mbox{\Hypertarget{classdhtt_1_1BranchPlugType_a08eb798e41a7a5ae39f1203abbc19906}\label{classdhtt_1_1BranchPlugType_a08eb798e41a7a5ae39f1203abbc19906}} 
 \index{dhtt::BranchPlugType@{dhtt::BranchPlugType}!send\_maintain@{send\_maintain}}
 \index{send\_maintain@{send\_maintain}!dhtt::BranchPlugType@{dhtt::BranchPlugType}}
@@ -254,6 +274,10 @@ This is the method where overloaded maintenance code should exist to hit the rig
 \begin{DoxyReturn}{Returns}
 condition result from the child 
 \end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a61fb438038d9506c6396292fcf53d4ee}{dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Plug}}.
+
 
 
 \doxysubsection{Member Data Documentation}

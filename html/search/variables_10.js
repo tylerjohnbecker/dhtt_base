@@ -10,11 +10,10 @@ var searchData=
   ['resources_5fowned_5fby_5fsubtree_7',['resources_owned_by_subtree',['../classdhtt_1_1Node.html#a282a7a079bc283b3857cf951f083a99c',1,'dhtt::Node']]],
   ['resources_5fsub_8',['resources_sub',['../classdhtt_1_1Node.html#a3d2fbe7dd850b48bd9c19f8f1a6a6bb7',1,'dhtt::Node']]],
   ['responses_9',['responses',['../classdhtt_1_1Node.html#a09debead42c6b70e4123399287fb93fc',1,'dhtt::Node']]],
-  ['result_5fpub_10',['result_pub',['../classdhtt_1_1SubServer.html#a974e626f2f700de30536cd41fdf0b73c',1,'dhtt::SubServer']]],
-  ['robot_5fname_11',['robot_name',['../classdhtt__plugins_1_1RootBehavior.html#aa309557b293a304e6c12345fb2154772',1,'dhtt_plugins::RootBehavior']]],
-  ['robot_5fresources_5ffile_5fpath_12',['robot_resources_file_path',['../classdhtt__plugins_1_1RootBehavior.html#aa92a5987e9d0c11b50a4793f239a1ca4',1,'dhtt_plugins::RootBehavior']]],
-  ['root_5fstatus_5fpub_13',['root_status_pub',['../classdhtt_1_1MainServer.html#a3db453527ebe9fbb960649f529098cec',1,'dhtt::MainServer']]],
-  ['run_5ftree_5fthread_14',['run_tree_thread',['../classdhtt_1_1MainServer.html#a32c91656658edf862ab4953bafbd5f01',1,'dhtt::MainServer']]],
-  ['running_15',['running',['../classdhtt_1_1MainServer.html#a7dbbf6c6d913289a4ee63b82488cab13',1,'dhtt::MainServer']]],
-  ['running_5fmut_16',['running_mut',['../classdhtt_1_1MainServer.html#a6d280409bc4098db671180f2a7020765',1,'dhtt::MainServer']]]
+  ['robot_5fname_10',['robot_name',['../classdhtt__plugins_1_1RootBehavior.html#aa309557b293a304e6c12345fb2154772',1,'dhtt_plugins::RootBehavior']]],
+  ['robot_5fresources_5ffile_5fpath_11',['robot_resources_file_path',['../classdhtt__plugins_1_1RootBehavior.html#aa92a5987e9d0c11b50a4793f239a1ca4',1,'dhtt_plugins::RootBehavior']]],
+  ['root_5fstatus_5fpub_12',['root_status_pub',['../classdhtt_1_1MainServer.html#a3db453527ebe9fbb960649f529098cec',1,'dhtt::MainServer']]],
+  ['run_5ftree_5fthread_13',['run_tree_thread',['../classdhtt_1_1MainServer.html#a32c91656658edf862ab4953bafbd5f01',1,'dhtt::MainServer']]],
+  ['running_14',['running',['../classdhtt_1_1MainServer.html#a7dbbf6c6d913289a4ee63b82488cab13',1,'dhtt::MainServer']]],
+  ['running_5fmut_15',['running_mut',['../classdhtt_1_1MainServer.html#a6d280409bc4098db671180f2a7020765',1,'dhtt::MainServer']]]
 ];

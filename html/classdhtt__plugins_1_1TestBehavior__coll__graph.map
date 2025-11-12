@@ -1,4 +1,5 @@
 <map id="dhtt_plugins::TestBehavior" name="dhtt_plugins::TestBehavior">
-<area shape="rect" id="node1" title="A behavior which is just utilized for testing the functionality of the tree." alt="" coords="5,79,180,104"/>
-<area shape="rect" id="node2" href="$classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes." alt="" coords="38,5,147,31"/>
+<area shape="rect" id="node1" title="A behavior which is just utilized for testing the functionality of the tree." alt="" coords="5,183,180,208"/>
+<area shape="rect" id="node2" href="$classdhtt_1_1NodeType.html" title="Base class describing the logic of the nodes." alt="" coords="38,108,147,133"/>
+<area shape="rect" id="node3" href="$structdhtt__utils_1_1PredCon.html" title=" " alt="" coords="27,5,158,31"/>
 </map>

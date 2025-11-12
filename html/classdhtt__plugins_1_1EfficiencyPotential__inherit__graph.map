@@ -1,0 +1,4 @@
+<map id="dhtt_plugins::EfficiencyPotential" name="dhtt_plugins::EfficiencyPotential">
+<area shape="rect" id="node1" title="Returns the perceived efficiency from the logic of the Node." alt="" coords="5,79,157,119"/>
+<area shape="rect" id="node2" href="$classdhtt_1_1PotentialType.html" title="a lightweight plugin for computing the activation potential of a node" alt="" coords="17,5,146,31"/>
+</map>

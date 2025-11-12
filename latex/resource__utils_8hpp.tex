@@ -1,0 +1,34 @@
+\hypertarget{resource__utils_8hpp}{}\doxysection{dhtt/include/dhtt/utils/resource\+\_\+utils.hpp File Reference}
+\label{resource__utils_8hpp}\index{dhtt/include/dhtt/utils/resource\_utils.hpp@{dhtt/include/dhtt/utils/resource\_utils.hpp}}
+{\ttfamily \#include \char`\"{}dhtt\+\_\+msgs/msg/resources.\+hpp\char`\"{}}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$any$>$}\newline
+{\ttfamily \#include $<$cassert$>$}\newline
+Include dependency graph for resource\+\_\+utils.\+hpp\+:
+% FIG 0
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{dhtt\+\_\+utils\+::\+Vector\+Resources}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespacedhtt__utils}{dhtt\+\_\+utils}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{dhtt\+\_\+utils\+::\+Vector\+Resources}} \mbox{\hyperlink{namespacedhtt__utils_a6d988440a8a29195c3e457a8b91e9ca0}{dhtt\+\_\+utils\+::\+Vector\+Resources}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+dhtt\+\_\+msgs\+::msg\+::\+Resources \mbox{\hyperlink{namespacedhtt__utils_a8bb9bbf6456dcbef69dc065c1ee412c3}{dhtt\+\_\+utils\+::vector\+\_\+to\+\_\+msg}} (Vector\+Resources data)
+\begin{DoxyCompactList}\small\item\em creates a dhtt\+\_\+msgs\+::msg\+::\+Resources object from vectors containing the necessary information \end{DoxyCompactList}\item 
+dhtt\+\_\+msgs\+::msg\+::\+Resources \mbox{\hyperlink{namespacedhtt__utils_ad4ad751f513e7b91c656460757e0e4c2}{dhtt\+\_\+utils\+::vector\+\_\+to\+\_\+msg}} (std\+::vector$<$ std\+::string $>$ names, std\+::vector$<$ long int $>$ types, std\+::vector$<$ long int $>$ channels, std\+::vector$<$ bool $>$ locked, std\+::vector$<$ long int $>$ owners)
+\begin{DoxyCompactList}\small\item\em overload of vector\+\_\+to\+\_\+msg which takes each vector individually as a parameter \end{DoxyCompactList}\item 
+Vector\+Resources \mbox{\hyperlink{namespacedhtt__utils_a77020d28b2f386f1fa950882e30a0124}{dhtt\+\_\+utils\+::msg\+\_\+to\+\_\+vector}} (std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ msgs)
+\begin{DoxyCompactList}\small\item\em creates a \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}} object from a given vector of dhtt\+\_\+msgs\+::msg\+::\+Resource msgs \end{DoxyCompactList}\item 
+Vector\+Resources \mbox{\hyperlink{namespacedhtt__utils_a1bfda421111e0ec5acd7831c0c91c6ca}{dhtt\+\_\+utils\+::msg\+\_\+to\+\_\+vector}} (dhtt\+\_\+msgs\+::msg\+::\+Resources msg)
+\begin{DoxyCompactList}\small\item\em creates a \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}} object from a given dhtt\+\_\+msgs\+::msg\+::\+Resources msg \end{DoxyCompactList}\end{DoxyCompactItemize}

@@ -1,0 +1,95 @@
+\hypertarget{classdhtt__plugins_1_1TestPotential}{}\doxysection{dhtt\+\_\+plugins\+::Test\+Potential Class Reference}
+\label{classdhtt__plugins_1_1TestPotential}\index{dhtt\_plugins::TestPotential@{dhtt\_plugins::TestPotential}}
+
+
+dummy activation potential plugin for testing  
+
+
+
+
+{\ttfamily \#include $<$test\+\_\+potential.\+hpp$>$}
+
+
+
+Inheritance diagram for dhtt\+\_\+plugins\+::Test\+Potential\+:
+% FIG 0
+
+
+Collaboration diagram for dhtt\+\_\+plugins\+::Test\+Potential\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{classdhtt__plugins_1_1TestPotential_abb5506bc16c208e311bc8bb8a4f27650}{$\sim$\+Test\+Potential}} ()=default
+\item 
+\mbox{\hyperlink{classdhtt__plugins_1_1TestPotential_a04fedb9efc0438327fcc0150b001a324}{Test\+Potential}} ()
+\item 
+double \mbox{\hyperlink{classdhtt__plugins_1_1TestPotential_a51c6a88b25529af0788c27ecd1162098}{compute\+\_\+activation\+\_\+potential}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em returns a dummy activation potential such that nodes added first have lower potential \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t \mbox{\hyperlink{classdhtt__plugins_1_1TestPotential_a3040c6e8d488c595667a5bb16ee4a656}{my\+\_\+node\+\_\+counter}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static size\+\_\+t \mbox{\hyperlink{classdhtt__plugins_1_1TestPotential_a2baff19ae9000861a6a9905eac2a06c3}{nodes\+\_\+added}} = 0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+dummy activation potential plugin for testing 
+
+Scales activation potential so that early nodes added have low potential 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1TestPotential_abb5506bc16c208e311bc8bb8a4f27650}\label{classdhtt__plugins_1_1TestPotential_abb5506bc16c208e311bc8bb8a4f27650}} 
+\index{dhtt\_plugins::TestPotential@{dhtt\_plugins::TestPotential}!````~TestPotential@{$\sim$TestPotential}}
+\index{````~TestPotential@{$\sim$TestPotential}!dhtt\_plugins::TestPotential@{dhtt\_plugins::TestPotential}}
+\doxysubsubsection{\texorpdfstring{$\sim$TestPotential()}{~TestPotential()}}
+{\footnotesize\ttfamily virtual dhtt\+\_\+plugins\+::\+Test\+Potential\+::$\sim$\+Test\+Potential (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1TestPotential_a04fedb9efc0438327fcc0150b001a324}\label{classdhtt__plugins_1_1TestPotential_a04fedb9efc0438327fcc0150b001a324}} 
+\index{dhtt\_plugins::TestPotential@{dhtt\_plugins::TestPotential}!TestPotential@{TestPotential}}
+\index{TestPotential@{TestPotential}!dhtt\_plugins::TestPotential@{dhtt\_plugins::TestPotential}}
+\doxysubsubsection{\texorpdfstring{TestPotential()}{TestPotential()}}
+{\footnotesize\ttfamily dhtt\+\_\+plugins\+::\+Test\+Potential\+::\+Test\+Potential (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1TestPotential_a51c6a88b25529af0788c27ecd1162098}\label{classdhtt__plugins_1_1TestPotential_a51c6a88b25529af0788c27ecd1162098}} 
+\index{dhtt\_plugins::TestPotential@{dhtt\_plugins::TestPotential}!compute\_activation\_potential@{compute\_activation\_potential}}
+\index{compute\_activation\_potential@{compute\_activation\_potential}!dhtt\_plugins::TestPotential@{dhtt\_plugins::TestPotential}}
+\doxysubsubsection{\texorpdfstring{compute\_activation\_potential()}{compute\_activation\_potential()}}
+{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Test\+Potential\+::compute\+\_\+activation\+\_\+potential (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+returns a dummy activation potential such that nodes added first have lower potential 
+
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1PotentialType_a72fd911b54a2c14a4e942daff8bf3879}{dhtt\+::\+Potential\+Type}}.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1TestPotential_a3040c6e8d488c595667a5bb16ee4a656}\label{classdhtt__plugins_1_1TestPotential_a3040c6e8d488c595667a5bb16ee4a656}} 
+\index{dhtt\_plugins::TestPotential@{dhtt\_plugins::TestPotential}!my\_node\_counter@{my\_node\_counter}}
+\index{my\_node\_counter@{my\_node\_counter}!dhtt\_plugins::TestPotential@{dhtt\_plugins::TestPotential}}
+\doxysubsubsection{\texorpdfstring{my\_node\_counter}{my\_node\_counter}}
+{\footnotesize\ttfamily size\+\_\+t dhtt\+\_\+plugins\+::\+Test\+Potential\+::my\+\_\+node\+\_\+counter\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1TestPotential_a2baff19ae9000861a6a9905eac2a06c3}\label{classdhtt__plugins_1_1TestPotential_a2baff19ae9000861a6a9905eac2a06c3}} 
+\index{dhtt\_plugins::TestPotential@{dhtt\_plugins::TestPotential}!nodes\_added@{nodes\_added}}
+\index{nodes\_added@{nodes\_added}!dhtt\_plugins::TestPotential@{dhtt\_plugins::TestPotential}}
+\doxysubsubsection{\texorpdfstring{nodes\_added}{nodes\_added}}
+{\footnotesize\ttfamily size\+\_\+t dhtt\+\_\+plugins\+::\+Test\+Potential\+::nodes\+\_\+added = 0\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt\+\_\+plugins/include/dhtt\+\_\+plugins/potentials/\mbox{\hyperlink{test__potential_8hpp}{test\+\_\+potential.\+hpp}}\end{DoxyCompactItemize}

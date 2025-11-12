@@ -10,6 +10,5 @@ var searchData=
   ['active_5fchild_5fname_7',['active_child_name',['../classdhtt_1_1Node.html#ae11459053c91e69999dedff767c56a05',1,'dhtt::Node']]],
   ['add_5fresources_8',['add_resources',['../classdhtt__plugins_1_1ActionType.html#a8537fb7273e0394be55165f5a27b211d',1,'dhtt_plugins::ActionType']]],
   ['already_5fmade_9',['already_made',['../classdhtt__plugins_1_1RootBehavior.html#a236c90da7a7982bc61e86c15fe33c16a',1,'dhtt_plugins::RootBehavior']]],
-  ['args_10',['args',['../classdhtt_1_1SubServer.html#a7d687866ec33eef0207fc70c43c9685b',1,'dhtt::SubServer']]],
-  ['available_5fresources_11',['available_resources',['../classdhtt_1_1Node.html#ad80c0534f216a1096edf5445249b8d64',1,'dhtt::Node']]]
+  ['available_5fresources_10',['available_resources',['../classdhtt_1_1Node.html#ad80c0534f216a1096edf5445249b8d64',1,'dhtt::Node']]]
 ];

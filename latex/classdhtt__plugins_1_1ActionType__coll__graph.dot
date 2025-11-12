@@ -7,4 +7,6 @@ digraph "dhtt_plugins::ActionType"
   Node1 [label="dhtt_plugins::ActionType",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="parent class of all behavior/action type nodes"];
   Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
   Node2 [label="dhtt::NodeType",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classdhtt_1_1NodeType.html",tooltip="Base class describing the logic of the nodes."];
+  Node3 -> Node2 [dir="back",color="darkorchid3",style="dashed",label=" postconditions\npreconditions" ];
+  Node3 [label="dhtt_utils::PredCon",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$structdhtt__utils_1_1PredCon.html",tooltip=" "];
 }

@@ -1,20 +1,21 @@
 var searchData=
 [
-  ['param_5fclient_5fnode_5fptr_0',['param_client_node_ptr',['../classdhtt_1_1CommunicationAggregator.html#ae271734d5ea759d958e9290eccba7604',1,'dhtt::CommunicationAggregator']]],
-  ['param_5fclient_5fptr_1',['param_client_ptr',['../classdhtt__plugins_1_1RootBehavior.html#acc53d37c2b66d07d222ad61e08c087ff',1,'dhtt_plugins::RootBehavior']]],
-  ['param_5fclient_5fptrs_2',['param_client_ptrs',['../classdhtt_1_1CommunicationAggregator.html#abc605d72f5a3fcbab83ff56697d2d5b8',1,'dhtt::CommunicationAggregator']]],
-  ['param_5fmutex_3',['param_mutex',['../classdhtt_1_1CommunicationAggregator.html#ac158ec9a6767909237eb83c88b3259ac',1,'dhtt::CommunicationAggregator']]],
-  ['params_4',['params',['../classdhtt_1_1NodeType.html#a2cf719d31abbbad3a06e6c0ecc4915cf',1,'dhtt::NodeType']]],
-  ['parent_5fcommunication_5fsocket_5',['parent_communication_socket',['../classdhtt_1_1Node.html#a980c580fdba440348b903658bd81e803',1,'dhtt::Node']]],
-  ['parent_5fname_6',['parent_name',['../classdhtt_1_1Node.html#a4f3abfadbbda36594d1976a3d960fc09',1,'dhtt::Node']]],
-  ['parent_5fservice_7',['parent_service',['../classdhtt_1_1SubServer.html#a93bb1c98f2039ff81f41946294550b5c',1,'dhtt::SubServer']]],
+  ['paired_5fsocket_0',['paired_socket',['../classdhtt__plugins_1_1PtrBranchPlug.html#a07a755bd3620a2c45b999d59a2278b12',1,'dhtt_plugins::PtrBranchPlug']]],
+  ['param_5fclient_5fnode_5fptr_1',['param_client_node_ptr',['../classdhtt_1_1CommunicationAggregator.html#ae271734d5ea759d958e9290eccba7604',1,'dhtt::CommunicationAggregator']]],
+  ['param_5fclient_5fptr_2',['param_client_ptr',['../classdhtt__plugins_1_1RootBehavior.html#acc53d37c2b66d07d222ad61e08c087ff',1,'dhtt_plugins::RootBehavior']]],
+  ['param_5fclient_5fptrs_3',['param_client_ptrs',['../classdhtt_1_1CommunicationAggregator.html#abc605d72f5a3fcbab83ff56697d2d5b8',1,'dhtt::CommunicationAggregator']]],
+  ['param_5fmutex_4',['param_mutex',['../classdhtt_1_1CommunicationAggregator.html#ac158ec9a6767909237eb83c88b3259ac',1,'dhtt::CommunicationAggregator']]],
+  ['params_5',['params',['../classdhtt_1_1NodeType.html#a2cf719d31abbbad3a06e6c0ecc4915cf',1,'dhtt::NodeType']]],
+  ['parent_5fcommunication_5fsocket_6',['parent_communication_socket',['../classdhtt_1_1Node.html#a980c580fdba440348b903658bd81e803',1,'dhtt::Node']]],
+  ['parent_5fname_7',['parent_name',['../classdhtt_1_1Node.html#a4f3abfadbbda36594d1976a3d960fc09',1,'dhtt::Node']]],
   ['passed_5fresources_8',['passed_resources',['../classdhtt_1_1Node.html#ae27cd76b756f33a2227b41ca1b326107',1,'dhtt::Node']]],
   ['plugin_5fname_9',['plugin_name',['../classdhtt_1_1Node.html#abcacf32d8e8065c230f844eb918001f4',1,'dhtt::Node']]],
   ['postconditions_10',['postconditions',['../classdhtt_1_1NodeType.html#a1709abe730c2ec5d62c95fdf2d75a20b',1,'dhtt::NodeType']]],
   ['potential_11',['potential',['../classdhtt_1_1Node.html#a6661935386c178f4a86e516e31d95c65',1,'dhtt::Node']]],
   ['potential_5ftype_5floader_12',['potential_type_loader',['../classdhtt_1_1Node.html#a2b61aab13dac4569e6e9737d824cd0cf',1,'dhtt::Node']]],
   ['preconditions_13',['preconditions',['../classdhtt_1_1NodeType.html#a09f44dea50dea76741516405a5cdffe6',1,'dhtt::NodeType']]],
-  ['priority_14',['priority',['../classdhtt_1_1Node.html#a72b463e4482459cd0169730186d7c33c',1,'dhtt::Node']]],
-  ['pub_5fopts_15',['pub_opts',['../classdhtt_1_1MainServer.html#a7afa774e12a5fe9536fdcaa137ddf68b',1,'dhtt::MainServer::pub_opts()'],['../classdhtt_1_1Node.html#a0d36f0aeba568920c9b4cd44ee565db4',1,'dhtt::Node::pub_opts()']]],
-  ['publisher_5fptrs_16',['publisher_ptrs',['../classdhtt_1_1CommunicationAggregator.html#ab1622872d91966245f52f742df581dcd',1,'dhtt::CommunicationAggregator']]]
+  ['predicates_14',['predicates',['../structdhtt__utils_1_1PredCon.html#a845e05c71df56df56f5d2ca64a47bdc1',1,'dhtt_utils::PredCon']]],
+  ['priority_15',['priority',['../classdhtt_1_1Node.html#a72b463e4482459cd0169730186d7c33c',1,'dhtt::Node']]],
+  ['pub_5fopts_16',['pub_opts',['../classdhtt_1_1MainServer.html#a7afa774e12a5fe9536fdcaa137ddf68b',1,'dhtt::MainServer::pub_opts()'],['../classdhtt_1_1Node.html#a0d36f0aeba568920c9b4cd44ee565db4',1,'dhtt::Node::pub_opts()']]],
+  ['publisher_5fptrs_17',['publisher_ptrs',['../classdhtt_1_1CommunicationAggregator.html#ab1622872d91966245f52f742df581dcd',1,'dhtt::CommunicationAggregator']]]
 ];

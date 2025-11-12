@@ -88,6 +88,15 @@ $(function() {
 
 <p><code>#include &lt;<a class="el" href="branch__type_8hpp_source.html">branch_type.hpp</a>&gt;</code></p>
 <div class="dynheader">
+Inheritance diagram for dhtt::BranchPlugType:</div>
+<div class="dyncontent">
+<div class="center"><img src="classdhtt_1_1BranchPlugType__inherit__graph.png" border="0" usemap="#adhtt_1_1BranchPlugType_inherit__map" alt="Inheritance graph"/></div>
+<map name="adhtt_1_1BranchPlugType_inherit__map" id="adhtt_1_1BranchPlugType_inherit__map">
+<area shape="rect" title="Base class for the plugs which provides the necessary multithreading capabilities." alt="" coords="24,5,169,31"/>
+<area shape="rect" href="classdhtt__plugins_1_1PtrBranchPlug.html" title=" " alt="" coords="5,79,188,104"/>
+</map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
+<div class="dynheader">
 Collaboration diagram for dhtt::BranchPlugType:</div>
 <div class="dyncontent">
 <div class="center"><img src="classdhtt_1_1BranchPlugType__coll__graph.png" border="0" usemap="#adhtt_1_1BranchPlugType_coll__map" alt="Collaboration graph"/></div>
@@ -318,6 +327,8 @@ Private Attributes</h2></td></tr>
 <p >This method will be run from the parent node, and should be overloaded for each different connection type</p>
 <dl class="section return"><dt>Returns</dt><dd>true if it can connect, false otherwise </dd></dl>
 
+<p>Reimplemented in <a class="el" href="classdhtt__plugins_1_1PtrBranchPlug.html#a0e4c20164827054bf146355cb30c7c1b">dhtt_plugins::PtrBranchPlug</a>.</p>
+
 </div>
 </div>
 <a id="abda9e11339d0dbfd3db0238a46be1987" name="abda9e11339d0dbfd3db0238a46be1987"></a>
@@ -345,6 +356,8 @@ Private Attributes</h2></td></tr>
 
 <p>collects resources and joins threads </p>
 <p >This should be called in the destructor of the node class and can be overriden in the case that child classes have more resources to collect </p>
+
+<p>Reimplemented in <a class="el" href="classdhtt__plugins_1_1PtrBranchPlug.html#a5d522bc5350c54c57a0f498703d788f3">dhtt_plugins::PtrBranchPlug</a>.</p>
 
 </div>
 </div>
@@ -457,6 +470,8 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
+<p>Implemented in <a class="el" href="classdhtt__plugins_1_1PtrBranchPlug.html#a0061f2f5a621ef7a91014a5b9d0fc898">dhtt_plugins::PtrBranchPlug</a>.</p>
+
 </div>
 </div>
 <a id="adf20411eb6ee10f954802f0971a485ff" name="adf20411eb6ee10f954802f0971a485ff"></a>
@@ -493,6 +508,8 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>activation result from the child </dd></dl>
 
+<p>Implemented in <a class="el" href="classdhtt__plugins_1_1PtrBranchPlug.html#a54eeb30739b2a3274dcd8b7ae9947a56">dhtt_plugins::PtrBranchPlug</a>.</p>
+
 </div>
 </div>
 <a id="a08eb798e41a7a5ae39f1203abbc19906" name="a08eb798e41a7a5ae39f1203abbc19906"></a>
@@ -528,6 +545,8 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>condition result from the child </dd></dl>
+
+<p>Implemented in <a class="el" href="classdhtt__plugins_1_1PtrBranchPlug.html#a61fb438038d9506c6396292fcf53d4ee">dhtt_plugins::PtrBranchPlug</a>.</p>
 
 </div>
 </div>

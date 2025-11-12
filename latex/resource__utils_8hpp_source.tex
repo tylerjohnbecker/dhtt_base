@@ -1,0 +1,58 @@
+\hypertarget{resource__utils_8hpp_source}{}\doxysection{resource\+\_\+utils.\+hpp}
+\label{resource__utils_8hpp_source}\index{dhtt/include/dhtt/utils/resource\_utils.hpp@{dhtt/include/dhtt/utils/resource\_utils.hpp}}
+\mbox{\hyperlink{resource__utils_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef RESOURCE\_UTILS\_HPP\_}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define RESOURCE\_UTILS\_HPP\_}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include "{}dhtt\_msgs/msg/resources.hpp"{}}}
+\DoxyCodeLine{5 }
+\DoxyCodeLine{6 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#include <any>}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include <cassert>}}
+\DoxyCodeLine{9 }
+\DoxyCodeLine{10 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedhtt__utils}{dhtt\_utils}} }
+\DoxyCodeLine{11 \{}
+\DoxyCodeLine{12     \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{VectorResources}}}
+\DoxyCodeLine{13     \{}
+\DoxyCodeLine{14         std::vector<std::string> \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_a4377a75aa33ab7b308d62160d9b167ed}{names}};}
+\DoxyCodeLine{15         std::vector<long int> \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_a8a58dbba2d751a4a60ba8224f92d4e7f}{types}};}
+\DoxyCodeLine{16         std::vector<long int> \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_aae9e6e6eb2536e4ea6a54bff087d92f1}{channels}};}
+\DoxyCodeLine{17         std::vector<bool> \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_a39a9fb373610c0285e76e6cc8e06de76}{locks}};}
+\DoxyCodeLine{18         std::vector<long int> \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_a904b86ef8a0ccc748e504576b9bc56a4}{owners}};}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20         \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_a2cb160c44a0996eb80dcd99312e792c5}{VectorResources}}() \{\};}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22         \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_a018add71d8402d07cb97cf9fe232158a}{VectorResources}}(std::vector<std::string> a, std::vector<long int> b, std::vector<long int> c, std::vector<bool> d, std::vector<long int> e)}
+\DoxyCodeLine{23         \{}
+\DoxyCodeLine{24             \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_a4377a75aa33ab7b308d62160d9b167ed}{names}} = a;}
+\DoxyCodeLine{25             \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_a8a58dbba2d751a4a60ba8224f92d4e7f}{types}} = b;}
+\DoxyCodeLine{26             \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_aae9e6e6eb2536e4ea6a54bff087d92f1}{channels}} = c;}
+\DoxyCodeLine{27             \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_a39a9fb373610c0285e76e6cc8e06de76}{locks}} = d;}
+\DoxyCodeLine{28             \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_a904b86ef8a0ccc748e504576b9bc56a4}{owners}} = e;}
+\DoxyCodeLine{29         \};}
+\DoxyCodeLine{30 }
+\DoxyCodeLine{31         \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_aef95587b137fbcbd4169593e18e5c939}{VectorResources}}(std::initializer\_list<std::any> tup) }
+\DoxyCodeLine{32         \{}
+\DoxyCodeLine{33             assert( (\textcolor{keywordtype}{int}) tup.size() == 5 );}
+\DoxyCodeLine{34 }
+\DoxyCodeLine{35             \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_a4377a75aa33ab7b308d62160d9b167ed}{names}} = std::any\_cast<std::vector<std::string>>(*(tup.begin()));}
+\DoxyCodeLine{36             \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_a8a58dbba2d751a4a60ba8224f92d4e7f}{types}} = std::any\_cast<std::vector<long int>>(*(tup.begin() + 1));}
+\DoxyCodeLine{37             \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_aae9e6e6eb2536e4ea6a54bff087d92f1}{channels}} = std::any\_cast<std::vector<long int>>(*(tup.begin() + 2));}
+\DoxyCodeLine{38             \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_a39a9fb373610c0285e76e6cc8e06de76}{locks}} = std::any\_cast<std::vector<bool>>(*(tup.begin() + 3));}
+\DoxyCodeLine{39             \mbox{\hyperlink{structdhtt__utils_1_1VectorResources_a904b86ef8a0ccc748e504576b9bc56a4}{owners}} = std::any\_cast<std::vector<long int>>(*(tup.begin() + 4));}
+\DoxyCodeLine{40         \};}
+\DoxyCodeLine{41     \} VectorResources;}
+\DoxyCodeLine{42     }
+\DoxyCodeLine{52     dhtt\_msgs::msg::Resources \mbox{\hyperlink{namespacedhtt__utils_a8bb9bbf6456dcbef69dc065c1ee412c3}{vector\_to\_msg}}( \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{VectorResources}} data );}
+\DoxyCodeLine{53 }
+\DoxyCodeLine{65     dhtt\_msgs::msg::Resources \mbox{\hyperlink{namespacedhtt__utils_a8bb9bbf6456dcbef69dc065c1ee412c3}{vector\_to\_msg}}( std::vector<std::string> names, std::vector<long int> types, std::vector<long int> channels, std::vector<bool> locked, std::vector<long int> owners );}
+\DoxyCodeLine{66 }
+\DoxyCodeLine{76     \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{VectorResources}} \mbox{\hyperlink{namespacedhtt__utils_a77020d28b2f386f1fa950882e30a0124}{msg\_to\_vector}}( std::vector<dhtt\_msgs::msg::Resource> msgs );}
+\DoxyCodeLine{77 }
+\DoxyCodeLine{87     \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{VectorResources}} \mbox{\hyperlink{namespacedhtt__utils_a77020d28b2f386f1fa950882e30a0124}{msg\_to\_vector}}( dhtt\_msgs::msg::Resources msg );}
+\DoxyCodeLine{88 \}}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{90 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// RESOURCE\_UTILS\_HPP\_}}
+
+\end{DoxyCode}

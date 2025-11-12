@@ -1,0 +1,78 @@
+\hypertarget{condition__utils_8hpp_source}{}\doxysection{condition\+\_\+utils.\+hpp}
+\label{condition__utils_8hpp_source}\index{dhtt/include/dhtt/utils/condition\_utils.hpp@{dhtt/include/dhtt/utils/condition\_utils.hpp}}
+\mbox{\hyperlink{condition__utils_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#ifndef CONDITION\_UTILS\_HPP\_}}
+\DoxyCodeLine{3 \textcolor{preprocessor}{\#define CONDITION\_UTILS\_HPP\_}}
+\DoxyCodeLine{4 }
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include <unordered\_map>}}
+\DoxyCodeLine{6 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#include <set>}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include <string>}}
+\DoxyCodeLine{9 }
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#include "{}rclcpp/rclcpp.hpp"{}}}
+\DoxyCodeLine{11 }
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include "{}dhtt\_msgs/action/condition.hpp"{}}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include "{}dhtt\_msgs/msg/pair.hpp"{}}}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedhtt__utils}{dhtt\_utils}}}
+\DoxyCodeLine{17 \{}
+\DoxyCodeLine{18     \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredCon}}}
+\DoxyCodeLine{19     \{}
+\DoxyCodeLine{20         \textcolor{keywordtype}{int} \mbox{\hyperlink{structdhtt__utils_1_1PredCon_a7be772598fc27f908b0f9726d3885794}{logical\_operator}};}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22         std::vector<dhtt\_msgs::msg::Pair> \mbox{\hyperlink{structdhtt__utils_1_1PredCon_a845e05c71df56df56f5d2ca64a47bdc1}{predicates}};}
+\DoxyCodeLine{23         std::vector<std::shared\_ptr<struct PredCon>> \mbox{\hyperlink{structdhtt__utils_1_1PredCon_a69f5570dac4204bf9f2e6954a3b601d6}{conjunctions}};}
+\DoxyCodeLine{24     \} \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{PredicateConjunction}};}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26     \textcolor{keyword}{enum} \mbox{\hyperlink{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99}{logical\_operators}} }
+\DoxyCodeLine{27     \{}
+\DoxyCodeLine{28         \mbox{\hyperlink{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99a1737f886c4ec745728e73a0ef00c98ca}{LOGICAL\_AND}} = 1,}
+\DoxyCodeLine{29         \mbox{\hyperlink{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99ac6068e77d8f6eb09e76f5e98ef8eb5e3}{LOGICAL\_OR}} = 2,}
+\DoxyCodeLine{30         \mbox{\hyperlink{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99a3930bc6e00cd8c0464e8c15710a8b242}{LOGICAL\_OTHER}} = 3}
+\DoxyCodeLine{31     \};}
+\DoxyCodeLine{32 }
+\DoxyCodeLine{40     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedhtt__utils_ad4db3bb88da43565a300d3f1b2b53477}{predicate\_partial\_equals}}(dhtt\_msgs::msg::Pair lhs, dhtt\_msgs::msg::Pair rhs);}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{47     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedhtt__utils_aef94d527d6554aa8ee6f5921319fd3cc}{predicate\_equals}}(\textcolor{keyword}{const} dhtt\_msgs::msg::Pair\& lhs, \textcolor{keyword}{const} dhtt\_msgs::msg::Pair\& rhs);}
+\DoxyCodeLine{48 }
+\DoxyCodeLine{52     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedhtt__utils_a5e2e055a2ef2b11e27737dafc44a8e19}{compare\_predicates}}(\textcolor{keyword}{const} dhtt\_msgs::msg::Pair\& lhs, \textcolor{keyword}{const} dhtt\_msgs::msg::Pair\& rhs);}
+\DoxyCodeLine{53 }
+\DoxyCodeLine{61     dhtt\_msgs::msg::Pair \mbox{\hyperlink{namespacedhtt__utils_ae58c3fee03b148db123bae87a1cf6e63}{predicate\_copy}}(\textcolor{keyword}{const} dhtt\_msgs::msg::Pair\& msg);}
+\DoxyCodeLine{62 }
+\DoxyCodeLine{72     std::shared\_ptr<PredicateConjunction> \mbox{\hyperlink{namespacedhtt__utils_aa904de9daac68b7b1481f5d4d3007f66}{conjunction\_copy}}(\textcolor{keyword}{const} \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}}\& msg);}
+\DoxyCodeLine{73 }
+\DoxyCodeLine{74     std::string \mbox{\hyperlink{namespacedhtt__utils_a4e19ee406f29d91d050a120242157b3d}{to\_string}}(std::shared\_ptr<PredicateConjunction> pred);}
+\DoxyCodeLine{75 }
+\DoxyCodeLine{76     std::string \mbox{\hyperlink{namespacedhtt__utils_a4e19ee406f29d91d050a120242157b3d}{to\_string}}(\textcolor{keyword}{const} \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}}\& pred);}
+\DoxyCodeLine{77 }
+\DoxyCodeLine{78     \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}} \mbox{\hyperlink{namespacedhtt__utils_ad2943298cb7840480260660b92e8048c}{convert\_to\_struct}}(std::string to\_convert);}
+\DoxyCodeLine{79 }
+\DoxyCodeLine{91     \textcolor{keywordtype}{void} \mbox{\hyperlink{namespacedhtt__utils_ae9df4020ee49c30414963fd12962c958}{remove\_predicate\_duplicates}}(\mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}}\& msg);}
+\DoxyCodeLine{92 }
+\DoxyCodeLine{103     \textcolor{keywordtype}{void} \mbox{\hyperlink{namespacedhtt__utils_a3d4468f5c02369f0f87d764f15cd5cdb}{remove\_predicate\_partial\_duplicates}}(\mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}}\& msg);}
+\DoxyCodeLine{104 }
+\DoxyCodeLine{117     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedhtt__utils_a93346a4642729dfac216e2728673896d}{violates\_predicates}}(\textcolor{keyword}{const} \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}}\& postconditions, \textcolor{keyword}{const} \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}}\& preconditions);}
+\DoxyCodeLine{118 }
+\DoxyCodeLine{130     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedhtt__utils_a2cbc46b79df1b863a6f027da7706b04e}{contains\_contradiction}} (\textcolor{keyword}{const} \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}}\& to\_check);}
+\DoxyCodeLine{131 }
+\DoxyCodeLine{143     \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}} \mbox{\hyperlink{namespacedhtt__utils_a3a009cad25e2ee0b7220767fa3c6d5fe}{flatten\_predicates}}(\textcolor{keyword}{const} \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}}\& msg);}
+\DoxyCodeLine{144 }
+\DoxyCodeLine{156     \textcolor{keywordtype}{void} \mbox{\hyperlink{namespacedhtt__utils_a9f6e69ab00d21500f9ca3631771838ec}{append\_predicate\_conjunction}}(\mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}}\& to, \textcolor{keyword}{const} \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}} from);}
+\DoxyCodeLine{157 }
+\DoxyCodeLine{166     \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}} \mbox{\hyperlink{namespacedhtt__utils_a1332db8647a55ab96829cafda867e0c9}{combine\_predicates}}(\textcolor{keyword}{const} \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}}\& l\_pred, \textcolor{keyword}{const} \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}}\& r\_pred);}
+\DoxyCodeLine{167 }
+\DoxyCodeLine{175     std::shared\_ptr<dhtt\_utils::PredicateConjunction> \mbox{\hyperlink{namespacedhtt__utils_aafc2ec4312260dc4291b43440d801c19}{negate\_predicates}}(\textcolor{keyword}{const} \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}}\& to\_negate);}
+\DoxyCodeLine{176 }
+\DoxyCodeLine{182     std::vector<dhtt\_msgs::msg::Pair>::iterator \mbox{\hyperlink{namespacedhtt__utils_ab2bf8c57486300111c7f6726bf21bd76}{find\_partial\_predicate}}(std::vector<dhtt\_msgs::msg::Pair> to\_search, dhtt\_msgs::msg::Pair to\_find);}
+\DoxyCodeLine{183 }
+\DoxyCodeLine{189     std::vector<dhtt\_msgs::msg::Pair>::iterator \mbox{\hyperlink{namespacedhtt__utils_af2b765d33eaa4d1699a3dc0494e2877b}{find\_predicate}}(std::vector<dhtt\_msgs::msg::Pair>\& to\_search, dhtt\_msgs::msg::Pair to\_find);}
+\DoxyCodeLine{190 }
+\DoxyCodeLine{203     \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}} \mbox{\hyperlink{namespacedhtt__utils_a6681546e5e1a89c201882d2ac3a626eb}{remove\_partial\_dependencies}}(\textcolor{keyword}{const} std::vector<PredicateConjunction> post, \textcolor{keyword}{const} \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{PredicateConjunction}}\& pre);}
+\DoxyCodeLine{204 \}}
+\DoxyCodeLine{205 }
+\DoxyCodeLine{206 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// CONDITION\_UTILS\_HPP\_}}
+
+\end{DoxyCode}

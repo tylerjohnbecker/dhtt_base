@@ -1,0 +1,43 @@
+\hypertarget{ptr__branch_8hpp_source}{}\doxysection{ptr\+\_\+branch.\+hpp}
+\label{ptr__branch_8hpp_source}\index{dhtt\_plugins/include/dhtt\_plugins/tree/ptr\_branch.hpp@{dhtt\_plugins/include/dhtt\_plugins/tree/ptr\_branch.hpp}}
+\mbox{\hyperlink{ptr__branch_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef PTR\_BRANCH\_HPP\_}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define PTR\_BRANCH\_HPP\_}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{branch__type_8hpp}{dhtt/tree/branch\_type.hpp}}"{}}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{node_8hpp}{dhtt/tree/node.hpp}}"{}}}
+\DoxyCodeLine{6 }
+\DoxyCodeLine{7 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedhtt__plugins}{dhtt\_plugins}}}
+\DoxyCodeLine{8 \{}
+\DoxyCodeLine{9     \textcolor{keyword}{class }\mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchSocket}{PtrBranchSocket}} : \textcolor{keyword}{public} \mbox{\hyperlink{classdhtt_1_1BranchSocketType}{dhtt::BranchSocketType}}}
+\DoxyCodeLine{10     \{}
+\DoxyCodeLine{11     \textcolor{keyword}{public}:}
+\DoxyCodeLine{15         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchSocket_a82186d2a8045fab49bec7ca6253a1802}{initialize}}(\mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* constructor\_ptr) \textcolor{keyword}{override};}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{20         dhtt\_msgs::action::Activation::Result \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchSocket_afc4f490b15c2fc336418a12e64c2fb7f}{activation\_received\_callback}}(dhtt\_msgs::action::Activation::Goal goal) \textcolor{keyword}{override};}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{25         dhtt\_msgs::action::Condition::Result \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchSocket_aad2bbb444f7957a9eb5d9117a1bbb9d3}{maintain\_received\_callback}}(dhtt\_msgs::action::Condition::Goal goal) \textcolor{keyword}{override};}
+\DoxyCodeLine{26     \};}
+\DoxyCodeLine{27 }
+\DoxyCodeLine{28     \textcolor{keyword}{class }\mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug}{PtrBranchPlug}} : \textcolor{keyword}{public} \mbox{\hyperlink{classdhtt_1_1BranchPlugType}{dhtt::BranchPlugType}}}
+\DoxyCodeLine{29     \{}
+\DoxyCodeLine{30     \textcolor{keyword}{public}:}
+\DoxyCodeLine{36         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a0061f2f5a621ef7a91014a5b9d0fc898}{initialize}}(\mbox{\hyperlink{classdhtt_1_1Node}{dhtt::Node}}* constructor\_ptr, std::shared\_ptr<dhtt::BranchSocketType> socket\_ptr, std::string child\_name) \textcolor{keyword}{override};}
+\DoxyCodeLine{37 }
+\DoxyCodeLine{43         \textcolor{keywordtype}{void} \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a5d522bc5350c54c57a0f498703d788f3}{destruct}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{44 }
+\DoxyCodeLine{45     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{49         dhtt\_msgs::action::Activation::Result \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a54eeb30739b2a3274dcd8b7ae9947a56}{send\_activate}}(dhtt\_msgs::action::Activation::Goal to\_send) \textcolor{keyword}{override};}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{54         dhtt\_msgs::action::Condition::Result \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a61fb438038d9506c6396292fcf53d4ee}{send\_maintain}}(dhtt\_msgs::action::Condition::Goal to\_send) \textcolor{keyword}{override};}
+\DoxyCodeLine{55 }
+\DoxyCodeLine{59         \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a0e4c20164827054bf146355cb30c7c1b}{connection\_is\_good}}() \textcolor{keyword}{override};}
+\DoxyCodeLine{60 }
+\DoxyCodeLine{61         std::shared\_ptr<dhtt::BranchSocketType> \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchPlug_a07a755bd3620a2c45b999d59a2278b12}{paired\_socket}};}
+\DoxyCodeLine{62     \};}
+\DoxyCodeLine{63 \}}
+\DoxyCodeLine{64 }
+\DoxyCodeLine{65 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// PTR\_BRANCH\_HPP\_}}
+
+\end{DoxyCode}

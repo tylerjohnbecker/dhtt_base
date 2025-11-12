@@ -1,0 +1,4 @@
+<map id="dhtt_plugins::TestPotential" name="dhtt_plugins::TestPotential">
+<area shape="rect" id="node1" title="dummy activation potential plugin for testing" alt="" coords="5,79,180,104"/>
+<area shape="rect" id="node2" href="$classdhtt_1_1PotentialType.html" title="a lightweight plugin for computing the activation potential of a node" alt="" coords="28,5,157,31"/>
+</map>

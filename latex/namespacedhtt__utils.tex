@@ -1,0 +1,504 @@
+\hypertarget{namespacedhtt__utils}{}\doxysection{dhtt\+\_\+utils Namespace Reference}
+\label{namespacedhtt__utils}\index{dhtt\_utils@{dhtt\_utils}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{Pred\+Con}}
+\item 
+struct \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{dhtt\+\_\+utils\+::\+Pred\+Con}} \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}}
+\item 
+typedef struct \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{dhtt\+\_\+utils\+::\+Vector\+Resources}} \mbox{\hyperlink{namespacedhtt__utils_a6d988440a8a29195c3e457a8b91e9ca0}{Vector\+Resources}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99}{logical\+\_\+operators}} \{ \mbox{\hyperlink{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99a1737f886c4ec745728e73a0ef00c98ca}{LOGICAL\+\_\+\+AND}} = 1
+, \mbox{\hyperlink{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99ac6068e77d8f6eb09e76f5e98ef8eb5e3}{LOGICAL\+\_\+\+OR}} = 2
+, \mbox{\hyperlink{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99a3930bc6e00cd8c0464e8c15710a8b242}{LOGICAL\+\_\+\+OTHER}} = 3
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{namespacedhtt__utils_ad4db3bb88da43565a300d3f1b2b53477}{predicate\+\_\+partial\+\_\+equals}} (dhtt\+\_\+msgs\+::msg\+::\+Pair lhs, dhtt\+\_\+msgs\+::msg\+::\+Pair rhs)
+\begin{DoxyCompactList}\small\item\em helper for find\+\_\+partial\+\_\+predicate \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacedhtt__utils_aef94d527d6554aa8ee6f5921319fd3cc}{predicate\+\_\+equals}} (const dhtt\+\_\+msgs\+::msg\+::\+Pair \&lhs, const dhtt\+\_\+msgs\+::msg\+::\+Pair \&rhs)
+\begin{DoxyCompactList}\small\item\em equality function for predicates \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacedhtt__utils_a5e2e055a2ef2b11e27737dafc44a8e19}{compare\+\_\+predicates}} (const dhtt\+\_\+msgs\+::msg\+::\+Pair \&lhs, const dhtt\+\_\+msgs\+::msg\+::\+Pair \&rhs)
+\begin{DoxyCompactList}\small\item\em comparison function for standard library sets \end{DoxyCompactList}\item 
+dhtt\+\_\+msgs\+::msg\+::\+Pair \mbox{\hyperlink{namespacedhtt__utils_ae58c3fee03b148db123bae87a1cf6e63}{predicate\+\_\+copy}} (const dhtt\+\_\+msgs\+::msg\+::\+Pair \&msg)
+\begin{DoxyCompactList}\small\item\em Creates a deep copy of a predicate. \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} $>$ \mbox{\hyperlink{namespacedhtt__utils_aa904de9daac68b7b1481f5d4d3007f66}{conjunction\+\_\+copy}} (const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&msg)
+\begin{DoxyCompactList}\small\item\em Creates a deep copy of a conjunction of predicates. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{namespacedhtt__utils_a4e19ee406f29d91d050a120242157b3d}{to\+\_\+string}} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} $>$ pred)
+\item 
+std\+::string \mbox{\hyperlink{namespacedhtt__utils_a5e385c4e3f823beb0a0bf4336004312d}{to\+\_\+string}} (const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&pred)
+\item 
+\mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \mbox{\hyperlink{namespacedhtt__utils_ad2943298cb7840480260660b92e8048c}{convert\+\_\+to\+\_\+struct}} (std\+::string to\+\_\+convert)
+\item 
+void \mbox{\hyperlink{namespacedhtt__utils_ae9df4020ee49c30414963fd12962c958}{remove\+\_\+predicate\+\_\+duplicates}} (\mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&msg)
+\begin{DoxyCompactList}\small\item\em removes any duplicate predicates from the given predicate conjunction \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacedhtt__utils_a3d4468f5c02369f0f87d764f15cd5cdb}{remove\+\_\+predicate\+\_\+partial\+\_\+duplicates}} (\mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&msg)
+\begin{DoxyCompactList}\small\item\em removes duplicates of the same information changing in the temporall reverse order \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacedhtt__utils_a93346a4642729dfac216e2728673896d}{violates\+\_\+predicates}} (const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&postconditions, const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&preconditions)
+\begin{DoxyCompactList}\small\item\em check if the execution of given postconditions would violate the given preconditions \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacedhtt__utils_a2cbc46b79df1b863a6f027da7706b04e}{contains\+\_\+contradiction}} (const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&to\+\_\+check)
+\begin{DoxyCompactList}\small\item\em checks given predicate list for internal contradictions \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \mbox{\hyperlink{namespacedhtt__utils_a3a009cad25e2ee0b7220767fa3c6d5fe}{flatten\+\_\+predicates}} (const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&msg)
+\begin{DoxyCompactList}\small\item\em flattens given predicate conjunction as much as possible \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacedhtt__utils_a9f6e69ab00d21500f9ca3631771838ec}{append\+\_\+predicate\+\_\+conjunction}} (\mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&to, const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} from)
+\begin{DoxyCompactList}\small\item\em combines two predicate conjunctions \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \mbox{\hyperlink{namespacedhtt__utils_a1332db8647a55ab96829cafda867e0c9}{combine\+\_\+predicates}} (const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&l\+\_\+pred, const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&r\+\_\+pred)
+\begin{DoxyCompactList}\small\item\em combines two given lists of predicates \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{dhtt\+\_\+utils\+::\+Predicate\+Conjunction}} $>$ \mbox{\hyperlink{namespacedhtt__utils_aafc2ec4312260dc4291b43440d801c19}{negate\+\_\+predicates}} (const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&to\+\_\+negate)
+\begin{DoxyCompactList}\small\item\em recursively negate the predicates of the given predicate conjunction \end{DoxyCompactList}\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Pair $>$\+::iterator \mbox{\hyperlink{namespacedhtt__utils_ab2bf8c57486300111c7f6726bf21bd76}{find\+\_\+partial\+\_\+predicate}} (std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Pair $>$ to\+\_\+search, dhtt\+\_\+msgs\+::msg\+::\+Pair to\+\_\+find)
+\begin{DoxyCompactList}\small\item\em finds a given key value pair in the given vector of predicates \end{DoxyCompactList}\item 
+std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Pair $>$\+::iterator \mbox{\hyperlink{namespacedhtt__utils_af2b765d33eaa4d1699a3dc0494e2877b}{find\+\_\+predicate}} (std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Pair $>$ \&to\+\_\+search, dhtt\+\_\+msgs\+::msg\+::\+Pair to\+\_\+find)
+\begin{DoxyCompactList}\small\item\em finds a given predicate in a given vector of predicates \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \mbox{\hyperlink{namespacedhtt__utils_a6681546e5e1a89c201882d2ac3a626eb}{remove\+\_\+partial\+\_\+dependencies}} (const std\+::vector$<$ \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} $>$ post, const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&pre)
+\begin{DoxyCompactList}\small\item\em Removes partial temporal dependencies between the given list of postconditions and the given preconditions. \end{DoxyCompactList}\item 
+dhtt\+\_\+msgs\+::msg\+::\+Resources \mbox{\hyperlink{namespacedhtt__utils_a8bb9bbf6456dcbef69dc065c1ee412c3}{vector\+\_\+to\+\_\+msg}} (\mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}} data)
+\begin{DoxyCompactList}\small\item\em creates a dhtt\+\_\+msgs\+::msg\+::\+Resources object from vectors containing the necessary information \end{DoxyCompactList}\item 
+dhtt\+\_\+msgs\+::msg\+::\+Resources \mbox{\hyperlink{namespacedhtt__utils_ad4ad751f513e7b91c656460757e0e4c2}{vector\+\_\+to\+\_\+msg}} (std\+::vector$<$ std\+::string $>$ names, std\+::vector$<$ long int $>$ types, std\+::vector$<$ long int $>$ channels, std\+::vector$<$ bool $>$ locked, std\+::vector$<$ long int $>$ owners)
+\begin{DoxyCompactList}\small\item\em overload of vector\+\_\+to\+\_\+msg which takes each vector individually as a parameter \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}} \mbox{\hyperlink{namespacedhtt__utils_a77020d28b2f386f1fa950882e30a0124}{msg\+\_\+to\+\_\+vector}} (std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ msgs)
+\begin{DoxyCompactList}\small\item\em creates a \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}} object from a given vector of dhtt\+\_\+msgs\+::msg\+::\+Resource msgs \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}} \mbox{\hyperlink{namespacedhtt__utils_a1bfda421111e0ec5acd7831c0c91c6ca}{msg\+\_\+to\+\_\+vector}} (dhtt\+\_\+msgs\+::msg\+::\+Resources msg)
+\begin{DoxyCompactList}\small\item\em creates a \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}} object from a given dhtt\+\_\+msgs\+::msg\+::\+Resources msg \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}\label{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}} 
+\index{dhtt\_utils@{dhtt\_utils}!PredicateConjunction@{PredicateConjunction}}
+\index{PredicateConjunction@{PredicateConjunction}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{PredicateConjunction}{PredicateConjunction}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structdhtt__utils_1_1PredCon}{dhtt\+\_\+utils\+::\+Pred\+Con}} \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{dhtt\+\_\+utils\+::\+Predicate\+Conjunction}}}
+
+\mbox{\Hypertarget{namespacedhtt__utils_a6d988440a8a29195c3e457a8b91e9ca0}\label{namespacedhtt__utils_a6d988440a8a29195c3e457a8b91e9ca0}} 
+\index{dhtt\_utils@{dhtt\_utils}!VectorResources@{VectorResources}}
+\index{VectorResources@{VectorResources}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{VectorResources}{VectorResources}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{dhtt\+\_\+utils\+::\+Vector\+Resources}} \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{dhtt\+\_\+utils\+::\+Vector\+Resources}}}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99}\label{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99}} 
+\index{dhtt\_utils@{dhtt\_utils}!logical\_operators@{logical\_operators}}
+\index{logical\_operators@{logical\_operators}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{logical\_operators}{logical\_operators}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99}{dhtt\+\_\+utils\+::logical\+\_\+operators}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LOGICAL\_AND@{LOGICAL\_AND}!dhtt\_utils@{dhtt\_utils}}\index{dhtt\_utils@{dhtt\_utils}!LOGICAL\_AND@{LOGICAL\_AND}}}\mbox{\Hypertarget{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99a1737f886c4ec745728e73a0ef00c98ca}\label{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99a1737f886c4ec745728e73a0ef00c98ca}} 
+LOGICAL\+\_\+\+AND&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LOGICAL\_OR@{LOGICAL\_OR}!dhtt\_utils@{dhtt\_utils}}\index{dhtt\_utils@{dhtt\_utils}!LOGICAL\_OR@{LOGICAL\_OR}}}\mbox{\Hypertarget{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99ac6068e77d8f6eb09e76f5e98ef8eb5e3}\label{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99ac6068e77d8f6eb09e76f5e98ef8eb5e3}} 
+LOGICAL\+\_\+\+OR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LOGICAL\_OTHER@{LOGICAL\_OTHER}!dhtt\_utils@{dhtt\_utils}}\index{dhtt\_utils@{dhtt\_utils}!LOGICAL\_OTHER@{LOGICAL\_OTHER}}}\mbox{\Hypertarget{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99a3930bc6e00cd8c0464e8c15710a8b242}\label{namespacedhtt__utils_a878516bcfba0feba8a6ecae633845f99a3930bc6e00cd8c0464e8c15710a8b242}} 
+LOGICAL\+\_\+\+OTHER&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacedhtt__utils_a9f6e69ab00d21500f9ca3631771838ec}\label{namespacedhtt__utils_a9f6e69ab00d21500f9ca3631771838ec}} 
+\index{dhtt\_utils@{dhtt\_utils}!append\_predicate\_conjunction@{append\_predicate\_conjunction}}
+\index{append\_predicate\_conjunction@{append\_predicate\_conjunction}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{append\_predicate\_conjunction()}{append\_predicate\_conjunction()}}
+{\footnotesize\ttfamily void dhtt\+\_\+utils\+::append\+\_\+predicate\+\_\+conjunction (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&}]{to,  }\item[{const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}}}]{from }\end{DoxyParamCaption})}
+
+
+
+combines two predicate conjunctions 
+
+This function does not check for duplicate predicates after appending to the to list. If that is the desired behavior then explicitly run remove\+\_\+predicate\+\_\+duplicates after this function.
+
+
+\begin{DoxyParams}{Parameters}
+{\em to} & will have the other parameter appended to it \\
+\hline
+{\em from} & will be appended to to\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_a1332db8647a55ab96829cafda867e0c9}\label{namespacedhtt__utils_a1332db8647a55ab96829cafda867e0c9}} 
+\index{dhtt\_utils@{dhtt\_utils}!combine\_predicates@{combine\_predicates}}
+\index{combine\_predicates@{combine\_predicates}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{combine\_predicates()}{combine\_predicates()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} dhtt\+\_\+utils\+::combine\+\_\+predicates (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&}]{l\+\_\+pred,  }\item[{const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&}]{r\+\_\+pred }\end{DoxyParamCaption})}
+
+
+
+combines two given lists of predicates 
+
+
+\begin{DoxyParams}{Parameters}
+{\em l\+\_\+pred} & first Predicate Conjunctions \\
+\hline
+{\em r\+\_\+pred} & second Predicate Conjunctions\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+flattened list of predicates combined into a Predicate Conjunctions 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_a5e2e055a2ef2b11e27737dafc44a8e19}\label{namespacedhtt__utils_a5e2e055a2ef2b11e27737dafc44a8e19}} 
+\index{dhtt\_utils@{dhtt\_utils}!compare\_predicates@{compare\_predicates}}
+\index{compare\_predicates@{compare\_predicates}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{compare\_predicates()}{compare\_predicates()}}
+{\footnotesize\ttfamily bool dhtt\+\_\+utils\+::compare\+\_\+predicates (\begin{DoxyParamCaption}\item[{const dhtt\+\_\+msgs\+::msg\+::\+Pair \&}]{lhs,  }\item[{const dhtt\+\_\+msgs\+::msg\+::\+Pair \&}]{rhs }\end{DoxyParamCaption})}
+
+
+
+comparison function for standard library sets 
+
+\mbox{\Hypertarget{namespacedhtt__utils_aa904de9daac68b7b1481f5d4d3007f66}\label{namespacedhtt__utils_aa904de9daac68b7b1481f5d4d3007f66}} 
+\index{dhtt\_utils@{dhtt\_utils}!conjunction\_copy@{conjunction\_copy}}
+\index{conjunction\_copy@{conjunction\_copy}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{conjunction\_copy()}{conjunction\_copy()}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} $>$ dhtt\+\_\+utils\+::conjunction\+\_\+copy (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&}]{msg }\end{DoxyParamCaption})}
+
+
+
+Creates a deep copy of a conjunction of predicates. 
+
+Utilizes the recursive definition of a predicate conjunction, and maintains all properties of the initial msg (including order).
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & predicate conjunction to copy\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+deep copy of predicate conjunction 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_a2cbc46b79df1b863a6f027da7706b04e}\label{namespacedhtt__utils_a2cbc46b79df1b863a6f027da7706b04e}} 
+\index{dhtt\_utils@{dhtt\_utils}!contains\_contradiction@{contains\_contradiction}}
+\index{contains\_contradiction@{contains\_contradiction}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{contains\_contradiction()}{contains\_contradiction()}}
+{\footnotesize\ttfamily bool dhtt\+\_\+utils\+::contains\+\_\+contradiction (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&}]{to\+\_\+check }\end{DoxyParamCaption})}
+
+
+
+checks given predicate list for internal contradictions 
+
+An internal contradiction in this context involves for instance having the following predicate relationship ( p /\textbackslash{} !p ) or ( p \textbackslash{}/ !p ). If a predicate is meant to realize both possible values we consider that a contradiction for now. However, logically this will not cover every possible contradiction that could occur in predicate relationships as testing if a predicate conjunction is logical is NP-\/\+Hard (SAT).
+
+
+\begin{DoxyParams}{Parameters}
+{\em to\+\_\+check} & Predicate Conjunction to check for contradictions\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if a contradiction is found, false otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_ad2943298cb7840480260660b92e8048c}\label{namespacedhtt__utils_ad2943298cb7840480260660b92e8048c}} 
+\index{dhtt\_utils@{dhtt\_utils}!convert\_to\_struct@{convert\_to\_struct}}
+\index{convert\_to\_struct@{convert\_to\_struct}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{convert\_to\_struct()}{convert\_to\_struct()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} dhtt\+\_\+utils\+::convert\+\_\+to\+\_\+struct (\begin{DoxyParamCaption}\item[{std\+::string}]{to\+\_\+convert }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacedhtt__utils_ab2bf8c57486300111c7f6726bf21bd76}\label{namespacedhtt__utils_ab2bf8c57486300111c7f6726bf21bd76}} 
+\index{dhtt\_utils@{dhtt\_utils}!find\_partial\_predicate@{find\_partial\_predicate}}
+\index{find\_partial\_predicate@{find\_partial\_predicate}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{find\_partial\_predicate()}{find\_partial\_predicate()}}
+{\footnotesize\ttfamily std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Pair $>$\+::iterator dhtt\+\_\+utils\+::find\+\_\+partial\+\_\+predicate (\begin{DoxyParamCaption}\item[{std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Pair $>$}]{to\+\_\+search,  }\item[{dhtt\+\_\+msgs\+::msg\+::\+Pair}]{to\+\_\+find }\end{DoxyParamCaption})}
+
+
+
+finds a given key value pair in the given vector of predicates 
+
+\begin{DoxyReturn}{Returns}
+iterator pointing to found predicate, or to\+\_\+search.\+end() if not found 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_af2b765d33eaa4d1699a3dc0494e2877b}\label{namespacedhtt__utils_af2b765d33eaa4d1699a3dc0494e2877b}} 
+\index{dhtt\_utils@{dhtt\_utils}!find\_predicate@{find\_predicate}}
+\index{find\_predicate@{find\_predicate}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{find\_predicate()}{find\_predicate()}}
+{\footnotesize\ttfamily std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Pair $>$\+::iterator dhtt\+\_\+utils\+::find\+\_\+predicate (\begin{DoxyParamCaption}\item[{std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Pair $>$ \&}]{to\+\_\+search,  }\item[{dhtt\+\_\+msgs\+::msg\+::\+Pair}]{to\+\_\+find }\end{DoxyParamCaption})}
+
+
+
+finds a given predicate in a given vector of predicates 
+
+\begin{DoxyReturn}{Returns}
+iterator pointing to found predicate, or to\+\_\+search.\+end() if not found 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_a3a009cad25e2ee0b7220767fa3c6d5fe}\label{namespacedhtt__utils_a3a009cad25e2ee0b7220767fa3c6d5fe}} 
+\index{dhtt\_utils@{dhtt\_utils}!flatten\_predicates@{flatten\_predicates}}
+\index{flatten\_predicates@{flatten\_predicates}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{flatten\_predicates()}{flatten\_predicates()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} dhtt\+\_\+utils\+::flatten\+\_\+predicates (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&}]{msg }\end{DoxyParamCaption})}
+
+
+
+flattens given predicate conjunction as much as possible 
+
+Predicates can only be flattened if they share the same logical operator otherwise distributive properties have to be used and the list gets more confusing. So those are the only ones that are flattened. We are not considering cases where there are multiple levels of predicate conjunctions with the same logical operator. In those cases, run this function multiple times.
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & to flatten\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+deep copy of the message but flattened as much as possible 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_a1bfda421111e0ec5acd7831c0c91c6ca}\label{namespacedhtt__utils_a1bfda421111e0ec5acd7831c0c91c6ca}} 
+\index{dhtt\_utils@{dhtt\_utils}!msg\_to\_vector@{msg\_to\_vector}}
+\index{msg\_to\_vector@{msg\_to\_vector}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{msg\_to\_vector()}{msg\_to\_vector()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}} dhtt\+\_\+utils\+::msg\+\_\+to\+\_\+vector (\begin{DoxyParamCaption}\item[{dhtt\+\_\+msgs\+::msg\+::\+Resources}]{msg }\end{DoxyParamCaption})}
+
+
+
+creates a \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}} object from a given dhtt\+\_\+msgs\+::msg\+::\+Resources msg 
+
+This is an overload of msg\+\_\+to\+\_\+vector.
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & object to transform for list representation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}} struct with equivalent information to msg 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_a77020d28b2f386f1fa950882e30a0124}\label{namespacedhtt__utils_a77020d28b2f386f1fa950882e30a0124}} 
+\index{dhtt\_utils@{dhtt\_utils}!msg\_to\_vector@{msg\_to\_vector}}
+\index{msg\_to\_vector@{msg\_to\_vector}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{msg\_to\_vector()}{msg\_to\_vector()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}} dhtt\+\_\+utils\+::msg\+\_\+to\+\_\+vector (\begin{DoxyParamCaption}\item[{std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$}]{msgs }\end{DoxyParamCaption})}
+
+
+
+creates a \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}} object from a given vector of dhtt\+\_\+msgs\+::msg\+::\+Resource msgs 
+
+This transformation is useful for pushing resources to the param server. Will put default values for resources with empty values.
+
+
+\begin{DoxyParams}{Parameters}
+{\em msgs} & object to transform for list representation\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}} struct with equivalent information to msg 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_aafc2ec4312260dc4291b43440d801c19}\label{namespacedhtt__utils_aafc2ec4312260dc4291b43440d801c19}} 
+\index{dhtt\_utils@{dhtt\_utils}!negate\_predicates@{negate\_predicates}}
+\index{negate\_predicates@{negate\_predicates}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{negate\_predicates()}{negate\_predicates()}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{dhtt\+\_\+utils\+::\+Predicate\+Conjunction}} $>$ dhtt\+\_\+utils\+::negate\+\_\+predicates (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&}]{to\+\_\+negate }\end{DoxyParamCaption})}
+
+
+
+recursively negate the predicates of the given predicate conjunction 
+
+
+\begin{DoxyParams}{Parameters}
+{\em to\+\_\+negate} & Predicate Conjunction which is to be negated\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+inverse copy of to\+\_\+negate 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_ae58c3fee03b148db123bae87a1cf6e63}\label{namespacedhtt__utils_ae58c3fee03b148db123bae87a1cf6e63}} 
+\index{dhtt\_utils@{dhtt\_utils}!predicate\_copy@{predicate\_copy}}
+\index{predicate\_copy@{predicate\_copy}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{predicate\_copy()}{predicate\_copy()}}
+{\footnotesize\ttfamily dhtt\+\_\+msgs\+::msg\+::\+Pair dhtt\+\_\+utils\+::predicate\+\_\+copy (\begin{DoxyParamCaption}\item[{const dhtt\+\_\+msgs\+::msg\+::\+Pair \&}]{msg }\end{DoxyParamCaption})}
+
+
+
+Creates a deep copy of a predicate. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & predicate to copy\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+deep copy of predicate 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_aef94d527d6554aa8ee6f5921319fd3cc}\label{namespacedhtt__utils_aef94d527d6554aa8ee6f5921319fd3cc}} 
+\index{dhtt\_utils@{dhtt\_utils}!predicate\_equals@{predicate\_equals}}
+\index{predicate\_equals@{predicate\_equals}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{predicate\_equals()}{predicate\_equals()}}
+{\footnotesize\ttfamily bool dhtt\+\_\+utils\+::predicate\+\_\+equals (\begin{DoxyParamCaption}\item[{const dhtt\+\_\+msgs\+::msg\+::\+Pair \&}]{lhs,  }\item[{const dhtt\+\_\+msgs\+::msg\+::\+Pair \&}]{rhs }\end{DoxyParamCaption})}
+
+
+
+equality function for predicates 
+
+\begin{DoxyReturn}{Returns}
+True if predicates are equal, False otherwise 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_ad4db3bb88da43565a300d3f1b2b53477}\label{namespacedhtt__utils_ad4db3bb88da43565a300d3f1b2b53477}} 
+\index{dhtt\_utils@{dhtt\_utils}!predicate\_partial\_equals@{predicate\_partial\_equals}}
+\index{predicate\_partial\_equals@{predicate\_partial\_equals}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{predicate\_partial\_equals()}{predicate\_partial\_equals()}}
+{\footnotesize\ttfamily bool dhtt\+\_\+utils\+::predicate\+\_\+partial\+\_\+equals (\begin{DoxyParamCaption}\item[{dhtt\+\_\+msgs\+::msg\+::\+Pair}]{lhs,  }\item[{dhtt\+\_\+msgs\+::msg\+::\+Pair}]{rhs }\end{DoxyParamCaption})}
+
+
+
+helper for find\+\_\+partial\+\_\+predicate 
+
+This is the same as predicate\+\_\+equals except that the negation member of the Pair message is not checked
+
+\begin{DoxyReturn}{Returns}
+True if predicates share key and value, false otherwise 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_a6681546e5e1a89c201882d2ac3a626eb}\label{namespacedhtt__utils_a6681546e5e1a89c201882d2ac3a626eb}} 
+\index{dhtt\_utils@{dhtt\_utils}!remove\_partial\_dependencies@{remove\_partial\_dependencies}}
+\index{remove\_partial\_dependencies@{remove\_partial\_dependencies}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{remove\_partial\_dependencies()}{remove\_partial\_dependencies()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} dhtt\+\_\+utils\+::remove\+\_\+partial\+\_\+dependencies (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} $>$}]{post,  }\item[{const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&}]{pre }\end{DoxyParamCaption})}
+
+
+
+Removes partial temporal dependencies between the given list of postconditions and the given preconditions. 
+
+Searches the list of preconditions for the given postconditions. If any are found then they are not included in the returned set of preconditions. Currently only works on preconditions that are and\textquotesingle{}ed together because if they are or\textquotesingle{}ed instead then there is no partial dependency. For that same reason this check is not recursive.
+
+
+\begin{DoxyParams}{Parameters}
+{\em post} & vector of predicate conjunctions representing the sum total of the postconditions to check for \\
+\hline
+{\em pre} & predicate conjunction of preconditions to check against\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+new predicate conjunction of only the preconditions which were not found in the postconditions 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_ae9df4020ee49c30414963fd12962c958}\label{namespacedhtt__utils_ae9df4020ee49c30414963fd12962c958}} 
+\index{dhtt\_utils@{dhtt\_utils}!remove\_predicate\_duplicates@{remove\_predicate\_duplicates}}
+\index{remove\_predicate\_duplicates@{remove\_predicate\_duplicates}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{remove\_predicate\_duplicates()}{remove\_predicate\_duplicates()}}
+{\footnotesize\ttfamily void dhtt\+\_\+utils\+::remove\+\_\+predicate\+\_\+duplicates (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&}]{msg }\end{DoxyParamCaption})}
+
+
+
+removes any duplicate predicates from the given predicate conjunction 
+
+Duplicate predicates with the same logical operator represent only themselves ( a and a = a ) therefore removing them is free and should save some work when processing the predicates as it will keep the lists shorter. Hopefully it is less work to maintain this property then it is to just leave duplicates in. Either way this is cleaner for the user when inspecting predicates.
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & where the duplicates will be removed\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_a3d4468f5c02369f0f87d764f15cd5cdb}\label{namespacedhtt__utils_a3d4468f5c02369f0f87d764f15cd5cdb}} 
+\index{dhtt\_utils@{dhtt\_utils}!remove\_predicate\_partial\_duplicates@{remove\_predicate\_partial\_duplicates}}
+\index{remove\_predicate\_partial\_duplicates@{remove\_predicate\_partial\_duplicates}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{remove\_predicate\_partial\_duplicates()}{remove\_predicate\_partial\_duplicates()}}
+{\footnotesize\ttfamily void dhtt\+\_\+utils\+::remove\+\_\+predicate\+\_\+partial\+\_\+duplicates (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&}]{msg }\end{DoxyParamCaption})}
+
+
+
+removes duplicates of the same information changing in the temporall reverse order 
+
+Useful for instance in a THEN node where a single predicate\textquotesingle{}s status may be changing. This ensures that only the last state is remembered as a postcondition of that behavior
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & where the duplicates will be removed\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_a5e385c4e3f823beb0a0bf4336004312d}\label{namespacedhtt__utils_a5e385c4e3f823beb0a0bf4336004312d}} 
+\index{dhtt\_utils@{dhtt\_utils}!to\_string@{to\_string}}
+\index{to\_string@{to\_string}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{to\_string()}{to\_string()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::string dhtt\+\_\+utils\+::to\+\_\+string (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&}]{pred }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacedhtt__utils_a4e19ee406f29d91d050a120242157b3d}\label{namespacedhtt__utils_a4e19ee406f29d91d050a120242157b3d}} 
+\index{dhtt\_utils@{dhtt\_utils}!to\_string@{to\_string}}
+\index{to\_string@{to\_string}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{to\_string()}{to\_string()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::string dhtt\+\_\+utils\+::to\+\_\+string (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} $>$}]{pred }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacedhtt__utils_ad4ad751f513e7b91c656460757e0e4c2}\label{namespacedhtt__utils_ad4ad751f513e7b91c656460757e0e4c2}} 
+\index{dhtt\_utils@{dhtt\_utils}!vector\_to\_msg@{vector\_to\_msg}}
+\index{vector\_to\_msg@{vector\_to\_msg}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{vector\_to\_msg()}{vector\_to\_msg()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily dhtt\+\_\+msgs\+::msg\+::\+Resources dhtt\+\_\+utils\+::vector\+\_\+to\+\_\+msg (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::string $>$}]{names,  }\item[{std\+::vector$<$ long int $>$}]{types,  }\item[{std\+::vector$<$ long int $>$}]{channels,  }\item[{std\+::vector$<$ bool $>$}]{locked,  }\item[{std\+::vector$<$ long int $>$}]{owners }\end{DoxyParamCaption})}
+
+
+
+overload of vector\+\_\+to\+\_\+msg which takes each vector individually as a parameter 
+
+
+\begin{DoxyParams}{Parameters}
+{\em names} & vector of strings \\
+\hline
+{\em types} & vector of types represented as integers \\
+\hline
+{\em channels} & vector of resource channels \\
+\hline
+{\em locks} & vector of booleans representing locked or unlocked \\
+\hline
+{\em owners} & vector of each resource\textquotesingle{}s number of owners\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+msg representation of above information 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_a8bb9bbf6456dcbef69dc065c1ee412c3}\label{namespacedhtt__utils_a8bb9bbf6456dcbef69dc065c1ee412c3}} 
+\index{dhtt\_utils@{dhtt\_utils}!vector\_to\_msg@{vector\_to\_msg}}
+\index{vector\_to\_msg@{vector\_to\_msg}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{vector\_to\_msg()}{vector\_to\_msg()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily dhtt\+\_\+msgs\+::msg\+::\+Resources dhtt\+\_\+utils\+::vector\+\_\+to\+\_\+msg (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}}}]{data }\end{DoxyParamCaption})}
+
+
+
+creates a dhtt\+\_\+msgs\+::msg\+::\+Resources object from vectors containing the necessary information 
+
+Vectors should all be the same size and the information for a single resource should correspond to a single index across all of them.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & \mbox{\hyperlink{structdhtt__utils_1_1VectorResources}{Vector\+Resources}} struct containing all of the information to transform\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+msg which is equivalent to the data 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacedhtt__utils_a93346a4642729dfac216e2728673896d}\label{namespacedhtt__utils_a93346a4642729dfac216e2728673896d}} 
+\index{dhtt\_utils@{dhtt\_utils}!violates\_predicates@{violates\_predicates}}
+\index{violates\_predicates@{violates\_predicates}!dhtt\_utils@{dhtt\_utils}}
+\doxysubsubsection{\texorpdfstring{violates\_predicates()}{violates\_predicates()}}
+{\footnotesize\ttfamily bool dhtt\+\_\+utils\+::violates\+\_\+predicates (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&}]{postconditions,  }\item[{const \mbox{\hyperlink{namespacedhtt__utils_ac80abfc51c1ebf95430e16497c968902}{Predicate\+Conjunction}} \&}]{preconditions }\end{DoxyParamCaption})}
+
+
+
+check if the execution of given postconditions would violate the given preconditions 
+
+This check essentially set\textquotesingle{}s all values of the given postconditions to true and then assumes all others are true as well. So any negations not in the postconditions list will evaluate to false etc. and whatever is given in the postconditions list is considered true (negations will also evaluate to true). Therefore, we will just evaluate the whole boolean statement recursively to generate and return the negation of truth value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em postconditions} & Predicate Conjunction of the postcondition list \\
+\hline
+{\em preconditions} & Predicate Conjunction of the preconditions list\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the postconditions would violate the preconditions (on their own), false otherwise. 
+\end{DoxyReturn}

@@ -1,0 +1,74 @@
+\hypertarget{classdhtt__plugins_1_1PtrBranchSocket}{}\doxysection{dhtt\+\_\+plugins\+::Ptr\+Branch\+Socket Class Reference}
+\label{classdhtt__plugins_1_1PtrBranchSocket}\index{dhtt\_plugins::PtrBranchSocket@{dhtt\_plugins::PtrBranchSocket}}
+
+
+{\ttfamily \#include $<$ptr\+\_\+branch.\+hpp$>$}
+
+
+
+Inheritance diagram for dhtt\+\_\+plugins\+::Ptr\+Branch\+Socket\+:
+% FIG 0
+
+
+Collaboration diagram for dhtt\+\_\+plugins\+::Ptr\+Branch\+Socket\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchSocket_a82186d2a8045fab49bec7ca6253a1802}{initialize}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$constructor\+\_\+ptr) override
+\begin{DoxyCompactList}\small\item\em initializes the pointer to the constructor and nothing else... \end{DoxyCompactList}\item 
+dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchSocket_afc4f490b15c2fc336418a12e64c2fb7f}{activation\+\_\+received\+\_\+callback}} (dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Goal goal) override
+\begin{DoxyCompactList}\small\item\em just runs the activate function of the attached node \end{DoxyCompactList}\item 
+dhtt\+\_\+msgs\+::action\+::\+Condition\+::\+Result \mbox{\hyperlink{classdhtt__plugins_1_1PtrBranchSocket_aad2bbb444f7957a9eb5d9117a1bbb9d3}{maintain\+\_\+received\+\_\+callback}} (dhtt\+\_\+msgs\+::action\+::\+Condition\+::\+Goal goal) override
+\begin{DoxyCompactList}\small\item\em just runs the maintain conditions function of the attached node \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1PtrBranchSocket_afc4f490b15c2fc336418a12e64c2fb7f}\label{classdhtt__plugins_1_1PtrBranchSocket_afc4f490b15c2fc336418a12e64c2fb7f}} 
+\index{dhtt\_plugins::PtrBranchSocket@{dhtt\_plugins::PtrBranchSocket}!activation\_received\_callback@{activation\_received\_callback}}
+\index{activation\_received\_callback@{activation\_received\_callback}!dhtt\_plugins::PtrBranchSocket@{dhtt\_plugins::PtrBranchSocket}}
+\doxysubsubsection{\texorpdfstring{activation\_received\_callback()}{activation\_received\_callback()}}
+{\footnotesize\ttfamily dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Result dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Socket\+::activation\+\_\+received\+\_\+callback (\begin{DoxyParamCaption}\item[{dhtt\+\_\+msgs\+::action\+::\+Activation\+::\+Goal}]{goal }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+just runs the activate function of the attached node 
+
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1BranchSocketType_add4fa4d6e143b7bf1e5a15a589fcb2b7}{dhtt\+::\+Branch\+Socket\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1PtrBranchSocket_a82186d2a8045fab49bec7ca6253a1802}\label{classdhtt__plugins_1_1PtrBranchSocket_a82186d2a8045fab49bec7ca6253a1802}} 
+\index{dhtt\_plugins::PtrBranchSocket@{dhtt\_plugins::PtrBranchSocket}!initialize@{initialize}}
+\index{initialize@{initialize}!dhtt\_plugins::PtrBranchSocket@{dhtt\_plugins::PtrBranchSocket}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily void dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Socket\+::initialize (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{constructor\+\_\+ptr }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+initializes the pointer to the constructor and nothing else... 
+
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1BranchSocketType_a6323fef56616461214b60464d67f0f2a}{dhtt\+::\+Branch\+Socket\+Type}}.
+
+\mbox{\Hypertarget{classdhtt__plugins_1_1PtrBranchSocket_aad2bbb444f7957a9eb5d9117a1bbb9d3}\label{classdhtt__plugins_1_1PtrBranchSocket_aad2bbb444f7957a9eb5d9117a1bbb9d3}} 
+\index{dhtt\_plugins::PtrBranchSocket@{dhtt\_plugins::PtrBranchSocket}!maintain\_received\_callback@{maintain\_received\_callback}}
+\index{maintain\_received\_callback@{maintain\_received\_callback}!dhtt\_plugins::PtrBranchSocket@{dhtt\_plugins::PtrBranchSocket}}
+\doxysubsubsection{\texorpdfstring{maintain\_received\_callback()}{maintain\_received\_callback()}}
+{\footnotesize\ttfamily dhtt\+\_\+msgs\+::action\+::\+Condition\+::\+Result dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Socket\+::maintain\+\_\+received\+\_\+callback (\begin{DoxyParamCaption}\item[{dhtt\+\_\+msgs\+::action\+::\+Condition\+::\+Goal}]{goal }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+just runs the maintain conditions function of the attached node 
+
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1BranchSocketType_a688c0dcb09ab29a130b4c6bc5cbed5b1}{dhtt\+::\+Branch\+Socket\+Type}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt\+\_\+plugins/include/dhtt\+\_\+plugins/tree/\mbox{\hyperlink{ptr__branch_8hpp}{ptr\+\_\+branch.\+hpp}}\end{DoxyCompactItemize}

@@ -9,6 +9,5 @@ var searchData=
   ['branch_5fsocket_5ftype_5floader_6',['branch_socket_type_loader',['../classdhtt_1_1Node.html#ae7773fd9d1c7b3b107d50651dfaf1828',1,'dhtt::Node']]],
   ['branch_5ftype_2ehpp_7',['branch_type.hpp',['../branch__type_8hpp.html',1,'']]],
   ['branchplugtype_8',['BranchPlugType',['../classdhtt_1_1BranchPlugType.html',1,'dhtt']]],
-  ['branchsockettype_9',['BranchSocketType',['../classdhtt_1_1BranchSocketType.html',1,'dhtt']]],
-  ['build_5fsubtree_10',['build_subtree',['../classdhtt_1_1SubServer.html#ae50f0c6e41b321dbd3f9b6275861558d',1,'dhtt::SubServer']]]
+  ['branchsockettype_9',['BranchSocketType',['../classdhtt_1_1BranchSocketType.html',1,'dhtt']]]
 ];

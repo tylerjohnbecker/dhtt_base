@@ -11,10 +11,14 @@ digraph "dhtt_plugins/include/dhtt_plugins"
     graph [ bgcolor="#edf0f7", pencolor="grey25", label="", fontname=Helvetica,fontsize=10 style="filled,bold", URL="dir_0ba64e188c3c4476ccd865843fd334f3.html",tooltip=""]
     dir_0ba64e188c3c4476ccd865843fd334f3 [shape=plaintext, label="dhtt_plugins"];
   dir_d22a19b2aa01e0eeb0dfcaabdbf13a3e [label="behaviors", fillcolor="#a2b4d6", color="grey25", style="filled", URL="dir_d22a19b2aa01e0eeb0dfcaabdbf13a3e.html",tooltip=""];
+  dir_94a5244455f1c916a18ad7b0ec7913ab [label="potentials", fillcolor="#a2b4d6", color="grey25", style="filled", URL="dir_94a5244455f1c916a18ad7b0ec7913ab.html",tooltip=""];
   dir_5616743b0456aacb4aa8f5860f499112 [label="tasks", fillcolor="#a2b4d6", color="grey25", style="filled", URL="dir_5616743b0456aacb4aa8f5860f499112.html",tooltip=""];
+  dir_a66e3f7c6fa2a377b5636fff6b027e57 [label="tree", fillcolor="#a2b4d6", color="grey25", style="filled", URL="dir_a66e3f7c6fa2a377b5636fff6b027e57.html",tooltip=""];
   }
   }
   dir_ddb31809bb043c5c8043c26a6d397ff8 [label="dhtt", fillcolor="#edf0f7", color="red", style="filled", URL="dir_ddb31809bb043c5c8043c26a6d397ff8.html",tooltip=""];
   dir_d22a19b2aa01e0eeb0dfcaabdbf13a3e->dir_ddb31809bb043c5c8043c26a6d397ff8 [headlabel="6", labeldistance=1.5 headhref="dir_000000_000001.html" color="steelblue1" fontcolor="steelblue1"];
-  dir_5616743b0456aacb4aa8f5860f499112->dir_ddb31809bb043c5c8043c26a6d397ff8 [headlabel="8", labeldistance=1.5 headhref="dir_000008_000001.html" color="steelblue1" fontcolor="steelblue1"];
+  dir_94a5244455f1c916a18ad7b0ec7913ab->dir_ddb31809bb043c5c8043c26a6d397ff8 [headlabel="6", labeldistance=1.5 headhref="dir_000007_000001.html" color="steelblue1" fontcolor="steelblue1"];
+  dir_5616743b0456aacb4aa8f5860f499112->dir_ddb31809bb043c5c8043c26a6d397ff8 [headlabel="8", labeldistance=1.5 headhref="dir_000009_000001.html" color="steelblue1" fontcolor="steelblue1"];
+  dir_a66e3f7c6fa2a377b5636fff6b027e57->dir_ddb31809bb043c5c8043c26a6d397ff8 [headlabel="3", labeldistance=1.5 headhref="dir_000012_000001.html" color="steelblue1" fontcolor="steelblue1"];
 }

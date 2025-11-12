@@ -1,0 +1,51 @@
+\hypertarget{classdhtt__plugins_1_1ResourcePotential}{}\doxysection{dhtt\+\_\+plugins\+::Resource\+Potential Class Reference}
+\label{classdhtt__plugins_1_1ResourcePotential}\index{dhtt\_plugins::ResourcePotential@{dhtt\_plugins::ResourcePotential}}
+
+
+monitors and changes activation potential according to the number of resources used in the tree  
+
+
+
+
+{\ttfamily \#include $<$resource\+\_\+potential.\+hpp$>$}
+
+
+
+Inheritance diagram for dhtt\+\_\+plugins\+::Resource\+Potential\+:
+% FIG 0
+
+
+Collaboration diagram for dhtt\+\_\+plugins\+::Resource\+Potential\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{classdhtt__plugins_1_1ResourcePotential_a697a9de2bdef50a093b2c9d370779481}{compute\+\_\+activation\+\_\+potential}} (\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$container) override
+\begin{DoxyCompactList}\small\item\em returns the perceived efficiency from the node logic plugin or the number of resources owned by the subtree over the total number of resources \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+monitors and changes activation potential according to the number of resources used in the tree 
+
+When resource usage is below a threshold value the activation potential is just returned from the node logic, however, when the threshold is exceeded the number of resources used in the subtree is given so that the d\+HTT prioritizes freeing up resources. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdhtt__plugins_1_1ResourcePotential_a697a9de2bdef50a093b2c9d370779481}\label{classdhtt__plugins_1_1ResourcePotential_a697a9de2bdef50a093b2c9d370779481}} 
+\index{dhtt\_plugins::ResourcePotential@{dhtt\_plugins::ResourcePotential}!compute\_activation\_potential@{compute\_activation\_potential}}
+\index{compute\_activation\_potential@{compute\_activation\_potential}!dhtt\_plugins::ResourcePotential@{dhtt\_plugins::ResourcePotential}}
+\doxysubsubsection{\texorpdfstring{compute\_activation\_potential()}{compute\_activation\_potential()}}
+{\footnotesize\ttfamily double dhtt\+\_\+plugins\+::\+Resource\+Potential\+::compute\+\_\+activation\+\_\+potential (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $\ast$}]{container }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+returns the perceived efficiency from the node logic plugin or the number of resources owned by the subtree over the total number of resources 
+
+
+
+Implements \mbox{\hyperlink{classdhtt_1_1PotentialType_a72fd911b54a2c14a4e942daff8bf3879}{dhtt\+::\+Potential\+Type}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+dhtt\+\_\+plugins/include/dhtt\+\_\+plugins/potentials/\mbox{\hyperlink{resource__potential_8hpp}{resource\+\_\+potential.\+hpp}}\end{DoxyCompactItemize}
