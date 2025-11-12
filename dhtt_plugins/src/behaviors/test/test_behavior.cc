@@ -115,22 +115,10 @@ namespace dhtt_plugins
 		std::vector<dhtt_msgs::msg::Resource> passed;
 		std::vector<dhtt_msgs::msg::Resource> released;
 
-		bool first = true;
-		
 		for (dhtt_msgs::msg::Resource resource : container->get_owned_resources())
 		{
-			if (resource.type == dhtt_msgs::msg::Resource::GRIPPER and first)
-			{
-				passed.push_back(resource);
-				DHTT_LOG_DEBUG(this->com_agg, "Passing control of resource " << resource.name);
-
-				first = false;
-			}
-			else
-			{
-				released.push_back(resource);
-				DHTT_LOG_DEBUG(this->com_agg, "Releasing control of resource " << resource.name);
-			}
+			released.push_back(resource);
+			DHTT_LOG_DEBUG(this->com_agg, "Releasing control of resource " << resource.name);
 		}
 
 		to_ret->passed_resources = passed;
