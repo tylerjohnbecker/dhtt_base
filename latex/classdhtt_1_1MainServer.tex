@@ -24,7 +24,7 @@ Collaboration diagram for dhtt\+::Main\+Server\+:
 \begin{DoxyCompactList}\small\item\em constructor for the \mbox{\hyperlink{classdhtt_1_1MainServer}{Main\+Server}} Class \end{DoxyCompactList}\item 
 \mbox{\hyperlink{classdhtt_1_1MainServer_a4cb4032ccc5d22e5fc85d5846c4579a8}{$\sim$\+Main\+Server}} ()
 \end{DoxyCompactItemize}
-\doxysubsection*{Private Member Functions}
+\doxysubsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 void \mbox{\hyperlink{classdhtt_1_1MainServer_a5baef94ba95d5800a20424cf6ae0ea18}{modify\+\_\+callback}} (const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Request $>$ request, std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$ response)
@@ -37,6 +37,13 @@ void \mbox{\hyperlink{classdhtt_1_1MainServer_a8f2558f1d98c5f2388a0935469eb6935}
 \begin{DoxyCompactList}\small\item\em callback for handling History\+Request. See History\+Request.\+srv for more information. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classdhtt_1_1MainServer_aaa0eb710f37098afa6de7bb04dfafd4d}{resource\+\_\+callback}} (const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Resource\+Request\+::\+Request $>$ request, std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Resource\+Request\+::\+Response $>$ response)
 \begin{DoxyCompactList}\small\item\em callback for handling Resource\+Request. See Resource\+Request.\+srv for more information. \end{DoxyCompactList}\item 
+std\+::unordered\+\_\+map$<$ std\+::string, std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $>$ $>$ \mbox{\hyperlink{classdhtt_1_1MainServer_abfed42f653d27ca6ea85a5b698f3f051}{get\+\_\+node\+\_\+map}} () const
+\begin{DoxyCompactList}\small\item\em get a copy of the node map. That is, the internal dhtt\+:\mbox{\hyperlink{classdhtt_1_1Node}{Node}} representations. \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator}{Communication\+Aggregator}} $>$ \mbox{\hyperlink{classdhtt_1_1MainServer_afa864bf16a8da2d7dedcef144bab4b03}{get\+\_\+com\+\_\+agg}} () const
+\begin{DoxyCompactList}\small\item\em get a copy of the global communication aggregator \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
 std\+::string \mbox{\hyperlink{classdhtt_1_1MainServer_a35d3db25bf6f92a806ecbf4c6a343b65}{add\+\_\+node}} (std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$ response, std\+::string parent\+\_\+name, dhtt\+\_\+msgs\+::msg\+::\+Node to\+\_\+add, bool force=true, int index=-\/1)
 \begin{DoxyCompactList}\small\item\em helper function for adding new nodes to the tree \end{DoxyCompactList}\item 
 std\+::string \mbox{\hyperlink{classdhtt_1_1MainServer_a28abce8d945c5050892805c53306c1f3}{add\+\_\+nodes\+\_\+from\+\_\+file}} (std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$ response, std\+::string parent\+\_\+name, std\+::string file\+\_\+name, std\+::vector$<$ std\+::string $>$ file\+\_\+args, bool force=true)
@@ -451,7 +458,7 @@ empty string if successfully loaded, otherwise contains an error message
 \index{dhtt::MainServer@{dhtt::MainServer}!control\_callback@{control\_callback}}
 \index{control\_callback@{control\_callback}!dhtt::MainServer@{dhtt::MainServer}}
 \doxysubsubsection{\texorpdfstring{control\_callback()}{control\_callback()}}
-{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::control\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Control\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Control\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::control\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Control\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Control\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
 
 
 
@@ -461,7 +468,7 @@ callback for handling Control\+Request. See Control\+Request.\+srv for more info
 \index{dhtt::MainServer@{dhtt::MainServer}!fetch\_callback@{fetch\_callback}}
 \index{fetch\_callback@{fetch\_callback}!dhtt::MainServer@{dhtt::MainServer}}
 \doxysubsubsection{\texorpdfstring{fetch\_callback()}{fetch\_callback()}}
-{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::fetch\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Fetch\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Fetch\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::fetch\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Fetch\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Fetch\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
 
 
 
@@ -577,6 +584,16 @@ Generally returns the line of nodes from the root node to the active behavior.
 \begin{DoxyReturn}{Returns}
 vector of all active nodes in the tree 
 \end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_afa864bf16a8da2d7dedcef144bab4b03}\label{classdhtt_1_1MainServer_afa864bf16a8da2d7dedcef144bab4b03}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!get\_com\_agg@{get\_com\_agg}}
+\index{get\_com\_agg@{get\_com\_agg}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{get\_com\_agg()}{get\_com\_agg()}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator}{Communication\+Aggregator}} $>$ dhtt\+::\+Main\+Server\+::get\+\_\+com\+\_\+agg (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+
+
+get a copy of the global communication aggregator 
+
 \mbox{\Hypertarget{classdhtt_1_1MainServer_aed2d1522a382ccadfc3c680c244a335f}\label{classdhtt_1_1MainServer_aed2d1522a382ccadfc3c680c244a335f}} 
 \index{dhtt::MainServer@{dhtt::MainServer}!get\_next\_behaviors@{get\_next\_behaviors}}
 \index{get\_next\_behaviors@{get\_next\_behaviors}!dhtt::MainServer@{dhtt::MainServer}}
@@ -601,6 +618,16 @@ Subtrees will only happen temporally after the given index if they share an ance
 \begin{DoxyReturn}{Returns}
 list of indices of the subsequent subtrees in the internal node\+\_\+list 
 \end{DoxyReturn}
+\mbox{\Hypertarget{classdhtt_1_1MainServer_abfed42f653d27ca6ea85a5b698f3f051}\label{classdhtt_1_1MainServer_abfed42f653d27ca6ea85a5b698f3f051}} 
+\index{dhtt::MainServer@{dhtt::MainServer}!get\_node\_map@{get\_node\_map}}
+\index{get\_node\_map@{get\_node\_map}!dhtt::MainServer@{dhtt::MainServer}}
+\doxysubsubsection{\texorpdfstring{get\_node\_map()}{get\_node\_map()}}
+{\footnotesize\ttfamily std\+::unordered\+\_\+map$<$ std\+::string, std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1Node}{dhtt\+::\+Node}} $>$ $>$ dhtt\+::\+Main\+Server\+::get\+\_\+node\+\_\+map (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+
+
+get a copy of the node map. That is, the internal dhtt\+:\mbox{\hyperlink{classdhtt_1_1Node}{Node}} representations. 
+
 \mbox{\Hypertarget{classdhtt_1_1MainServer_af222dc5f7079cf5261856fe177cd06a5}\label{classdhtt_1_1MainServer_af222dc5f7079cf5261856fe177cd06a5}} 
 \index{dhtt::MainServer@{dhtt::MainServer}!get\_postconditions@{get\_postconditions}}
 \index{get\_postconditions@{get\_postconditions}!dhtt::MainServer@{dhtt::MainServer}}
@@ -645,7 +672,7 @@ list of \mbox{[} key, val \mbox{]} preconditions required for running a subtree
 \index{dhtt::MainServer@{dhtt::MainServer}!history\_callback@{history\_callback}}
 \index{history\_callback@{history\_callback}!dhtt::MainServer@{dhtt::MainServer}}
 \doxysubsubsection{\texorpdfstring{history\_callback()}{history\_callback()}}
-{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::history\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+History\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+History\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::history\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+History\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+History\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
 
 
 
@@ -690,7 +717,7 @@ void
 \index{dhtt::MainServer@{dhtt::MainServer}!modify\_callback@{modify\_callback}}
 \index{modify\_callback@{modify\_callback}!dhtt::MainServer@{dhtt::MainServer}}
 \doxysubsubsection{\texorpdfstring{modify\_callback()}{modify\_callback()}}
-{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::modify\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::modify\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Modify\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
 
 
 
@@ -769,7 +796,7 @@ string with exception information or empty string if successful
 \index{dhtt::MainServer@{dhtt::MainServer}!resource\_callback@{resource\_callback}}
 \index{resource\_callback@{resource\_callback}!dhtt::MainServer@{dhtt::MainServer}}
 \doxysubsubsection{\texorpdfstring{resource\_callback()}{resource\_callback()}}
-{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::resource\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Resource\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Resource\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+{\footnotesize\ttfamily void dhtt\+::\+Main\+Server\+::resource\+\_\+callback (\begin{DoxyParamCaption}\item[{const std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Resource\+Request\+::\+Request $>$}]{request,  }\item[{std\+::shared\+\_\+ptr$<$ dhtt\+\_\+msgs\+::srv\+::\+Resource\+Request\+::\+Response $>$}]{response }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
 
 
 

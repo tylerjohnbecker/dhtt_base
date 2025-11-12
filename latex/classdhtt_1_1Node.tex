@@ -14,19 +14,19 @@ d\+HTT \mbox{\hyperlink{classdhtt_1_1Node}{Node}} class for all nodes on the tre
 \item 
 \mbox{\hyperlink{classdhtt_1_1Node_adf967bffe5bde331fc03fbf961c8514a}{Node}} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1CommunicationAggregator}{Communication\+Aggregator}} $>$ com\+\_\+agg, std\+::string \mbox{\hyperlink{classdhtt_1_1Node_a115da70a32b17f9913d7bfb57180afe3}{name}}, std\+::string type, std\+::vector$<$ std\+::string $>$ params, std\+::string \mbox{\hyperlink{classdhtt_1_1Node_a4f3abfadbbda36594d1976a3d960fc09}{parent\+\_\+name}}, std\+::string socket\+\_\+type=\char`\"{}dhtt\+\_\+plugins\+::\+Ptr\+Branch\+Socket\char`\"{}, std\+::string goitr\+\_\+type=\char`\"{}\char`\"{}, std\+::string potential\+\_\+type=\char`\"{}dhtt\+\_\+plugins\+::\+Efficiency\+Potential\char`\"{})
 \begin{DoxyCompactList}\small\item\em Constructor for the node class. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{classdhtt_1_1Node_a36bce3e0e7d7593a5b63b637f39cfee1}{$\sim$\+Node}} ()
+virtual \mbox{\hyperlink{classdhtt_1_1Node_ad5e0b6ca63de0a907e89776ad0ce50f1}{$\sim$\+Node}} ()
 \item 
 bool \mbox{\hyperlink{classdhtt_1_1Node_a37e3f9bfad1ce41f0279baa58f0c91cf}{loaded\+\_\+successfully}} ()
 \begin{DoxyCompactList}\small\item\em returns the value of successful\+\_\+load \end{DoxyCompactList}\item 
 std\+::string \mbox{\hyperlink{classdhtt_1_1Node_aaa42c6f51d16f6e9840765b18ec01feb}{get\+\_\+error\+\_\+msg}} ()
 \begin{DoxyCompactList}\small\item\em getter method for error msg \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{classdhtt_1_1Node_a7a4d1d56bad5edb66932470a9b6b1cf4}{get\+\_\+subtree\+\_\+resources}} ()
+virtual int \mbox{\hyperlink{classdhtt_1_1Node_ae770b65cbc8062f88fc5e018933e9d83}{get\+\_\+subtree\+\_\+resources}} ()
 \begin{DoxyCompactList}\small\item\em get the number of resources owned in the subtree starting at this node \end{DoxyCompactList}\item 
 std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt_1_1Node_a33b8aeec2ee92d5e4d1cb829f6f34515}{get\+\_\+owned\+\_\+resources}} ()
 \begin{DoxyCompactList}\small\item\em Returns all currently owned resources of the node. \end{DoxyCompactList}\item 
 std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt_1_1Node_a38ef2a767d8d750e5fbe0eab07fb6e40}{get\+\_\+passed\+\_\+resources}} ()
 \begin{DoxyCompactList}\small\item\em Returns all resources passed to a node by the parent. \end{DoxyCompactList}\item 
-std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt_1_1Node_a5808acf03ace257d187a6e5b1bafc0b5}{get\+\_\+resource\+\_\+state}} ()
+virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ \mbox{\hyperlink{classdhtt_1_1Node_a7ba143a0d282de2ac2e4065b5f5b978f}{get\+\_\+resource\+\_\+state}} ()
 \begin{DoxyCompactList}\small\item\em Returns the node\textquotesingle{}s copy of the resource state. \end{DoxyCompactList}\item 
 std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classdhtt_1_1BranchSocketType}{Branch\+Socket\+Type}} $>$ \mbox{\hyperlink{classdhtt_1_1Node_a4053e0cdd7f6a59416f7998514e7df1b}{get\+\_\+socket\+\_\+ptr}} ()
 \begin{DoxyCompactList}\small\item\em returns a shared ptr to the socket\+\_\+ptr of this node \end{DoxyCompactList}\item 
@@ -224,6 +224,8 @@ Initializes all values simply. If the given plugin names cannot be loaded for so
 
 
 \begin{DoxyParams}{Parameters}
+{\em com\+\_\+agg} & interface with ros \\
+\hline
 {\em name} & name of the node being created (should be unique) \\
 \hline
 {\em type} & exact name of the plugin to load (ex. \mbox{\hyperlink{classdhtt__plugins_1_1AndBehavior}{dhtt\+\_\+plugins\+::\+And\+Behavior}}) \\
@@ -242,11 +244,11 @@ Initializes all values simply. If the given plugin names cannot be loaded for so
 \begin{DoxyReturn}{Returns}
 void 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classdhtt_1_1Node_a36bce3e0e7d7593a5b63b637f39cfee1}\label{classdhtt_1_1Node_a36bce3e0e7d7593a5b63b637f39cfee1}} 
+\mbox{\Hypertarget{classdhtt_1_1Node_ad5e0b6ca63de0a907e89776ad0ce50f1}\label{classdhtt_1_1Node_ad5e0b6ca63de0a907e89776ad0ce50f1}} 
 \index{dhtt::Node@{dhtt::Node}!````~Node@{$\sim$Node}}
 \index{````~Node@{$\sim$Node}!dhtt::Node@{dhtt::Node}}
 \doxysubsubsection{\texorpdfstring{$\sim$Node()}{~Node()}}
-{\footnotesize\ttfamily dhtt\+::\+Node\+::$\sim$\+Node (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily virtual dhtt\+::\+Node\+::$\sim$\+Node (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
 
 
 
@@ -595,11 +597,11 @@ Resources can be passed to the next node under a THEN node in order to maintain 
 \begin{DoxyReturn}{Returns}
 list of passed resources. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classdhtt_1_1Node_a5808acf03ace257d187a6e5b1bafc0b5}\label{classdhtt_1_1Node_a5808acf03ace257d187a6e5b1bafc0b5}} 
+\mbox{\Hypertarget{classdhtt_1_1Node_a7ba143a0d282de2ac2e4065b5f5b978f}\label{classdhtt_1_1Node_a7ba143a0d282de2ac2e4065b5f5b978f}} 
 \index{dhtt::Node@{dhtt::Node}!get\_resource\_state@{get\_resource\_state}}
 \index{get\_resource\_state@{get\_resource\_state}!dhtt::Node@{dhtt::Node}}
 \doxysubsubsection{\texorpdfstring{get\_resource\_state()}{get\_resource\_state()}}
-{\footnotesize\ttfamily std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+::\+Node\+::get\+\_\+resource\+\_\+state (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily virtual std\+::vector$<$ dhtt\+\_\+msgs\+::msg\+::\+Resource $>$ dhtt\+::\+Node\+::get\+\_\+resource\+\_\+state (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
 
 
 
@@ -625,11 +627,11 @@ Mostly used for constructing the corresponding plug but could be useful outside 
 \begin{DoxyReturn}{Returns}
 shared\+\_\+ptr to this node\textquotesingle{}s parent socket 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classdhtt_1_1Node_a7a4d1d56bad5edb66932470a9b6b1cf4}\label{classdhtt_1_1Node_a7a4d1d56bad5edb66932470a9b6b1cf4}} 
+\mbox{\Hypertarget{classdhtt_1_1Node_ae770b65cbc8062f88fc5e018933e9d83}\label{classdhtt_1_1Node_ae770b65cbc8062f88fc5e018933e9d83}} 
 \index{dhtt::Node@{dhtt::Node}!get\_subtree\_resources@{get\_subtree\_resources}}
 \index{get\_subtree\_resources@{get\_subtree\_resources}!dhtt::Node@{dhtt::Node}}
 \doxysubsubsection{\texorpdfstring{get\_subtree\_resources()}{get\_subtree\_resources()}}
-{\footnotesize\ttfamily int dhtt\+::\+Node\+::get\+\_\+subtree\+\_\+resources (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily virtual int dhtt\+::\+Node\+::get\+\_\+subtree\+\_\+resources (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
 
 
 

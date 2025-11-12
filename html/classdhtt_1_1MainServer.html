@@ -75,6 +75,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classdhtt_1_1MainServer-members.html">List of all members</a>  </div>
@@ -113,8 +114,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4cb4032ccc5d22e5fc85d5846c4579a8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a4cb4032ccc5d22e5fc85d5846c4579a8">~MainServer</a> ()</td></tr>
 <tr class="separator:a4cb4032ccc5d22e5fc85d5846c4579a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
-Private Member Functions</h2></td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
 <tr class="memitem:a5baef94ba95d5800a20424cf6ae0ea18"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a5baef94ba95d5800a20424cf6ae0ea18">modify_callback</a> (const std::shared_ptr&lt; dhtt_msgs::srv::ModifyRequest::Request &gt; request, std::shared_ptr&lt; dhtt_msgs::srv::ModifyRequest::Response &gt; response)</td></tr>
 <tr class="memdesc:a5baef94ba95d5800a20424cf6ae0ea18"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback for handling ModifyRequests. See ModifyRequest.srv for more information.  <a href="classdhtt_1_1MainServer.html#a5baef94ba95d5800a20424cf6ae0ea18">More...</a><br /></td></tr>
 <tr class="separator:a5baef94ba95d5800a20424cf6ae0ea18"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -130,6 +131,15 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:aaa0eb710f37098afa6de7bb04dfafd4d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#aaa0eb710f37098afa6de7bb04dfafd4d">resource_callback</a> (const std::shared_ptr&lt; dhtt_msgs::srv::ResourceRequest::Request &gt; request, std::shared_ptr&lt; dhtt_msgs::srv::ResourceRequest::Response &gt; response)</td></tr>
 <tr class="memdesc:aaa0eb710f37098afa6de7bb04dfafd4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">callback for handling ResourceRequest. See ResourceRequest.srv for more information.  <a href="classdhtt_1_1MainServer.html#aaa0eb710f37098afa6de7bb04dfafd4d">More...</a><br /></td></tr>
 <tr class="separator:aaa0eb710f37098afa6de7bb04dfafd4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfed42f653d27ca6ea85a5b698f3f051"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; std::string, std::shared_ptr&lt; <a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#abfed42f653d27ca6ea85a5b698f3f051">get_node_map</a> () const</td></tr>
+<tr class="memdesc:abfed42f653d27ca6ea85a5b698f3f051"><td class="mdescLeft">&#160;</td><td class="mdescRight">get a copy of the node map. That is, the internal dhtt:<a class="el" href="classdhtt_1_1Node.html" title="dHTT Node class for all nodes on the tree">Node</a> representations.  <a href="classdhtt_1_1MainServer.html#abfed42f653d27ca6ea85a5b698f3f051">More...</a><br /></td></tr>
+<tr class="separator:abfed42f653d27ca6ea85a5b698f3f051"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa864bf16a8da2d7dedcef144bab4b03"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1CommunicationAggregator.html">CommunicationAggregator</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#afa864bf16a8da2d7dedcef144bab4b03">get_com_agg</a> () const</td></tr>
+<tr class="memdesc:afa864bf16a8da2d7dedcef144bab4b03"><td class="mdescLeft">&#160;</td><td class="mdescRight">get a copy of the global communication aggregator  <a href="classdhtt_1_1MainServer.html#afa864bf16a8da2d7dedcef144bab4b03">More...</a><br /></td></tr>
+<tr class="separator:afa864bf16a8da2d7dedcef144bab4b03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
 <tr class="memitem:a35d3db25bf6f92a806ecbf4c6a343b65"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1MainServer.html#a35d3db25bf6f92a806ecbf4c6a343b65">add_node</a> (std::shared_ptr&lt; dhtt_msgs::srv::ModifyRequest::Response &gt; response, std::string parent_name, dhtt_msgs::msg::Node to_add, bool force=true, int index=-1)</td></tr>
 <tr class="memdesc:a35d3db25bf6f92a806ecbf4c6a343b65"><td class="mdescLeft">&#160;</td><td class="mdescRight">helper function for adding new nodes to the tree  <a href="classdhtt_1_1MainServer.html#a35d3db25bf6f92a806ecbf4c6a343b65">More...</a><br /></td></tr>
 <tr class="separator:a35d3db25bf6f92a806ecbf4c6a343b65"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -895,7 +905,7 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -933,7 +943,7 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1144,6 +1154,33 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="afa864bf16a8da2d7dedcef144bab4b03" name="afa864bf16a8da2d7dedcef144bab4b03"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa864bf16a8da2d7dedcef144bab4b03">&#9670;&#160;</a></span>get_com_agg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1CommunicationAggregator.html">CommunicationAggregator</a> &gt; dhtt::MainServer::get_com_agg </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get a copy of the global communication aggregator </p>
+
+</div>
+</div>
 <a id="aed2d1522a382ccadfc3c680c244a335f" name="aed2d1522a382ccadfc3c680c244a335f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aed2d1522a382ccadfc3c680c244a335f">&#9670;&#160;</a></span>get_next_behaviors()</h2>
 
@@ -1195,6 +1232,33 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>list of indices of the subsequent subtrees in the internal node_list </dd></dl>
+
+</div>
+</div>
+<a id="abfed42f653d27ca6ea85a5b698f3f051" name="abfed42f653d27ca6ea85a5b698f3f051"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfed42f653d27ca6ea85a5b698f3f051">&#9670;&#160;</a></span>get_node_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt; std::string, std::shared_ptr&lt; <a class="el" href="classdhtt_1_1Node.html">dhtt::Node</a> &gt; &gt; dhtt::MainServer::get_node_map </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get a copy of the node map. That is, the internal dhtt:<a class="el" href="classdhtt_1_1Node.html" title="dHTT Node class for all nodes on the tree">Node</a> representations. </p>
 
 </div>
 </div>
@@ -1299,7 +1363,7 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1401,7 +1465,7 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -1574,7 +1638,7 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

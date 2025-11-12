@@ -94,26 +94,26 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:adf967bffe5bde331fc03fbf961c8514a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#adf967bffe5bde331fc03fbf961c8514a">Node</a> (std::shared_ptr&lt; <a class="el" href="classdhtt_1_1CommunicationAggregator.html">CommunicationAggregator</a> &gt; com_agg, std::string <a class="el" href="classdhtt_1_1Node.html#a115da70a32b17f9913d7bfb57180afe3">name</a>, std::string type, std::vector&lt; std::string &gt; params, std::string <a class="el" href="classdhtt_1_1Node.html#a4f3abfadbbda36594d1976a3d960fc09">parent_name</a>, std::string socket_type=&quot;dhtt_plugins::PtrBranchSocket&quot;, std::string goitr_type=&quot;&quot;, std::string potential_type=&quot;dhtt_plugins::EfficiencyPotential&quot;)</td></tr>
 <tr class="memdesc:adf967bffe5bde331fc03fbf961c8514a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the node class.  <a href="classdhtt_1_1Node.html#adf967bffe5bde331fc03fbf961c8514a">More...</a><br /></td></tr>
 <tr class="separator:adf967bffe5bde331fc03fbf961c8514a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36bce3e0e7d7593a5b63b637f39cfee1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a36bce3e0e7d7593a5b63b637f39cfee1">~Node</a> ()</td></tr>
-<tr class="separator:a36bce3e0e7d7593a5b63b637f39cfee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5e0b6ca63de0a907e89776ad0ce50f1"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ad5e0b6ca63de0a907e89776ad0ce50f1">~Node</a> ()</td></tr>
+<tr class="separator:ad5e0b6ca63de0a907e89776ad0ce50f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37e3f9bfad1ce41f0279baa58f0c91cf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a37e3f9bfad1ce41f0279baa58f0c91cf">loaded_successfully</a> ()</td></tr>
 <tr class="memdesc:a37e3f9bfad1ce41f0279baa58f0c91cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the value of successful_load  <a href="classdhtt_1_1Node.html#a37e3f9bfad1ce41f0279baa58f0c91cf">More...</a><br /></td></tr>
 <tr class="separator:a37e3f9bfad1ce41f0279baa58f0c91cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa42c6f51d16f6e9840765b18ec01feb"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#aaa42c6f51d16f6e9840765b18ec01feb">get_error_msg</a> ()</td></tr>
 <tr class="memdesc:aaa42c6f51d16f6e9840765b18ec01feb"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter method for error msg  <a href="classdhtt_1_1Node.html#aaa42c6f51d16f6e9840765b18ec01feb">More...</a><br /></td></tr>
 <tr class="separator:aaa42c6f51d16f6e9840765b18ec01feb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a4d1d56bad5edb66932470a9b6b1cf4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a7a4d1d56bad5edb66932470a9b6b1cf4">get_subtree_resources</a> ()</td></tr>
-<tr class="memdesc:a7a4d1d56bad5edb66932470a9b6b1cf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the number of resources owned in the subtree starting at this node  <a href="classdhtt_1_1Node.html#a7a4d1d56bad5edb66932470a9b6b1cf4">More...</a><br /></td></tr>
-<tr class="separator:a7a4d1d56bad5edb66932470a9b6b1cf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae770b65cbc8062f88fc5e018933e9d83"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#ae770b65cbc8062f88fc5e018933e9d83">get_subtree_resources</a> ()</td></tr>
+<tr class="memdesc:ae770b65cbc8062f88fc5e018933e9d83"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the number of resources owned in the subtree starting at this node  <a href="classdhtt_1_1Node.html#ae770b65cbc8062f88fc5e018933e9d83">More...</a><br /></td></tr>
+<tr class="separator:ae770b65cbc8062f88fc5e018933e9d83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33b8aeec2ee92d5e4d1cb829f6f34515"><td class="memItemLeft" align="right" valign="top">std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a33b8aeec2ee92d5e4d1cb829f6f34515">get_owned_resources</a> ()</td></tr>
 <tr class="memdesc:a33b8aeec2ee92d5e4d1cb829f6f34515"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns all currently owned resources of the node.  <a href="classdhtt_1_1Node.html#a33b8aeec2ee92d5e4d1cb829f6f34515">More...</a><br /></td></tr>
 <tr class="separator:a33b8aeec2ee92d5e4d1cb829f6f34515"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38ef2a767d8d750e5fbe0eab07fb6e40"><td class="memItemLeft" align="right" valign="top">std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a38ef2a767d8d750e5fbe0eab07fb6e40">get_passed_resources</a> ()</td></tr>
 <tr class="memdesc:a38ef2a767d8d750e5fbe0eab07fb6e40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns all resources passed to a node by the parent.  <a href="classdhtt_1_1Node.html#a38ef2a767d8d750e5fbe0eab07fb6e40">More...</a><br /></td></tr>
 <tr class="separator:a38ef2a767d8d750e5fbe0eab07fb6e40"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5808acf03ace257d187a6e5b1bafc0b5"><td class="memItemLeft" align="right" valign="top">std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a5808acf03ace257d187a6e5b1bafc0b5">get_resource_state</a> ()</td></tr>
-<tr class="memdesc:a5808acf03ace257d187a6e5b1bafc0b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the node's copy of the resource state.  <a href="classdhtt_1_1Node.html#a5808acf03ace257d187a6e5b1bafc0b5">More...</a><br /></td></tr>
-<tr class="separator:a5808acf03ace257d187a6e5b1bafc0b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ba143a0d282de2ac2e4065b5f5b978f"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; dhtt_msgs::msg::Resource &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a7ba143a0d282de2ac2e4065b5f5b978f">get_resource_state</a> ()</td></tr>
+<tr class="memdesc:a7ba143a0d282de2ac2e4065b5f5b978f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the node's copy of the resource state.  <a href="classdhtt_1_1Node.html#a7ba143a0d282de2ac2e4065b5f5b978f">More...</a><br /></td></tr>
+<tr class="separator:a7ba143a0d282de2ac2e4065b5f5b978f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4053e0cdd7f6a59416f7998514e7df1b"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classdhtt_1_1BranchSocketType.html">BranchSocketType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdhtt_1_1Node.html#a4053e0cdd7f6a59416f7998514e7df1b">get_socket_ptr</a> ()</td></tr>
 <tr class="memdesc:a4053e0cdd7f6a59416f7998514e7df1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a shared ptr to the socket_ptr of this node  <a href="classdhtt_1_1Node.html#a4053e0cdd7f6a59416f7998514e7df1b">More...</a><br /></td></tr>
 <tr class="separator:a4053e0cdd7f6a59416f7998514e7df1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -392,6 +392,7 @@ Friends</h2></td></tr>
 <p >Initializes all values simply. If the given plugin names cannot be loaded for some reason does not construct. Errors are flagged through successful_load and error messages are stored in error_msg.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">com_agg</td><td>interface with ros </td></tr>
     <tr><td class="paramname">name</td><td>name of the node being created (should be unique) </td></tr>
     <tr><td class="paramname">type</td><td>exact name of the plugin to load (ex. <a class="el" href="classdhtt__plugins_1_1AndBehavior.html" title="Implementation of the AND node for dHTTs.">dhtt_plugins::AndBehavior</a>) </td></tr>
     <tr><td class="paramname">params</td><td>parameter list for the given plugin (a list of string parameters) </td></tr>
@@ -406,19 +407,27 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a36bce3e0e7d7593a5b63b637f39cfee1" name="a36bce3e0e7d7593a5b63b637f39cfee1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a36bce3e0e7d7593a5b63b637f39cfee1">&#9670;&#160;</a></span>~Node()</h2>
+<a id="ad5e0b6ca63de0a907e89776ad0ce50f1" name="ad5e0b6ca63de0a907e89776ad0ce50f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5e0b6ca63de0a907e89776ad0ce50f1">&#9670;&#160;</a></span>~Node()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">dhtt::Node::~Node </td>
+          <td class="memname">virtual dhtt::Node::~Node </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>
@@ -1003,19 +1012,27 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a5808acf03ace257d187a6e5b1bafc0b5" name="a5808acf03ace257d187a6e5b1bafc0b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5808acf03ace257d187a6e5b1bafc0b5">&#9670;&#160;</a></span>get_resource_state()</h2>
+<a id="a7ba143a0d282de2ac2e4065b5f5b978f" name="a7ba143a0d282de2ac2e4065b5f5b978f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ba143a0d282de2ac2e4065b5f5b978f">&#9670;&#160;</a></span>get_resource_state()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; dhtt_msgs::msg::Resource &gt; dhtt::Node::get_resource_state </td>
+          <td class="memname">virtual std::vector&lt; dhtt_msgs::msg::Resource &gt; dhtt::Node::get_resource_state </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Returns the node's copy of the resource state. </p>
@@ -1045,19 +1062,27 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a7a4d1d56bad5edb66932470a9b6b1cf4" name="a7a4d1d56bad5edb66932470a9b6b1cf4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7a4d1d56bad5edb66932470a9b6b1cf4">&#9670;&#160;</a></span>get_subtree_resources()</h2>
+<a id="ae770b65cbc8062f88fc5e018933e9d83" name="ae770b65cbc8062f88fc5e018933e9d83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae770b65cbc8062f88fc5e018933e9d83">&#9670;&#160;</a></span>get_subtree_resources()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int dhtt::Node::get_subtree_resources </td>
+          <td class="memname">virtual int dhtt::Node::get_subtree_resources </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>get the number of resources owned in the subtree starting at this node </p>
