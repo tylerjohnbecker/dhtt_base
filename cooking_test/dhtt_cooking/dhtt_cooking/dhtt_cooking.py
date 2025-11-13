@@ -545,7 +545,7 @@ class CookingEnvironment:
                            render=render,
                            reward_scheme=reward_scheme, ignore_completed_recipes=True, agents_arms=[2])
         observations, info = env.reset()
-        env.render()
+        # env.render() # has to be in main thread
         terminations = {DEFAULT_PLAYER_NAME: False}
         truncations = {DEFAULT_PLAYER_NAME: False}
 
@@ -562,7 +562,7 @@ class CookingEnvironment:
             self.truncations = truncations
             self.infos = infos
 
-            self.env.render()
+            # self.env.render() # has to be in main thread
 
     @staticmethod
     def _strip_loc(s: str):
@@ -677,7 +677,10 @@ def main():
 
     my_ex.add_node(node)
 
-    my_ex.spin()
+    while rclpy.ok():
+        my_ex.spin_once()
+        node.cooking_environment.env.render()  # pygame/SDL 2.0 apparently needs to be in the main thread
+        # TODO misses rendering move_to intermediate steps this is the simplest solution
 
     rclpy.shutdown()
 
