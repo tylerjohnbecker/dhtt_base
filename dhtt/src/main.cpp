@@ -16,9 +16,6 @@ int main (int argc, char** argv)
 
 	bool slow = false;
 
-	if ( argc > 2 )
-		slow = true;
-
 	auto my_server = std::make_shared<dhtt::MainServer>("dHTT_server", spinner, slow);
 
 	RCLCPP_INFO(my_server->get_logger(), "Server started...");

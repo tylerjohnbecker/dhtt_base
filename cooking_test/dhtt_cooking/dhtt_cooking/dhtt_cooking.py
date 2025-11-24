@@ -105,8 +105,14 @@ class CookingNode(rclpy.node.Node):
     def __init__(self, ex):
         super().__init__('cooking_zoo')
 
-        self.cooking_environment = CookingEnvironment()
-        
+        # ROS Parameters
+        self.declare_parameter('render', False)
+        self.declare_parameter('level_name', 'dhtt_experiment')
+        self._param_render = bool(self.get_parameter('render').value)
+        self._param_level_name = str(self.get_parameter('level_name').value)
+
+        self.cooking_environment = CookingEnvironment(self._param_render, self._param_level_name)
+
         self.qos = rclpy.qos.QoSProfile(history=rclpy.qos.HistoryPolicy.KEEP_ALL)
 
         self.cooking_server = self.create_service(CookingRequest, 'Cooking_Server', self.cooking_request_callback, qos_profile=self.qos)
@@ -427,15 +433,20 @@ class CookingEnvironment:
         #     else:
         #         return super().walk_to_location(location, observation)
 
-    def __init__(self):
-        self._init_cooking_zoo()
+    def __init__(self, render, level_name):
+        self._param_render = render
+        self._param_level_name = level_name
+
+        self._init_cooking_zoo(self._param_render, self._param_level_name)
 
         self.env: CookingZooEnvironment
         self.observations: dict
         self.infos: dict
         self.terminations: dict
         self.truncations: dict
-        self.env, self.observations, self.infos, self.terminations, self.truncations = self._init_cooking_zoo()
+        self.env, self.observations, self.infos, self.terminations, self.truncations = self._init_cooking_zoo(
+            self._param_render,
+            self._param_level_name)
 
         # self.last_reward = None
         # self.cumulative_reward = 0
@@ -444,7 +455,8 @@ class CookingEnvironment:
 
     def start(self):
         """Initialize the cooking_zoo environment. Typically this is called in the constructor."""
-        self.env, self.observations, self.infos, self.terminations, self.truncations = self._init_cooking_zoo()
+        self.env, self.observations, self.infos, self.terminations, self.truncations = self._init_cooking_zoo(
+            self._param_render, self._param_level_name)
 
     def stop(self):
         self.env.close()
@@ -521,18 +533,18 @@ class CookingEnvironment:
         return msg
 
     @staticmethod
-    def _init_cooking_zoo():  # TODO refactor to be non-static
+    def _init_cooking_zoo(render: bool, level_name: str):  # TODO refactor to be non-static
         """
         Helper to initialize the environment. Just moves this code from self.__init__()
         :return: tuple of dict terminations, dict truncations
         """
         num_agents = 1
         max_steps = 1_000_000
-        render = True
+        render = render
         obs_spaces = ["symbolic"]
         action_scheme = "scheme1_twohand"
         meta_file = "dhtt_experiment"
-        level = "dhtt_experiment"
+        level = level_name
         allowed_recipes = ["TomatoToastedBreadPlate", "CarrotBananaPlate", "ToastedBreadPlate", "AppleWatermelonPlate",
                            "ApplePlate", "WatermelonPlate"]
         end_condition_all_dishes = True
