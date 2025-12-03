@@ -132,4 +132,4 @@ Nodes:
     behavior_type: 'dhtt_cooking_plugins::CookingPlatePlaceBehavior'
     robot: 0
     parent: 'TomatoToastThen'
-    params: [ 'object: AbsorbingDeliversquare', 'mark: A#' ]
+    params: [ 'object: AbsorbingDeliversquare', 'mark: A#', 'unmark: foo' ]
