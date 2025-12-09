@@ -27,6 +27,40 @@ void CookingPickBehavior::do_work(dhtt::Node *container)
 	std::vector<dhtt_cooking_msgs::msg::CookingObject> prev_held = this->observed_agent.holding;
 	auto last_holding = this->observed_agent.holding;
 
+	/* move_to */
+	// See cooking_move_behavior.cc populate_resource_lists(), this skips some steps because we
+	// assume the target of a pick is always a dynamic object
+
+	// Set destination
+	dhtt_msgs::msg::Resource n_world_resource;
+	if (this->destination_conditions != "Free")
+		n_world_resource.type = dhtt_cooking_utils::param_to_msg_val(this->destination_value +
+																	 this->destination_conditions);
+	else
+		n_world_resource.type = dhtt_cooking_utils::param_to_msg_val(this->destination_value);
+	this->set_destination_to_closest_owned(n_world_resource.type, container->get_owned_resources());
+
+	auto move_req = std::make_shared<dhtt_cooking_msgs::srv::CookingRequest::Request>();
+	move_req->super_action = dhtt_cooking_msgs::srv::CookingRequest::Request::ACTION;
+	move_req->action.player_name = dhtt_cooking_msgs::msg::CookingAction::DEFAULT_PLAYER_NAME;
+	move_req->action.action_type = dhtt_cooking_msgs::msg::CookingAction::MOVE_TO;
+
+	std::string dest_point_str = std::to_string(this->destination_point.x) + ", " +
+								 std::to_string(this->destination_point.y);
+
+	move_req->action.params = dest_point_str;
+
+	auto move_res = this->send_request_and_update(move_req);
+
+	bool move_suc = move_res.get()->success;
+	if (not move_suc)
+	{
+		DHTT_LOG_ERROR(this->com_agg, "move_to request did not succeed, returning early: %s"
+										  << move_res.get()->error_msg.c_str());
+		this->done = false;
+		return;
+	}
+
 	/* interact_primary */
 	auto req = std::make_shared<dhtt_cooking_msgs::srv::CookingRequest::Request>();
 	req->super_action = dhtt_cooking_msgs::srv::CookingRequest::Request::ACTION;
