@@ -788,7 +788,7 @@ namespace dhtt
 				potential_type = to_add.potential_type;
 
 			// create a physical node from the message and add to physical list
-			this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(this->global_com, to_add.node_name, to_add.plugin_name, to_add.params, parent_name, "dhtt_plugins::PtrBranchSocket", goitr_type, potential_type);
+			this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(this->global_com, to_add.node_name, to_add.plugin_name, to_add.params, to_add.parent_name, "dhtt_plugins::PtrBranchSocket", goitr_type, potential_type);
 
 			if (this->node_map[to_add.node_name]->loaded_successfully() == false)
 			{
