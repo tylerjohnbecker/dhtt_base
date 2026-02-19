@@ -327,7 +327,7 @@ namespace dhtt
 
 		if (request->type == dhtt_msgs::srv::ModifyRequest::Request::REPARENT)
 		{
-			std::lock_guard<boost::mutex> guard(this->modify_mut);
+			std::lock_guard guard(this->modify_mut);
 
 			if ((int)request->to_modify.size() == 0)
 			{
@@ -1141,7 +1141,7 @@ namespace dhtt
 		found_to_reparent->parent = new_parent_index;
 		found_to_reparent->parent_name = new_parent;
 
-		toReparentdHTT->register_with_parent();
+		newParentdHTT->add_child(toReparentdHTT->get_socket_ptr(), to_reparent);
 		if (toReparentdHTT->loaded_successfully() == false)
 		{
 			return toReparentdHTT->get_error_msg();
@@ -1151,14 +1151,14 @@ namespace dhtt
 
 		newParentdHTT->update_status(newParentdHTT->status.state);
 
-		RCLCPP_DEBUG(this->get_logger(), "toReparent->parent " + toReparentdHTT->parent_name);
+		RCLCPP_DEBUG(this->get_logger(), "toReparent->parent %s", toReparentdHTT->parent_name.c_str());
 		for (const auto &element : oldParentdHTT->child_names)
 		{
-			RCLCPP_DEBUG(this->get_logger(), "oldParent->child " + element);
+			RCLCPP_DEBUG(this->get_logger(), "oldParent->child %s", element.c_str());
 		}
 		for (const auto &element : newParentdHTT->child_names)
 		{
-			RCLCPP_DEBUG(this->get_logger(), "newParent->child " + element);
+			RCLCPP_DEBUG(this->get_logger(), "newParent->child %s", element.c_str());
 		}
 
 		this->maintain_local_subtree();

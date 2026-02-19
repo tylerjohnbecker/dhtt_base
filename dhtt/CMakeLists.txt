@@ -96,6 +96,15 @@ if(BUILD_TESTING)
   # install(PROGRAMS
   #   tests/add_remove_test.py
   #   DESTINATION lib/${PROJECT_NAME})
+
+  # gtest
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(${PROJECT_NAME}_test tests/main_server_test.cpp)
+  target_include_directories(${PROJECT_NAME}_test PUBLIC
+          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+          $<INSTALL_INTERFACE:include>
+  )
+  target_link_libraries(${PROJECT_NAME}_test dhtt_lib)
 endif()
 
 ament_export_include_directories(
