@@ -102,10 +102,19 @@ namespace dhtt
 		/**
 		 * \brief get a copy of the node map. That is, the internal dhtt:Node representations.
 		 */
-		std::unordered_map<std::string, std::shared_ptr<dhtt::Node>> get_node_map() const
+		auto get_node_map() const
 		{
 			return this->node_map;
-		};
+		}
+
+		/**
+		 *
+		 * \brief get a copy of the node list. That is, the internal dhtt::Subtree representation.
+		 */
+		auto get_node_list() const
+		{
+			return this->node_list;
+		}
 
 		/**
 		 * \brief get a copy of the global communication aggregator
@@ -167,17 +176,31 @@ namespace dhtt
 		std::string remove_node( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string to_remove );
 
 		/**
-		 * \brief Reparents \p to_parent to \p new_parent
+		 * \brief Reparents \p to_reparent to \p new_parent
 		 *
-		 * Sets the parent field of \p to_parent and calls dhtt::Node::remove_child() on the parent
+		 * Sets the parent field of \p to_reparent and calls dhtt::Node::remove_child() on the parent
 		 *
-		 * \param response shared_ptr to the response which will be returned to the user. Modified with any successfully reparented node's name.
-		 * \param to_parent exact name of the node to reparent
+		 * \param response shared_ptr to the response which will be returned to the user. #TODO Modified with any successfully reparented node's name.
+		 * \param to_reparent exact name of the node to reparent
 		 * \param new_parent exact name of the new parent \p to_parent should become a child of
 		 *
 		 * \return string with exception information or empty string if successful
 		 */
 		std::string reparent_node(const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request, const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> response, std::string to_reparent, std::string new_parent);
+
+		/**
+		 * \brief Rebiases/reweights \param to_modify to the value in \param request
+		 *
+		 * \param request shared_ptr to the request used to set the weight/bias
+		 * \param response shared_ptr to the response which will be returned to the user. Modified
+		 * with any successfully reparented node's name
+		 * \param to_modify name of the node to be reweighted/rebiased
+		 * \return string with exception information or empty string if successful
+		 */
+		std::string
+		reweight_rebias(const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> &request,
+						const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> &response,
+						const std::string &to_modify);
 
 		/**
 		 * \brief Changes params of a given node name

@@ -20,6 +20,8 @@ int8 					type
 string					plugin_name
 string					goitr_name
 string                  potential_type
+float64                 weight 1.0
+float64                 bias 0.0
 
 # the resources that the node has been given access to
 dhtt_msgs/Resource[]	owned_resources

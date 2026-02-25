@@ -102,13 +102,15 @@ namespace dhtt
 		 * \param type exact name of the plugin to load (ex. dhtt_plugins::AndBehavior) 
 		 * \param params parameter list for the given plugin (a list of string parameters)
 		 * \param parent_name name of this nodes parent (parent is notified of new child through dhtt::MainServer)
+		 * \param weight scaling factor on activation potential
+		 * \param bias bias on activation potential
 		 * \param socket_type name of the plugin to use for this node's parent socket
 		 * \param goitr_type name of the goitr plugin to load for this node (if empty no goitr is loaded)
 		 * \param potential_type name of the activation potential plugin for this node (dhtt_plugins::EfficiencyPotential by default)
 		 * 
 		 * \return void
 		 */
-		Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string parent_name, std::string socket_type="dhtt_plugins::PtrBranchSocket", std::string goitr_type="", std::string potential_type="dhtt_plugins::EfficiencyPotential");
+		Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string parent_name, const double &weight, const double &bias, std::string socket_type="dhtt_plugins::PtrBranchSocket", std::string goitr_type="", std::string potential_type="dhtt_plugins::EfficiencyPotential");
 		
 		virtual ~Node();
 
@@ -331,6 +333,22 @@ namespace dhtt
 		std::string get_node_name();
 
 		/**
+		 * \brief return tuple (activation potential, weight, bias)
+		 */
+		auto get_activation_potential()
+		{
+			return std::tuple(this->activation_potential, this->weight, this->bias);
+		}
+
+		/**
+		 * \brief return a copy of the node's status
+		 */
+		auto get_status() const
+		{
+			return this->status;
+		}
+
+		/**
 		 * \brief checks whether a request of given resources can be fulfilled
 		 * 
 		 * looks at the internal list of available resources (as given by the root node's message) and the given requested resources. if the list of available resources could be updated
@@ -473,10 +491,9 @@ namespace dhtt
 		void apply_postconditions();
 
 		/**
-		 * \brief calculates activation potential as a function of the estimate from the NodeType plugin
-		 * 
-		 * \deprecated
-		 * 
+		 * \brief calculates activation potential as a function of the estimate from @link potential
+		 * @link PotentialType::compute_activation_potential
+		 *
 		 * \return activation_potential of the node
 		 */
 		double calculate_activation_potential();
@@ -544,6 +561,8 @@ namespace dhtt
 		std::string active_child_name;
 
 		double activation_potential;
+		double weight;
+		double bias;
 
 		int priority;
 		int resources_owned_by_subtree;

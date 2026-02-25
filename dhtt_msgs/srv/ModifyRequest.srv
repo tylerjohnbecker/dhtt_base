@@ -26,6 +26,14 @@ string			 	mutate_type
 # optional: name of the node to become parent of nodes in to_modify[]
 string              new_parent
 
+# optional: weight to set on all nodes in to_modify[], must be positive
+float64              weight
+
+# optional: bias to set on all nodes in to_modify[]
+float64              bias
+
+# optional:
+
 # msg constants (self explanatory)
 int8 				ADD=0
 int8				ADD_FROM_FILE=1
@@ -33,6 +41,8 @@ int8 				REMOVE=2
 int8 				PARAM_UPDATE=3
 int8 				MUTATE=4
 int8                REPARENT=5 # set all to_modify[] to be children of new_parent
+int8                REWEIGHT=6
+int8                REBIAS=7
 ---
 # returns whether or not a node was found, and whether it could be modified successfully
 bool 				success

@@ -2,10 +2,10 @@
 
 namespace dhtt
 {
-	Node::Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string p_name, std::string branch_socket_type, std::string goitr_type, std::string potential_type) : 
+	Node::Node(std::shared_ptr<CommunicationAggregator> com_agg, std::string name, std::string type, std::vector<std::string> params, std::string p_name, const double &weight, const double &bias, std::string branch_socket_type, std::string goitr_type, std::string potential_type) :
 			conc_group(nullptr), node_type_loader("dhtt", "dhtt::NodeType"), goitr_type_loader("dhtt", "dhtt::GoitrType"), 
 			branch_socket_type_loader("dhtt", "dhtt::BranchSocketType"), branch_plug_type_loader("dhtt", "dhtt::BranchPlugType"), potential_type_loader("dhtt", "dhtt::PotentialType"),
-			name(name), parent_name(p_name), priority(1), resource_status_updated(false), first_activation(true), active(false)
+			name(name), parent_name(p_name), priority(1), resource_status_updated(false), first_activation(true), active(false), weight{weight}, bias{bias}
 	{
 		// create a callback group for parallel ones
 		// this->conc_group = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
@@ -482,7 +482,7 @@ namespace dhtt
 			this->active_child_name = to_ret.local_best_node;
 
 			// check preconditions before moving request up
-			to_ret.activation_potential = this->potential->compute_activation_potential(this);
+			to_ret.activation_potential = this->calculate_activation_potential();
 			to_ret.possible = to_ret.possible and this->check_preconditions() and (to_ret.activation_potential > 0);
 
 			if ( to_ret.possible )
@@ -749,13 +749,43 @@ namespace dhtt
 
 		if (request->type == dhtt_msgs::srv::ModifyRequest::Request::REPARENT)
 		{
-			// TODO lock logic_mut?
 			this->parent_name = request->new_parent;
 			response->error_msg = "";
 			response->success = true;
 			// remove_child() on old parent and register_with_parent() on new parent is done by main server
 
 			this->update_status(this->status.state);
+
+			return;
+		}
+
+		if (request->type == dhtt_msgs::srv::ModifyRequest::Request::REWEIGHT)
+		{
+			if (request->weight < 0)
+			{
+				response->error_msg = "Cannot have negative weight.";
+				response->success = false;
+				return;
+			}
+
+			this->weight = request->weight;
+			this->update_status(this->status.state);
+
+			response->error_msg = "";
+			response->success = true;
+
+			return;
+		}
+
+		if (request->type == dhtt_msgs::srv::ModifyRequest::Request::REBIAS)
+		{
+			this->bias = request->bias;
+			this->update_status(this->status.state);
+
+			response->error_msg = "";
+			response->success = true;
+
+			return;
 		}
 	}
 
@@ -796,7 +826,21 @@ namespace dhtt
 
 	double Node::calculate_activation_potential()
 	{
-		return this->logic->get_perceived_efficiency(this) * (this->priority + (int) this->owned_resources.size());
+		double working_potential{
+			this->potential->compute_activation_potential(this) * this->weight + this->bias};
+
+		if (working_potential < 0.0)
+		{
+			DHTT_LOG_WARN(this->global_com, "Calculated negative activation potential: "
+												<< working_potential << " clamping to zero.");
+		}
+		else if (working_potential == 0.0)
+		{
+			DHTT_LOG_WARN(this->global_com, "Calculated activation potential: 0");
+		}
+
+		this->activation_potential = std::max(0.0, working_potential);
+		return this->activation_potential;
 	}
 
 	void Node::pull_resources()

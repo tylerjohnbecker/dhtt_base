@@ -57,7 +57,7 @@ namespace dhtt
 		this->node_list.task_completion_percent = 0.0f;
 
 		// initialize physical Root Node. loaded a yaml file as a part of the constructor so we don't catch it and make the program fail to load if that happens
-		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>(this->global_com, "ROOT_0", "dhtt_plugins::RootBehavior", root_node->params, "NONE", "dhtt_plugins::PtrBranchSocket");
+		this->node_map["ROOT_0"] = std::make_shared<dhtt::Node>(this->global_com, "ROOT_0", "dhtt_plugins::RootBehavior", root_node->params, "NONE", 1.0, 0.0, "dhtt_plugins::PtrBranchSocket");
 		// this->spinner_cp->add_node(this->node_map["ROOT_0"]);
 		this->node_map["ROOT_0"]->register_servers();
 		this->node_map["ROOT_0"]->set_resource_status_updated(true);
@@ -332,7 +332,7 @@ namespace dhtt
 			if ((int)request->to_modify.size() == 0)
 			{
 				response->success = false;
-				response->error_msg = "Failed to reparent nodes because no nodes to remove were given.";
+				response->error_msg = "Failed to reparent nodes because no nodes to reparent were given.";
 
 				RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
 
@@ -342,6 +342,39 @@ namespace dhtt
 			for (auto iter = request->to_modify.begin(); iter != request->to_modify.end(); iter++)
 			{
 				response->error_msg = this->reparent_node(request, response, *iter, request->new_parent);
+				response->success = response->error_msg.empty();
+
+				// exit early if modification fails
+				if (not response->success)
+				{
+					RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+
+					return;
+				}
+			}
+
+			return;
+		}
+
+		if (request->type == dhtt_msgs::srv::ModifyRequest::Request::REWEIGHT or
+			request->type == dhtt_msgs::srv::ModifyRequest::Request::REBIAS)
+		{
+			if (request->to_modify.size() == 0)
+			{
+				std::lock_guard guard(this->modify_mut);
+
+				response->success = false;
+				response->error_msg =
+					"Failed to reweight nodes because no nodes to reweight were given.";
+
+				RCLCPP_ERROR(this->get_logger(), "%s", response->error_msg.c_str());
+
+				return;
+			}
+
+			for (const auto &x : request->to_modify)
+			{
+				response->error_msg = this->reweight_rebias(request, response, x);
 				response->success = response->error_msg.empty();
 
 				// exit early if modification fails
@@ -707,7 +740,7 @@ namespace dhtt
 			potential_type = to_add.potential_type;
 
 		// create a physical node from the message and add to physical list
-		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(this->global_com, to_add.node_name, to_add.plugin_name, to_add.params, parent_name, "dhtt_plugins::PtrBranchSocket", goitr_type, potential_type);
+		this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(this->global_com, to_add.node_name, to_add.plugin_name, to_add.params, parent_name, to_add.weight, to_add.bias, "dhtt_plugins::PtrBranchSocket", goitr_type, potential_type);
 
 		if (this->node_map[to_add.node_name]->loaded_successfully() == false)
 		{
@@ -819,7 +852,7 @@ namespace dhtt
 				potential_type = to_add.potential_type;
 
 			// create a physical node from the message and add to physical list
-			this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(this->global_com, to_add.node_name, to_add.plugin_name, to_add.params, to_add.parent_name, "dhtt_plugins::PtrBranchSocket", goitr_type, potential_type);
+			this->node_map[to_add.node_name] = std::make_shared<dhtt::Node>(this->global_com, to_add.node_name, to_add.plugin_name, to_add.params, to_add.parent_name, to_add.weight, to_add.bias, "dhtt_plugins::PtrBranchSocket", goitr_type, potential_type);
 
 			if (this->node_map[to_add.node_name]->loaded_successfully() == false)
 			{
@@ -1166,7 +1199,55 @@ namespace dhtt
 		return ""; // success
 	}
 
-		std::string MainServer::change_params( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request )
+	std::string MainServer::reweight_rebias(
+		const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> &request,
+		const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> &response,
+		const std::string &to_modify)
+
+	{
+		auto pred_find_node_msg = [to_modify](const dhtt_msgs::msg::Node &check)
+		{ return check.node_name == to_modify; };
+
+		const auto &found_to_modify_it{this->node_map.find(to_modify)};
+
+		// Iterator itself is const reference, not what it's pointing to
+		const auto &found_to_modify_msg_it{std::find_if(this->node_list.tree_nodes.begin(),
+														this->node_list.tree_nodes.end(),
+														pred_find_node_msg)};
+
+		if (found_to_modify_it == this->node_map.cend() or
+			found_to_modify_msg_it == this->node_list.tree_nodes.end())
+		{
+			return "Node " + to_modify + " not found in tree. Returning in error.";
+		}
+
+		const auto &found_to_modify = found_to_modify_it->second;
+
+		if (to_modify == this->node_list.tree_nodes[0].node_name)
+		{
+			return "Cannot modify root node. Returning in error.";
+		}
+
+		if (this->verbose)
+		{
+			RCLCPP_INFO(this->get_logger(), "\tReweighting/Rebiasing node %s.", to_modify.c_str());
+		}
+
+		found_to_modify->modify(request, response);
+		if (not response->success)
+		{
+			return response->error_msg;
+		}
+		found_to_modify->update_status(found_to_modify->status.state);
+
+		// Also need to update this->node_list, which is used by the fetch server
+		found_to_modify_msg_it->weight = found_to_modify->weight;
+		found_to_modify_msg_it->bias = found_to_modify->bias;
+
+		return ""; // success
+	}
+
+	std::string MainServer::change_params( const std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Request> request )
 	{
 		(void) request;
 
@@ -1449,7 +1530,7 @@ namespace dhtt
 		}
 
 		// now make a dummy node of the new type to generate the postconditions list
-		dhtt::Node dummy(this->global_com, "dummy", n_type, std::vector<std::string>(), "NONE");
+		dhtt::Node dummy(this->global_com, "dummy", n_type, std::vector<std::string>(), "NONE", 1.0, 0.0);
 
 		// if it doesn't load most likely the plugin does not exist or requires some parameters
 		if ( not dummy.successful_load )

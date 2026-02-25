@@ -51,7 +51,7 @@ class TestNode : public dhtt::Node
 			 std::string type, std::vector<std::string> params, std::string parent_name,
 			 std::string socket_type = "dhtt_plugins::PtrBranchSocket", std::string goitr_type = "",
 			 std::string potential_type = "dhtt_plugins::EfficiencyPotential")
-		: dhtt::Node(com_agg, name, type, params, parent_name, socket_type, goitr_type,
+		: dhtt::Node(com_agg, name, type, params, parent_name, 1.0, 0.0, socket_type, goitr_type,
 					 potential_type)
 	{
 	}
@@ -116,7 +116,7 @@ TEST_F(TestMainServerF, test_make_node)
 {
 	auto node = std::make_shared<dhtt::Node>(
 		test_main_server->test_get_com_agg(), "Foo", "dhtt_plugins::TestBehavior",
-		std::vector<std::string>({"activation_potential: 0.5"}), "ROOT_0",
+		std::vector<std::string>({"activation_potential: 0.5"}), "ROOT_0", 1.0, 0.0,
 		"dhtt_plugins::PtrBranchSocket", "", "dhtt_plugins::EfficiencyPotential");
 
 	auto res = node->get_logic()->get_perceived_efficiency(node.get());
@@ -131,7 +131,7 @@ TEST_F(TestMainServerF, test_EfficiencyPotential)
 	// check the trivial functionality of returning Node::get_perceived_efficiency
 	auto node = std::make_shared<dhtt::Node>(
 		test_main_server->test_get_com_agg(), "Foo", "dhtt_plugins::TestBehavior",
-		std::vector<std::string>({"activation_potential: 0.5"}), "ROOT_0",
+		std::vector<std::string>({"activation_potential: 0.5"}), "ROOT_0", 1.0, 0.0,
 		"dhtt_plugins::PtrBranchSocket", "", "dhtt_plugins::EfficiencyPotential");
 
 	auto potential_plugin =
@@ -186,7 +186,7 @@ TEST_F(TestMainServerF, test_TestPotential)
 {
 	auto node = std::make_shared<dhtt::Node>(
 		test_main_server->test_get_com_agg(), "Foo", "dhtt_plugins::TestBehavior",
-		std::vector<std::string>({"activation_potential: 0.5"}), "ROOT_0",
+		std::vector<std::string>({"activation_potential: 0.5"}), "ROOT_0", 1.0, 0.0,
 		"dhtt_plugins::PtrBranchSocket", "", "dhtt_plugins::EfficiencyPotential");
 
 	auto potential_plugin =

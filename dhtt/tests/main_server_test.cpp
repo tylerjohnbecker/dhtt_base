@@ -32,11 +32,41 @@ class TestMainServer : public dhtt::MainServer
 		return res;
 	}
 
+	std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> fetch()
+	{
+		const auto req = std::make_shared<dhtt_msgs::srv::FetchRequest::Request>();
+		const auto res = std::make_shared<dhtt_msgs::srv::FetchRequest::Response>();
+
+		req->return_full_subtree = true;
+		this->fetch_callback(req, res);
+		return res;
+	}
+
+	std::shared_ptr<dhtt_msgs::srv::ControlRequest::Response> start()
+	{
+		const auto req = std::make_shared<dhtt_msgs::srv::ControlRequest::Request>();
+		const auto res = std::make_shared<dhtt_msgs::srv::ControlRequest::Response>();
+
+		req->type = dhtt_msgs::srv::ControlRequest::Request::START;
+		this->control_callback(req, res);
+		return res;
+	}
+
+	std::shared_ptr<dhtt_msgs::srv::ControlRequest::Response> reset()
+	{
+		const auto req = std::make_shared<dhtt_msgs::srv::ControlRequest::Request>();
+		const auto res = std::make_shared<dhtt_msgs::srv::ControlRequest::Response>();
+
+		req->type = dhtt_msgs::srv::ControlRequest::Request::RESET;
+		this->control_callback(req, res);
+		return res;
+	}
+
 	std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response>
 	reparent(const std::string &to_reparent, const std::string &new_parent)
 	{
 		const auto req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
-		auto res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
+		const auto res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
 
 		req->type = dhtt_msgs::srv::ModifyRequest::Request::REPARENT;
 		req->to_modify = {to_reparent};
@@ -46,10 +76,37 @@ class TestMainServer : public dhtt::MainServer
 		return res;
 	}
 
-	std::unordered_map<std::string, std::shared_ptr<dhtt::Node>> test_get_node_map() const
+	std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> reweight(const std::string &to_modify,
+																	  const double weight)
 	{
-		return this->get_node_map();
-	};
+		const auto req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
+		auto res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
+
+		req->type = dhtt_msgs::srv::ModifyRequest::Request::REWEIGHT;
+		req->to_modify = {to_modify};
+		req->weight = weight;
+
+		this->modify_callback(req, res);
+		return res;
+	}
+
+	std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response> rebias(const std::string &to_modify,
+																	const double bias)
+	{
+		const auto req = std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>();
+		auto res = std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>();
+
+		req->type = dhtt_msgs::srv::ModifyRequest::Request::REBIAS;
+		req->to_modify = {to_modify};
+		req->bias = bias;
+
+		this->modify_callback(req, res);
+		return res;
+	}
+
+	auto test_get_node_map() const { return this->get_node_map(); }
+
+	auto test_get_node_list() const { return this->get_node_list(); }
 
 	std::shared_ptr<dhtt::CommunicationAggregator> test_get_com_agg() const
 	{
@@ -73,9 +130,25 @@ class TestMainServer : public dhtt::MainServer
 
 class TestMainServerF : public testing::Test
 {
-  public:
+  private:
 	std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner;
+	std::thread t;
+
+  public:
 	std::shared_ptr<TestMainServer> test_main_server;
+
+	static auto find_node_in_list(const dhtt_msgs::msg::Subtree &subtree, const std::string &name)
+	{
+		return std::find_if(subtree.tree_nodes.cbegin(), subtree.tree_nodes.cend(),
+							[name](const auto &check) { return check.node_name == name; });
+	}
+
+	static auto
+	wait_for_done(const std::unordered_map<std::string, std::shared_ptr<dhtt::Node>> &map)
+	{
+		while (map.at("ROOT_0")->get_status().state != dhtt_msgs::msg::NodeStatus::DONE)
+			;
+	}
 
   protected:
 	void SetUp() override
@@ -86,9 +159,16 @@ class TestMainServerF : public testing::Test
 
 		RCLCPP_INFO(this->test_main_server->get_logger(), "Fixture Server started...");
 		this->spinner->add_node(this->test_main_server);
+
+		// Has to spin in its own thread because spinner->spin() blocks until cancel()
+		t = std::thread(&rclcpp::executors::MultiThreadedExecutor::spin, spinner);
 	}
 
-	void TearDown() override {}
+	void TearDown() override
+	{
+		this->spinner->cancel();
+		t.join();
+	}
 };
 
 class TestMainServerYAMLF : public TestMainServerF
@@ -201,6 +281,92 @@ TEST_F(TestMainServerYAMLF, test_reparent)
 	ASSERT_NE(test_main_server->find_parent(TO_REPARENT)->get_node_name(), OLD_PARENT);
 	ASSERT_NE(test_main_server->find_parent(TO_REPARENT),
 			  node_map_after.at(OLD_PARENT)); // should point to same object too
+}
+
+TEST_F(TestMainServerYAMLF, test_reweight_init)
+{
+	static std::string TO_MODIFY = "FirstTask_3";
+
+	test_main_server->add_from_file(PATH);
+	const auto &node_map_before = test_main_server->test_get_node_map();
+	const auto &node_before = node_map_before.at(TO_MODIFY);
+	const auto &[_ap, w_before, b_before] = node_before->get_activation_potential();
+	const auto &node_list_before = test_main_server->test_get_node_list();
+	const auto &node_msg_before = find_node_in_list(node_list_before, TO_MODIFY);
+
+	ASSERT_DOUBLE_EQ(w_before, 1.0);
+	ASSERT_DOUBLE_EQ(b_before, 0.0);
+	ASSERT_DOUBLE_EQ(node_msg_before->weight, 1.0);
+	ASSERT_DOUBLE_EQ(node_msg_before->bias, 0.0);
+
+	test_main_server->start();
+	wait_for_done(node_map_before);
+	const auto &ap_before = std::get<0>(node_before->get_activation_potential());
+	ASSERT_DOUBLE_EQ(ap_before, 10.0);
+}
+
+TEST_F(TestMainServerYAMLF, test_reweight)
+{
+	static std::string TO_MODIFY = "FirstTask_3";
+
+	test_main_server->add_from_file(PATH);
+
+	const auto &res_1{test_main_server->reweight(TO_MODIFY, 5.0)};
+	ASSERT_TRUE(res_1->success and res_1->error_msg.empty());
+	const auto &res_2{test_main_server->rebias(TO_MODIFY, 1.0)};
+	ASSERT_TRUE(res_2->success and res_2->error_msg.empty());
+
+	const auto &node_map_before = test_main_server->test_get_node_map();
+	const auto &node_before = node_map_before.at(TO_MODIFY);
+	const auto &[_ap, w_before, b_before] = node_before->get_activation_potential();
+	const auto &node_list_before = test_main_server->test_get_node_list();
+	const auto &node_msg_before = find_node_in_list(node_list_before, TO_MODIFY);
+
+	ASSERT_DOUBLE_EQ(w_before, 5.0);
+	ASSERT_DOUBLE_EQ(b_before, 1.0);
+	ASSERT_DOUBLE_EQ(node_msg_before->weight, 5.0);
+	ASSERT_DOUBLE_EQ(node_msg_before->bias, 1.0);
+
+	test_main_server->start();
+	wait_for_done(node_map_before);
+	const auto &ap_before = std::get<0>(node_before->get_activation_potential());
+	ASSERT_DOUBLE_EQ(ap_before, 51.0);
+}
+
+TEST_F(TestMainServerYAMLF, test_reweight_negative)
+{
+	static std::string TO_MODIFY = "FirstTask_3";
+
+	test_main_server->add_from_file(PATH);
+
+	// Empty to_modify list
+	const auto &res_0{test_main_server->reweight({}, 1.0)};
+	ASSERT_FALSE(res_0->success);
+	ASSERT_FALSE(res_0->error_msg.empty());
+
+	// Negative weight
+	const auto &res_1{test_main_server->reweight(TO_MODIFY, -1.0)};
+	ASSERT_FALSE(res_1->success);
+	ASSERT_FALSE(res_1->error_msg.empty());
+
+	// Zero weight should be allowed, visual check for roslog warning
+	const auto &res_2{test_main_server->reweight(TO_MODIFY, 0.0)};
+	ASSERT_TRUE(res_2->success);
+	ASSERT_TRUE(res_2->error_msg.empty());
+
+	// Negative bias should be allowed, visual check for roslog warning
+	const auto &res_3{test_main_server->rebias(TO_MODIFY, -10.0)};
+	ASSERT_TRUE(res_3->success);
+	ASSERT_TRUE(res_3->error_msg.empty());
+
+	// Should clamp negative activation to 0
+	test_main_server->start();
+	const auto &node_map_before = test_main_server->test_get_node_map();
+	const auto &node_before = node_map_before.at(TO_MODIFY);
+	std::this_thread::sleep_for(std::chrono::milliseconds(
+		15)); // Root node with impossible children will stay in WAITING state
+	const auto &ap_before = std::get<0>(node_before->get_activation_potential());
+	ASSERT_DOUBLE_EQ(ap_before, 0.0);
 }
 
 // TODO more tests
