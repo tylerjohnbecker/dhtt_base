@@ -4,7 +4,7 @@ namespace dhtt
 {
 	MainServer::MainServer(std::string node_name, std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> spinner, bool slow) : 
 									rclcpp::Node(node_name),//, rclcpp::NodeOptions().allow_undeclared_parameters(true).automatically_declare_parameters_from_overrides(true)), 
-									conc_group(nullptr), spinner_cp(spinner), total_nodes_added(1), verbose(true), running(false)
+									conc_group(nullptr), spinner_cp(spinner), total_nodes_added(1), verbose(true), running(false), end(false)
 	{
 		// create a callback group for parallel ones
 		this->conc_group = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
