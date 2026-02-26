@@ -2173,6 +2173,11 @@ namespace dhtt
 					to_build.type = config["Nodes"][(*iter)]["type"].as<int>();
 					to_build.plugin_name = config["Nodes"][(*iter)]["behavior_type"].as<std::string>();
 
+					if (const auto &labels = config["Nodes"][(*iter)]["labels"])
+					{
+						to_build.labels = labels.as<std::vector<std::string>>();
+					}
+
 					// check optional parameter "goitr_type"
 					try 
 					{

@@ -211,11 +211,17 @@ Nodes:
 	std::ofstream file;
 
   protected:
+	std::string YAML;
+
+	virtual void set_yaml() { this->YAML = SIMPLE_AND; }
+
 	void SetUp() override
 	{
 		TestMainServerF::SetUp();
+		set_yaml();
+
 		file.open(PATH);
-		file << SIMPLE_AND;
+		file << YAML;
 		file.close();
 	}
 
@@ -231,6 +237,33 @@ Nodes:
 
   public:
 	const std::filesystem::path PATH = std::filesystem::temp_directory_path() / "simple_and.yaml";
+};
+
+class TestMainServerYAML_LABELF : public TestMainServerYAMLF
+{
+  private:
+	static constexpr auto LABEL = R"(
+NodeList:
+  - 'ParentAnd'
+  - 'ChildAnd'
+
+Nodes:
+  ParentAnd:
+    type: 1
+    behavior_type: 'dhtt_plugins::AndBehavior'
+    robot: 0
+    parent: 'NONE'
+    params: []
+    labels: ['FOO']
+  ChildAnd:
+    type: 1
+    behavior_type: 'dhtt_plugins::AndBehavior'
+    robot: 0
+    parent: 'ParentAnd'
+    params: []
+)";
+
+	void set_yaml() override { this->YAML = LABEL; }
 };
 
 TEST_F(TestMainServerF, test_fixture)
@@ -367,6 +400,18 @@ TEST_F(TestMainServerYAMLF, test_reweight_negative)
 		15)); // Root node with impossible children will stay in WAITING state
 	const auto &ap_before = std::get<0>(node_before->get_activation_potential());
 	ASSERT_DOUBLE_EQ(ap_before, 0.0);
+}
+
+TEST_F(TestMainServerYAML_LABELF, test_label)
+{
+	test_main_server->add_from_file(PATH);
+
+	const auto &node_list = test_main_server->test_get_node_list();
+	const auto &node_msg_parent = find_node_in_list(node_list, "ParentAnd_1");
+	const auto &node_msg_child = find_node_in_list(node_list, "ChildAnd_2");
+
+	ASSERT_TRUE(node_msg_parent->labels[0] == "FOO");
+	ASSERT_TRUE(node_msg_child->labels.empty());
 }
 
 // TODO more tests

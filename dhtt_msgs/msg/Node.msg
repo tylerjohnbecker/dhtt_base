@@ -36,6 +36,9 @@ dhtt_msgs/NodeStatus	node_status
 string                  preconditions
 string                  postconditions
 
+# label the node. This is useful for marking a subtree for external systems to see.
+string[]                labels
+
 # node type declarations (for specific behavior types use the common name parameter as well)
 int8 					ROOT=0
 int8 					AND=1
