@@ -1607,20 +1607,13 @@ namespace dhtt
 
 	std::string MainServer::save_tree(std::string file_name, std::string file_path)
 	{
-		struct stat path;
+		std::filesystem::path path(file_path);
 
-		std::string file;
+		std::filesystem::path file(path/ file_name);
 
-		if ( stat( file_path.c_str(), &path ) == 0 )
+		if ( not std::filesystem::exists(path) )
 		{
-			file = file_name + file_path;
-		}
-		else
-		{
-			if ( strcmp(file_path.c_str(), "") )
-				return "Specified file path does not exist, returning in error";
-
-			file = dhtt_folder_path.native() + DEFAULT_SAVE_LOCATION + file_name;
+			RCLCPP_INFO(this->get_logger(), "Specified file path does not exist, creating it");
 		}
 
 		// construct the yaml friendly version of the tree
@@ -1631,21 +1624,35 @@ namespace dhtt
 			if ( not strcmp(iter.node_name.c_str(), "ROOT_0") )
 				continue;
 
+			std::string friendly_name{iter.node_name.substr(0, iter.node_name.find('_'))};
+			std::string friendly_parent_name{iter.parent_name.substr(0, iter.parent_name.find('_'))};
+
 			// construct the current node
 			YAML::Node current_node;
 
-			current_node["type"] = iter.type;
+			// TODO consider not adding empty values ("")
+			current_node["type"] = static_cast<unsigned int>(iter.type);
 			current_node["behavior_type"] = iter.plugin_name;
 			current_node["goitr_type"] = iter.goitr_name;
-			current_node["robot"] = 0; // for now we will always assume the one robot 
-			current_node["parent"] = iter.parent_name;
+			current_node["robot"] = 0; // for now we will always assume the one robot
+			current_node["parent"] = iter.parent_name == "ROOT_0" ? ROOT_PARENT_NAME : friendly_parent_name;
+			current_node["weight"] = iter.weight;
+			current_node["bias"] = iter.bias;
+			current_node["potential_type"] = iter.potential_type;
 
-			for ( auto param_iter = iter.params.begin() ; param_iter != iter.params.end() ; param_iter++ )
-				current_node["params"].push_back( (*param_iter) );
+			for (const auto &x : iter.params)
+			{
+				current_node["params"].push_back(x);
+			}
+
+			for (const auto &x : iter.labels)
+			{
+				current_node["labels"].push_back(x);
+			}
 			
 			// add to the total
-			root_node["NodeList"].push_back(iter.node_name);
-			root_node["Nodes"][iter.node_name] = current_node; 
+			root_node["NodeList"].push_back(friendly_name);
+			root_node["Nodes"][friendly_name] = current_node;
 		}
 
 		std::ofstream fout(file);
@@ -2122,7 +2129,15 @@ namespace dhtt
 				// first build vector of nodes from yaml file
 				YAML::Node config = YAML::LoadFile(file_name_cur);
 			
-				std::vector<std::string> nodes = config["NodeList"].as<std::vector<std::string>>();
+				std::vector<std::string> nodes;
+				if (const auto &_nodes{config["NodeList"]})
+				{
+					nodes = _nodes.as<std::vector<std::string>>();
+				}
+				else
+				{
+					throw std::runtime_error("missing NodeList");
+				}
 
 				std::string fake_parent = "";
 
@@ -2147,7 +2162,15 @@ namespace dhtt
 						to_build.node_name = updated_names[node_name];
 					}
 
-					std::string parent_name = config["Nodes"][(*iter)]["parent"].as<std::string>();
+					std::string parent_name;
+					if (const auto &_parent_name{config["Nodes"][(*iter)]["parent"]})
+					{
+						parent_name = _parent_name.as<std::string>();
+					}
+					else
+					{
+						throw std::runtime_error("missing parent name");
+					}
 
 					if ( fake_parent != "" and parent_name == fake_parent )
 					{
@@ -2170,8 +2193,23 @@ namespace dhtt
 						to_build.parent_name = updated_names[parent_name];
 					}
 
-					to_build.type = config["Nodes"][(*iter)]["type"].as<int>();
-					to_build.plugin_name = config["Nodes"][(*iter)]["behavior_type"].as<std::string>();
+					if (const auto &_type{config["Nodes"][(*iter)]["type"]})
+					{
+						to_build.type = _type.as<int>();
+					}
+					else
+					{
+						throw std::runtime_error("missing type field");
+					}
+
+					if (const auto &_plugin_name{config["Nodes"][(*iter)]["behavior_type"]})
+					{
+						to_build.plugin_name = _plugin_name.as<std::string>();
+					}
+					else
+					{
+						throw std::runtime_error("missing plugin_name field");
+					}
 
 					if (const auto &labels = config["Nodes"][(*iter)]["labels"])
 					{
@@ -2179,21 +2217,21 @@ namespace dhtt
 					}
 
 					// check optional parameter "goitr_type"
-					try 
+					if (const auto &_goitr_name{config["Nodes"][(*iter)]["goitr_type"]})
 					{
-						to_build.goitr_name = config["Nodes"][(*iter)]["goitr_type"].as<std::string>();
+						to_build.goitr_name = _goitr_name.as<std::string>();
 					}
-					catch (const std::exception& e)
+					else
 					{
 						to_build.goitr_name = "";
 					}
 
 					// check optional parameter potential_type
-					try 
+					if (const auto &_potential_type {config["Nodes"][(*iter)]["potential_type"]})
 					{
-						to_build.potential_type = config["Nodes"][(*iter)]["potential_type"].as<std::string>();
+						to_build.potential_type = _potential_type.as<std::string>();
 					}
-					catch (const std::exception& e)
+					else
 					{
 						to_build.potential_type = "";
 					}
@@ -2203,7 +2241,15 @@ namespace dhtt
 
 					// also make some consideration for the plugin type but not necessary until that functions
 
-					std::vector<std::string> params = config["Nodes"][(*iter)]["params"].as<std::vector<std::string>>();
+					std::vector<std::string> params;
+					if (const auto &_params {config["Nodes"][(*iter)]["params"]})
+					{
+						params = _params.as<std::vector<std::string>>();
+					}
+					else
+					{
+						params = {};
+					}
 
 					for ( auto param_iter = params.begin(); param_iter != params.end(); param_iter++ )
 					{	

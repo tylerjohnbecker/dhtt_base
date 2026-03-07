@@ -32,6 +32,20 @@ class TestMainServer : public dhtt::MainServer
 		return res;
 	}
 
+	std::shared_ptr<dhtt_msgs::srv::ModifyRequest::Response>
+	add(const std::vector<std::string> &to_modify, const dhtt_msgs::msg::Node &add_node)
+	{
+		const auto req{std::make_shared<dhtt_msgs::srv::ModifyRequest::Request>()};
+		auto res{std::make_shared<dhtt_msgs::srv::ModifyRequest::Response>()};
+
+		req->type = dhtt_msgs::srv::ModifyRequest::Request::ADD;
+		req->to_modify = to_modify;
+		req->add_node = add_node;
+
+		this->modify_callback(req, res);
+		return res;
+	}
+
 	std::shared_ptr<dhtt_msgs::srv::FetchRequest::Response> fetch()
 	{
 		const auto req = std::make_shared<dhtt_msgs::srv::FetchRequest::Request>();
@@ -101,6 +115,20 @@ class TestMainServer : public dhtt::MainServer
 		req->bias = bias;
 
 		this->modify_callback(req, res);
+		return res;
+	}
+
+	std::shared_ptr<dhtt_msgs::srv::ControlRequest::Response>
+	save(const std::filesystem::path &path)
+	{
+		const auto req{std::make_shared<dhtt_msgs::srv::ControlRequest::Request>()};
+		auto res{std::make_shared<dhtt_msgs::srv::ControlRequest::Response>()};
+
+		req->type = dhtt_msgs::srv::ControlRequest::Request::SAVE;
+		req->file_path = path.parent_path();
+		req->file_name = path.filename();
+
+		this->control_callback(req, res);
 		return res;
 	}
 
@@ -412,6 +440,114 @@ TEST_F(TestMainServerYAML_LABELF, test_label)
 
 	ASSERT_TRUE(node_msg_parent->labels[0] == "FOO");
 	ASSERT_TRUE(node_msg_child->labels.empty());
+}
+
+TEST_F(TestMainServerF, test_label_add)
+{
+	dhtt_msgs::msg::Node my_node;
+	my_node.node_name = "foo";
+	my_node.parent_name = "ROOT_0";
+	my_node.type = dhtt_msgs::msg::Node::AND;
+	my_node.plugin_name = "dhtt_plugins::AndBehavior";
+	my_node.labels = {"bar"};
+
+	const auto res{test_main_server->add({"ROOT_0"}, my_node)};
+	const auto real_node{test_main_server->test_get_node_list().tree_nodes[1]};
+	ASSERT_TRUE(res->success);
+	ASSERT_EQ(real_node.labels, my_node.labels);
+}
+
+TEST_F(TestMainServerYAMLF, test_save)
+{
+	const std::string target_file(std::filesystem::temp_directory_path() / "test_save.yaml");
+
+	test_main_server->add_from_file(PATH);
+	const auto &first_node_list = test_main_server->test_get_node_list();
+
+	const auto save_res{test_main_server->save(target_file)};
+	test_main_server->reset();
+	const auto add_res{test_main_server->add_from_file(target_file)};
+	const auto &reloaded_node_list = test_main_server->test_get_node_list();
+
+	ASSERT_TRUE(save_res->success);
+	ASSERT_TRUE(save_res->error_msg.empty());
+	ASSERT_TRUE(add_res->success);
+	ASSERT_TRUE(add_res->error_msg.empty());
+
+	auto first_sorted{first_node_list.tree_nodes};
+	auto second_sorted{reloaded_node_list.tree_nodes};
+
+	const auto comp{[](const auto &a, const auto &b) { return a.node_name < b.node_name; }};
+	std::sort(first_sorted.begin(), first_sorted.end(), comp);
+	std::sort(second_sorted.begin(), second_sorted.end(), comp);
+
+	auto strip_name{[](const std::string &x) { return x.substr(0, x.find('_')); }};
+	auto strip_node{[strip_name](dhtt_msgs::msg::Node &x)
+					{
+						x.node_name = strip_name(x.node_name);
+						x.parent_name = strip_name(x.node_name);
+						for (auto &y : x.child_name)
+						{
+							y = strip_name(y);
+						};
+					}};
+	for (auto &x : first_sorted)
+	{
+		std::sort(x.child_name.begin(), x.child_name.end());
+		strip_node(x);
+	}
+	for (auto &x : second_sorted)
+	{
+		std::sort(x.child_name.begin(), x.child_name.end());
+		strip_node(x);
+	}
+
+	ASSERT_EQ(first_sorted.size(), first_sorted.size());
+
+#define myexpect(field) EXPECT_EQ(first.field, second.field)
+	for (size_t i{0}; i < first_node_list.tree_nodes.size(); ++i)
+	{
+		const auto &first{first_sorted[i]};
+		const auto &second{second_sorted[i]};
+
+		myexpect(node_name);
+		// myexpect(parent); Saved order doesn't need to be identical to the first
+		myexpect(parent_name);
+		// myexpect(children); Saved order doesn't need to be identical to the first
+		myexpect(child_name);
+		myexpect(params);
+		myexpect(type);
+		myexpect(plugin_name);
+		myexpect(goitr_name);
+		myexpect(potential_type);
+		myexpect(weight);
+		myexpect(bias);
+		myexpect(owned_resources);
+		myexpect(subtree_owned_resources);
+		myexpect(node_status);
+		myexpect(preconditions);
+		myexpect(postconditions);
+		myexpect(labels);
+	}
+}
+
+TEST_F(TestMainServerYAML_LABELF, test_save_label)
+{
+	const std::string target_file(std::filesystem::temp_directory_path() / "test_save.yaml");
+
+	test_main_server->add_from_file(PATH);
+	const auto save_res{test_main_server->save(target_file)};
+	test_main_server->reset();
+	const auto add_res{test_main_server->add_from_file(target_file)};
+	const auto &reloaded_node_list = test_main_server->test_get_node_list();
+
+	ASSERT_TRUE(save_res->success);
+	ASSERT_TRUE(save_res->error_msg.empty());
+	ASSERT_TRUE(add_res->success);
+	ASSERT_TRUE(add_res->error_msg.empty());
+
+	ASSERT_TRUE((reloaded_node_list.tree_nodes.cend() - 1)->labels.empty());
+	ASSERT_EQ((reloaded_node_list.tree_nodes.cend() - 2)->labels[0], "FOO");
 }
 
 // TODO more tests
