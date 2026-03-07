@@ -11,8 +11,6 @@ double CookingInteractSpecialBehavior::get_perceived_efficiency(dhtt::Node* cont
 	{
 		// High activation if we're right next to the object. No activation otherwise.
 		double to_ret = abs(this->agent_point_distance(this->destination_point) - 1.0) < DBL_EPSILON ? 1.0 : 0.0;
-
-		this->activation_potential = to_ret; // TODO is this necessary?
 		return to_ret;
 	}
 

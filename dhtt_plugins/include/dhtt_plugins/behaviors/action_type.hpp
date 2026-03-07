@@ -155,7 +155,6 @@ namespace dhtt_plugins
 
 		bool done;
 
-		double activation_potential;
 		std::vector<dhtt_msgs::msg::Resource> necessary_resources; 
 		std::vector<dhtt_msgs::msg::Resource> necessary_world_resources;
 

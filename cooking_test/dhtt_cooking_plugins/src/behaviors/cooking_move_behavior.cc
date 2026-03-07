@@ -10,7 +10,6 @@ double CookingMoveBehavior::get_perceived_efficiency(dhtt::Node* container)
 	{
 		double to_ret = pow(1.0 + this->agent_point_distance(this->destination_point), -1);
 
-		this->activation_potential = to_ret; // TODO is this necessary?
 		return to_ret;
 	}
 
