@@ -38,7 +38,8 @@
 #define RESOURCES_POSTFIX "/resource"
 #define CONTROL_POSTFIX "/control"
 
-#define ACTIVATION_POTENTIAL_HIGHEST 2.0
+// double could be more correct. ROS should pass a float64 all the way through
+#define ACTIVATION_POTENTIAL_HIGHEST std::numeric_limits<float>::max();
 
 namespace dhtt
 {
