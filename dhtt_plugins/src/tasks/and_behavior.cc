@@ -49,18 +49,24 @@ namespace dhtt_plugins
 		std::vector<std::string> active_children;
 		std::string local_best_child = "";
 
+		// find the maximum weight of the unfinished children
+		double max_weight = results.cbegin()->second.weight;
+		for (const auto &[_, result] : results)
+		{
+			max_weight =
+				(not result.done) and result.weight > max_weight ? result.weight : max_weight;
+		}
+
 		double current_max_activation_potential = -1;
 
 		int num_children = 0;
-		double activation_potential_sum = 0.0;
 
 		for ( auto const& x : results )
 		{
 			if ( not x.second.done )
 			{
-				DHTT_LOG_DEBUG(this->com_agg, "Evaluating child [" << x.first << "] with activation potential " << x.second.activation_potential << "...");
+				DHTT_LOG_DEBUG(this->com_agg, "Evaluating child [" << x.first << "] with activation potential and weight" << x.second.activation_potential << ' ' << x.second.weight << "...");
 				num_children++;
-				activation_potential_sum += x.second.activation_potential;
 
 				if ( x.second.activation_potential > current_max_activation_potential and x.second.possible )
 				{
@@ -78,8 +84,11 @@ namespace dhtt_plugins
 			}
 		}
 
+		const auto scaled_best_activation_potential{results[local_best_child].activation_potential /
+													max_weight};
+
 		this->num_active_children = num_children;
-		this->activation_potential = (strcmp("", local_best_child.c_str())) ? results[local_best_child].activation_potential : 0.0;
+		this->activation_potential = (not local_best_child.empty() ? scaled_best_activation_potential : 0.0);
 		to_ret->activation_potential = activation_potential;
 
 		// check if a possible child exists

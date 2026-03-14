@@ -27,6 +27,7 @@ bool 						possible
 
 # filled in by node class
 float64 					activation_potential
+float64                     weight
 
 # second pass
 # released resources are no longer in use after hitting the root node, passed resources are sent up to the nearest THEN node and then given to their next child

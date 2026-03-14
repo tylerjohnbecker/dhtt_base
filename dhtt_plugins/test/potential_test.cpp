@@ -209,6 +209,8 @@ TEST_F(TestMainServerF, test_TestPotential)
 	ASSERT_DOUBLE_EQ(res2, 1.0);
 }
 
+// TODO test the AndBehavior::auction_callback() handling node weights
+
 int main(int argc, char **argv)
 {
 	rclcpp::init(0, nullptr);

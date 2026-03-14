@@ -483,6 +483,7 @@ namespace dhtt
 
 			// check preconditions before moving request up
 			to_ret.activation_potential = this->calculate_activation_potential();
+			to_ret.weight = this->weight;
 			to_ret.possible = to_ret.possible and this->check_preconditions() and (to_ret.activation_potential > 0);
 
 			if ( to_ret.possible )
