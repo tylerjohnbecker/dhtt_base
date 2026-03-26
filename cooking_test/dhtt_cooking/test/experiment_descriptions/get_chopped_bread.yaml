@@ -98,7 +98,7 @@ Nodes:
     params: [ 'object: Bread', 'mark: $mark', 'unmark: foo' ]
   BreadChoppedAnd:
     type: 1
-    behavior_type: "dhtt_plugins::ThenBehavior"
+    behavior_type: "dhtt_plugins::AndBehavior"
     robot: 0
     parent: "BreadNewBreadThen"
     params: [ ]
