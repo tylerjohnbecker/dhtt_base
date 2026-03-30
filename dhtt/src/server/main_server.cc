@@ -1619,40 +1619,69 @@ namespace dhtt
 		// construct the yaml friendly version of the tree
 		YAML::Node root_node;
 
-		for ( auto const& iter : this->node_list.tree_nodes )
+		auto add_to_yaml{
+			[&root_node](const dhtt_msgs::msg::Node &iter)
+			{
+				// std::string friendly_name{iter.node_name.substr(0, iter.node_name.find('_'))};
+				// std::string friendly_parent_name{iter.parent_name.substr(0,
+				// iter.parent_name.find('_'))};
+				std::string friendly_name{iter.node_name};
+				std::string friendly_parent_name{iter.parent_name};
+
+				// construct the current node
+				YAML::Node current_node;
+
+				// TODO consider not adding empty values ("")
+				current_node["type"] = static_cast<unsigned int>(iter.type);
+				current_node["behavior_type"] = iter.plugin_name;
+				current_node["goitr_type"] = iter.goitr_name;
+				current_node["robot"] = 0; // for now we will always assume the one robot
+				current_node["parent"] =
+					iter.parent_name == "ROOT_0" ? ROOT_PARENT_NAME : friendly_parent_name;
+				current_node["weight"] = iter.weight;
+				current_node["bias"] = iter.bias;
+				current_node["potential_type"] = iter.potential_type;
+
+				for (const auto &x : iter.params)
+				{
+					current_node["params"].push_back(x);
+				}
+
+				for (const auto &x : iter.labels)
+				{
+					current_node["labels"].push_back(x);
+				}
+
+				// add to the total
+				root_node["NodeList"].push_back(friendly_name);
+				root_node["Nodes"][friendly_name] = current_node;
+			}};
+
+		for (auto const &iter : this->node_list.tree_nodes)
 		{
-			if ( not strcmp(iter.node_name.c_str(), "ROOT_0") )
+			if (iter.node_name == "ROOT_0")
 				continue;
 
-			std::string friendly_name{iter.node_name.substr(0, iter.node_name.find('_'))};
-			std::string friendly_parent_name{iter.parent_name.substr(0, iter.parent_name.find('_'))};
-
-			// construct the current node
-			YAML::Node current_node;
-
-			// TODO consider not adding empty values ("")
-			current_node["type"] = static_cast<unsigned int>(iter.type);
-			current_node["behavior_type"] = iter.plugin_name;
-			current_node["goitr_type"] = iter.goitr_name;
-			current_node["robot"] = 0; // for now we will always assume the one robot
-			current_node["parent"] = iter.parent_name == "ROOT_0" ? ROOT_PARENT_NAME : friendly_parent_name;
-			current_node["weight"] = iter.weight;
-			current_node["bias"] = iter.bias;
-			current_node["potential_type"] = iter.potential_type;
-
-			for (const auto &x : iter.params)
+			// Add the first behavior/task node
+			if (iter.parent_name == "ROOT_0")
 			{
-				current_node["params"].push_back(x);
+				add_to_yaml(iter);
 			}
 
-			for (const auto &x : iter.labels)
+			// if it's a task node add its children. The order in node_list.tree_nodes may
+			// not reflect the order in iter.children, which is important for THEN nodes
+			// This assumes the tree is connected
+			// We don't add the task node itself, because it should be a child of either another
+			// task node or ROOT_0 above
+			if (iter.type < dhtt_msgs::msg::Node::BEHAVIOR)
 			{
-				current_node["labels"].push_back(x);
+				for (const auto &idx : iter.children)
+				{
+					add_to_yaml(this->node_list.tree_nodes[idx]);
+				}
 			}
-			
-			// add to the total
-			root_node["NodeList"].push_back(friendly_name);
-			root_node["Nodes"][friendly_name] = current_node;
+
+			// Don't do anything to behavior nodes, they are always children not paren
 		}
 
 		std::ofstream fout(file);

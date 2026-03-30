@@ -474,6 +474,36 @@ TEST_F(TestMainServerYAMLF, test_save)
 	ASSERT_TRUE(add_res->success);
 	ASSERT_TRUE(add_res->error_msg.empty());
 
+	auto strip_name{[](const std::string &x) { return x.substr(0, x.find('_')); }};
+	auto strip_node{[strip_name](dhtt_msgs::msg::Node &x)
+					{
+						x.node_name = strip_name(x.node_name);
+						x.parent_name = strip_name(x.parent_name);
+						for (auto &y : x.child_name)
+						{
+							y = strip_name(y);
+						};
+					}};
+	auto find_index{[](const auto& list, const auto &match)
+	{
+		return std::distance(list.cbegin(), std::find_if(list.cbegin(), list.cend(), [match](const auto &x){return x == match;}));
+	}};
+
+	const auto _parent_and{std::find_if(reloaded_node_list.tree_nodes.cbegin(),
+								 reloaded_node_list.tree_nodes.cend(), [strip_name](const auto &a)
+								 { return strip_name(a.node_name) == "ParentAnd"; })};
+	auto parent_and{*_parent_and};
+	strip_node(parent_and);
+
+	const auto child_and_idx{find_index(parent_and.child_name, "ChildAnd")};
+	const auto child_first_task_idx{find_index(parent_and.child_name, "FirstTask")};
+
+	// goes child < first
+	ASSERT_LT(child_and_idx, child_first_task_idx);
+
+	// TODO Make sure node names don't have the underscore suffix
+	// const std::regex r(R"(.+_[0-9]+$)");
+
 	auto first_sorted{first_node_list.tree_nodes};
 	auto second_sorted{reloaded_node_list.tree_nodes};
 
@@ -481,16 +511,6 @@ TEST_F(TestMainServerYAMLF, test_save)
 	std::sort(first_sorted.begin(), first_sorted.end(), comp);
 	std::sort(second_sorted.begin(), second_sorted.end(), comp);
 
-	auto strip_name{[](const std::string &x) { return x.substr(0, x.find('_')); }};
-	auto strip_node{[strip_name](dhtt_msgs::msg::Node &x)
-					{
-						x.node_name = strip_name(x.node_name);
-						x.parent_name = strip_name(x.node_name);
-						for (auto &y : x.child_name)
-						{
-							y = strip_name(y);
-						};
-					}};
 	for (auto &x : first_sorted)
 	{
 		std::sort(x.child_name.begin(), x.child_name.end());
