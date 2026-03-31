@@ -501,9 +501,6 @@ TEST_F(TestMainServerYAMLF, test_save)
 	// goes child < first
 	ASSERT_LT(child_and_idx, child_first_task_idx);
 
-	// TODO Make sure node names don't have the underscore suffix
-	// const std::regex r(R"(.+_[0-9]+$)");
-
 	auto first_sorted{first_node_list.tree_nodes};
 	auto second_sorted{reloaded_node_list.tree_nodes};
 
@@ -568,6 +565,58 @@ TEST_F(TestMainServerYAML_LABELF, test_save_label)
 
 	ASSERT_TRUE((reloaded_node_list.tree_nodes.cend() - 1)->labels.empty());
 	ASSERT_EQ((reloaded_node_list.tree_nodes.cend() - 2)->labels[0], "FOO");
+}
+
+TEST_F(TestMainServerYAMLF, test_save_no_underscore_and_dedup)
+{
+	const std::string target_file(std::filesystem::temp_directory_path() / "test_save.yaml");
+	test_main_server->add_from_file(PATH);
+
+	dhtt_msgs::msg::Node to_add;
+	to_add.type = dhtt_msgs::msg::Node::AND;
+	to_add.node_name = "ParentAnd";
+	to_add.plugin_name = "dhtt_plugins::AndBehavior";
+	auto add_res{test_main_server->add({"ROOT_0"}, to_add)};
+	ASSERT_TRUE(add_res->success);
+
+	const auto save_res{test_main_server->save(target_file)};
+
+	YAML::Node root{YAML::LoadFile(target_file)};
+
+	const auto node_list{root["NodeList"].as<std::vector<std::string>>()};
+	std::vector<std::string> node_names;
+	std::vector<std::string> node_parents;
+
+	for (const auto &x : root["Nodes"])
+	{
+		node_names.push_back(x.first.as<std::string>());
+		node_parents.push_back(x.second["parent"].as<std::string>());
+	}
+
+	// Shouldn't have the underscore suffix
+	for (const auto &vec : {node_list, node_names, node_parents})
+	{
+		for (const auto &x : vec)
+		{
+			ASSERT_EQ(x.find('_'), std::string::npos);
+		}
+	}
+
+	// Shouldn't have duplicates
+	for (auto x{node_list.begin()}; x < node_list.end(); ++x)
+	{
+		for (auto y{x + 1}; y < node_list.end(); ++y)
+		{
+			ASSERT_NE(*x, *y);
+		}
+	}
+	for (auto x{node_names.begin()}; x < node_names.end(); ++x)
+	{
+		for (auto y{x + 1}; y < node_names.end(); ++y)
+		{
+			ASSERT_NE(*x, *y);
+		}
+	}
 }
 
 // TODO more tests
